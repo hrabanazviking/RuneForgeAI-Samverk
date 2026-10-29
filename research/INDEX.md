@@ -101,3 +101,10 @@ and the roadmap slices it feeds (see `docs/SAMVERK_MASSIVE_ROADMAP.md`).
 | `42-data-model-and-storage.md` | What lives in SQLite, what lives in the filesystem object store, and what lives in git itself — and how do the three stay consistent under crash and concurrent load? |
 | `43-markdown-and-rendering.md` | How is Markdown rendered safely — sanitisation, syntax highlighting, mentions, task lists, Mermaid-like diagrams, relative links in repos — without XSS ever riding along? |
 | `44-migration-and-import.md` | How does a repository (and its issues/wiki) move from GitHub to Samverk — git-level clone is easy; what about metadata — and what does an honest importer promise and refuse to promise? |
+
+### The founding laws, studied
+
+| File | Study question |
+|---|---|
+| `45-cross-platform-architecture.md` | How does Samverk stay one program across Linux, Windows, and macOS, on x86-64 and ARM down to Raspberry Pi-class hardware — which platform seams (paths, processes, signals, file locking, service managers, filesystem case rules) must exist from the first slice so portability is architecture, not apology — and what is the honest OS × CPU proof matrix? |
+| `46-visual-design-cyber-viking.md` | How does Volmarr's Cyber-Viking Visual Design Lawbook land on a code-hosting UI — tokens, composition, colour and light, typography and verified runes, under the summoned design warband (Hallveig, Rannveig, Solveig, Ljósbera, Rúnhildr, Tove) — so the forge is *really nice* with a measurable job for every themed element, and passes the Book XIV ship gate: coherent in grayscale, at 125–200% scaling, and with effects off? (Kin to file 41, which studies accessibility and findability; this file studies beauty and doctrine.) |

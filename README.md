@@ -43,6 +43,14 @@ answer to that failure:
    on its own. It can *also* be woven into **Samtal** (Volmarr's sovereign
    village chat) as the village's code-and-file-sharing heart — but the seam
    is a seam: Samverk never requires Samtal, and Samtal never swallows it.
+6. **Cross-platform, completely.** Samverk works on all operating systems
+   and all kinds of hardware: the server runs on Linux, Windows, and
+   macOS, on x86-64 and ARM down to a Raspberry Pi — and the web face is
+   reachable from any modern browser on any device. Portability is a
+   founding law, proven platform by platform, never assumed.
+
+Samverk's face is designed under Volmarr's Cyber-Viking Visual Design
+Lawbook — *really nice* is a founding requirement, not a garnish.
 
 Samverk also inherits a standing duty: **the backup of Volmarr's own work.**
 It mirrors his original repositories from GitHub onto his own machines and
@@ -53,7 +61,7 @@ keeps them current, so his creations never live only under a landlord's roof.
 **Founding phase (2026-10-29).** This repository currently holds:
 
 - the AGPL-3.0 `LICENSE` (placed by Volmarr at the founding),
-- `research/` — the clean-room research corpus: 44 study areas, each an
+- `research/` — the clean-room research corpus: 46 study areas, each an
   empty file awaiting its study, with `research/INDEX.md` naming the
   question each must answer,
 - `docs/SAMVERK_MASSIVE_ROADMAP.md` — the massive slice roadmap for the

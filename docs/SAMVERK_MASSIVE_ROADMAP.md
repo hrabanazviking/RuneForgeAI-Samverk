@@ -1,6 +1,6 @@
 # Samverk — Massive Roadmap
 
-**404 slices · 21 parts · founded 2026-10-29 by Volmarr's commission**
+**416 slices · 22 parts · founded 2026-10-29 by Volmarr's commission**
 
 Samverk is our own clean-room, open-source version-control application: an
 extremely robust, highly secure forge with the feature-set GitHub's users
@@ -33,6 +33,15 @@ say so in the study file that covers it (`research/`).
    Skips are named with their reasons, as in Project Aesir's master runs.
 5. **Standalone before seam.** Samverk must be complete without Samtal
    (Parts I–XVIII, XX–XXI) before the Samtal seam (Part XIX) is built.
+6. **Cross-platform, completely** (Volmarr's founding law, 2026-10-29).
+   Samverk runs on all operating systems and hardware kinds: the server
+   on Linux, Windows, and macOS; on x86-64 and ARM, down to Raspberry
+   Pi-class hardware and up; the web UI reachable from any modern
+   browser on any device. No platform-specific dependency may enter the
+   design without a named, replaceable seam. Portability is an
+   architectural commitment from the first slice (Part I), proven cell
+   by cell in Part XXII — and **NOT PROVEN** in any cell until its
+   battery has actually run there.
 
 ## Architecture stance (Samtal-model, decided at founding)
 
@@ -64,8 +73,14 @@ Proof Spine (Part XXI).
 *The ground every later part stands on. Draws on research files 31
 (threat model), 35 (audit log), 42 (data model), 07 (passwords/sessions).*
 
+*Founding commitment (virtue 6): nothing in this part — or any part —
+may quietly assume Linux, x86-64, or a case-sensitive filesystem.
+Platform touchpoints (paths, processes, signals, locking, service
+management) go through the platform seam audited at S-406 from the very
+first slice; portability retrofitted later is portability refused.*
+
 - **S-001** Threat model ratified — attackers, assets, and trust boundaries written in `research/31-threat-model.md`; every later security slice cites it.
-- **S-002** Project skeleton — package layout, config file loading, `samverk serve` dev run on a bare checkout; acceptance: server answers a health route on a Pi and a laptop.
+- **S-002** Project skeleton — package layout, config file loading, `samverk serve` dev run on a bare checkout; acceptance: server answers a health route on a Pi and a laptop, and the same unmodified skeleton runs on Linux, Windows, and macOS dev machines (full proof is Part XXII's; the skeleton may never be born platform-locked).
 - **S-003** Secrets law — instance secrets load from env or a mode-600 file, never plaintext in the database; acceptance: grep of a seeded DB finds no secret.
 - **S-004** Password hashing — memory-hard hashing (scrypt/argon2 via admitted dependency), per-user salt, hash-upgrade-on-login path; acceptance: known-answer + timing tests.
 - **S-005** Constant-time comparison and login throttling primitives — acceptance: throttle trips in test after N failures, releases after backoff.
@@ -517,7 +532,9 @@ host-agnostic) and is this part's fixture.*
 
 *Draws on research files 38 (standalone deployment), 40 (admin and site
 settings). Native installs only. The Raspberry Pi and the old laptop are
-the reference machines.*
+the reference machines. This part's systemd work is the Linux third of
+one cross-platform promise — Windows and macOS service management are
+Part XXII's, and all three are equal citizens.*
 
 - **S-345** Run model — one process serves web, API, transports' HTTP half, and background jobs are separate worker processes under the same unit family; the topology is drawn in the operator guide.
 - **S-346** Configuration — one config file (documented key by key), environment overrides, config check command that explains errors in plain words.
@@ -567,10 +584,34 @@ this seam is inside one village, not between villages.*
 
 ## Part XX — UI, Accessibility & the Design Lawbook
 
-*Draws on research file 41. Volmarr's Cyber-Viking Visual Design Lawbook
-is standing law: never a generic app with runes pasted on; every themed
-element needs a measurable job; cut ornament before touching information
-architecture.*
+*Draws on research files 41 and 46. Volmarr's Cyber-Viking Visual Design
+Lawbook is standing law: never a generic app with runes pasted on; every
+themed element needs a measurable job; cut ornament before touching
+information architecture. Samverk must look* really nice *— super nice —
+in Volmarr's modern Cyber-Viking design language (his founding word,
+2026-10-29), and beauty here is engineered, not hoped for.*
+
+*The summoned specialists for this part are Volmarr's Cyber-Viking
+Design Agent Families, seated by their recorded offices:* ***Hallveig***
+*(design-system architecture and theme coherence) owns the token system
+and doctrine coherence;* ***Rannveig*** *(composition architecture) owns
+layout, grid, and calm-centre composition of every core screen;*
+***Solveig*** *(design engineering of the forge) owns the design-to-code
+contracts the slices are built against;* ***Ljósbera*** *(colour and
+light forging) owns the darkness ladder, accent budgets, and glow;*
+***Rúnhildr*** *(typography and symbol mastery) owns type, icons, and
+verified rune accuracy — Elder Futhark as semantic marks only, never a
+substitute alphabet;* ***Tove*** *(accessibility and usability warden)
+holds the Book XIV ship-gate veto: nothing in this part ships over her
+refusal.*
+
+*Acceptance law for every slice in this part: the Lawbook's ship gate is
+a criterion, not a garnish — the work must stay coherent* ***in
+grayscale, at 125–200% text scaling, and with glow/texture effects
+off***; *colour is never the only status signal; the primary task must
+be obvious in about three seconds; and any themed element that cannot
+name its measurable job is cut before information architecture is
+touched.*
 
 - **S-381** Design tokens — the Lawbook's numbers as code: corner cuts 6–12px, ≤3 frame strengths, accent budget 5–12%, ≥4 dark surface values, body text 14–18px.
 - **S-382** Layout shell — one navigation skeleton for all surfaces; a findability test script (timed tasks: mint a token, create a repo, add a mirror) that every release must pass.
@@ -583,7 +624,7 @@ architecture.*
 - **S-389** Screen-reader pass — ARIA landmarks and labels on core flows verified with a real screen reader; findings fixed or named.
 - **S-390** Alt-text law — every image in the UI and docs carries real alt text, including avatars (user-supplied alt honoured) and diagrams (described, not "image").
 - **S-391** Motion discipline — UI motion within the Lawbook's bands (80–140ms / 160–220ms), ceremonial motion rare; `prefers-reduced-motion` respected fully.
-- **S-392** Part XX gate — the Lawbook's Book XIV removal tests applied; no critical visual defects open.
+- **S-392** Part XX gate — the Lawbook's Book XIV ship gate executed in full: removal tests applied, grayscale/scaling/effects-off proofs (S-383–S-385) re-run on the finished UI, and **Tove's veto recorded** — the gate closes only with her explicit pass; no critical visual defects open, no themed element without a named job surviving.
 
 ## Part XXI — Proof Spine & the v1.0 Gate
 
@@ -595,13 +636,38 @@ honest remainders.*
 - **S-395** Performance verification — clone/search/browse budgets (S-073, S-217) re-measured on Pi-class hardware and published with the numbers.
 - **S-396** Upgrade drill — an RC instance with real-shaped data upgraded per S-357 and verified; the drill log is a release artifact.
 - **S-397** Documentation completeness — operator guide, admin guide, user guide, API contract (S-237): every guide walked by a fresh reader against a live instance.
-- **S-398** Research corpus audit — all 44 study files either hold a completed study or are honestly marked open with the roadmap slice that owns them; no file claims what it does not hold.
+- **S-398** Research corpus audit — all 46 study files either hold a completed study or are honestly marked open with the roadmap slice that owns them; no file claims what it does not hold.
 - **S-399** Claims register final — every public claim in the README and docs traced to a proof or reworded; the register ships with the release.
 - **S-400** Release packaging — source tarball with checksums (S-260 machinery), signed by the maintainer key, notes written in plain words first.
 - **S-401** The v1.0 tag — tagged on the counted-green tree only; the tag's release (S-257, on Samverk itself, dogfooded) carries the census.
 - **S-402** Volmarr's usability walk — the founder, unaided, on a fresh instance: creates an account, mints a token, creates a repo, pushes to it, sets a mirror. Every stumble is a defect under the Never-Leave-A-Bug law, fixed or commissioned on the spot.
 - **S-403** Successor roadmap seed — the honest remainder (GraphQL verdict revisited, refused/deferred items, S-398's open studies) written as the seed of the next roadmap.
 - **S-404** Final census to Volmarr — what stands proven, what stands NOT PROVEN, what stands refused — counted, plain, and complete. The roadmap closes; the together-work continues.
+
+---
+
+## Part XXII — Cross-Platform & Portability
+
+*Volmarr's founding law (2026-10-29): "cross platform completely in all
+ways — all operating systems, all various different types of hardware
+and such devices." Draws on research file 45. The commitment is
+architectural and early (preamble virtue 6, Part I's founding
+commitment, S-002's unmodified skeleton); this part carries the proof.
+A matrix cell is PROVEN only when its battery has run in that cell;
+everything else reads NOT PROVEN, in those words.*
+
+- **S-405** Support matrix ratified — the promise written down: server on Linux, Windows, macOS; CPUs x86-64 and ARM64, Raspberry Pi 5 as the floor; the matrix lives in research file 45 with every cell initially marked NOT PROVEN.
+- **S-406** Platform seam audit — every OS touchpoint (paths, process spawning and signals, file locking, permissions bits, service management) inventoried and routed through one platform module; acceptance: the audit greps the tree and finds no stray platform calls outside the seam.
+- **S-407** Dependency replaceability register — every dependency (the git binaries, SQLite, the admitted cryptography dependency, any future admission) names its equivalent or replacement path per OS; an irreplaceable dependency is a defect under the Never-Leave-A-Bug law.
+- **S-408** Filesystem law — repository storage and metadata correct on case-sensitive *and* case-insensitive filesystems; the two-names-differing-only-by-case collision is handled deterministically and tested on both kinds.
+- **S-409** Path and encoding discipline — stored data (refs, paths in the DB, config) uses one canonical form; no OS-specific separator or line ending ever leaks into stored state or the wire.
+- **S-410** Windows service — Samverk installs and runs as a native Windows service (no Docker, no WSL requirement), with the install walk documented to Part XVIII's standard.
+- **S-411** macOS service — Samverk installs and runs under launchd, with the install walk documented to the same standard.
+- **S-412** Linux services parity — the systemd units (S-348) re-verified as one of three equal citizens; no feature exists on Linux that the service model forbids elsewhere.
+- **S-413** CPU honesty — performance budgets (S-073, S-217, S-395) restated per hardware class (Pi-class ARM, laptop x86-64, desktop/server); a budget proven on one class claims nothing about another.
+- **S-414** Browser and device reach — the web UI verified in current Chrome, Firefox, Safari, and Edge, and on phone and tablet browsers (small screens, touch targets per S-386); the device matrix is the test list.
+- **S-415** Battery port: Linux on ARM — the full battery (S-394) executed green on the Raspberry Pi 5 (ARM64); the Linux×ARM64 cell flips to PROVEN, with the counted run recorded.
+- **S-416** Battery ports: Windows and macOS + the portability gate — the full battery executed green on Windows (x86-64) and macOS (Apple silicon — the second ARM64 home); with S-415 that is three OSes and two CPU families proven. The portability claims register is published with the release: every promised cell PROVEN with its counted run, or NOT PROVEN in plain words — the founding law is declared kept only for proven cells.
 
 ---
 

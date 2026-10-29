@@ -33,10 +33,24 @@ Volmarr's original repos onto his own machines.
 - **Architecture stance:** Python, stdlib-first, Samtal-pattern (SQLite
   state, one program family); git plumbing does git's work; three stores
   (SQLite / filesystem / git) under one event store.
-- **Roadmap:** `docs/SAMVERK_MASSIVE_ROADMAP.md` — **404 slices, 21
-  parts**, slice sequence machine-verified continuous (S-001–S-404) on
-  the day of writing.
-- **Research corpus:** `research/` — 44 empty study files +
+- **Cross-platform law** (Volmarr, 2026-10-29, founding): Samverk is
+  cross-platform completely — server on Linux, Windows, macOS; x86-64
+  and ARM down to Raspberry Pi-class hardware; UI reachable from any
+  modern browser/device. Roadmap virtue 6, Part I commitment, and
+  Part XXII (S-405–S-416) carries the proof: a matrix cell is PROVEN
+  only when its battery ran there, NOT PROVEN until then.
+- **Design law** (Volmarr, 2026-10-29, founding): Samverk must look
+  *really nice* in his modern Cyber-Viking design language. Its face is
+  designed under the Cyber-Viking Visual Design Lawbook, with the
+  design warband seated in roadmap Part XX by office — Hallveig
+  (design-system architecture), Rannveig (composition), Solveig
+  (design-to-code contracts), Ljósbera (colour/light), Rúnhildr
+  (type/runes), Tove (accessibility; holds the Book XIV ship-gate
+  veto). Ship gate bound as acceptance: grayscale coherence, 125–200%
+  scaling, effects-off coherence, no colour-only status.
+- **Roadmap:** `docs/SAMVERK_MASSIVE_ROADMAP.md` — **416 slices, 22
+  parts**, slice sequence machine-verified continuous (S-001–S-416).
+- **Research corpus:** `research/` — 46 empty study files +
   `INDEX.md` carrying each study question (Volmarr's exact founding ask:
   empty files first; words land as studies are done).
 - **Standing exclusions:** no Docker; no federation; no hosted-service
@@ -64,3 +78,10 @@ Volmarr's original repos onto his own machines.
   roadmap authored after public-source study of GitHub's feature
   surface (docs.github.com product/security documentation; git protocol
   references), and this map seeded. All pushed and remote-verified.
+- **2026-10-29 (later)** — Two founding amendments by Volmarr's word:
+  cross-platform as founding law (research file 45, roadmap virtue 6,
+  new Part XXII, S-405–S-416 — roadmap now 416 slices / 22 parts) and
+  the Cyber-Viking design law (research file 46; Part XX binds the
+  design warband by office and the Book XIV ship gate as acceptance;
+  README and this map carry the plain statement). Corpus now 46 study
+  files. Pushed and remote-verified.
