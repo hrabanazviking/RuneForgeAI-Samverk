@@ -18,6 +18,12 @@ Named by the Skald of Mythic Engineering and chosen by Volmarr, 2026-10-29 —
 *Samverk* is the together-work: the place where the village's talk becomes
 the village's work.
 
+---
+
+![https://github.com/hrabanazviking/RuneForgeAI-Samverk/blob/main/Lets_Build_Our_Own_App_1.png](https://github.com/hrabanazviking/RuneForgeAI-Samverk/blob/main/Lets_Build_Our_Own_App_1.png)
+
+---
+
 ## Why it exists
 
 Volmarr tried the self-hosted forges on offer and was fought at every door —
