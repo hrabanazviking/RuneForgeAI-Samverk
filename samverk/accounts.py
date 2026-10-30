@@ -31,6 +31,16 @@ The users table and the one door that creates rows in it.
   ``auth.signup.denied`` with its reason — when an AuditLog is
   supplied. Creation commits before the account is answered with
   (commit-before-answer), so a returned id is immediately usable.
+- **Rename and tombstones (S-042)** live here too, because they
+  are operations on the same uniqueness law: `rename` applies
+  the full username law to the new name, refuses collisions
+  (live names and other accounts' unexpired tombstones), and
+  leaves the old canonical name as a **tombstone** for 90
+  days — during which `resolve_user` / `redirect_for` route
+  the old name to the account's new one, registration refuses
+  the held name, and the owner may rename back onto it
+  (their own tombstone is no obstacle). Sessions, keyed by
+  account id, are untouched by a rename.
 """
 
 from __future__ import annotations
@@ -50,6 +60,10 @@ USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 39
 PASSWORD_MIN_LENGTH = 10
 PASSWORD_MAX_LENGTH = 128
+# S-042: how long a renamed-away name stays held as a
+# tombstone — long enough for links and clones to find their
+# way, short enough that a name is not hoarded forever.
+TOMBSTONE_SECONDS = 90 * 24 * 3600
 
 RESERVED_USERNAMES = frozenset({
     "admin", "administrator", "root", "system", "support",
@@ -290,6 +304,13 @@ class AccountStore:
         if self.get_by_username(username_lower) is not None:
             raise deny("username_taken",
                        "That username is already taken.")
+        if self._tombstone_for(username_lower) is not None:
+            # S-042: a renamed-away name is held for its
+            # former owner until the tombstone lapses.
+            raise deny(
+                "username_taken",
+                "That username was in use until recently and "
+                "is still held for its former owner.")
         email_lower = email_norm.lower() if email_norm else None
         if email_lower and self.get_by_email(email_lower) is not None:
             raise deny("email_taken",
@@ -328,3 +349,116 @@ class AccountStore:
                 target_id=str(user.id), outcome="success",
                 source_ip=source_ip, detail={"method": "open"})
         return user
+
+    # -- rename and tombstones (S-042) ---------------------------
+    def _tombstone_for(self, username_lower: str) -> sqlite3.Row | None:
+        """The *unexpired* tombstone holding a canonical name,
+        or None — a lapsed tombstone holds nothing."""
+        row = self._conn.execute(
+            "SELECT * FROM username_tombstones WHERE old_lower = ?",
+            (username_lower,)).fetchone()
+        if row is None or int(self._now()) >= row["expires_at"]:
+            return None
+        return row
+
+    def rename(
+        self, user_id: int, new_username: object,
+        *, source_ip: str | None = None,
+    ) -> User:
+        """Rename an account under the full username law.
+
+        The old canonical name becomes a tombstone (see the
+        module docstring): it redirects here, nobody else can
+        register or rename onto it while it stands, and the
+        owner renaming back onto their own tombstone simply
+        reclaims it. A case-only change updates the display
+        case and leaves no tombstone. Every outcome is
+        audited `auth.username.change`."""
+        user = self.get_by_id(user_id)
+        if user is None:
+            raise RegistrationError("no_such_user", "No such account.")
+
+        def deny(reason: str, message: str) -> RegistrationError:
+            if self._audit is not None:
+                self._audit.append(
+                    actor_kind="user", actor_id=user.id,
+                    action="auth.username.change", target_kind="user",
+                    target_id=str(user.id), outcome="denied",
+                    source_ip=source_ip, detail={"reason": reason})
+            return RegistrationError(reason, message)
+
+        try:
+            validated = validate_username(new_username)
+        except RegistrationError as exc:
+            raise deny(exc.reason, str(exc)) from None
+        new_lower = validated.lower()
+
+        if new_lower == user.username_lower:
+            if validated == user.username:
+                raise deny("rename_same",
+                           "That is already the account's name.")
+            with self._conn:  # case-only: display case moves alone
+                self._conn.execute(
+                    "UPDATE users SET username = ? WHERE id = ?",
+                    (validated, user.id))
+        else:
+            existing = self.get_by_username(new_lower)
+            if existing is not None and existing.id != user.id:
+                raise deny("username_taken",
+                           "That username is already taken.")
+            tomb = self._tombstone_for(new_lower)
+            if tomb is not None and tomb["user_id"] != user.id:
+                raise deny(
+                    "username_taken",
+                    "That username was in use until recently and "
+                    "is still held for its former owner.")
+            now = int(self._now())
+            with self._conn:  # name moves and tombstone lands together
+                self._conn.execute(
+                    "UPDATE users SET username = ?, username_lower = ?"
+                    " WHERE id = ?",
+                    (validated, new_lower, user.id))
+                self._conn.execute(
+                    "DELETE FROM username_tombstones"
+                    " WHERE old_lower = ?",
+                    (new_lower,))  # reclaiming our own old name
+                self._conn.execute(
+                    "INSERT INTO username_tombstones (old_lower,"
+                    " user_id, old_display, renamed_at, expires_at)"
+                    " VALUES (?, ?, ?, ?, ?)",
+                    (user.username_lower, user.id, user.username,
+                     now, now + TOMBSTONE_SECONDS))
+        if self._audit is not None:
+            self._audit.append(
+                actor_kind="user", actor_id=user.id,
+                action="auth.username.change", target_kind="user",
+                target_id=str(user.id), outcome="success",
+                source_ip=source_ip,
+                detail={"from": user.username, "to": validated})
+        renamed = self.get_by_id(user.id)
+        assert renamed is not None
+        return renamed
+
+    def resolve_user(self, name: object) -> User | None:
+        """Find the account a name means today: the live
+        holder, else — while its tombstone stands — the
+        account that renamed away from it. This is the
+        resolution repository URLs will ride on in Part III."""
+        live = self.get_by_username(name)  # type: ignore[arg-type]
+        if live is not None:
+            return live
+        if not isinstance(name, str):
+            return None
+        tomb = self._tombstone_for(name.strip().lower())
+        if tomb is None:
+            return None
+        return self.get_by_id(int(tomb["user_id"]))
+
+    def redirect_for(self, name: object) -> str | None:
+        """The current username an old name redirects to, or
+        None when the name is live (no redirect needed) or
+        simply unknown / its tombstone has lapsed."""
+        if self.get_by_username(name) is not None:  # type: ignore[arg-type]
+            return None
+        user = self.resolve_user(name)
+        return user.username if user is not None else None

@@ -753,6 +753,26 @@ Volmarr's original repos onto his own machines.
   through the real login service (two identical logins →
   exactly one notice and one audit row). Cumulative
   battery: **331/331**.
+- **S-042 DONE (2026-10-30)** — account rename:
+  `AccountStore.rename` in `samverk/accounts.py` + schema
+  migration 18 (`username_tombstones`). The rename applies
+  the full S-025 username law to the new name and refuses
+  collisions clearly — live names (any case), reserved
+  names, and other accounts' unexpired tombstones. The old
+  canonical name is held as a **90-day tombstone**:
+  `resolve_user` / `redirect_for` route it to the account's
+  new name (the resolution seam Part III's repository URLs
+  will ride on), registration refuses the held name, and
+  the owner may rename back onto their own tombstone
+  (reclaiming it leaves the intermediate name tombstoned
+  instead). A case-only change moves the display case and
+  leaves no tombstone. Sessions, keyed by account id, are
+  untouched. Every outcome is audited under the append-only
+  taxonomy addition `auth.username.change` (47 events
+  total; doc + code + counts updated together). Battery
+  `tests/test_account_rename.py`: **7 passed / 0 failed**,
+  including tombstone lapse (after 90 days the name frees
+  and the redirect ends). Cumulative battery: **338/338**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -863,3 +883,16 @@ Volmarr's original repos onto his own machines.
   0 failed**. All banked locally on `main`; **no GitHub
   push** — pushes stay gated on Volmarr's word. Next slice:
   S-039 passkeys/WebAuthn.
+- **2026-10-30 (keeper run)** — Previous run had banked S-038
+  at 02:24 EDT and its run record closed at 02:25 EDT (clean
+  tree, no process live), so this run resumed at the map's
+  named next slice and built **S-039** passkeys/WebAuthn
+  (318/318; taxonomy append-only +3 events, 45 total),
+  **S-040** session management (325/325), **S-041**
+  new-sign-in notification (331/331; taxonomy +1, 46 total),
+  and **S-042** account rename with tombstones (338/338;
+  taxonomy +1, 47 total) — each with its counted battery
+  green and the full suite re-counted at this run's end:
+  **338 passed / 0 failed**. All banked locally on `main`;
+  **no GitHub push** — pushes stay gated on Volmarr's word.
+  Next slice: S-043 account deletion.

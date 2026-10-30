@@ -45,6 +45,7 @@ any name not in this document's set.*
 | `auth.passkey.remove` | Passkey removed by its owner (S-039) | `{"credential_id": ...}` |
 | `auth.passkey.login` | Passkey assertion verified — second factor or passwordless (S-039) | `{"credential_id": ...}` |
 | `auth.signin.notify` | New-device sign-in notice fired (S-041) | `{"device": ...}` — the label only, never a fingerprint |
+| `auth.username.change` | Account renamed; old name tombstoned (S-042) | `{"from": ..., "to": ...}` — usernames are public identifiers |
 
 ## repo — repositories and their security surface
 
@@ -98,3 +99,5 @@ S-039 (2026-10-30) added `auth.passkey.add`,
 22 auth, 13 repo, 10 admin.
 S-041 (2026-10-30) added `auth.signin.notify` — 46 events:
 23 auth, 13 repo, 10 admin.
+S-042 (2026-10-30) added `auth.username.change` — 47 events:
+24 auth, 13 repo, 10 admin.

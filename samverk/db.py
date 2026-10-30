@@ -297,6 +297,19 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_signin_notifications_user"
         " ON signin_notifications (user_id)",
     ]),
+    # S-042: username tombstones — when an account renames,
+    # its old canonical name is held for a tombstone period:
+    # it redirects to the account's new name and cannot be
+    # registered or taken by anyone else until it lapses.
+    (18, [
+        "CREATE TABLE username_tombstones ("
+        "  old_lower TEXT PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  old_display TEXT NOT NULL,"
+        "  renamed_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
