@@ -58,8 +58,9 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part III in progress** (Part I gate passed 2026-10-30;
-  Part II gate S-048 passed 2026-10-30 at 368/368).
+- **Phase: Part IV next** (Part I gate passed 2026-10-30;
+  Part II gate S-048 passed 2026-10-30 at 368/368; Part III
+  gate S-076 passed 2026-10-30 at 510/510).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1358,6 +1359,46 @@ Volmarr's original repos onto his own machines.
   the bundle restoring HEAD exactly. Cumulative battery:
   **498/498** (full recount at the S-076 gate). Next:
   S-075 corruption behaviour.
+- **S-075 DONE (2026-10-30)** — corruption behaviour:
+  `samverk/repo_health.py` — the one health seam.
+  `assess_repository` answers missing / not_a_repository /
+  empty / healthy / damaged as distinct verdicts (empty is
+  a sound repo waiting for a first push, never a synonym
+  for damage); damage is proven by `git fsck --full`
+  (admitted to S-014's allowlist for this slice) plus ref
+  listing, and the report carries fsck's own first line.
+  `ensure_readable` raises `RepoDamagedError` for callers
+  that need the exception shape. Nothing here repairs —
+  repair is restore-from-backup (S-074), a deliberate act.
+  Battery `tests/test_repo_health.py`: **6 passed /
+  0 failed**, including the literal acceptance —
+  corruption injection (bit-flipped and truncated loose
+  objects, a damaged HEAD) reads damaged at this seam and
+  errors at the S-051 object seam, never empty content.
+  Cumulative battery: **504/504** (full recount at the
+  gate below). Next: S-076 Part III gate.
+- **S-076 DONE (2026-10-30) — PART III GATE.** Gate battery
+  `tests/test_git_core_battery.py`: **6 passed / 0 failed**,
+  striking the *assembled* Part III system: stock-git
+  plumbing interop (rev-parse / clone agree with S-051/52's
+  seams), the 10-thread atomic-ref race at gate scale
+  (exactly one winner), S-051's 10k-object acceptance
+  re-verified (10,000 batch reads), corruption named by
+  every seam, and the cross-slice agreement test
+  (consistency ↔ health ↔ graph cache ↔ backup on one
+  instance; an unregistered-but-sound repo is drift *and*
+  empty, not damaged). Full counted run at the gate on
+  this VM: `python3 -m unittest discover -s tests` →
+  **510 passed / 0 failed**. **Open findings, named:**
+  (1) Pi-class / laptop clone budgets (S-073) are stated
+  but **NOT PROVEN** on those classes — Part XXI/XXII own
+  their proof; (2) transports (HTTP/SSH wire) are Part IV —
+  the gate proves plumbing interop locally, not yet over
+  the wire; (3) everything banked sits on local `main`
+  only — **no GitHub push**: pushes stay gated on
+  Volmarr's explicit word. **Part III is complete.**
+  Next: Part IV — Git Transports, opening at S-077 smart
+  HTTP advertisement.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
