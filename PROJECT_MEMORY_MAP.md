@@ -1039,6 +1039,28 @@ Volmarr's original repos onto his own machines.
   not-due-until-the-interval-passes check. Cumulative
   battery: **416/416** (full counted run on this VM at this
   slice). Next: S-060 LFS object store.
+- **S-060 DONE (2026-10-30)** — LFS object store:
+  `samverk/lfs_store.py` (no migration) — per-repo
+  content-addressed layout `<repo>.git/lfs/objects/<ab>/<cd>/<oid>`
+  (the standard LFS fan-out; the layout S-058 already
+  measures). Integrity is verified by oid on write: bytes
+  land in a temp file, are SHA-256-hashed as written, and
+  are atomically published only when the digest equals the
+  claimed oid (and the length the claimed size) — a mismatch
+  stores nothing. Dedupe: an object already present and
+  verified is never rewritten (mtime-proven in the battery).
+  Oids are validated as exactly 64 lowercase hex before they
+  form any path. Pointer files (`make_pointer` /
+  `parse_pointer`, the LFS spec v1 text shape) round-trip
+  here so S-061's API and real clients share one parser.
+  Battery `tests/test_lfs_store.py`: **6 passed / 0 failed**,
+  including S-058's accounting seeing stored LFS bytes to
+  the byte. Cumulative battery: **422/422** (full counted
+  run on this VM at this slice). Next: S-061 LFS batch API.
+  (Environment note: `git-lfs` was not installed on this VM;
+  installed natively via apt this run — no Docker — so
+  S-061/S-062's real-client interop acceptances can be
+  proven, not skipped.)
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
