@@ -13,17 +13,18 @@
   hash whenever the stored one uses an old algorithm or weaker
   parameters; the caller persists it. Legacy `pbkdf2-sha256` rows
   verify (so old accounts can log in once) and always upgrade.
-- **Comparison** is constant-time (`hmac.compare_digest`); S-005
-  formalises the primitive for all callers.
+- **Comparison** is constant-time via the single seam
+  `throttle.constant_time_equal` (S-005).
 """
 
 from __future__ import annotations
 
 import base64
 import hashlib
-import hmac
 import os
 from dataclasses import dataclass
+
+from .throttle import constant_time_equal
 
 _ALGO_SCRYPT = "scrypt"
 _ALGO_LEGACY = "pbkdf2-sha256"
@@ -84,14 +85,14 @@ def verify_password(password: str, stored: str) -> bool:
             salt, expected = _unb64(rest[3]), _unb64(rest[4])
             dk = _scrypt(password.encode("utf-8"), salt,
                          ScryptParams(n=n, r=r, p=p, dklen=len(expected)))
-            return hmac.compare_digest(dk, expected)
+            return constant_time_equal(dk, expected)
         if algo == _ALGO_LEGACY:
             iterations = int(rest[0])
             salt, expected = _unb64(rest[1]), _unb64(rest[2])
             dk = hashlib.pbkdf2_hmac(
                 "sha256", password.encode("utf-8"), salt, iterations,
                 dklen=len(expected))
-            return hmac.compare_digest(dk, expected)
+            return constant_time_equal(dk, expected)
     except (ValueError, IndexError, OverflowError):
         return False
     return False

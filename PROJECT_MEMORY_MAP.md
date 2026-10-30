@@ -93,7 +93,15 @@ Volmarr's original repos onto his own machines.
   during the run: a hand-typed base64 salt in the KAT strings; the
   KDF digests were verified byte-exact against fresh computation.)
   Cumulative battery: 28/28.
-- Next: S-005 constant-time comparison + login throttling.
+- **S-005 DONE (2026-10-29)** — `samverk/throttle.py`:
+  `constant_time_equal` (the single comparison seam for secrets;
+  `passwords.py` refactored onto it) and `LoginThrottle` (per-account
+  exponential backoff: 3 free failures, then 2s doubling to a 300s
+  cap; delays, never locks). Battery `tests/test_throttle.py`:
+  **7 passed / 0 failed** — trip after N failures, release after
+  backoff, growth + cap, success-clears, per-account independence.
+  Cumulative battery: 35/35.
+- Next: S-006 session tokens.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
