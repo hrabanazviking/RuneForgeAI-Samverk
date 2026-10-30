@@ -330,9 +330,31 @@ Volmarr's original repos onto his own machines.
   material distinct, key bytes and hex absent from the DB
   file) and the CLI drill end to end. Cumulative battery:
   **165/165**.
-- **Campaign position: S-001…S-020 DONE.** Next: S-021 signup
-  abuse friction (registration throttles, disposable-domain
-  policy hooks, no third-party captcha).
+- **S-021 DONE (2026-10-30)** — signup abuse friction:
+  `samverk/signup_friction.py` — a `SignupGuard` that decides
+  (registration itself is S-025's, and consumes the decision).
+  Friction is ours alone, **no third-party captcha**: S-011
+  buckets aimed at signup (per-IP 5 attempts refilling 5/hour
+  + per-email 3 refilling 3/hour, charged both-or-neither, so
+  one-IP floods and one-address-many-IP retries both die), and
+  disposable-domain *policy hooks* — a plain callable over the
+  parsed domain; shipped policies are allow-all (default) and
+  an operator blocklist (listed domains + their subdomains);
+  no third-party disposable list is bundled or fetched.
+  Decision order is deliberate: malformed → refused as
+  malformed; domain-refused → refused without spending throttle
+  tokens; only plausible attempts are charged. Battery
+  `tests/test_signup_friction.py`: **8 passed / 0 failed**,
+  including the literal acceptance — a scripted 20-attempt
+  flood from one IP is throttled after 5 with truthful
+  retry-afters, and buckets refill on the fake clock. (One
+  parser flaw found by the battery and fixed in-slice:
+  `a@.com` — an empty domain label — initially passed; the
+  parser now requires ≥2 non-empty labels.) Cumulative
+  battery: **173/173**.
+- **Campaign position: S-001…S-021 DONE.** Next: S-022
+  security battery v1 (auth bypass, IDOR, injection attempts
+  as an automated suite).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
