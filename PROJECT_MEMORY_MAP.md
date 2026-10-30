@@ -60,9 +60,9 @@ Volmarr's original repos onto his own machines.
 
 - **Phase: Part IV in progress** (Part I gate passed 2026-10-30;
   Part II gate S-048 passed 2026-10-30 at 368/368; Part III
-  gate S-076 passed 2026-10-30 at 510/510; S-077…S-083
-  banked 2026-10-30, full suite 553/553; next S-084 SSH
-  transport design).
+  gate S-076 passed 2026-10-30 at 510/510; S-077…S-088
+  banked 2026-10-30, full suite 587/587; next S-089
+  pre-receive gate point).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1481,6 +1481,72 @@ Volmarr's original repos onto his own machines.
   (the per-slice running counts above sum to 551; the full
   recount from the tree is the governing number). Next:
   S-084 SSH transport design (research file 02 first).
+- **S-084 DONE (2026-10-30)** — SSH transport design:
+  research study 02 written (`research/02-git-protocol-ssh.md`).
+  Decision: system OpenSSH + one unprivileged `git` OS user +
+  AuthorizedKeysCommand + a forced command into Samverk —
+  never a shell; a custom Python SSH server and per-account OS
+  users were considered and rejected with reasons recorded.
+  Binding law handed down: the SSH_ORIGINAL_COMMAND parser law,
+  the S-085 identity law, S-054 permission reuse, S-014 seam
+  execution, sshd Match-block hardening, brief-cache revocation
+  bound, and per-slice contracts for S-085…S-093. Windows SSH
+  serving stays **NOT PROVEN** (Part XXII cell).
+- **S-085 DONE (2026-10-30)** — SSH key resolution:
+  `samverk/ssh_auth.py` `SshKeyResolver` — a presented
+  fingerprint resolves to an account principal (personal key,
+  account `active` only — the S-081 law) or a deploy-key
+  principal bound to its one repository; unknown, malformed,
+  and dead-account fingerprints share one uniform None (no
+  enumeration). Resolution cached briefly (5 s named TTL,
+  256-entry bound, refusals cached too; `invalidate` and
+  `cache_ttl=0` seams for tests/callers). The
+  `authorized_keys_line` emitter prints at most one line —
+  `restrict` + forced `ssh-serve` command carrying integer
+  principal ids and the fingerprint, stored key verbatim — or
+  nothing. Battery `tests/test_ssh_key_resolution.py`:
+  **12 passed / 0 failed** (one test of mine mis-sequenced the
+  cache invalidation mid-write; the resolver was right and the
+  test was rewritten cleanly in-slice).
+- **S-086 DONE (2026-10-30)** — SSH upload-pack routing:
+  `samverk/ssh_serve.py` — `parse_original_command` enforces
+  study 02's parser law (closed service set, one single-quoted
+  `owner/repo`, everything else refused as one malformed
+  shape; battery includes injection, traversal, absolute-path,
+  and dash-host cases); routing gates through S-013 paths and
+  S-054 `can_read` before any pack byte, with private and
+  missing repositories sharing one refusal text byte-for-byte.
+  Execution via the new `run_git_pack_stdio` seam in
+  `samverk/proc.py` (pack program attached to the caller's
+  streams, no stateless-rpc; `GIT_PROTOCOL=version=2` honoured
+  only when exact). Archive parses but is refused by name
+  until S-093. Battery `tests/test_ssh_upload_routing.py`:
+  **9 passed / 0 failed**, including stock git cloning through
+  the serve door via a stand-in ssh program (real sshd is
+  S-095's cell).
+- **S-087 DONE (2026-10-30)** — SSH receive-pack routing:
+  same parser and seams under `can_write`; a reader of a
+  readable repo meets the honest write refusal, a stranger to
+  a private repo sees the uniform not-found. Accepted pushes
+  (runner exit 0) append the taxonomy's `repo.push` audit
+  event with `transport=ssh` detail; failed pushes append
+  nothing. Battery `tests/test_ssh_receive_routing.py`:
+  **6 passed / 0 failed**, including stock git pushing through
+  the serve door end to end, the bare ref advancing, and the
+  audit row landing from the serve process itself.
+- **S-088 DONE (2026-10-30)** — deploy-key transport rights
+  on the wire: deploy principals are gated per request through
+  S-031's `authorize` — the bound repository reads, every
+  other target (public repos included) answers the uniform
+  not-found; a read-only deploy key's push is refused at the
+  gate before any pack byte; a read/write deploy key pushes
+  and is audited with actor kind `deploy_key`; key use is
+  stamped. Battery `tests/test_ssh_deploy_keys.py`:
+  **7 passed / 0 failed**, including stock-git clone+push with
+  a read/write deploy principal and clone-works/push-refused
+  with a read-only one (bare ref verified unmoved). Cumulative
+  at this run's verified full recount: **587 passed /
+  0 failed**. Next: S-089 pre-receive gate point.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1714,3 +1780,22 @@ Volmarr's original repos onto his own machines.
   `main`; **no GitHub push** — pushes stay gated on
   Volmarr's word. Next slice: S-084 SSH transport design
   (research file 02 study before code).
+- **2026-10-30 (keeper run, SSH block opened)** — Previous
+  run had closed Part IV's HTTP block at 04:56 EDT (head
+  2ef27e2, clean tree, no process live), so this run resumed
+  at the map's named next slice: baseline re-verified from
+  the tree (553/553), then **S-084** SSH transport design
+  (research study 02; OpenSSH + AuthorizedKeysCommand +
+  forced command, never a shell), **S-085** key resolution
+  (565), **S-086** SSH upload-pack routing (574), **S-087**
+  SSH receive-pack routing + push audit (580), and **S-088**
+  deploy keys on the wire (587) — full suite re-counted
+  fresh at this run's end with the campaign's counting
+  method (`python3 -m unittest discover -s tests`):
+  **587 passed / 0 failed**. Stock-git interop is now proven
+  over the SSH door's protocol shape (clone, push, deploy
+  keys, both grants) through a stand-in ssh program; a real
+  sshd on an ephemeral port remains S-095's acceptance cell.
+  All banked locally on `main`; **no GitHub push** — pushes
+  stay gated on Volmarr's word. Next slice: S-089
+  pre-receive gate point.
