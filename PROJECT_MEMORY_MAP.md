@@ -1061,6 +1061,42 @@ Volmarr's original repos onto his own machines.
   installed natively via apt this run — no Docker — so
   S-061/S-062's real-client interop acceptances can be
   proven, not skipped.)
+- **S-061 DONE (2026-10-30)** — LFS batch API:
+  `samverk/lfs_api.py` (no migration) — the batch operation
+  real git-lfs clients speak, plus `make_lfs_handler`, an
+  HTTP adapter serving `/<owner>/<repo>/info/lfs/…` and the
+  action URLs (the main server's route table adopts these
+  with Part IV's transports, whose S-081/S-082 supply the
+  real actor resolvers). Per object, the server answers
+  with expiring **signed action URLs**: HMAC-SHA256 tokens
+  naming exactly one repo, one oid, one operation
+  (upload/download/verify), expiring in one hour, verified
+  through the S-005 constant-time seam — tampered, expired,
+  and wrong-operation tokens are all refused in the battery.
+  Permissions come from S-054's one function (upload needs
+  write, download needs read, an unreadable private repo
+  answers 404); an already-stored object gets no upload
+  actions; a missing download object gets the spec's
+  per-object 404; the verify action re-hashes the stored
+  bytes (S-060) before telling a client success. Battery
+  `tests/test_lfs_api.py`: **6 passed / 0 failed**,
+  including the literal acceptance — a **stock git-lfs
+  3.6.1 client round-trip**: `git lfs push --all` uploaded
+  a 1 MiB object through the batch API into S-060's store
+  (verified there by oid), and a fresh repo's checkout
+  smudge downloaded it back through the batch API to
+  byte-identical content. Cumulative battery: **428/428**
+  (full counted run on this VM at this slice, git-lfs on
+  PATH). Two honest notes: (1) this VM's system layer does
+  not persist apt installs between sessions, so a pristine
+  git-lfs 3.6.1 release binary is kept at
+  `~/workspace/.tools/git-lfs` for keeper runs (the battery
+  skips the client test where no git-lfs exists, per the
+  standing skip pattern); (2) a threaded HTTP server cannot
+  use a same-thread sqlite connection — the battery harness
+  opens its connection cross-thread, and Part IV's wiring
+  must do the same (or per-thread connections). Next:
+  S-062 LFS locking.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
