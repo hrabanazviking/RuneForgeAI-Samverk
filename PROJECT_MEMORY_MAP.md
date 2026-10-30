@@ -593,6 +593,24 @@ Volmarr's original repos onto his own machines.
   0 failed**, including the literal acceptance — the full
   permission matrix (every permission × granted/ungranted ×
   own/other repo). Cumulative battery: **269/269**.
+- **S-034 DONE (2026-10-30)** — token management UI
+  (surface): `samverk/token_management.py` — one management
+  home over both token stores. `TokenManagement.list_all`
+  unifies classic + fine-grained tokens with title, prefix,
+  scopes/permissions, target repo, created, **last-used**,
+  expiry, and a status word (Active / Expired / Revoked —
+  text, never colour alone); `revoke(user, kind, id)` is the
+  one-click revocation, dispatched to the owning store whose
+  owner-only law guards it. **Findability (the anti-Forgejo
+  test):** `render_settings_home` links `/settings/tokens`
+  in one click; the token page renders a revoke form (with
+  the S-009 CSRF field) only for live tokens, and an empty
+  state that teaches what a token is. All user text passes
+  S-010's escaping seam. Battery
+  `tests/test_token_management.py`: **7 passed / 0 failed**,
+  including the findability walk (settings home → token
+  page) and one-call revocation of both kinds. Cumulative
+  battery: **276/276**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -688,6 +706,7 @@ Volmarr's original repos onto his own machines.
   at 01:55 EDT (clean tree, no process live), so this run
   resumed at the map's named next slice and built **S-032**
   personal access tokens (260/260), then **S-033** fine-grained
-  tokens (269/269) in the same run. Banked locally on `main`;
+  tokens (269/269), then **S-034** token management UI
+  (276/276), all in the same run. Banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
-  Next slice: S-034 token management UI.
+  Next slice: S-035 two-factor TOTP enrolment.
