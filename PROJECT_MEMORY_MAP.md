@@ -58,20 +58,20 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part V in progress** (Part I gate passed
+- **Phase: Part VI in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-118
-  banked 2026-10-30 — governing recounts reproduced from
-  log files read back after each run finished: pytest
-  749 passed / 1 skipped / 0 failed (750 collected);
-  unittest discover 750 ran, 749 passed / 1 skipped /
-  0 failed; the one skip is a named cell, NOT PROVEN
-  on this host: S-095's real-sshd cell. The two git-lfs
-  client cells ran and passed — this run's recounts
-  prepended `~/workspace/.tools` to PATH, as the
-  S-112 run did and the S-115 correction directed);
-  next S-119 repository header summary.
+  Part IV gate S-096 passed 2026-10-30 at 640; Part V gate
+  S-120 passed 2026-10-30; S-121..S-123 banked 2026-10-30 —
+  governing recounts reproduced from log files read back
+  after each run finished: pytest 783 passed / 1 skipped /
+  0 failed (784 collected); unittest discover 784 ran,
+  783 passed / 1 skipped / 0 failed; the one skip is a
+  named cell, NOT PROVEN on this host: S-095's real-sshd
+  cell. The two git-lfs client cells ran and passed —
+  the recounts prepended `~/workspace/.tools` to PATH,
+  as the S-112 run did and the S-115 correction directed);
+  next S-124 labels.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
