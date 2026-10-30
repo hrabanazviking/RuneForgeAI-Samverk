@@ -929,6 +929,24 @@ Volmarr's original repos onto his own machines.
   ref from the same expected value and exactly one wins.
   Cumulative battery: **389/389** (full counted run on this
   VM at this slice).
+- **S-054 DONE (2026-10-30)** — repository visibility
+  enforcement: `samverk/permissions.py` — one function,
+  `role_for(viewer, repo, collaborator_role=...)`, decides
+  every repository permission, and web/API/transports must
+  consult it or its `can_read`/`can_write`/`can_admin`
+  wrappers. Owner and site admin hold `admin`; a granted
+  collaborator role applies on any visibility (the grant
+  store is Part IX's; the seam takes the role until then);
+  public means world-readable and never world-writable;
+  private means role `None` for everyone else, which
+  surfaces render as not-found, not forbidden — a private
+  repo's existence is itself private. Battery
+  `tests/test_permissions.py`: **6 passed / 0 failed** —
+  the Part IX matrix (owner / collaborator / stranger /
+  anonymous x public / private x read / write / admin) run
+  early, as the roadmap asks. Cumulative battery:
+  **395/395** (full counted run on this VM at this slice).
+  Next: S-055 forking.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
