@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "samverk"
+version = "0.1.0"
+description = "Samverk — our own clean-room, open-source version-control application."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "AGPL-3.0" }
+# Stdlib-first (roadmap S-017): no runtime dependencies admitted yet.
+# Each future dependency needs a reason line in the dependency register.
+dependencies = []
+
+[project.scripts]
+samverk = "samverk.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["samverk*"]

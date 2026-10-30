@@ -65,7 +65,16 @@ Volmarr's original repos onto his own machines.
   sessions) written and committed.
 - **S-001 DONE (2026-10-29)** — threat model ratified: threat register
   T-01…T-20, trust boundaries TB1…TB8, honest limits §6 of study 31.
-- Next: S-002 project skeleton.
+- **S-002 DONE (2026-10-29)** — project skeleton: `samverk/` package
+  (config loading, platform seam, `samverk serve`), `pyproject.toml`
+  (stdlib-only), acceptance battery `tests/test_skeleton.py`:
+  **10 passed / 0 failed** on Linux x86-64 (this VM), including the
+  literal acceptance — a fresh `python -m samverk serve` process
+  answering `/healthz`. Platform cells beyond this machine (Pi,
+  Windows, macOS) are **NOT PROVEN** — Part XXII owns their proof;
+  the skeleton's platform touchpoints exist only behind
+  `samverk/platform_seam.py`, mechanically checked by test.
+- Next: S-003 secrets law.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
