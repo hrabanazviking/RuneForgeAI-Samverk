@@ -1293,6 +1293,19 @@ Volmarr's original repos onto his own machines.
   battery: **479/479** — full counted run on this VM at
   this slice, verifying the whole run's arithmetic
   (S-067…S-070). Next: S-071 consistency checker.
+- **S-071 DONE (2026-10-30)** — consistency checker:
+  `samverk/consistency.py` — a read-only fsck-style sweep
+  reconciling rows ↔ disk ↔ LFS objects: a row whose bare
+  repo is missing or not bare is named, a disk repo with no
+  row is named (never adopted), dangling fork/template
+  lineage and orphan mirror records are named, and every
+  LFS object is checked for its fan-out path and re-hashed
+  against its oid. **Drift is reported, never silently
+  fixed** — the battery plants stray + corrupt drift,
+  snapshots the repos tree, and proves the sweep changes
+  nothing. Battery `tests/test_consistency.py`: **6 passed /
+  0 failed**. Cumulative battery: **485/485** (full recount
+  at the S-076 gate). Next: S-072 commit graph caches.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
