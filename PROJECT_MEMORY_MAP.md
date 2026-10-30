@@ -706,6 +706,30 @@ Volmarr's original repos onto his own machines.
   (ES256 with DER signatures + packed self-attestation, and
   Ed25519 with RFC 8032 mathematics), sharing no code with
   the server. Cumulative battery: **318/318**.
+- **S-040 DONE (2026-10-30)** — session management:
+  `samverk/session_management.py` over the S-006 store,
+  extended in place (schema migration 16 adds
+  `device_label` / `source_ip` to sessions; `SessionStore`
+  gains `list_for_user`, owner-scoped `revoke_by_id`, and
+  `revoke_all(except_id=…)`; S-027 login now records the
+  device label + address at sign-in). The owner sees every
+  session — device, address, sign-in and last-active times,
+  a status word (Active / Revoked / Expired, text never
+  colour alone), and a *this session* marker — one click
+  from the settings home via S-034's existing "Security
+  and sessions" link. `revoke_one` is owner-only in the
+  query itself; `revoke_all` can spare the current session
+  so the remedy does not lock out its wielder. Every landed
+  revocation is audited under the taxonomy's long-frozen
+  `auth.session.revoke` (`{"scope": "one"|"all"}` — no new
+  events). The page renders device labels (hostile text)
+  only through S-010's seam and offers revoke forms only
+  for live, non-current sessions. Battery
+  `tests/test_session_management.py`: **7 passed /
+  0 failed**, including the literal acceptance — a revoked
+  session's token resolves to nobody on its very next
+  request while its sibling session lives on. Cumulative
+  battery: **325/325**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

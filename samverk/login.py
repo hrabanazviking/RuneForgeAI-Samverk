@@ -82,6 +82,7 @@ class LoginService:
     def login(
         self, username: object, password: object,
         source_ip: str | None = None,
+        device_label: str | None = None,
     ) -> str:
         """Verify credentials; on success return a fresh session
         token (S-006). Every failure raises LoginFailed with the
@@ -114,7 +115,8 @@ class LoginService:
         if upgrade is not None:
             self._accounts.set_password_hash(user.id, upgrade)
         self._throttle.record_success(key)
-        token = self._sessions.create(user.id)
+        token = self._sessions.create(
+            user.id, device_label=device_label, source_ip=source_ip)
         if self._audit is not None:
             self._audit.append(
                 actor_kind="user", actor_id=user.id,

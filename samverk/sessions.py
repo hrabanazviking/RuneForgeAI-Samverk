@@ -24,10 +24,25 @@ import os
 import sqlite3
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 
 ABSOLUTE_TTL_SECONDS = 30 * 24 * 3600
 IDLE_TTL_SECONDS = 7 * 24 * 3600
 _TOKEN_BYTES = 32  # 256 bits
+
+
+@dataclass(frozen=True)
+class SessionInfo:
+    """One session as its owner may see it (S-040). The token
+    and its hash are never part of this view."""
+    id: int
+    user_id: int
+    created_at: int
+    last_seen_at: int
+    absolute_expires_at: int
+    revoked: bool
+    device_label: str | None
+    source_ip: str | None
 
 
 def _hash_token(token: str) -> str:
@@ -51,17 +66,64 @@ class SessionStore:
         self._idle = idle_ttl
         self._now = time_fn
 
-    def create(self, user_id: int) -> str:
-        """Create a session; return the raw token (shown once)."""
+    @property
+    def idle_ttl(self) -> int:
+        return self._idle
+
+    @property
+    def absolute_ttl(self) -> int:
+        return self._absolute
+
+    def create(self, user_id: int, device_label: str | None = None,
+               source_ip: str | None = None) -> str:
+        """Create a session; return the raw token (shown once).
+        The device label and source address (S-040) are the
+        owner's recognition aids in the session list."""
         now = int(self._now())
         token = _new_token()
         with self._conn:  # committed before the token is answered with
             self._conn.execute(
                 "INSERT INTO sessions (user_id, token_hash, created_at,"
-                " last_seen_at, absolute_expires_at) VALUES (?, ?, ?, ?, ?)",
-                (user_id, _hash_token(token), now, now, now + self._absolute),
+                " last_seen_at, absolute_expires_at, device_label,"
+                " source_ip) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (user_id, _hash_token(token), now, now, now + self._absolute,
+                 device_label, source_ip),
             )
         return token
+
+    def list_for_user(self, user_id: int) -> list[SessionInfo]:
+        """Every session the account has, oldest first —
+        revoked and expired rows included, so the management
+        page can show honest status words (S-040)."""
+        rows = self._conn.execute(
+            "SELECT id, user_id, created_at, last_seen_at,"
+            " absolute_expires_at, revoked, device_label, source_ip"
+            " FROM sessions WHERE user_id = ? ORDER BY id",
+            (user_id,)).fetchall()
+        return [SessionInfo(
+            id=r["id"], user_id=r["user_id"],
+            created_at=r["created_at"], last_seen_at=r["last_seen_at"],
+            absolute_expires_at=r["absolute_expires_at"],
+            revoked=bool(r["revoked"]), device_label=r["device_label"],
+            source_ip=r["source_ip"]) for r in rows]
+
+    def id_for_token(self, token: str) -> int | None:
+        row = self._conn.execute(
+            "SELECT id FROM sessions WHERE token_hash = ?",
+            (_hash_token(token),)).fetchone()
+        return int(row["id"]) if row else None
+
+    def revoke_by_id(self, user_id: int, session_id: int) -> bool:
+        """Tombstone one session, owner-scoped in the query
+        itself: another account's id answers False and changes
+        nothing. True only when this call did the revoking."""
+        with self._conn:
+            cur = self._conn.execute(
+                "UPDATE sessions SET revoked = 1 WHERE id = ?"
+                " AND user_id = ? AND revoked = 0",
+                (session_id, user_id),
+            )
+        return cur.rowcount > 0
 
     def authenticate(self, token: str) -> int | None:
         """Resolve a token to its user id, enforcing both clocks and
@@ -97,10 +159,22 @@ class SessionStore:
             )
         return cur.rowcount > 0
 
-    def revoke_all(self, user_id: int) -> int:
+    def revoke_all(self, user_id: int,
+                   except_id: int | None = None) -> int:
+        """Tombstone every live session of the account; with
+        `except_id`, that one session (the owner's current
+        one, S-040) survives the sweep."""
         with self._conn:
-            cur = self._conn.execute(
-                "UPDATE sessions SET revoked = 1 WHERE user_id = ? AND revoked = 0",
-                (user_id,),
-            )
+            if except_id is None:
+                cur = self._conn.execute(
+                    "UPDATE sessions SET revoked = 1"
+                    " WHERE user_id = ? AND revoked = 0",
+                    (user_id,),
+                )
+            else:
+                cur = self._conn.execute(
+                    "UPDATE sessions SET revoked = 1"
+                    " WHERE user_id = ? AND revoked = 0 AND id != ?",
+                    (user_id, except_id),
+                )
         return cur.rowcount

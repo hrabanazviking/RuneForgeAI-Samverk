@@ -264,6 +264,13 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_passkey_credentials_user"
         " ON passkey_credentials (user_id)",
     ]),
+    # S-040: sessions learn what device and address they came
+    # from, so the owner can recognise them in the session
+    # list (labels are user-facing text, never trusted input).
+    (16, [
+        "ALTER TABLE sessions ADD COLUMN device_label TEXT",
+        "ALTER TABLE sessions ADD COLUMN source_ip TEXT",
+    ]),
 ]
 
 
