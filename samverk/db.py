@@ -423,6 +423,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  runs INTEGER NOT NULL DEFAULT 0"
         ")",
     ]),
+    # S-062: LFS locks — one lock per (repo, path); the lock
+    # names a file path, its holding account, and when it was
+    # taken. Ids are random hex minted by the locking module.
+    (27, [
+        "CREATE TABLE lfs_locks ("
+        "  id TEXT PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  path TEXT NOT NULL,"
+        "  owner_user_id INTEGER NOT NULL,"
+        "  owner_name TEXT NOT NULL,"
+        "  locked_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, path)"
+        ")",
+        "CREATE INDEX idx_lfs_locks_repo ON lfs_locks (repo_id)",
+    ]),
 ]
 
 

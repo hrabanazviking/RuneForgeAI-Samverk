@@ -267,7 +267,11 @@ def make_lfs_handler(api: LFSApi,
             self.wfile.write(raw)
 
         def _fail(self, exc: LFSApiError) -> None:
-            self._json(exc.status, {"message": str(exc)})
+            payload = {"message": str(exc)}
+            existing = getattr(exc, "existing", None)
+            if existing is not None:   # S-062: a lock conflict names its lock
+                payload["lock"] = existing
+            self._json(exc.status, payload)
 
         def _base(self) -> str:
             host = self.headers.get("Host") or "localhost"

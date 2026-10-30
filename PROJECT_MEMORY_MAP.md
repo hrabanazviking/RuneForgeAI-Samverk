@@ -1097,6 +1097,28 @@ Volmarr's original repos onto his own machines.
   opens its connection cross-thread, and Part IV's wiring
   must do the same (or per-thread connections). Next:
   S-062 LFS locking.
+- **S-062 DONE (2026-10-30)** — LFS locking:
+  `samverk/lfs_locks.py` + schema migration 27 (`lfs_locks`,
+  UNIQUE (repo_id, path)) — the public LFS lock API:
+  lock / unlock / list / verify, served through the S-061
+  handler when a locking service is attached. Locks name
+  *paths*, not objects; ids are 128-bit random hex.
+  Locking needs S-054 write, listing/verifying read; a
+  conflict refuses 403 naming the existing lock (holder
+  included, so a client can show who has it); only the
+  lock's owner may release it, or a repo admin with an
+  explicit `force`. `verify` splits ours/theirs for the
+  push-time check. Battery `tests/test_lfs_locks.py`:
+  **6 passed / 0 failed**, including the literal
+  acceptance — stock git-lfs 3.6.1 `lock` / `locks` /
+  `unlock` against Samverk's endpoint. (Two battery-design
+  lessons, fixed in the tests, not the code: a stranger
+  rightly cannot write-lock a public repo under S-054, so
+  conflicts are exercised by an admin; and git-lfs itself
+  refuses to unlock a file with uncommitted changes, so
+  the interop repo commits first.) Cumulative battery:
+  **434/434** (full counted run on this VM at this slice).
+  Next: S-063 archive downloads.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
