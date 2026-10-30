@@ -80,6 +80,32 @@ class BlameViewTests(unittest.TestCase):
         self.assertIn("alpha &lt;x&gt;", page)
         self.assertNotIn("second <words>", page)
 
+    def test_consecutive_lines_from_one_commit_blame(self):
+        # Regression (found by the S-120 gate battery): git
+        # omits the group-count field from the porcelain
+        # header of every line after the first in a
+        # same-commit group, and the parser once refused
+        # those headers — blame failed outright on any
+        # file with consecutive lines from one commit.
+        self.repos.create_repository(
+            self.owner.id, "volmarr", "multi", visibility="private")
+        bare = self.repos.path_for("volmarr", "multi")
+        work = self.root / "work-multi"; work.mkdir()
+        run_git(work, "init", "-b", "main")
+        (work / "multi.py").write_text("one\ntwo\nthree\n", encoding="utf-8")
+        run_as(work, "Alice A", "alice@example.com",
+               "2024-01-01T00:00:00Z", "add", ".")
+        run_as(work, "Alice A", "alice@example.com",
+               "2024-01-01T00:00:00Z", "commit", "-m", "all at once")
+        run_git(work, "push", str(bare), "main")
+        view = self.viewer.blame(self.owner, "volmarr", "multi",
+                                 path="multi.py")
+        self.assertEqual(view.total_lines, 3)
+        self.assertEqual([l.text for l in view.lines],
+                         ["one", "two", "three"])
+        self.assertTrue(all(l.author == "Alice A" for l in view.lines))
+        self.assertTrue(all(l.summary == "all at once" for l in view.lines))
+
     def test_pagination_walks_long_files_honestly(self):
         page1 = self.viewer.blame(self.owner, "volmarr", "samverk",
                                   path="code.py", page=1, per_page=2)

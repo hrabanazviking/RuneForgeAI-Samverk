@@ -126,9 +126,15 @@ def _parse_line_porcelain(output: str) -> list[BlameLine]:
             fields = {}
             header = None
             continue
-        parts = raw.split(" ", 3)
-        if len(parts) == 4 and len(parts[0]) == 40 and parts[1].isdigit() \
-                and parts[2].isdigit():
+        parts = raw.split(" ")
+        # A block header is `<oid> <orig> <final>` plus, on the
+        # first line of a same-commit group only, the group's
+        # line count — git omits that fourth field on the
+        # group's later lines, so both shapes are headers.
+        if len(parts) in (3, 4) and len(parts[0]) == 40 \
+                and all(c in "0123456789abcdef" for c in parts[0]) \
+                and parts[1].isdigit() and parts[2].isdigit() \
+                and (len(parts) == 3 or parts[3].isdigit()):
             header = (parts[0], int(parts[1]), int(parts[2]))
             fields = {}
             continue
