@@ -1341,6 +1341,23 @@ Volmarr's original repos onto his own machines.
   `tests/test_repo_budgets.py`: **3 passed / 0 failed**.
   Cumulative battery: **493/493** (full recount at the
   S-076 gate). Next: S-074 repository backup primitive.
+- **S-074 DONE (2026-10-30)** — repository backup primitive:
+  `samverk/repo_backup.py` — a single-repo export is a
+  `git bundle` file (`--all`, verified with `bundle verify`
+  after creation; an unverifiable bundle is deleted, never
+  reported) plus a metadata JSON (`samverk-repo-export/1`:
+  row fields, refs, measured size, bundle SHA-256 + bytes).
+  Owner-or-admin only; an existing export is never
+  overwritten silently. `bundle` (and `fsck`, for S-075)
+  joined S-014's allowlist with reasons. **Battery-found
+  behaviour, handled in-slice:** git refuses an empty
+  bundle, so an empty repo is refused by name
+  (`repo_empty`) instead of faking a backup that restores
+  to nothing. Battery `tests/test_repo_backup.py`:
+  **5 passed / 0 failed**, including a stock-git clone from
+  the bundle restoring HEAD exactly. Cumulative battery:
+  **498/498** (full recount at the S-076 gate). Next:
+  S-075 corruption behaviour.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
