@@ -68,8 +68,11 @@ Volmarr's original repos onto his own machines.
   unittest discover 732 ran, 729 passed / 3 skipped /
   0 failed; the three skips are named cells, NOT PROVEN
   on this host: S-095's real-sshd cell and the two
-  git-lfs client cells (git-lfs is not installed on this
-  host in this run — a targeted `-rs` run names both);
+  git-lfs client cells (this run's recounts did not
+  carry the pristine git-lfs 3.6.1 kept at
+  `~/workspace/.tools/git-lfs` on PATH — a targeted
+  `-rs` run names both cells; future recounts prepend
+  `~/workspace/.tools` to PATH, as the S-112 run did);
   next S-116 print and export of code views.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -2403,11 +2406,18 @@ Volmarr's original repos onto his own machines.
   1353.4 s)**; unittest discover **732 ran, 729 passed /
   3 skipped / 0 failed (1053.3 s)** — the prior 714 plus
   this run's 17 battery tests, minus the two git-lfs
-  client cells, which skipped again because git-lfs is
-  not installed on this host in this run (a targeted
-  `-rs` run names both cells, as it names S-095's
-  real-sshd cell: all three skips are named NOT PROVEN
-  cells, not failures). One crossed report was caught
+  client cells, which skipped because this run's
+  recount commands did not carry the pristine git-lfs
+  binary kept at `~/workspace/.tools/git-lfs` on PATH
+  (a targeted `-rs` run names both cells, as it names
+  S-095's real-sshd cell: all three skips are named
+  NOT PROVEN cells, not failures). Correction, same
+  day: the session entry as first written said git-lfs
+  was "not installed on this host" — wrong; the binary
+  (3.6.1, verified working after the fact) lives at
+  `~/workspace/.tools/git-lfs` and was simply absent
+  from this run's PATH. The measured counts stand as
+  run; the reason is what is corrected here. One crossed report was caught
   and discarded in-run: the pytest background session's
   delivered stdout claimed 731 passed / 1 skipped in
   1252 s, but its own log file — whose 1353.4 s duration
