@@ -949,8 +949,11 @@ Volmarr's original repos onto his own machines.
   Next: S-055 forking.
 - **S-055 DONE (2026-10-30)** — forking: `samverk/forks.py` +
   schema migration 23 (`repositories.fork_of_id`) — a fork is a
-  server-side `git clone --bare` (S-014 gains `clone`, local
-  S-013 paths only) with its own object store, so upstream
+  server-side bare clone through S-014's dedicated
+  local-paths-only seam (`run_git_clone_local`; generic
+  `clone` stays refused — corrected in the fix entry below
+  after the S-014 battery caught the first cut allowlisting
+  it) with its own object store, so upstream
   damage can never break it; the row records the direct
   upstream link. Forking is gated by S-054's `can_read` (an
   unreadable private repo answers as not-found), a private
@@ -1008,6 +1011,15 @@ Volmarr's original repos onto his own machines.
   byte and real git content growing the object category.
   Cumulative battery: **412/412** (full counted run on this
   VM at this slice). Next: S-059 garbage-collection scheduling.
+- **FIX (2026-10-30, same keeper run)** — the final full
+  recount caught S-055's first cut breaking S-014's battery:
+  allowlisting generic `clone` made `run_git(["clone", url])`
+  stop being refused. Fixed in scope per the never-leave-a-bug
+  law: `clone` is off the allowlist again, and forking goes
+  through `run_git_clone_local` in `samverk/proc.py` — both
+  paths are trusted resolved `Path` objects from S-013, the
+  function builds its own argv, and no caller string can be a
+  clone source. The S-055 entry above is corrected to match.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

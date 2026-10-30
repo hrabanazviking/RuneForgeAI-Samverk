@@ -2,10 +2,12 @@
 
 A fork is a server-side clone with its upstream link recorded:
 
-- **Clone, not reference.** `git clone --bare` (through S-014,
-  both paths from S-013) gives the fork its own complete object
-  store: deleting or rewriting the upstream can never break it.
-  The `fork_of_id` column on the repository row is lineage only.
+- **Clone, not reference.** A server-side bare clone through
+  S-014's dedicated local-paths-only seam (`run_git_clone_local`
+  — generic `clone` stays refused, as S-014's battery demands)
+  gives the fork its own complete object store: deleting or
+  rewriting the upstream can never break it. The `fork_of_id`
+  column on the repository row is lineage only.
 - **Read gate first.** Forking requires read access under
   S-054's one permission function. A private repository the
   actor cannot read answers as if it did not exist — its
@@ -29,7 +31,7 @@ from .accounts import AccountStore
 from .audit import AuditLog
 from .permissions import can_read
 from .platform_seam import ensure_dir
-from .proc import run_git
+from .proc import run_git_clone_local
 from .repo_paths import RepoPathError
 from .repositories import (
     Repository, RepositoryError, RepositoryStore, _validate_visibility,
@@ -87,8 +89,7 @@ class ForkStore:
             raise ForkError("repo_path_exists",
                             "A directory already exists at that path.")
         ensure_dir(dest_path.parent)
-        result = run_git(["clone", "--bare", str(src_path), str(dest_path)],
-                         timeout=120.0)
+        result = run_git_clone_local(src_path, dest_path, timeout=120.0)
         if result.returncode != 0:
             shutil.rmtree(dest_path, ignore_errors=True)
             raise ForkError(

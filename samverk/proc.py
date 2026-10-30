@@ -59,7 +59,6 @@ ALLOWED_PROGRAMS = frozenset({"git"})
 # as they land — never at a call site.
 GIT_SUBCOMMANDS = frozenset({
     "init",           # S-049 bare repository creation
-    "clone",          # S-055 server-side fork clone (local trusted paths only, from S-013)
     "rev-parse",      # ref / object resolution
     "rev-list",       # history walks
     "cat-file",       # object reads
@@ -217,6 +216,38 @@ def run_git(
         "git", _validate_git_args(args),
         cwd=cwd, timeout=timeout, input_bytes=input_bytes,
     )
+
+
+def run_git_clone_local(
+    source_path: Path,
+    dest_path: Path,
+    *,
+    timeout: float = 120.0,
+) -> subprocess.CompletedProcess:
+    """Clone one local bare repository to another local path —
+    the S-055 fork seam, and the *only* clone in Samverk.
+
+    Generic `clone` deliberately stays off `GIT_SUBCOMMANDS`:
+    `run_git(["clone", <url>])` is refused, exactly as S-014's
+    battery demands, because a clone source taken from a string
+    is a remote-code-fetch primitive. Here both paths are
+    trusted `Path` parameters the caller resolved through
+    S-013 — never strings, never URLs — and this function
+    builds the argv itself, so no caller-supplied argument
+    exists at all.
+    """
+    for value in (source_path, dest_path):
+        if not isinstance(value, Path) or not value.is_absolute():
+            raise ProcRefused(
+                "clone_path_not_trusted",
+                "clone paths must be resolved local Path objects")
+    executable = resolve_program("git")
+    argv = [str(executable), "clone", "--bare",
+            str(source_path), str(dest_path)]
+    return subprocess.run(
+        argv, shell=False, timeout=timeout,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        env=_clean_env())
 
 
 def run_git_in(
