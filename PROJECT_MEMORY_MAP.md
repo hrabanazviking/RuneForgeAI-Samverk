@@ -352,9 +352,24 @@ Volmarr's original repos onto his own machines.
   `a@.com` — an empty domain label — initially passed; the
   parser now requires ≥2 non-empty labels.) Cumulative
   battery: **173/173**.
-- **Campaign position: S-001…S-021 DONE.** Next: S-022
-  security battery v1 (auth bypass, IDOR, injection attempts
-  as an automated suite).
+- **S-022 DONE (2026-10-30)** — security battery v1:
+  `tests/test_security_battery.py` — **9 passed / 0 failed**,
+  attacking the *assembled* Part I system (real HTTP server,
+  real session store, real seams): fabricated session cookies
+  buy nothing and cross-site POSTs are refused 403; a DB-leak
+  drill (stolen session-table values presented back)
+  authenticates no one; SQL injection is stored as inert data
+  with the audit chain intact; shell injection through git
+  argv creates nothing; cookie header injection is refused;
+  stored-XSS payloads render inert. **Named honestly in the
+  file:** classic IDOR has no surface yet (no accounts or
+  per-user resources exist in Part I), so the identifier class
+  strikes the identifier surfaces that exist — repo names and
+  URL paths — and Part II's gate (S-048) inherits the file.
+  Cumulative battery: **182/182**.
+- **Campaign position: S-001…S-022 DONE.** Next: S-023 claims
+  register (every README security claim mapped to a test or
+  marked NOT PROVEN).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
