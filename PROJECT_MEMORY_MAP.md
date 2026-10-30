@@ -310,8 +310,29 @@ Volmarr's original repos onto his own machines.
   body leaks neither message, path, nor traceback, and the
   captured server log holds the detail under the id, redacted.
   Cumulative battery: **157/157**.
-- **Campaign position: S-001…S-019 DONE.** Next: S-020
-  operator key custody (instance keys, rotation drill).
+- **S-020 DONE (2026-10-30)** — operator key custody:
+  `samverk/keys.py` + `docs/KEY_CUSTODY_RUNBOOK.md` + `samverk
+  keys ensure|status|rotate` CLI. Keys are generated at install
+  (`ensure_instance_key`, 256-bit CSPRNG, idempotent — never
+  silently replaced), stored as files only under
+  `<data_root>/keys/` (`instance-<purpose>-v<N>.key`, hex,
+  mode 600 from the first instant via `os.open`; loosely-
+  permissioned or corrupt files refused fail-closed), and
+  identified publicly by a 16-hex SHA-256 fingerprint that is
+  safe to log. Rotation mints N+1 and keeps every earlier
+  version loadable by number; the CLI's rotation is
+  audit-logged (`admin.key.rotate`, fingerprints only). The
+  runbook carries backup/restore/compromise duties, including
+  the fingerprint comparison that proves a restore. Battery
+  `tests/test_keys.py`: **8 passed / 0 failed**, including the
+  literal acceptance — the full rotation drill on a scratch
+  instance (generate → rotate ×2 → all versions load, all
+  material distinct, key bytes and hex absent from the DB
+  file) and the CLI drill end to end. Cumulative battery:
+  **165/165**.
+- **Campaign position: S-001…S-020 DONE.** Next: S-021 signup
+  abuse friction (registration throttles, disposable-domain
+  policy hooks, no third-party captcha).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
