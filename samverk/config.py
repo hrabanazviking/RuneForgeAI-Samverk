@@ -36,6 +36,13 @@ class Config:
     # session cookies then carry the Secure flag. S-015 owns the TLS
     # law that makes HTTPS the default posture.
     secure_cookies: bool = False
+    # S-015: TLS material and the plaintext override. Both TLS paths
+    # together, or neither — tls_policy refuses a half-configured
+    # pair. allow_plaintext_http only has an effect outside
+    # loopback, and only when the arming is audit-logged.
+    tls_cert_file: Path | None = None
+    tls_key_file: Path | None = None
+    allow_plaintext_http: bool = False
 
     @property
     def db_path(self) -> Path:
@@ -65,6 +72,12 @@ def _from_file(cfg: Config, path: Path) -> None:
         cfg.log_level = s["log_level"].strip().upper()
     if "secure_cookies" in s:
         cfg.secure_cookies = _parse_bool(s["secure_cookies"])
+    if "tls_cert_file" in s:
+        cfg.tls_cert_file = Path(s["tls_cert_file"]).expanduser()
+    if "tls_key_file" in s:
+        cfg.tls_key_file = Path(s["tls_key_file"]).expanduser()
+    if "allow_plaintext_http" in s:
+        cfg.allow_plaintext_http = _parse_bool(s["allow_plaintext_http"])
 
 
 def _from_env(cfg: Config, env: dict[str, str]) -> None:
@@ -80,6 +93,13 @@ def _from_env(cfg: Config, env: dict[str, str]) -> None:
         cfg.log_level = env["SAMVERK_LOG_LEVEL"].upper()
     if env.get("SAMVERK_SECURE_COOKIES"):
         cfg.secure_cookies = _parse_bool(env["SAMVERK_SECURE_COOKIES"])
+    if env.get("SAMVERK_TLS_CERT_FILE"):
+        cfg.tls_cert_file = Path(env["SAMVERK_TLS_CERT_FILE"]).expanduser()
+    if env.get("SAMVERK_TLS_KEY_FILE"):
+        cfg.tls_key_file = Path(env["SAMVERK_TLS_KEY_FILE"]).expanduser()
+    if env.get("SAMVERK_ALLOW_PLAINTEXT_HTTP"):
+        cfg.allow_plaintext_http = _parse_bool(
+            env["SAMVERK_ALLOW_PLAINTEXT_HTTP"])
 
 
 def load_config(

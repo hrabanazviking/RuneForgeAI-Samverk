@@ -217,9 +217,26 @@ Volmarr's original repos onto his own machines.
   query token is now allowed for rev-parse alone; every
   `--git-dir=<path>` form stays refused everywhere.)
   Cumulative battery: **124/124**.
-- **Campaign position: S-001…S-014 DONE.** Next: S-015 TLS and
-  secure defaults (plaintext HTTP refused outside loopback
-  without an audit-logged operator override).
+- **S-015 DONE (2026-10-30)** — TLS and secure defaults:
+  `samverk/tls_policy.py` + config fields (`tls_cert_file`,
+  `tls_key_file`, `allow_plaintext_http`; file + env). The bind
+  law is enforced in `serve()` before anything listens:
+  loopback is literal (`localhost`, 127.0.0.0/8, ::1 — wildcards
+  and DNS names are *not* loopback, and no DNS is consulted);
+  non-loopback plaintext is **refused**, not warned; TLS
+  configured with both files takes the `tls` posture (socket
+  wrapped in `serve`, TLS ≥ 1.2, and S-009's Secure-cookie flag
+  becomes a fact of the bind); exactly one TLS file is refused
+  as half-configured in every posture; the operator override
+  only exists when audit-logged — `enforce_bind_policy` raises
+  `override_requires_audit` without an `AuditLog`, and with one
+  it writes `admin.plaintext_http_override` before returning.
+  Battery `tests/test_tls_policy.py`: **9 passed / 0 failed**,
+  including the literal acceptance — refusal outside loopback,
+  and the override landing exactly one verifiable audit row.
+  Cumulative battery: **133/133**.
+- **Campaign position: S-001…S-015 DONE.** Next: S-016 content
+  security policy for the web UI.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

@@ -143,11 +143,30 @@ def make_server(cfg: Config) -> ThreadingHTTPServer:
 
 
 def serve(cfg: Config) -> None:
-    """Run the server in the foreground until interrupted."""
+    """Run the server in the foreground until interrupted.
+
+    S-015's bind law is enforced before anything listens:
+    non-loopback plaintext without TLS is refused unless the
+    operator override is armed, and arming it is audit-logged
+    (see tls_policy). When TLS is configured the listening
+    socket is wrapped and the scheme is https.
+    """
+    from .tls_policy import enforce_with_audit, tls_configured
+
+    posture = enforce_with_audit(cfg)
     httpd = make_server(cfg)
+    scheme = "http"
+    if tls_configured(cfg):
+        import ssl
+
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+        context.load_cert_chain(str(cfg.tls_cert_file), str(cfg.tls_key_file))
+        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+        scheme = "https"
     host, port = httpd.server_address[:2]
-    print(f"samverk {__version__} listening on http://{host}:{port} "
-          f"(data root: {cfg.data_root})")
+    print(f"samverk {__version__} listening on {scheme}://{host}:{port} "
+          f"(data root: {cfg.data_root}, bind posture: {posture})")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
