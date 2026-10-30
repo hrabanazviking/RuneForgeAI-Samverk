@@ -508,6 +508,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  computed_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-090: push events — the canonical product record of
+    # every accepted push (actor, transport, ref ranges as
+    # JSON), the seed of Part XI's event store. The audit log
+    # stays the tamper-evident witness; this is ordinary,
+    # queryable product data.
+    (33, [
+        "CREATE TABLE push_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  actor_kind TEXT NOT NULL,"
+        "  actor_id INTEGER,"
+        "  transport TEXT NOT NULL,"
+        "  refs TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX push_events_repo_idx"
+        " ON push_events (repo_id, id)",
+    ]),
 ]
 
 
