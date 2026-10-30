@@ -792,6 +792,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_transfers_dest"
         " ON issue_transfers (dest_repo_id, dest_number)",
     ]),
+    # S-136: saved filters — a user's own named searches
+    # over one repository's issues / pull requests. The
+    # query text is stored as typed; S-135's parser is the
+    # validation seam at save time and at run time.
+    (45, [
+        "CREATE TABLE saved_filters ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  target TEXT NOT NULL DEFAULT 'issues',"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  query TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (user_id, repo_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_saved_filters_user"
+        " ON saved_filters (user_id, repo_id, name_lower)",
+    ]),
 ]
 
 
