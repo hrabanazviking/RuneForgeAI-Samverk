@@ -91,7 +91,14 @@ Volmarr's original repos onto his own machines.
   combined with taxonomy + comments + dependencies
   25 passed / 0 failed; the timeline extension's
   combined run 16 passed / 0 failed);
-  next S-133 transfer issue.
+  S-133 banked 2026-10-30 (8-test battery, foreground);
+  S-134 banked 2026-10-30 (7-test battery, foreground;
+  combined affected suites 55 passed / 0 failed);
+  governing full-suite recount read back from its log
+  file after this run's slices: pytest 851 passed /
+  1 skipped / 0 failed (852 collected; the one skip is
+  S-095's named real-sshd cell);
+  next S-135 issue search UI.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2379,6 +2386,58 @@ Volmarr's original repos onto his own machines.
   taxonomy + comments + dependencies **25 passed /
   0 failed**; timeline + locking combined **16 passed
   / 0 failed**, read back from the log files).
+- **S-133 DONE (2026-10-30)** — issue transfer:
+  `samverk/issue_transfer.py` + schema migration 44
+  (`issue_transfers`, the forwarding record). An issue
+  moves only between repositories of the same owner
+  (`different_owner` / `same_repository` refused by
+  name); the row itself moves — claiming the
+  destination's next shared number inside the same
+  transaction, so the vacated number is a permanent
+  gap (S-121) — keeping author, title, body, state and
+  closing reason, lock, comments, assignees, reactions
+  and state history; labels and the milestone remap by
+  name/title onto the destination's own rows or drop
+  (named in the result), and a pin stays behind. The
+  forwarding note at the old address names the
+  destination only to a viewer who can read it; to
+  anyone else it says in words that the issue was
+  transferred to another repository. The mover is the
+  author or a source writer who can read the
+  destination (unreadable destination = uniform
+  `repo_not_found`). Audited on both sides (taxonomy
+  append-only +2: `repo.issue.transfer_out` /
+  `.transfer_in`, 85 events: 29 auth, 44 repo,
+  12 admin; doc + code + counts together), and
+  S-131's timeline learned the arrival event from the
+  same record. Battery `tests/test_issue_transfer.py`:
+  **8 passed / 0 failed** (foreground).
+- **S-134 DONE (2026-10-30)** — bulk edit:
+  `samverk/issue_bulk_edit.py` — label/assign/close
+  across a filtered set, applied through the owning
+  seams (S-124/S-126/S-130), so each real change writes
+  that seam's own audit event for that issue and the
+  bulk act adds no event of its own. `select_numbers`
+  computes the set from plain criteria (state, label,
+  assignee, milestone, author) through the read seams;
+  sets are capped at 100 (`set_too_large` names the
+  cap, never a silent truncation) and operation
+  parameters are validated whole before any issue is
+  touched (a bad label, assignee, or closing reason
+  changes nothing). Per-issue outcomes are reported:
+  successes in order, failures with their reason — one
+  bad number or one permission refusal never stops the
+  rest of the set — and retries are quiet successes
+  that write no second audit event. Battery
+  `tests/test_issue_bulk_edit.py`: **7 passed /
+  0 failed** (foreground; combined affected suites
+  with S-133: transfer + bulk + taxonomy + timeline +
+  dependencies + labels + assignees + close/reopen
+  **55 passed / 0 failed**). Governing full-suite
+  recount after both slices, read back from its log
+  file: pytest **851 passed / 1 skipped / 0 failed**
+  (852 collected; the skip is S-095's named
+  real-sshd cell, NOT PROVEN on this host).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
