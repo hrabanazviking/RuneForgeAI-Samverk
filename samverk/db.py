@@ -583,6 +583,33 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_comment_edits_comment"
         " ON issue_comment_edits (comment_id, id)",
     ]),
+    # S-124: labels — one row per (repository, canonical
+    # name); the name is mandatory text, the colour a strict
+    # '#rrggbb' decoration beside it, never the meaning
+    # alone. issue_labels carries assignments; both die
+    # together when a label is deleted.
+    (36, [
+        "CREATE TABLE labels ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  colour TEXT NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_labels_repo ON labels (repo_id, name_lower)",
+        "CREATE TABLE issue_labels ("
+        "  issue_id INTEGER NOT NULL,"
+        "  label_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (issue_id, label_id)"
+        ")",
+        "CREATE INDEX idx_issue_labels_label"
+        " ON issue_labels (label_id, issue_id)",
+    ]),
 ]
 
 

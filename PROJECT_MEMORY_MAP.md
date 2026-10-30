@@ -2015,6 +2015,114 @@ Volmarr's original repos onto his own machines.
   `tests/test_repo_search.py`: **5 passed / 0 failed**
   (one test-expectation fix in-slice: the jump URL is
   percent-encoded, as URLs are).
+- **S-119 DONE (2026-10-30)** — repository header
+  summary: `samverk/repo_header.py` — visibility badge
+  as words with its meaning stated (never colour
+  alone), fork parent named and linked (a dangling
+  parent named as gone, never linked nowhere), mirror
+  badge naming source kind and last-sync status in
+  words while never showing the source itself, fork
+  count counted live; watch/star counts honestly
+  absent until S-222 (`None`, rendered 'not available
+  yet — Part XI') behind a checked counter seam.
+  Permission is S-054's uniform `repo_not_found`.
+  Battery `tests/test_repo_header.py`: **7 passed /
+  0 failed**. *(Entry written by the 2026-10-30
+  13:15 keeper run from the slice's banked commit
+  message — the run that banked S-119..S-123 left
+  these detailed entries and its session log
+  unwritten; repaired here, never left.)*
+- **S-120 DONE (2026-10-30) — PART V GATE.** Browsing
+  battery `tests/test_browsing_battery.py` (**6 passed
+  / 0 failed**) over the reference repos (small: full
+  walk; large: 60 nested files, paginated history,
+  honest finder totals; LFS: pointer reported as a
+  pointer, never served as the file; wiki-less: no
+  built page invents a wiki), plus the cross-cutting
+  strikes — a private repo answers every Part V
+  surface with the uniform `repo_not_found` for
+  strangers and anonymous readers while its owner
+  walks it fine, and rendered pages carry no inline
+  styles. The browser-rendered 100%/200% scaling
+  proof is NOT PROVEN here and owned by Part XX
+  S-384. Gate-found bug fixed in-slice, never left
+  (ac76948): the S-101 blame parser refused real git
+  output for same-commit line groups; it now accepts
+  both header shapes, with a regression test.
+  **Part V is complete.** Next: Part VI — Issues,
+  opening at S-121.
+- **S-121 DONE (2026-10-30)** — issue model and
+  numbering: `samverk/issues.py` + schema migration
+  34 (`repo_counters`, `issues`) — one shared per-repo
+  sequence for issues and pull requests (atomic upsert
+  claim, so racing connections never share a number;
+  the counter only moves forward, so a removed #n
+  leaves a gap and is never reused); every claimed
+  number is exactly one row carrying its kind,
+  resolved through `resolve_number`/`exists` — the
+  seam S-109's prose references and S-127's
+  cross-references read through. Battery
+  `tests/test_issue_numbering.py`: **6 passed /
+  0 failed**.
+- **S-122 DONE (2026-10-30)** — issue create/read/
+  update in `samverk/issues.py`: title (plain text,
+  required, stripped), Markdown body, author, open
+  state at birth (close/reopen with reasons is
+  S-130's); reads follow S-054 (a stranger to a
+  private repo, a pull request's number, and a
+  never-claimed number all answer the same uniform
+  `issue_not_found`, so private issues cannot be
+  enumerated); creating requires repo read access,
+  editing is the author's or a repo writer's; edits
+  are commit-before-answer with an optimistic version
+  (`edit_conflict` on a stale expectation, changing
+  nothing). Audited `repo.issue.create` /
+  `repo.issue.update` (taxonomy append-only, 58
+  events). Battery `tests/test_issues.py`: **7 passed
+  / 0 failed**.
+- **S-123 DONE (2026-10-30)** — comments:
+  `samverk/issue_comments.py` + schema migration 35 —
+  Markdown comments on issues under S-054 (strangers
+  to a private repo get the uniform `issue_not_found`
+  for every comment operation); edit history visible
+  by law — the previous body is recorded in
+  `issue_comment_edits` in the same transaction as
+  the edit, shown by `edits_for` to any reader;
+  editing is the author's alone; deletion by author
+  or repository admin is a tombstone (body cleared,
+  `deleted_at`/`deleted_by` stamped, list views skip
+  it, a direct link is told it was deleted) plus an
+  audit row (taxonomy append-only, 61 events; bodies
+  never in audit detail). Battery
+  `tests/test_issue_comments.py`: **7 passed /
+  0 failed**.
+- **S-124 DONE (2026-10-30)** — labels:
+  `samverk/labels.py` + schema migration 36
+  (`labels`, `issue_labels`) — CRUD under S-054
+  (managing is a writer act; strangers to a private
+  repo get the uniform `repo_not_found`). Text is
+  mandatory: a colour with no name is refused
+  (`label_name_required`), colours are strict
+  `#rrggbb`, and `render_label` prints the name and
+  the colour value as text, so meaning never rides
+  on colour alone. Names are unique per repository
+  case-insensitively. The default starter set
+  (`DEFAULT_LABELS`: bug, documentation, duplicate,
+  enhancement, good first issue, help wanted,
+  invalid, question, wontfix) is seeded inside the
+  repository-creation transaction, and
+  `seed_default_labels` repairs older repositories
+  idempotently. Assignment to issues (`add_to_issue`
+  / `remove_from_issue`) is a writer or issue-author
+  act; deleting a label takes its assignments with
+  it in the same transaction. Audited
+  `repo.label.create` / `.update` / `.delete` and
+  `repo.issue.label_add` / `.label_remove` (taxonomy
+  append-only, 66 events: 29 auth, 25 repo, 12
+  admin). Battery `tests/test_labels.py`: **8 passed
+  / 0 failed**; a local battery over labels +
+  taxonomy + repositories + issues + comments ran
+  34 passed / 0 failed at banking.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

@@ -76,6 +76,11 @@ any name not in this document's set.*
 | `repo.issue.comment` | Comment added to an issue (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
 | `repo.issue.comment_edit` | Comment edited by its author; previous body kept in the visible edit history (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
 | `repo.issue.comment_delete` | Comment deleted by its author or a repository admin; tombstone remains (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
+| `repo.label.create` | Label created in a repository (S-124) | `{"label": ...}` — the name (text is the meaning, never colour alone) |
+| `repo.label.update` | Label renamed, recoloured, or redescribed (S-124) | `{"label": ...}` |
+| `repo.label.delete` | Label deleted; its issue assignments die with it (S-124) | `{"label": ...}` |
+| `repo.issue.label_add` | Label added to an issue (S-124) | `{"number": ..., "label": ...}` |
+| `repo.issue.label_remove` | Label removed from an issue (S-124) | `{"number": ..., "label": ...}` |
 
 ## admin — instance administration
 
@@ -128,3 +133,7 @@ S-122 (2026-10-30) added `repo.issue.create` and
 S-123 (2026-10-30) added `repo.issue.comment`,
 `repo.issue.comment_edit` and `repo.issue.comment_delete`
 — 61 events: 29 auth, 20 repo, 12 admin.
+S-124 (2026-10-30) added `repo.label.create`,
+`repo.label.update`, `repo.label.delete`,
+`repo.issue.label_add` and `repo.issue.label_remove`
+— 66 events: 29 auth, 25 repo, 12 admin.

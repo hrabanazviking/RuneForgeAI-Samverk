@@ -83,6 +83,12 @@ REPO_EVENTS = frozenset({
     "repo.issue.comment",
     "repo.issue.comment_edit",
     "repo.issue.comment_delete",
+    # S-124 additions (append-only, per the taxonomy rules):
+    "repo.label.create",
+    "repo.label.update",
+    "repo.label.delete",
+    "repo.issue.label_add",
+    "repo.issue.label_remove",
 })
 
 ADMIN_EVENTS = frozenset({

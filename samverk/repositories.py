@@ -202,6 +202,10 @@ class RepositoryStore:
                 "git could not create the repository: "
                 + result.stderr.decode("utf-8", "replace").strip()[:200])
         now = int(self._now())
+        # S-124: a new repository is born with the default
+        # label set, seeded in the same transaction as its
+        # row (local import: labels imports this module).
+        from .labels import seed_defaults_tx
         try:
             with self._conn:  # commits before the answer (module docstring)
                 cur = self._conn.execute(
@@ -211,6 +215,7 @@ class RepositoryStore:
                     " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (owner_disp, owner_lower, repo_disp, repo_lower,
                      actor.id, now, description, visibility, default_branch))
+                seed_defaults_tx(self._conn, int(cur.lastrowid), now)
         except sqlite3.IntegrityError:
             shutil.rmtree(path, ignore_errors=True)
             raise RepositoryError(
