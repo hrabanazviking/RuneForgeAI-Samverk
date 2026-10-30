@@ -2841,3 +2841,23 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-129 issue
   templates.
+- **2026-10-30 (keeper run, Part VI continued)** — Previous
+  run had banked S-128 at 14:35 EDT (clean tree, no
+  process live), so this run first paid the owed
+  governing recount (log file read back: pytest **818
+  passed / 1 skipped / 0 failed** — exactly the prior
+  783 plus S-124..S-128's 35 battery tests), then built
+  **S-129** issue templates (11-test battery) and
+  **S-130** close and reopen (6-test battery; taxonomy
+  append-only +5 across the run, 79 events). Two
+  test-authoring slips were caught and fixed in the
+  batteries (a title-less label-check fixture; a compact
+  JSON spacing expectation), module behaviour standing
+  in both; no bugs were found in shipped code. Closing
+  governing recounts, both read back from log files:
+  pytest **835 passed / 1 skipped / 0 failed**;
+  unittest discover **836 ran, 835 passed / 1 skipped /
+  0 failed** — the one skip is S-095's named real-sshd
+  cell, NOT PROVEN on this host. All banked locally on
+  `main`; **no GitHub push** — pushes stay gated on
+  Volmarr's word. Next slice: S-131 timeline.
