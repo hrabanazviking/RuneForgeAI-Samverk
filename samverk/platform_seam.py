@@ -12,7 +12,8 @@ data-root location per OS convention, and directory creation. Process,
 signal, and locking primitives join it in the slices that first need
 them — named here so nobody builds them elsewhere:
 
-    FUTURE: spawn()      — subprocess creation without a shell (S-014)
+    LANDED: process creation lives in samverk/proc.py (S-014) —
+    it needed its policy home (allowlists) first.
     FUTURE: lock_file()  — advisory file locking (Part III)
     FUTURE: service_*()  — service-manager integration (Part XVIII)
 """

@@ -195,8 +195,31 @@ Volmarr's original repos onto his own machines.
   `tests/test_repo_paths.py`: **10 passed / 0 failed**,
   including the literal acceptance — the `..`/symlink escape
   battery. Cumulative battery: **116/116**.
-- **Campaign position: S-001…S-013 DONE.** Next: S-014 subprocess
-  discipline (git without a shell, argument allowlists).
+- **S-014 DONE (2026-10-30)** — subprocess discipline:
+  `samverk/proc.py` — git (the only allowlisted program) is run
+  with no shell, ever; argv[0] is resolved from the logical name
+  `git` via the module's own allowlist, never from user input;
+  the first argument must be an allowlisted subcommand
+  (`GIT_SUBCOMMANDS`, extended only here, with reasons), so the
+  global-option position (`-c`, `--git-dir`, …) is unreachable;
+  dangerous redirect flags are refused in any position; the
+  repository is a trusted parameter (`run_git_in`, path from
+  S-013) inserted as `--git-dir` by the module itself;
+  `GIT_DIR`/`GIT_CONFIG_*` and kin are stripped from the
+  inherited environment and `GIT_TERMINAL_PROMPT=0`; every spawn
+  carries a mandatory timeout. Battery `tests/test_proc.py`:
+  **8 passed / 0 failed**, including the literal acceptance —
+  shell-metacharacter injections arrive as inert single argv
+  entries and create nothing, and real git work (init /
+  hash-object / cat-file) flows through the law. (One design
+  flaw found by the battery and fixed in-slice: `rev-parse
+  --git-dir` is a read-only query, not a redirect — the bare
+  query token is now allowed for rev-parse alone; every
+  `--git-dir=<path>` form stays refused everywhere.)
+  Cumulative battery: **124/124**.
+- **Campaign position: S-001…S-014 DONE.** Next: S-015 TLS and
+  secure defaults (plaintext HTTP refused outside loopback
+  without an audit-logged operator override).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
