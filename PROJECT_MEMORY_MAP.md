@@ -58,9 +58,11 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part IV next** (Part I gate passed 2026-10-30;
+- **Phase: Part IV in progress** (Part I gate passed 2026-10-30;
   Part II gate S-048 passed 2026-10-30 at 368/368; Part III
-  gate S-076 passed 2026-10-30 at 510/510).
+  gate S-076 passed 2026-10-30 at 510/510; S-077…S-083
+  banked 2026-10-30, full suite 553/553; next S-084 SSH
+  transport design).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1399,6 +1401,86 @@ Volmarr's original repos onto his own machines.
   Volmarr's explicit word. **Part III is complete.**
   Next: Part IV — Git Transports, opening at S-077 smart
   HTTP advertisement.
+- **S-077 DONE (2026-10-30)** — smart HTTP advertisement:
+  research study 01 written (clean-room, from git's public
+  protocol docs + local stock-git experiments);
+  `samverk/git_http.py` `SmartHttpService.advertise` builds
+  the service pkt-line + flush + the pack program's own ref
+  advertisement, with S-054's read gate checked *before* any
+  git spawn (a damaged private repo still answers
+  `repo_not_found` to anonymous callers — the gate-before-bytes
+  proof). New S-014 seam `proc.run_git_pack`: upload-pack /
+  receive-pack take the repo as a positional argument and do
+  not honour `--git-dir`, so the seam builds argv itself
+  (closed flag set, trusted Path, GIT_PROTOCOL scrubbed/set
+  explicitly). Battery `tests/test_git_http_advertise.py`:
+  **7 passed / 0 failed**. Cumulative: **517**.
+- **S-078 DONE (2026-10-30)** — smart HTTP upload-pack:
+  `upload_pack` feeds the POST body verbatim to
+  `git upload-pack --stateless-rpc` after re-running the read
+  gate (an advertisement is not a ticket); the response is
+  the program's stdout verbatim, side-band progress included.
+  Battery `tests/test_git_http_upload.py`: **4 passed /
+  0 failed**, including stock-git clone (public, anonymous)
+  and clone+fetch (private, as owner) over real HTTP through
+  a test harness (cross-thread sqlite connection, the LFS
+  batteries' pattern). Cumulative: **521**.
+- **S-079 DONE (2026-10-30)** — smart HTTP receive-pack:
+  `receive_pack` + the receive advertisement sit behind the
+  *write* gate in the shared `_resolve`, fail-closed; the
+  roadmap's named test
+  `test_the_unauthenticated_receive_pack_hole_is_closed`
+  proves anonymous callers can neither advertise nor POST a
+  push against a public repo, and the ref does not move.
+  Battery `tests/test_git_http_receive.py`: **4 passed /
+  0 failed**, including a stock-git push over real HTTP that
+  moves the bare repo's main. Cumulative: **525**.
+- **S-080 DONE (2026-10-30)** — protocol v2:
+  `protocol_version_from_header` reads `Git-Protocol`;
+  v2 advertisements offer capabilities (`ls-refs`, `fetch`)
+  instead of refs; `ls-refs` commands are served through the
+  same stateless seam with `GIT_PROTOCOL=version=2`.
+  Battery `tests/test_git_protocol_v2.py`: **5 passed /
+  0 failed**, including the literal acceptance — a
+  `GIT_TRACE_PACKET` stock-git clone (`-c protocol.version=2`)
+  whose trace shows `command=ls-refs` and `command=fetch`
+  flowing over the wire. Cumulative: **530**.
+- **S-081 DONE (2026-10-30)** — HTTP Basic auth:
+  `samverk/git_auth.py` `GitAuthenticator.authenticate_basic`
+  resolves the Basic header through S-004's
+  `verify_and_upgrade` (legacy hashes upgrade in place),
+  against the login door's decoy hash for unknown names;
+  no session is created and no login throttle is charged.
+  Any non-`active` account status authenticates to nothing.
+  Battery `tests/test_git_basic_auth.py`: **6 passed /
+  0 failed**. Cumulative: **536**.
+- **S-082 DONE (2026-10-30)** — token-as-password:
+  `authorize_basic(header, owner, repo, minimum)` — classic
+  tokens (S-032) must carry `repo:read`/`repo:write`
+  (implication law decides), fine-grained tokens (S-033)
+  must carry `contents:read`/`contents:write` on exactly
+  that repo (`authorize` decides); the username slot must be
+  the owner's name or `x-access-token`; revoked, expired, and
+  suspended-account tokens resolve to nothing. Battery
+  `tests/test_git_token_auth.py`: **7 passed / 0 failed**,
+  including the named acceptance — a read-only token's push
+  refused at the credential gate. Cumulative: **543**.
+- **S-083 DONE (2026-10-30)** — anonymous public read +
+  the uniform existence shape, decided in `TransportGate`
+  (samverk/git_http.py): public upload legs answer
+  credential-free callers; every other credential-free
+  request meets one uniform **401** + `WWW-Authenticate:
+  Basic realm="Samverk"` (public write, private, and
+  nonexistent indistinguishable); credentials that grant
+  nothing meet a uniform **404** on anything not publicly
+  readable; a reader at the write gate meets an honest
+  **403**. Battery `tests/test_git_anonymous_access.py`:
+  **8 passed / 0 failed**, including byte-identical private
+  vs nonexistent 401s over the real wire. Cumulative at the
+  run's verified full recount: **553 passed / 0 failed**
+  (the per-slice running counts above sum to 551; the full
+  recount from the tree is the governing number). Next:
+  S-084 SSH transport design (research file 02 first).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1614,3 +1696,21 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next: Part IV, S-077 smart HTTP
   advertisement.
+- **2026-10-30 (keeper run, Part IV opened)** — Previous
+  run had closed Part III at 04:39 EDT (head 6967189, clean
+  tree, no process live), so this run resumed at the map's
+  named next slice: baseline re-verified from the tree
+  (510/510), research study 01 written, then **S-077**
+  advertisement (517), **S-078** upload-pack (521),
+  **S-079** receive-pack (525), **S-080** protocol v2
+  (530), **S-081** HTTP Basic auth (536), **S-082**
+  token-as-password (543), and **S-083** anonymous public
+  read + uniform 401/404 shape (551 by running count) —
+  full suite re-counted fresh at this run's end:
+  **553 passed / 0 failed** (the verified recount governs
+  over the running sum). Stock-git interop is now proven
+  over real HTTP for clone, fetch, and push, in v0 and in
+  protocol v2 (packet-traced). All banked locally on
+  `main`; **no GitHub push** — pushes stay gated on
+  Volmarr's word. Next slice: S-084 SSH transport design
+  (research file 02 study before code).
