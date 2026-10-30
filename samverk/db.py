@@ -176,6 +176,28 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_access_tokens_user ON access_tokens (user_id)",
     ]),
+    # S-033: fine-grained tokens — one repository (canonical
+    # owner/repo, S-031's binding shape) + a per-resource
+    # permission set; hashes only, as S-032.
+    (11, [
+        "CREATE TABLE fine_grained_tokens ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  owner TEXT NOT NULL,"
+        "  repo TEXT NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  token_hash TEXT NOT NULL UNIQUE,"
+        "  prefix TEXT NOT NULL,"
+        "  permissions TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  last_used_at INTEGER,"
+        "  revoked INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE INDEX idx_fine_tokens_user ON fine_grained_tokens (user_id)",
+        "CREATE INDEX idx_fine_tokens_repo"
+        " ON fine_grained_tokens (owner, repo)",
+    ]),
 ]
 
 

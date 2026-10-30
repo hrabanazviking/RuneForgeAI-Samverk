@@ -576,6 +576,23 @@ Volmarr's original repos onto his own machines.
   test (stored hashes and prefix authenticate no one; the raw
   token is absent from the DB file). Cumulative battery:
   **260/260**.
+- **S-033 DONE (2026-10-30)** — fine-grained tokens:
+  `samverk/fine_grained_tokens.py` + schema migration 11
+  (`fine_grained_tokens`, hashes only). A token binds to
+  **exactly one repository** (canonical owner/repo, S-031's
+  shape) and a per-resource permission set (contents /
+  issues / pull_requests, read+write, plus `metadata:read`
+  always held as the mandatory floor — stored, never hidden).
+  Write implies only its own read sibling. `authorize` is the
+  permission-matrix seam: wrong repo, wrong owner, ungranted
+  or unknown permission, and expired/revoked tokens all
+  answer None. S-032's law carries over: `svkf_` + 256-bit,
+  shown once, expiry required (≤1 year), owner-only
+  revocation, audited create/revoke without the token.
+  Battery `tests/test_fine_grained_tokens.py`: **9 passed /
+  0 failed**, including the literal acceptance — the full
+  permission matrix (every permission × granted/ungranted ×
+  own/other repo). Cumulative battery: **269/269**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -670,6 +687,7 @@ Volmarr's original repos onto his own machines.
 - **2026-10-30 (keeper run)** — Previous run had banked S-031
   at 01:55 EDT (clean tree, no process live), so this run
   resumed at the map's named next slice and built **S-032**
-  personal access tokens (260/260). Banked locally on `main`;
+  personal access tokens (260/260), then **S-033** fine-grained
+  tokens (269/269) in the same run. Banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
-  Next slice: S-033 fine-grained tokens.
+  Next slice: S-034 token management UI.
