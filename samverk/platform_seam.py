@@ -24,7 +24,13 @@ import platform
 import sys
 from pathlib import Path
 
-__all__ = ["os_name", "machine", "data_root_default", "ensure_dir"]
+__all__ = [
+    "os_name",
+    "machine",
+    "data_root_default",
+    "ensure_dir",
+    "secret_file_is_private",
+]
 
 
 def os_name() -> str:
@@ -73,3 +79,17 @@ def ensure_dir(path: Path) -> Path:
     """Create *path* (and parents) if missing; return it."""
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def secret_file_is_private(path: Path) -> bool:
+    """True when *path* is readable only by its owner.
+
+    POSIX: no group/other permission bits may be set (mode 600 or
+    stricter). Windows: POSIX modes do not exist; ACL verification is
+    an install-time concern (Part XVIII), so this returns True and the
+    difference is named here rather than hidden — the S-003 battery
+    checks the POSIX behaviour on POSIX platforms only.
+    """
+    if os_name() == "windows":
+        return True
+    return path.stat().st_mode & 0o077 == 0

@@ -74,7 +74,15 @@ Volmarr's original repos onto his own machines.
   Windows, macOS) are **NOT PROVEN** — Part XXII owns their proof;
   the skeleton's platform touchpoints exist only behind
   `samverk/platform_seam.py`, mechanically checked by test.
-- Next: S-003 secrets law.
+- **S-003 DONE (2026-10-29)** — secrets law: `samverk/secrets.py`
+  (env or mode-600 file only, fail-closed on loose permissions,
+  values never repr'd), `samverk/db.py` connection factory (WAL +
+  synchronous=FULL + foreign_keys=ON + busy_timeout 5000, numbered
+  transactional migrations), battery `tests/test_secrets.py`:
+  **9 passed / 0 failed**, including the literal acceptance — a
+  seeded DB (with a `secret:NAME` reference row) greps clean of both
+  file- and env-sourced secret values. Cumulative battery: 19/19.
+- Next: S-004 password hashing.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
