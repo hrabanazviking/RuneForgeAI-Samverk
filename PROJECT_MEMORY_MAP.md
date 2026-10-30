@@ -995,6 +995,19 @@ Volmarr's original repos onto his own machines.
   Audited under the frozen `repo.transfer`. Battery
   `tests/test_repo_transfer.py`: **4 passed / 0 failed**.
   Cumulative battery: **408/408**. Next: S-058 size accounting.
+- **S-058 DONE (2026-10-30)** — repository size accounting:
+  `samverk/repo_size.py` (no migration) — a file-by-file walk
+  of the bare directory (symlinks never followed) split into
+  git objects (`objects/`), LFS objects (`lfs/`, the per-repo
+  layout S-060 will fill — 0 until then, never invented), and
+  other (refs/config/future assets alongside), the three
+  always summing to the total. Shown to owners and site
+  admins only; anyone else is refused and a missing repo is
+  named. Battery `tests/test_repo_size.py`: **4 passed /
+  0 failed**, including a planted LFS object counted to the
+  byte and real git content growing the object category.
+  Cumulative battery: **412/412** (full counted run on this
+  VM at this slice). Next: S-059 garbage-collection scheduling.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1118,6 +1131,20 @@ Volmarr's original repos onto his own machines.
   **338 passed / 0 failed**. All banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
   Next slice: S-043 account deletion.
+- **2026-10-30 (keeper run, Part III continued)** — Previous
+  run had banked S-054 at 03:06 EDT (clean tree, no process
+  live), so this run resumed at the map's named next slice
+  and built **S-055** forking (400/400), **S-056** repository
+  deletion (404/404), **S-057** repository transfer (408/408),
+  and **S-058** size accounting (412/412) — taxonomy
+  append-only +1 event (55 total, `repo.fork`). One flaw was
+  caught by a battery mid-banking (the S-056 execution path
+  referenced S-057's table before that slice's migration
+  existed) and was fixed in-slice, with the cleanup correctly
+  sequenced into S-057. Full suite re-counted fresh at this
+  run's end: **412 passed / 0 failed**. All banked locally on
+  `main`; **no GitHub push** — pushes stay gated on
+  Volmarr's word. Next slice: S-059 GC scheduling.
 - **2026-10-30 (keeper run, Part II closed)** — Previous run
   had banked S-042 at 02:41 EDT (clean tree, no process
   live), so this run resumed at the map's named next slice
