@@ -58,7 +58,7 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part VII next** (Part I gate passed
+- **Phase: Part VII open** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
   Part IV gate S-096 passed 2026-10-30 at 640; Part V gate
@@ -130,7 +130,16 @@ Volmarr's original repos onto his own machines.
   passed, 1793.68 s — exactly the prior 880 plus this
   run's 26 battery tests; the one skip is S-095's
   named real-sshd cell);
-  next S-141 PR creation, same-repo — opening Part VII.
+  S-141 banked 2026-10-30 (8-test battery, foreground;
+  combined with conversion + compare + taxonomy +
+  dependencies 30 passed / 0 failed; no migration, no
+  new audit event — creation rides S-137's existing
+  repo.pull_request.create, taxonomy stands at 90);
+  next S-142 PR creation, cross-fork. A fresh
+  full-suite governing recount is owed before further
+  slices bank (last governing recount 906 passed /
+  1 skipped; arithmetic expectation 914 passed /
+  1 skipped).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -3267,3 +3276,34 @@ Volmarr's original repos onto his own machines.
   banked locally on `main`; **no GitHub push** —
   pushes stay gated on Volmarr's word. Next slice:
   S-141 PR creation, same-repo, opening Part VII.
+- **2026-10-30 (keeper run, Part VII opened)** — Previous
+  run had banked S-140 at 17:59 EDT, closing Part VI
+  (clean tree, no process live at this tick's check),
+  so this run resumed at the map's named next slice and
+  built **S-141** PR creation, same-repo (new module
+  `samverk/pull_requests.py`: branch pickers from the
+  real ref listing, preview_creation riding S-105's
+  compare unchanged with blockers said in words,
+  creation validating whole — same_branch /
+  base_not_found / head_not_found / no_commits /
+  already_exists / branch_invalid / title law — before
+  claiming the next shared S-121 number; born open,
+  not draft, audited under S-137's existing
+  repo.pull_request.create with same_repo in the
+  detail; taxonomy unchanged at 90 events, no
+  migration). 8-test battery, foreground; combined
+  with conversion + compare + taxonomy + dependencies
+  **30 passed / 0 failed**. One test-authoring slip
+  was caught and fixed in-slice (a compact-JSON spacing
+  expectation in the audit-detail assertion), module
+  behaviour standing. A fresh full-suite governing
+  recount was NOT run this tick (last governing
+  recount stands at 906 passed / 1 skipped; arithmetic
+  expectation 914 passed / 1 skipped) — the next
+  keeper run verifies it from a log file before
+  banking further slices. Environment: TMPDIR pointed
+  at `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`. All banked locally
+  on `main`; **no GitHub push** — pushes stay gated
+  on Volmarr's word. Next slice: S-142 PR creation,
+  cross-fork.
