@@ -252,8 +252,25 @@ Volmarr's original repos onto his own machines.
   (health, root, 404, and the CSRF gate's 403) carries the
   enforced header and that report-only mode swaps the header
   name only. Cumulative battery: **138/138**.
-- **Campaign position: S-001…S-016 DONE.** Next: S-017
-  dependency policy (stdlib-first register, CI-style battery).
+- **S-017 DONE (2026-10-30)** — dependency policy:
+  `samverk/dependencies.py` (the code register:
+  `ADMITTED_DEPENDENCIES`, today empty) +
+  `docs/DEPENDENCY_REGISTER.md` (the human register). Admission
+  requires all three of: a register entry with distribution,
+  exact `==` pin, import name, and a reason line naming what
+  the stdlib cannot do; the doc row; and the pinned pyproject
+  requirement — in one commit. Battery
+  `tests/test_dependencies.py`: **5 passed / 0 failed** — it
+  parses pyproject (stdlib `tomllib`) and requires the declared
+  runtime dependencies to equal the register exactly, checks
+  every admission carries a reason + exact pin and is named in
+  the doc, and AST-scans the package *and* the test suite so
+  every import must be stdlib, intra-package, or admitted
+  (with a guard test proving the scan really sees the package).
+  The register's emptiness is now a proven fact per run.
+  Cumulative battery: **143/143**.
+- **Campaign position: S-001…S-017 DONE.** Next: S-018 log
+  redaction (seeded secrets never reach captured logs).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
