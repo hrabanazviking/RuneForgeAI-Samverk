@@ -101,7 +101,7 @@ class SmartHttpService:
     def __init__(self, conn: sqlite3.Connection, data_root: Path,
                  accounts: AccountStore, repositories: RepositoryStore,
                  receive_gate=None, push_events=None,
-                 transfer_limits=None):
+                 transfer_limits=None, push_locks=None):
         self._conn = conn
         self._data_root = Path(data_root)
         self._accounts = accounts
@@ -109,6 +109,7 @@ class SmartHttpService:
         self._receive_gate = receive_gate
         self._push_events = push_events
         self._transfer_limits = transfer_limits
+        self._push_locks = push_locks
 
     # -- the gate -------------------------------------------------
 
@@ -220,9 +221,22 @@ class SmartHttpService:
                 refs_before = {r.name: r.oid for r in RefStore(path).list_refs()}
             except Exception:
                 refs_before = {}
-        result = run_git_pack(
-            path, program, stateless=True, input_bytes=bytes(body),
-            protocol_version=protocol_version, timeout=timeout)
+        if service_name == "git-receive-pack" \
+                and self._push_locks is not None:
+            # S-092: fail fast on a concurrent push to this repo.
+            from .push_locks import PushBusyError
+            try:
+                with self._push_locks.hold(_current.full_name):
+                    result = run_git_pack(
+                        path, program, stateless=True,
+                        input_bytes=bytes(body),
+                        protocol_version=protocol_version, timeout=timeout)
+            except PushBusyError as exc:
+                raise TransportError("push_in_progress", exc.message) from None
+        else:
+            result = run_git_pack(
+                path, program, stateless=True, input_bytes=bytes(body),
+                protocol_version=protocol_version, timeout=timeout)
         if result.returncode != 0:
             raise TransportError(
                 "transport_failed",

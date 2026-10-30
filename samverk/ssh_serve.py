@@ -120,6 +120,7 @@ class SshServeService:
         pack_runner: Callable[..., int] = run_git_pack_stdio,
         receive_gate=None,
         push_events=None,
+        push_locks=None,
     ):
         self._conn = conn
         self._data_root = Path(data_root)
@@ -129,6 +130,7 @@ class SshServeService:
         self._runner = pack_runner
         self._receive_gate = receive_gate
         self._push_events = push_events
+        self._push_locks = push_locks
         self._ssh_keys = SshKeyStore(conn, accounts)
         self._deploy_keys = DeployKeyStore(conn, accounts)
 
@@ -218,9 +220,23 @@ class SshServeService:
                 refs_before = {r.name: r.oid for r in RefStore(path).list_refs()}
             except Exception:
                 refs_before = {}
-        rc = self._runner(
-            path, program, stdin=stdin, stdout=stdout, stderr=stderr,
-            protocol_version=protocol_version)
+        # S-092: one receive at a time per repository — a
+        # concurrent push fails fast, before its pack moves.
+        lock_guard = None
+        if service == "git-receive-pack" and self._push_locks is not None:
+            from .push_locks import PushBusyError
+            lock_guard = self._push_locks.hold(current.full_name)
+            try:
+                lock_guard.__enter__()
+            except PushBusyError as exc:
+                return self._refuse(stderr, exc.reason, exc.message)
+        try:
+            rc = self._runner(
+                path, program, stdin=stdin, stdout=stdout, stderr=stderr,
+                protocol_version=protocol_version)
+        finally:
+            if lock_guard is not None:
+                lock_guard.__exit__(None, None, None)
         if service == "git-receive-pack" and rc == 0 \
                 and self._push_events is not None:
             # S-090: the canonical push event, ranges read back
