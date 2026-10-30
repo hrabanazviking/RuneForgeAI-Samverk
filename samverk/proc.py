@@ -493,6 +493,49 @@ def run_git_pack(
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
 
 
+def run_git_pack_stdio(
+    repo_path: Path,
+    program: str,
+    *,
+    stdin=None,
+    stdout=None,
+    stderr=None,
+    protocol_version: int | None = None,
+) -> int:
+    """Run a git pack program with the caller's streams attached
+    (the SSH door, S-086/S-087): the SSH channel *is* the pack
+    program's stdin/stdout, interactively, so nothing may be
+    buffered through Python. Same law as `run_git_pack` — the
+    program comes from `PACK_PROGRAMS` (named by the caller's
+    own table, never by client input), no `--stateless-rpc`
+    (an SSH session is stateful by nature), the repository is a
+    trusted resolved Path passed as the final positional
+    argument by this function itself, and `GIT_PROTOCOL` is set
+    or scrubbed explicitly. Returns the program's exit code.
+    The caller owns timeouts and limits (S-091's seam wraps
+    this one); this helper hides no such duty.
+    """
+    if program not in PACK_PROGRAMS:
+        raise ProcRefused("pack_program_not_allowlisted", str(program))
+    if not isinstance(repo_path, Path) or not repo_path.is_absolute():
+        raise ProcRefused(
+            "pack_path_not_trusted",
+            "pack repository must be a resolved local Path object")
+    if protocol_version not in (None, 0, 2):
+        raise ProcRefused(
+            "pack_protocol_invalid", repr(protocol_version))
+    executable = resolve_program("git")
+    argv = [str(executable), program, str(repo_path)]
+    env = _clean_env()
+    env.pop("GIT_PROTOCOL", None)
+    if protocol_version == 2:
+        env["GIT_PROTOCOL"] = "version=2"
+    proc = subprocess.Popen(
+        argv, shell=False, stdin=stdin, stdout=stdout,
+        stderr=stderr, env=env)
+    return proc.wait()
+
+
 def run_git_in(
     repo_path: Path,
     args: list[str],
