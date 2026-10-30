@@ -86,9 +86,13 @@ class SessionStore:
         return row["user_id"]
 
     def revoke(self, token: str) -> bool:
+        """Tombstone a live session; True only when this call did
+        the revoking (an already-revoked token reports False — a
+        double logout is a no-op, found by the S-027 battery)."""
         with self._conn:
             cur = self._conn.execute(
-                "UPDATE sessions SET revoked = 1 WHERE token_hash = ?",
+                "UPDATE sessions SET revoked = 1 WHERE token_hash = ?"
+                " AND revoked = 0",
                 (_hash_token(token),),
             )
         return cur.rowcount > 0

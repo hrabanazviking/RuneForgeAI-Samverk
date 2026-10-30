@@ -457,6 +457,26 @@ Volmarr's original repos onto his own machines.
   including the DB-leak test (stored hashes redeem nothing, raw
   token absent from the DB file) and audit checks for both
   roads. Cumulative battery: **209/209**.
+- **S-027 DONE (2026-10-30)** — login/logout: `samverk/login.py`
+  (`LoginService` over S-025 accounts + S-006 sessions + S-005
+  throttle). Every refusal — no such user, wrong password,
+  pending/suspended status, throttled — raises the same
+  `LoginFailed` with the same generic message, and a nonexistent
+  user still costs a scrypt verify against a decoy hash so
+  timing cannot enumerate accounts. Failures are audited
+  (`auth.login.failure`, attempted name only, never a password)
+  and feed the per-account exponential throttle (delays, never
+  locks; success clears it); success audits
+  `auth.login.success`, persists any S-004 hash upgrade, and
+  issues a fresh session. Logout tombstones the session token
+  itself and audits `auth.logout`; a second logout is a quiet
+  no-op. **Bug found by this battery and fixed in-slice:**
+  `SessionStore.revoke` reported True for an already-revoked
+  token (SQLite counted the re-matched row); it now only
+  revokes a live session (`AND revoked = 0`), verified against
+  the S-006 and S-022 batteries too. Battery
+  `tests/test_login.py`: **7 passed / 0 failed**. Cumulative
+  battery: **216/216**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
