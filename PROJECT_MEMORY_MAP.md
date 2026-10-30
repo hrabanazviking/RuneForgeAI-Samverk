@@ -58,12 +58,14 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: founding.** Repo holds LICENSE, tentative README, research
-  scaffold, massive roadmap, and this map. **No code exists yet**; none
-  is claimed.
-- Next road, when Volmarr gives the word: the research studies
-  (beginning with 31 threat model, 01/02 transports, 42 data model) and
-  Part I of the roadmap.
+- **Phase: Part I underway** (Volmarr's go-ahead, 2026-10-29 ~21:39
+  EDT). Campaign branch: `yrsa/samverk-part1`.
+- **Part I research complete (2026-10-29):** studies 31 (threat
+  model), 35 (audit log), 42 (data model & storage), 07 (passwords &
+  sessions) written and committed.
+- **S-001 DONE (2026-10-29)** — threat model ratified: threat register
+  T-01…T-20, trust boundaries TB1…TB8, honest limits §6 of study 31.
+- Next: S-002 project skeleton.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -85,3 +87,8 @@ Volmarr's original repos onto his own machines.
   design warband by office and the Book XIV ship gate as acceptance;
   README and this map carry the plain statement). Corpus now 46 study
   files. Pushed and remote-verified.
+- **2026-10-29 (campaign opens)** — Volmarr's go-ahead ~21:39 EDT.
+  Part I studies 31/35/42/07 completed as genuine clean-room studies;
+  **S-001 DONE** (threat model ratified). Work proceeds on branch
+  `yrsa/samverk-part1`; banking to main is the coordinator's step,
+  verified by ls-remote.
