@@ -58,11 +58,12 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part VI in progress** (Part I gate passed
+- **Phase: Part VII next** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
   Part IV gate S-096 passed 2026-10-30 at 640; Part V gate
-  S-120 passed 2026-10-30; S-121..S-128 banked 2026-10-30 —
+  S-120 passed 2026-10-30; Part VI gate S-140 passed
+  2026-10-30 at 906 passed / 1 skipped; S-121..S-128 banked 2026-10-30 —
   governing recounts reproduced from log files read back
   after each run finished: pytest 783 passed / 1 skipped /
   0 failed (784 collected); unittest discover 784 ran,
@@ -122,7 +123,14 @@ Volmarr's original repos onto his own machines.
   combined with dependencies 11 passed / 0 failed;
   migration 48; no new audit events — the outbox
   derives from the audit record);
-  next S-140 Part VI gate — full counted recount.
+  S-140 banked 2026-10-30 — PART VI GATE (5-test gate
+  battery, foreground; governing full-suite recount
+  read back from its log file: pytest 906 passed /
+  1 skipped / 0 failed, 907 collected, 5 subtests
+  passed, 1793.68 s — exactly the prior 880 plus this
+  run's 26 battery tests; the one skip is S-095's
+  named real-sshd cell);
+  next S-141 PR creation, same-repo — opening Part VII.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2602,6 +2610,49 @@ Volmarr's original repos onto his own machines.
   them). Battery `tests/test_issue_events_out.py`:
   **6 passed / 0 failed** (foreground; combined with
   the S-017 dependencies scan 11 passed / 0 failed).
+- **S-140 DONE (2026-10-30) — PART VI GATE.** Gate
+  battery `tests/test_issue_battery.py`: **5 passed /
+  0 failed** (foreground), walking the assembled Part
+  VI system over public and private repositories: the
+  full lifecycle end to end (create → comment → label
+  → milestone → assign → react → pin → lock, with the
+  lock biting a reader's comment → unlock → close as
+  completed → reopen → convert to a draft PR), with
+  the timeline and the S-139 outbox telling the same
+  story the acts wrote; transfer keeping an issue
+  whole with its forwarding note; references linking
+  both ways with the closing notice said before any
+  merge and a mention in the target's timeline; and
+  permissions at each role — a private repository
+  answering anonymous, stranger, and non-owner readers
+  with the uniform not-found on every surface (issues,
+  comments, timeline, outbox, references) while its
+  owner walks it fine, and on a public repository a
+  non-author reader refused edit and moderation while
+  the owner moderates. Counted gate run executed fresh
+  at the gate on this VM (Linux x86-64), read back
+  from its log file: `python3 -m pytest tests -q` →
+  **906 passed / 1 skipped / 0 failed** (907 collected,
+  5 subtests passed, 1793.68 s — exactly the prior
+  governing 880 plus S-137's 8, S-138's 7, S-139's 6,
+  and this gate's 5). The one skip is S-095's named
+  real-sshd cell, NOT PROVEN on this host. (The gate
+  recount's first attempt was killed by a service
+  restart after 7 tests — its log held only dots, no
+  result, and is not evidence; the restarted run's log
+  is `recount-2026-10-30-1745-pytest.log` in the goal's
+  hidden files.) **Open findings, named, none hidden:**
+  (1) the real-sshd cell stays NOT PROVEN (S-095);
+  platform cells beyond Linux x86-64 stay NOT PROVEN
+  (Part XXII owns proof). (2) Part VII builds the full
+  PR surface on S-137's PR record (creation roads,
+  ready-for-review, reviews, merge) — the draft PR a
+  conversion mints is real but minimal until then.
+  (3) Everything banked sits on local `main` only —
+  **no GitHub push made**: pushes stay gated on
+  Volmarr's explicit word. **Part VI is complete.**
+  Next: Part VII — Pull Requests & Code Review,
+  opening at S-141 PR creation, same-repo.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3201,3 +3252,18 @@ Volmarr's original repos onto his own machines.
   All banked locally on `main`; **no GitHub push** —
   pushes stay gated on Volmarr's word. Next slice:
   S-139 issue events out.
+- **2026-10-30 (keeper run, Part VI gate)** — Same run,
+  after banking S-139: built the **S-140 Part VI gate**
+  battery (5 tests, foreground) and ran the governing
+  full-suite recount. The recount's first attempt was
+  killed by a service restart after 7 tests (its log
+  held only dots — discarded, not evidence); the
+  restarted run's log was read back after it finished:
+  pytest **906 passed / 1 skipped / 0 failed** (907
+  collected, 5 subtests passed, 1793.68 s — exactly
+  the prior 880 plus this run's 26 battery tests);
+  the one skip is S-095's named real-sshd cell, NOT
+  PROVEN on this host. **Part VI is complete.** All
+  banked locally on `main`; **no GitHub push** —
+  pushes stay gated on Volmarr's word. Next slice:
+  S-141 PR creation, same-repo, opening Part VII.
