@@ -24,6 +24,7 @@ from urllib.parse import parse_qs
 from . import __version__
 from .config import Config
 from .csp import csp_header
+from .errors import PublicError, log_internal_error, new_error_id, public_error_body
 from .http_security import (
     CSRF_FORM_FIELD,
     CSRF_HEADER,
@@ -71,6 +72,45 @@ class _Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    # -- S-019 error law --
+
+    def _send_error(self, status: int, code: str,
+                    error_id: str | None = None) -> None:
+        """The only way an error leaves this server: a registered
+        code + an opaque id (errors.py), nothing else."""
+        self._send_json(status, public_error_body(code, error_id))
+
+    def _guarded(self, handler) -> None:
+        """Run *handler* under the error law. A PublicError is
+        answered with its own code/status; anything unexpected
+        becomes a 500 whose body carries only `internal` + the
+        error id, while the full detail goes to the server log
+        under that same id."""
+        try:
+            handler()
+        except PublicError as exc:
+            self._send_error(exc.status, exc.code)
+        except Exception as exc:  # noqa: BLE001 — the law is the catch
+            error_id = new_error_id()
+            log_internal_error(error_id, exc)
+            try:
+                self._send_error(500, "internal", error_id)
+            except Exception:
+                pass  # the client is gone; the log already has it
+
+    def send_error(self, code, message=None, explain=None) -> None:
+        """Base-class error pages (malformed requests, unknown
+        methods) are HTML carrying internals — replaced wholesale
+        with the S-019 JSON shape."""
+        error_code = {
+            400: "bad_request", 404: "not_found",
+            405: "method_not_allowed", 501: "method_not_allowed",
+        }.get(code, "internal" if code >= 500 else "bad_request")
+        try:
+            self._send_error(code, error_code)
+        except Exception:
+            pass
+
     # -- S-009 cookie helpers (used by the auth slices of Part II) --
 
     def set_session_cookie(self, token: str) -> None:
@@ -115,28 +155,34 @@ class _Handler(BaseHTTPRequestHandler):
             return False
         return validate_csrf_token(session_token, self._submitted_csrf_token())
 
-    def _handle_state_changing(self) -> None:
+    def _route_state_changing(self) -> None:
         """The gate, then routing. Fails closed: no valid token bound
         to the caller's own session cookie means no handler runs."""
         if not self._csrf_ok():
-            self._send_json(403, {"error": "csrf_failed"})
+            self._send_error(403, "csrf_failed")
             return
         # No state-changing routes exist yet (Part II adds the first);
         # a request that passed the gate honestly reaches routing.
-        self._send_json(404, {"error": "not_found"})
+        self._send_error(404, "not_found")
+
+    def _handle_state_changing(self) -> None:
+        self._guarded(self._route_state_changing)
 
     do_POST = _handle_state_changing
     do_PUT = _handle_state_changing
     do_PATCH = _handle_state_changing
     do_DELETE = _handle_state_changing
 
-    def do_GET(self) -> None:
+    def _route_get(self) -> None:
         if self.path == "/healthz":
             self._send_json(200, _health_payload())
         elif self.path == "/":
             self._send_json(200, {"service": "samverk", "version": __version__})
         else:
-            self._send_json(404, {"error": "not_found"})
+            self._send_error(404, "not_found")
+
+    def do_GET(self) -> None:
+        self._guarded(self._route_get)
 
 
 def make_server(cfg: Config) -> ThreadingHTTPServer:

@@ -288,9 +288,30 @@ Volmarr's original repos onto his own machines.
   first key pattern's word boundary let compound keys like
   `csrf_token='…'` leak; the segment-aware pattern replaced
   it.) Cumulative battery: **150/150**.
-- **Campaign position: S-001…S-018 DONE.** Next: S-019 error
-  law (no stack traces/paths/secrets to clients; opaque error
-  ids correlating to server logs).
+- **S-019 DONE (2026-10-30)** — error law:
+  `samverk/errors.py` — clients receive exactly
+  `{"error": <registered code>, "error_id": <64-bit CSPRNG
+  hex>}` and nothing else; codes are a frozen registry (like
+  the S-008 taxonomy — an unregistered code raises in-process,
+  never reaches a client); handlers may raise `PublicError`, and
+  the server's dispatch is guarded so any unexpected exception
+  becomes an opaque 500 under a fresh error id while the full
+  detail lands in the server log under the *same* id via
+  `log_internal_error` — which renders the traceback itself and
+  redacts before writing (a bare `logger.exception` would carry
+  exception text past S-018's filter, since logging appends
+  tracebacks after filters run; this function exists for that
+  reason). The base class's HTML error pages (malformed
+  requests, unknown methods) are replaced wholesale with the
+  JSON shape. The S-002 skeleton test's exact 404 assertion was
+  updated to the extended shape, intent preserved. Battery
+  `tests/test_errors.py`: **7 passed / 0 failed**, including a
+  handler rigged to raise a secret-carrying exception — the 500
+  body leaks neither message, path, nor traceback, and the
+  captured server log holds the detail under the id, redacted.
+  Cumulative battery: **157/157**.
+- **Campaign position: S-001…S-019 DONE.** Next: S-020
+  operator key custody (instance keys, rotation drill).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

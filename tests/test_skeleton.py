@@ -112,7 +112,12 @@ class ServerTests(unittest.TestCase):
     def test_unknown_route_is_a_clean_404(self):
         status, payload = _get(f"http://127.0.0.1:{self.port}/no-such-route")
         self.assertEqual(status, 404)
-        self.assertEqual(payload, {"error": "not_found"})
+        # S-019 extended this shape: a registered code + an opaque
+        # error id, nothing else. (S-002's intent — a clean JSON
+        # 404 with no internals — is preserved.)
+        self.assertEqual(payload["error"], "not_found")
+        self.assertEqual(set(payload), {"error", "error_id"})
+        self.assertEqual(len(payload["error_id"]), 16)
 
 
 class ServeSubprocessTests(unittest.TestCase):
