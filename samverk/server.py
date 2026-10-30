@@ -156,9 +156,12 @@ def serve(cfg: Config) -> None:
     (see tls_policy). When TLS is configured the listening
     socket is wrapped and the scheme is https.
     """
+    from .log_redaction import install_redaction
     from .tls_policy import enforce_with_audit, tls_configured
 
     posture = enforce_with_audit(cfg)
+    # S-018: no log write from this process happens unfiltered.
+    install_redaction()
     httpd = make_server(cfg)
     scheme = "http"
     if tls_configured(cfg):

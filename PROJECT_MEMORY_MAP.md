@@ -269,8 +269,28 @@ Volmarr's original repos onto his own machines.
   (with a guard test proving the scan really sees the package).
   The register's emptiness is now a proven fact per run.
   Cumulative battery: **143/143**.
-- **Campaign position: S-001…S-017 DONE.** Next: S-018 log
-  redaction (seeded secrets never reach captured logs).
+- **S-018 DONE (2026-10-30)** — log redaction:
+  `samverk/log_redaction.py` — a `RedactingFilter` for the
+  logging stack (installed on the root logger by `serve()`),
+  applying three layers in `redact_text`: registered literal
+  secrets (`register_secret`, min length 4, longest-first);
+  auth shapes struck whole (`Bearer`/`Basic`,
+  `Authorization:`/`Cookie:`/`Set-Cookie:` header values); and
+  sensitive-key pairs (`key=value`, `key: value`, JSON pairs)
+  whose key is sensitive as a whole `_`/`-`-separated segment —
+  `csrf_token`/`auth_token`/`x-api-key` strike, `author` does
+  not. Keys survive so logs stay debuggable; bare hex is
+  deliberately *not* struck (git SHAs belong in logs). Battery
+  `tests/test_log_redaction.py`: **7 passed / 0 failed**,
+  including the literal acceptance — seeded secrets in plain,
+  format-arg, cookie, and JSON shapes never appear in captured
+  logs. (One flaw found by the battery and fixed in-slice: the
+  first key pattern's word boundary let compound keys like
+  `csrf_token='…'` leak; the segment-aware pattern replaced
+  it.) Cumulative battery: **150/150**.
+- **Campaign position: S-001…S-018 DONE.** Next: S-019 error
+  law (no stack traces/paths/secrets to clients; opaque error
+  ids correlating to server logs).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
