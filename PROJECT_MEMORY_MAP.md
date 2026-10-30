@@ -630,6 +630,23 @@ Volmarr's original repos onto his own machines.
   vectors first typed from the table's SHA-256 column, and
   the provisioning label's colon over-encoded.) Cumulative
   battery: **286/286**.
+- **S-036 DONE (2026-10-30)** — sudo mode: `samverk/sudo_mode.py`
+  + schema migration 13 (`sudo_grants`). Re-entering the
+  account password (S-004 verify, decoy-hash timing for unknown
+  accounts, upgrade persisted as in S-027) opens a 15-minute
+  freshness window bound to **one session**, keyed by the
+  session token's SHA-256 — the raw token never touches the
+  table. Wrong password / unknown account is one generic
+  `SudoFailed` and grants nothing; expired grants answer
+  False and are swept. `as_verifier(session)` returns exactly
+  the re-auth seam S-030/S-035 consume, fulfilling S-030's
+  promise: its battery drives the real verifier through the
+  SSH key-add gate (refused before the grant, allowed inside
+  the window, refused after expiry). Battery
+  `tests/test_sudo_mode.py`: **6 passed / 0 failed**,
+  including the DB-leak test (grant rows hold hashes only,
+  and a stored hash itself buys no freshness). Cumulative
+  battery: **292/292**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

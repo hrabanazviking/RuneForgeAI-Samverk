@@ -211,6 +211,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  last_counter INTEGER NOT NULL DEFAULT -1"
         ")",
     ]),
+    # S-036: sudo-mode grants — bound to one session by the
+    # session token's SHA-256 (never the raw token, S-006 law).
+    (13, [
+        "CREATE TABLE sudo_grants ("
+        "  user_id INTEGER NOT NULL,"
+        "  session_hash TEXT NOT NULL,"
+        "  granted_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (user_id, session_hash)"
+        ")",
+    ]),
 ]
 
 
