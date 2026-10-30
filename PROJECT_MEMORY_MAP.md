@@ -891,6 +891,20 @@ Volmarr's original repos onto his own machines.
   the row in one transaction, and a failed row update rolls
   the directory back. Battery `tests/test_repo_metadata.py`:
   **6 passed / 0 failed**. Cumulative battery: **380/380**.
+- **S-051 DONE (2026-10-30)** — object reading:
+  `samverk/objects.py` — blob/tree/commit reads through one
+  `cat-file --batch` spawn per call (S-014 law), never one
+  spawn per object. Object ids are hex-validated before they
+  reach git; a missing object is a named refusal
+  (`object_not_found`), never empty content. Tree payloads
+  parse to (mode, name, oid) entries; commits parse to tree,
+  parents, author/committer and message. Battery
+  `tests/test_objects.py`: **3 passed / 0 failed**, including
+  the latency proof — 2,000 distinct blobs batch-read with
+  content verified, far inside a 5-second ceiling a
+  spawn-per-object reader would blow. (The roadmap's 10k
+  figure re-verifies at the Part III gate, S-076.)
+  Cumulative battery: **383/383**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
