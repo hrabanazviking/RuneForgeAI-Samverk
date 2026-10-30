@@ -125,6 +125,10 @@ REPO_EVENTS = frozenset({
     # S-143 additions (append-only, per the taxonomy rules):
     "repo.pull_request.mark_ready",
     "repo.pull_request.convert_to_draft",
+    # S-144 additions (append-only, per the taxonomy rules):
+    "repo.pull_request.comment",
+    "repo.pull_request.comment_edit",
+    "repo.pull_request.comment_delete",
 })
 
 ADMIN_EVENTS = frozenset({

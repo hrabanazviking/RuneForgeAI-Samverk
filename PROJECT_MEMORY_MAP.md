@@ -154,10 +154,23 @@ Volmarr's original repos onto his own machines.
   PRs + conversion + issue events out + dependencies
   52 passed / 0 failed, read back from its log file;
   taxonomy append-only +2, 92 events; no migration);
-  next S-144 PR conversation. A fresh full-suite
+  governing full-suite recount owed by S-143 was paid
+  by the next keeper run and read back from its log
+  file: pytest 933 passed / 1 skipped / 0 failed
+  (934 collected, 5 subtests passed, 2065.27 s —
+  exactly the prior 914 plus S-142's 10 and S-143's 9;
+  the one skip is S-095's named real-sshd cell);
+  S-144 banked 2026-10-30 (11-test battery, foreground;
+  combined with taxonomy + timeline + cross-references
+  + drafts + issue comments + issue events out +
+  dependencies + same-repo PRs + cross-fork PRs +
+  conversion 88 passed / 0 failed, read back from its
+  log file; taxonomy append-only +3, 95 events; no
+  migration);
+  next S-145 PR files view. A fresh full-suite
   governing recount is owed before further slices
-  bank (last governing recount 914 passed /
-  1 skipped; arithmetic expectation 933 passed /
+  bank (last governing recount 933 passed /
+  1 skipped; arithmetic expectation 944 passed /
   1 skipped).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -2780,6 +2793,55 @@ Volmarr's original repos onto his own machines.
   S-144 PR conversation. A fresh governing recount is
   owed before further slices bank (expectation
   933 passed / 1 skipped).
+- **S-144 DONE (2026-10-30)** — PR conversation:
+  new module `samverk/pull_request_conversation.py`
+  (`PullRequestConversationStore`). Comments live on
+  the pull request in S-123's shared comment record —
+  the same table, edit history, and tombstones, with
+  S-138's hidden-comment visibility and S-132's lock
+  refusal (reason in words, writers excepted) read
+  from the same stamps — under its own audit events
+  (taxonomy append-only +3:
+  `repo.pull_request.comment` / `.comment_edit` /
+  `.comment_delete`; **95 events: 29 auth, 54 repo,
+  12 admin**; doc + code + counts together), carried
+  by S-139's outbox under its `repo.pull_request.*`
+  verb rule. The timeline is derived the way S-131's
+  is — opening from the PR row, state changes from
+  `issue_events`, readiness conversions (S-143) and
+  the audited issue-family acts from the audit log,
+  mentions and references from S-127's record — and
+  `conversation_for` merges comments and timeline by
+  time into one stream. Closing-keyword display
+  rides S-127: `closing_references` parses the PR's
+  current body and its live comments, keeps only
+  keyword-governed references proven through
+  `resolve_number`, and `closing_notice` says each
+  in words before merge; `sync_references` records
+  the prose into S-127's record, so mentioned items
+  gain back-references (proven in S-131's own stream)
+  and the PR timeline gains its `referenced` events.
+  Review submissions land in S-148, which teaches
+  this stream its review events the way S-132…S-138
+  taught S-131 — no review record exists yet to
+  merge, and none is invented. Battery
+  `tests/test_pull_request_conversation.py`:
+  **11 passed / 0 failed** (foreground); combined
+  with taxonomy + timeline + cross-references +
+  drafts + issue comments + issue events out +
+  dependencies + same-repo PRs + cross-fork PRs +
+  conversion **88 passed / 0 failed**, read back
+  from its log file. The governing recount this run
+  owed was paid first and read back from its log
+  file: pytest **933 passed / 1 skipped / 0 failed**
+  (934 collected, 5 subtests passed, 2065.27 s —
+  exactly the prior 914 plus S-142's 10 and S-143's
+  9); the one skip is S-095's named real-sshd cell,
+  NOT PROVEN on this host. No bugs were found in
+  shipped code by the new battery. Next: S-145 PR
+  files view. A fresh governing recount is owed
+  before further slices bank (expectation 944
+  passed / 1 skipped).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3481,3 +3543,31 @@ Volmarr's original repos onto his own machines.
   further slices. All banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's
   word. Next slice: S-144 PR conversation.
+- **2026-10-30 (keeper run, Part VII continued)** — Previous
+  run had banked S-143 at 19:08 EDT and closed its
+  session log in that commit (clean tree, no process
+  live, no subagent worker at this tick's check), so
+  this run first paid the governing recount S-143 owed
+  (log file read back after it finished: pytest **933
+  passed / 1 skipped / 0 failed**, 934 collected, 5
+  subtests passed, 2065.27 s — exactly the prior 914
+  plus S-142's 10 and S-143's 9 battery tests; the one
+  skip is S-095's named real-sshd cell, NOT PROVEN on
+  this host), then built **S-144** PR conversation
+  (new module `samverk/pull_request_conversation.py`;
+  taxonomy append-only +3, 95 events). 11-test battery,
+  foreground; combined with taxonomy + timeline +
+  cross-references + drafts + issue comments + issue
+  events out + dependencies + same-repo PRs +
+  cross-fork PRs + conversion **88 passed / 0 failed**,
+  read back from its log file. No bugs were found in
+  shipped code by the new battery. A fresh full-suite
+  governing recount was NOT run after this slice (last
+  governing recount stands at 933 passed / 1 skipped;
+  arithmetic expectation 944 passed / 1 skipped) — the
+  next keeper run verifies it from a log file before
+  banking further slices. Environment: TMPDIR pointed
+  at `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`. All banked locally
+  on `main`; **no GitHub push** — pushes stay gated on
+  Volmarr's word. Next slice: S-145 PR files view.
