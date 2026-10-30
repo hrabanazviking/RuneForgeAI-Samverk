@@ -156,8 +156,20 @@ Volmarr's original repos onto his own machines.
   `tests/test_escaping.py`: **12 passed / 0 failed**, including the
   stored-XSS payload battery rendered through a profile snippet.
   Cumulative battery: **85/85**.
-- **Campaign position: S-001…S-010 DONE.** Next: S-011 rate
-  limiting (per-IP and per-account token buckets).
+- **S-011 DONE (2026-10-30)** — rate limiting:
+  `samverk/rate_limit.py` — thread-safe token buckets (burst to
+  capacity, then the refill rate; refusals carry a truthful
+  `Retry-After`) in a keyed `RateLimiter` deciding per-IP and
+  per-account together: a request is charged to both buckets or
+  neither, so one dimension's refusal never drains the other, and
+  an account hopping IPs still meets its own bucket. Distinct
+  from S-005's login-failure backoff by design (different layers
+  of the same door). Fully-refilled idle buckets are pruned.
+  Battery `tests/test_rate_limit.py`: **11 passed / 0 failed**,
+  including the burst test and a 20-thread race granting exactly
+  capacity. Cumulative battery: **96/96**.
+- **Campaign position: S-001…S-011 DONE.** Next: S-012 upload
+  handling law.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -199,5 +211,5 @@ Volmarr's original repos onto his own machines.
   locally on `yrsa/samverk-part1` (73/73 cumulative). GitHub push
   NOT done — pushes stay gated on Volmarr's explicit word per the
   keeper's binding laws. The same keeper run continued slice after
-  slice: **S-010 DONE** (85/85 cumulative) — see the S-010 entry
-  above. Next slice: S-011.
+  slice: **S-010 DONE** (85/85 cumulative), then **S-011 DONE**
+  (96/96 cumulative) — see their entries above. Next slice: S-012.
