@@ -41,6 +41,10 @@ AUTH_EVENTS = frozenset({
     # S-037 additions (append-only, per the taxonomy rules):
     "auth.recovery.generate",
     "auth.recovery.use",
+    # S-039 additions (append-only, per the taxonomy rules):
+    "auth.passkey.add",
+    "auth.passkey.remove",
+    "auth.passkey.login",
 })
 
 REPO_EVENTS = frozenset({

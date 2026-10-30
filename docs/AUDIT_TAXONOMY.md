@@ -41,6 +41,9 @@ any name not in this document's set.*
 | `auth.profile.update` | Profile text or avatar changed (S-029) | `{"fields": "text"\|"avatar"}` |
 | `auth.recovery.generate` | Recovery code set generated; any old set invalidated (S-037) | `{"count": ..., "invalidated": ...}` — never the codes |
 | `auth.recovery.use` | A recovery code was redeemed (S-037) | — |
+| `auth.passkey.add` | Passkey enrolled (S-039) | `{"credential_id": ..., "format": ...}` — the id is a public identifier, never key material beyond the stored public key |
+| `auth.passkey.remove` | Passkey removed by its owner (S-039) | `{"credential_id": ...}` |
+| `auth.passkey.login` | Passkey assertion verified — second factor or passwordless (S-039) | `{"credential_id": ...}` |
 
 ## repo — repositories and their security surface
 
@@ -89,3 +92,6 @@ S-029 (2026-10-30) added `auth.profile.update` — 40 events:
 17 auth, 13 repo, 10 admin.
 S-037 (2026-10-30) added `auth.recovery.generate` and
 `auth.recovery.use` — 42 events: 19 auth, 13 repo, 10 admin.
+S-039 (2026-10-30) added `auth.passkey.add`,
+`auth.passkey.remove` and `auth.passkey.login` — 45 events:
+22 auth, 13 repo, 10 admin.

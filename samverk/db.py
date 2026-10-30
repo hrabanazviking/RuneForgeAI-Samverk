@@ -235,6 +235,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_recovery_codes_user"
         " ON recovery_codes (user_id)",
     ]),
+    # S-039: passkeys. Challenges are stored hashed only
+    # (the S-006 law), single-use, expiring. Credentials hold
+    # the COSE public key bytes — passkeys carry no secret
+    # material to this server, by design; credential_id is
+    # globally UNIQUE (one passkey, one account).
+    (15, [
+        "CREATE TABLE passkey_challenges ("
+        "  id INTEGER PRIMARY KEY,"
+        "  challenge_hash TEXT NOT NULL UNIQUE,"
+        "  user_id INTEGER,"
+        "  purpose TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  used_at INTEGER"
+        ")",
+        "CREATE TABLE passkey_credentials ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  credential_id TEXT NOT NULL UNIQUE,"
+        "  public_key BLOB NOT NULL,"
+        "  sign_count INTEGER NOT NULL DEFAULT 0,"
+        "  aaguid TEXT NOT NULL,"
+        "  nickname TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  last_used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_passkey_credentials_user"
+        " ON passkey_credentials (user_id)",
+    ]),
 ]
 
 

@@ -678,6 +678,34 @@ Volmarr's original repos onto his own machines.
   adminship now would be a claim, not a control. Battery
   `tests/test_twofactor_policy.py`: **7 passed / 0 failed**.
   Cumulative battery: **305/305**.
+- **S-039 DONE (2026-10-30)** — passkeys/WebAuthn:
+  `samverk/passkeys.py` + schema migration 15
+  (`passkey_challenges` hashed-only/single-use/5-minute;
+  `passkey_credentials`, credential id globally UNIQUE).
+  The WebAuthn Level 2 ceremonies implemented clean-room
+  from the public W3C spec on the stdlib alone — own CBOR
+  decoder, own COSE parsing, own pure-Python signature
+  verification (ES256, RS256, EdDSA). Registration is
+  sudo-gated through the S-036 seam, verifies client-data
+  type/challenge/origin, RP-ID hash, user presence, and the
+  attestation format (`none` accepted; `packed`
+  self-attestation verified with the credential's own key;
+  certificate chains and other formats refused by name).
+  Authentication serves both roadmap doors with one
+  ceremony — account-bound challenge = second factor,
+  unbound = passwordless (the verified credential names the
+  account; the caller mints the ordinary S-006 session).
+  A signature counter that fails to move forward is refused
+  as `cloned_authenticator`. Taxonomy grew append-only by
+  three events (`auth.passkey.add` / `auth.passkey.remove` /
+  `auth.passkey.login`; 45 total, doc + code + counts
+  updated together). Battery `tests/test_passkeys.py`:
+  **13 passed / 0 failed**, including the literal
+  acceptance — interop proven against **two independent
+  software authenticators written in the battery itself**
+  (ES256 with DER signatures + packed self-attestation, and
+  Ed25519 with RFC 8032 mathematics), sharing no code with
+  the server. Cumulative battery: **318/318**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

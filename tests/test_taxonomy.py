@@ -25,9 +25,10 @@ class TaxonomyTests(unittest.TestCase):
         # 37 at the S-008 freeze; append-only additions since:
         # S-026 added auth.email.verify + admin.user.approve;
         # S-029 added auth.profile.update;
-        # S-037 added auth.recovery.generate + auth.recovery.use.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 42)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 19)
+        # S-037 added auth.recovery.generate + auth.recovery.use;
+        # S-039 added auth.passkey.add/remove/login.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 45)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 22)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 13)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 10)
 
