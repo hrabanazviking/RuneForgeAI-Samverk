@@ -1269,3 +1269,19 @@ Volmarr's original repos onto his own machines.
   **368 passed / 0 failed**. All banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
   Next: Part III, S-049 bare repository creation.
+- **2026-10-30 (keeper run, LFS block)** — Previous run had
+  banked S-058 + the fork-clone fix at 03:25 EDT (clean tree,
+  no process live), so this run resumed at the map's named
+  next slice and built **S-059** GC scheduling (416/416),
+  **S-060** LFS object store (422/422), **S-061** LFS batch
+  API (428/428), and **S-062** LFS locking (434/434) — each
+  with its counted battery green and the full suite
+  re-counted at every slice. The git-lfs client interop
+  acceptances of S-061/S-062 were proven for real against
+  stock git-lfs 3.6.1 (push/pull round-trip; lock/locks/
+  unlock), with the client binary kept at
+  `~/workspace/.tools/git-lfs` because this VM's system
+  layer does not persist apt installs between sessions.
+  All banked locally on `main`; **no GitHub push** —
+  pushes stay gated on Volmarr's word. Next slice: S-063
+  archive downloads.
