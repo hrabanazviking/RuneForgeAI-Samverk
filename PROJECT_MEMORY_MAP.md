@@ -647,6 +647,22 @@ Volmarr's original repos onto his own machines.
   including the DB-leak test (grant rows hold hashes only,
   and a stored hash itself buys no freshness). Cumulative
   battery: **292/292**.
+- **S-037 DONE (2026-10-30)** — recovery codes:
+  `samverk/recovery_codes.py` + schema migration 14. A set is
+  ten codes (10 chars, unambiguous alphabet, `XXXXX-XXXXX`),
+  shown once and stored only as SHA-256 hashes; redemption
+  is single-use (race-safe spend) and every failure is the
+  same False. Regeneration deletes the whole old set in the
+  same transaction that mints the new one and **reports how
+  many codes died** (`invalidated`), so the surface can warn
+  loudly. Gates: confirmed S-035 two-factor required, and
+  generation is sudo-gated through the S-036 seam. Taxonomy
+  grew append-only by two events (`auth.recovery.generate` /
+  `auth.recovery.use`, detail carries counts, never codes;
+  42 total, doc + code + counts updated together). Battery
+  `tests/test_recovery_codes.py`: **6 passed / 0 failed**,
+  including the DB-leak sweep for every plaintext code.
+  Cumulative battery: **298/298**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

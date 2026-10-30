@@ -39,6 +39,8 @@ any name not in this document's set.*
 | `auth.session.revoke` | A session (or all) revoked | `{"scope": "one"\|"all"}` |
 | `auth.email.verify` | Email verification token redeemed (S-026; outcome distinguishes success from denied) | `{"reason": ...}` on denial only |
 | `auth.profile.update` | Profile text or avatar changed (S-029) | `{"fields": "text"\|"avatar"}` |
+| `auth.recovery.generate` | Recovery code set generated; any old set invalidated (S-037) | `{"count": ..., "invalidated": ...}` — never the codes |
+| `auth.recovery.use` | A recovery code was redeemed (S-037) | — |
 
 ## repo — repositories and their security surface
 
@@ -85,3 +87,5 @@ S-026 (2026-10-30) added `auth.email.verify` and
 `admin.user.approve` — 39 events: 16 auth, 13 repo, 10 admin.
 S-029 (2026-10-30) added `auth.profile.update` — 40 events:
 17 auth, 13 repo, 10 admin.
+S-037 (2026-10-30) added `auth.recovery.generate` and
+`auth.recovery.use` — 42 events: 19 auth, 13 repo, 10 admin.

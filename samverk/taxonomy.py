@@ -38,6 +38,9 @@ AUTH_EVENTS = frozenset({
     "auth.email.verify",
     # S-029 addition (append-only, per the taxonomy rules):
     "auth.profile.update",
+    # S-037 additions (append-only, per the taxonomy rules):
+    "auth.recovery.generate",
+    "auth.recovery.use",
 })
 
 REPO_EVENTS = frozenset({

@@ -222,6 +222,19 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  PRIMARY KEY (user_id, session_hash)"
         ")",
     ]),
+    # S-037: recovery codes — only SHA-256 hashes stored
+    # (the S-006 law); used_at is the single-use stamp.
+    (14, [
+        "CREATE TABLE recovery_codes ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  code_hash TEXT NOT NULL UNIQUE,"
+        "  created_at INTEGER NOT NULL,"
+        "  used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_recovery_codes_user"
+        " ON recovery_codes (user_id)",
+    ]),
 ]
 
 

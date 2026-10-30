@@ -24,9 +24,10 @@ class TaxonomyTests(unittest.TestCase):
     def test_taxonomy_size_and_families(self):
         # 37 at the S-008 freeze; append-only additions since:
         # S-026 added auth.email.verify + admin.user.approve;
-        # S-029 added auth.profile.update.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 40)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 17)
+        # S-029 added auth.profile.update;
+        # S-037 added auth.recovery.generate + auth.recovery.use.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 42)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 19)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 13)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 10)
 
