@@ -22,12 +22,14 @@ pushes and S-127/S-131 set for derived records:
 - **The verb set is the issue family.** An event's verb
   is its audit action, for every `repo.issue.*`,
   `repo.label.*`, and `repo.milestone.*` action plus
-  `repo.pull_request.create` — computed from the frozen
-  taxonomy, so a new issue-family act joins the outbox
-  the day its event is added, and nothing outside the
-  family (signups, pushes, repo creation, issue
-  *templates*, which are repository configuration) can
-  leak in. Personal, unaudited acts (saved filters)
+  the `repo.pull_request.*` lifecycle (creation in
+  S-139's day; S-143's draft transitions joined by the
+  same rule when their events were added) — computed
+  from the frozen taxonomy, so a new issue-family act
+  joins the outbox the day its event is added, and
+  nothing outside the family (signups, pushes, repo
+  creation, issue *templates*, which are repository
+  configuration) can leak in. Personal, unaudited acts (saved filters)
   and derived records (cross-references) are not
   mutations and emit nothing — named here so the
   boundary is a decision, not an omission.
@@ -67,7 +69,7 @@ ISSUE_EVENT_VERBS = frozenset(
     if verb.startswith("repo.issue.")
     or verb.startswith("repo.label.")
     or verb.startswith("repo.milestone.")
-    or verb == "repo.pull_request.create")
+    or verb.startswith("repo.pull_request."))
 
 
 class IssueEventOutError(ValueError):

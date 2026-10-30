@@ -148,10 +148,16 @@ Volmarr's original repos onto his own machines.
   seam `run_git_fetch_ref`; no new audit event —
   creation rides repo.pull_request.create with
   same_repo false in the detail, taxonomy stands
-  at 90); next S-143 draft pull requests. A fresh
-  full-suite governing recount is owed before further
-  slices bank (last governing recount 914 passed /
-  1 skipped; arithmetic expectation 924 passed /
+  at 90);
+  S-143 banked 2026-10-30 (9-test battery, foreground;
+  combined with taxonomy + same-repo PRs + cross-fork
+  PRs + conversion + issue events out + dependencies
+  52 passed / 0 failed, read back from its log file;
+  taxonomy append-only +2, 92 events; no migration);
+  next S-144 PR conversation. A fresh full-suite
+  governing recount is owed before further slices
+  bank (last governing recount 914 passed /
+  1 skipped; arithmetic expectation 933 passed /
   1 skipped).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -2730,6 +2736,50 @@ Volmarr's original repos onto his own machines.
   battery. Next: S-143 draft pull requests. A fresh
   governing recount is owed before further slices bank
   (expectation 924 passed / 1 skipped).
+- **S-143 DONE (2026-10-30)** — draft pull requests:
+  new module `samverk/pull_request_drafts.py`
+  (`PullRequestDraftStore`). Drafts are born through
+  the ordinary creation seams — S-141's and S-142's
+  creation gained a `draft` parameter (default false;
+  the audit detail now says which), joining S-137's
+  conversion-born drafts — and are listed, read, and
+  rendered exactly like any other pull request.
+  `mark_ready` / `convert_to_draft` convert both ways:
+  the author or any writer on the base repository may
+  convert (a mere reader is refused
+  `permission_denied`; a stranger to a private repo
+  gets the uniform `pull_request_not_found`); a closed
+  pull request is refused `pull_request_closed`; asking
+  for the state it is already in is a quiet no-op.
+  Each real transition is an event — taxonomy
+  append-only +2 (`repo.pull_request.mark_ready`,
+  `repo.pull_request.convert_to_draft`; **92 events:
+  29 auth, 51 repo, 12 admin**; doc + code + counts
+  together) — and S-139's outbox verb rule now covers
+  the `repo.pull_request.*` lifecycle, so transitions
+  reach Part XI/XII like creations do. Unmergeability
+  is a stated seam: `merge_blocker` / `readiness` say
+  in words that a draft cannot merge until marked
+  ready (and a closed PR cannot merge), for the merge
+  slices S-153…S-155 to enforce from one place.
+  Battery `tests/test_pull_request_drafts.py`:
+  **9 passed / 0 failed** (foreground); combined with
+  taxonomy + same-repo PRs + cross-fork PRs +
+  conversion + issue events out + dependencies
+  **52 passed / 0 failed**, read back from its log
+  file. Two honest notes: (1) the battery's first
+  combined delivery claimed 51 passed / 0 failed —
+  a crossed report; three reproducible runs showed
+  1 failure (the battery tried to close a PR through
+  S-130's issue seam, which refuses PR rows by kind —
+  a test-arrangement error, module behaviour standing;
+  no PR-close seam exists yet, so the closed state is
+  now arranged at the storage layer with that stated
+  in the test), and only the log-file runs govern.
+  (2) No bugs were found in shipped code. Next:
+  S-144 PR conversation. A fresh governing recount is
+  owed before further slices bank (expectation
+  933 passed / 1 skipped).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3405,3 +3455,29 @@ Volmarr's original repos onto his own machines.
   on `main`; **no GitHub push** — pushes stay gated
   on Volmarr's word. Next slice: S-143 draft pull
   requests.
+- **2026-10-30 (keeper run, Part VII continued)** — Same
+  run, after banking S-142: built **S-143** draft pull
+  requests (new module `samverk/pull_request_drafts.py`;
+  creation seams gained the `draft` parameter; taxonomy
+  append-only +2, 92 events; S-139's outbox verb rule
+  extended to the `repo.pull_request.*` lifecycle).
+  9-test battery, foreground; combined with taxonomy +
+  same-repo PRs + cross-fork PRs + conversion + issue
+  events out + dependencies **52 passed / 0 failed**,
+  read back from its log file. One crossed report was
+  caught and discarded in-run: an early combined
+  delivery claimed 51 passed / 0 failed, but
+  reproducible runs showed the battery's closed-PR
+  arrangement failing against S-130's kind guard (a
+  test-arrangement error — no PR-close seam exists
+  yet; the closed state is now arranged at the storage
+  layer, stated in the test; module behaviour standing
+  in shipped code throughout). No bugs were found in
+  shipped code. A fresh full-suite governing recount
+  was NOT run after this slice (last governing recount
+  stands at 914 passed / 1 skipped; arithmetic
+  expectation 933 passed / 1 skipped) — the next keeper
+  run verifies it from a log file before banking
+  further slices. All banked locally on `main`;
+  **no GitHub push** — pushes stay gated on Volmarr's
+  word. Next slice: S-144 PR conversation.

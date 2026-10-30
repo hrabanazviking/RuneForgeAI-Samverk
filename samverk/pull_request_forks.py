@@ -64,7 +64,9 @@ flag, and an honest display of the fork relationship.
   `already_exists` (same base pair *and* same head
   repository, naming its number) are all refused before
   S-121's shared sequence moves. The pull request is
-  born open, not draft, in the **base** repository,
+  born open in the **base** repository — and not
+  draft, unless the author passes `draft=True`
+  (S-143's draft road rides this seam too) —
   claiming its next shared number.
 - **Audited under the existing event.**
   `repo.pull_request.create` (taxonomy unchanged at 90
@@ -391,7 +393,7 @@ class ForkPullRequestStore:
             self, actor: User, base_owner: object, base_repo: object, *,
             base_branch: object, head_owner: object, head_repo: object,
             head_branch: object, title: object = None, body: object = "",
-            maintainer_can_edit: bool = True,
+            maintainer_can_edit: bool = True, draft: bool = False,
             source_ip: str | None = None) -> CrossForkPullRequest:
         """Open a pull request from a fork's branch into the
         base repository. Every refusal is raised before any
@@ -441,9 +443,10 @@ class ForkPullRequestStore:
                 "INSERT INTO pull_requests (issue_id, repo_id,"
                 " source_issue_id, base_branch, head_branch,"
                 " base_oid, head_oid, is_draft, created_at, updated_at)"
-                " VALUES (?, ?, NULL, ?, ?, ?, ?, 0, ?, ?)",
+                " VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?)",
                 (row_id, base.id, base_name, head_name,
-                 view.base_oid, view.head_oid, now, now))
+                 view.base_oid, view.head_oid, 1 if draft else 0,
+                 now, now))
             pr_id = int(cur.lastrowid)
             self._conn.execute(
                 "INSERT INTO pull_request_forks (pull_request_id,"
@@ -459,7 +462,7 @@ class ForkPullRequestStore:
                 target_id=f"{base.full_name}#{number}",
                 outcome="success", source_ip=source_ip,
                 detail={"number": number, "base": base_name,
-                        "head": head_name, "draft": False,
+                        "head": head_name, "draft": bool(draft),
                         "same_repo": False, "head_repo": head.full_name,
                         "maintainer_can_edit": bool(maintainer_can_edit)})
         return created

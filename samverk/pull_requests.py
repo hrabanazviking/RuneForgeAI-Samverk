@@ -30,10 +30,12 @@ only then opens it.
   sequence moves, so a refused opening burns nothing.
 - **The PR is an ordinary numbered item.** It claims
   the next shared number (its `issues` row carries
-  `kind='pull_request'`, S-121), is born open and not
-  draft (drafts are S-143's slice; the conversion-born
-  PRs of S-137 start as drafts through their own seam),
-  and its `pull_requests` row (migration 46) records
+  `kind='pull_request'`, S-121), is born open — and
+  not draft, unless the author passes `draft=True`
+  (S-143's draft road rides this same seam, and the
+  audit detail says which; the conversion-born PRs of
+  S-137 start as drafts through their own seam) — and
+  its `pull_requests` row (migration 46) records
   the branch pair, both oids as compared at opening,
   and no source issue. The default title is the head
   commit's subject — the first commit the preview
@@ -210,7 +212,7 @@ class PullRequestStore:
     def create_pull_request(self, actor: User, owner: object,
                             repo: object, *, base_branch: object,
                             head_branch: object, title: object = None,
-                            body: object = "",
+                            body: object = "", draft: bool = False,
                             source_ip: str | None = None) -> PullRequest:
         """Open a same-repository pull request. Every
         refusal is raised before any number is claimed."""
@@ -254,9 +256,10 @@ class PullRequestStore:
                 "INSERT INTO pull_requests (issue_id, repo_id,"
                 " source_issue_id, base_branch, head_branch,"
                 " base_oid, head_oid, is_draft, created_at, updated_at)"
-                " VALUES (?, ?, NULL, ?, ?, ?, ?, 0, ?, ?)",
+                " VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?, ?)",
                 (row_id, current.id, base, head,
-                 view.base_oid, view.head_oid, now, now))
+                 view.base_oid, view.head_oid, 1 if draft else 0,
+                 now, now))
         created = self.get_pull_request(actor, owner, repo, number)
         if self._audit is not None:
             self._audit.append(
@@ -265,7 +268,7 @@ class PullRequestStore:
                 target_id=f"{current.full_name}#{number}",
                 outcome="success", source_ip=source_ip,
                 detail={"number": number, "base": base, "head": head,
-                        "draft": False, "same_repo": True})
+                        "draft": bool(draft), "same_repo": True})
         return created
 
     # -- reads -----------------------------------------------------------
