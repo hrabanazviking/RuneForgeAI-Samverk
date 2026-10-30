@@ -256,6 +256,25 @@ class SshServeService:
                             transport="ssh", updates=updates)
             except Exception:
                 pass
+        if service in ("git-upload-pack", "git-upload-archive") \
+                and rc == 0 and self._audit is not None:
+            # S-094: private-repo reads are witnessed (public
+            # reads are not — TransportAuditor decides).
+            from .transport_audit import TransportAuditor
+            if principal.kind == "deploy_key":
+                assert principal.deploy_key is not None
+                TransportAuditor(self._audit).record_read(
+                    actor_kind="deploy_key",
+                    actor_id=principal.deploy_key.id,
+                    full_name=current.full_name,
+                    visibility=current.visibility,
+                    transport="ssh", service=program)
+            elif principal.user is not None:
+                TransportAuditor(self._audit).record_read(
+                    actor_kind="user", actor_id=principal.user.id,
+                    full_name=current.full_name,
+                    visibility=current.visibility,
+                    transport="ssh", service=program)
         if service == "git-receive-pack" and rc == 0 \
                 and self._audit is not None:
             if principal.kind == "deploy_key":

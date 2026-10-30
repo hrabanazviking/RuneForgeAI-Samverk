@@ -103,7 +103,7 @@ class SmartHttpService:
     def __init__(self, conn: sqlite3.Connection, data_root: Path,
                  accounts: AccountStore, repositories: RepositoryStore,
                  receive_gate=None, push_events=None,
-                 transfer_limits=None, push_locks=None):
+                 transfer_limits=None, push_locks=None, audit=None):
         self._conn = conn
         self._data_root = Path(data_root)
         self._accounts = accounts
@@ -112,6 +112,7 @@ class SmartHttpService:
         self._push_events = push_events
         self._transfer_limits = transfer_limits
         self._push_locks = push_locks
+        self._audit = audit
 
     # -- the gate -------------------------------------------------
 
@@ -228,7 +229,8 @@ class SmartHttpService:
             timeout = self._transfer_limits.wall_clock_timeout("http")
         refs_before: dict[str, str] = {}
         want_event = (service_name == "git-receive-pack"
-                      and self._push_events is not None)
+                      and (self._push_events is not None
+                           or self._audit is not None))
         if want_event:
             try:
                 refs_before = {r.name: r.oid for r in RefStore(path).list_refs()}
@@ -257,17 +259,37 @@ class SmartHttpService:
         if want_event and viewer is not None:
             # S-090: record the canonical push event from the
             # refs that actually landed; post-receive recording
-            # never vetoes a landed push.
+            # never vetoes a landed push. S-094: the same landed
+            # ranges witness the push in the audit log.
             try:
                 refs_after = {r.name: r.oid for r in RefStore(path).list_refs()}
                 updates = diff_refs(refs_before, refs_after)
                 if updates:
-                    self._push_events.record_push(
-                        _current.owner, _current.name, actor_kind="user",
-                        actor_id=viewer.id, transport="http",
-                        updates=updates)
+                    if self._push_events is not None:
+                        self._push_events.record_push(
+                            _current.owner, _current.name,
+                            actor_kind="user", actor_id=viewer.id,
+                            transport="http", updates=updates)
+                    if self._audit is not None:
+                        from .transport_audit import TransportAuditor
+                        TransportAuditor(self._audit).record_push(
+                            actor_kind="user", actor_id=viewer.id,
+                            full_name=_current.full_name,
+                            transport="http",
+                            refs=tuple(u.ref for u in updates))
             except Exception:
                 pass
+        if self._audit is not None and program in (
+                "upload-pack", "upload-archive"):
+            # S-094: private-repo reads are witnessed; the
+            # auditor itself refuses to record public reads.
+            from .transport_audit import TransportAuditor
+            TransportAuditor(self._audit).record_read(
+                actor_kind="user" if viewer is not None else "anonymous",
+                actor_id=viewer.id if viewer is not None else None,
+                full_name=_current.full_name,
+                visibility=_current.visibility,
+                transport="http", service=program)
         return TransportResponse(
             content_type=f"application/x-{service_name}-result",
             body=result.stdout)

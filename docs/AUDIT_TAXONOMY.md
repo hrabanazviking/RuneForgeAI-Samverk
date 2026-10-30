@@ -70,6 +70,7 @@ any name not in this document's set.*
 | `repo.webhook.remove` | Webhook removed | `{"host": ...}` |
 | `repo.settings.change` | Security-relevant repo setting changed | `{"key": ..., "from": ..., "to": ...}` |
 | `repo.fork` | Repository forked; upstream link recorded (S-055) | `{"fork_of": ...}` |
+| `repo.fetch` | Private repository content fetched/cloned/archived via a transport (S-094) | `{"transport": ..., "service": ...}` — never pack or file contents; public reads are not recorded |
 
 ## admin — instance administration
 
@@ -114,3 +115,6 @@ S-043 (2026-10-30) added `auth.deletion.request`,
 S-044 added `admin.user.suspend` and `admin.user.unsuspend`;
 S-045 added `auth.identity.link` and `auth.identity.unlink`
 — 54 events: 29 auth, 13 repo, 12 admin.
+S-055 (2026-10-30) added `repo.fork` — 55 events.
+S-094 (2026-10-30) added `repo.fetch` — 56 events:
+29 auth, 15 repo, 12 admin.
