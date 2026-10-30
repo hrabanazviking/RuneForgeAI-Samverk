@@ -43,6 +43,9 @@ class Config:
     tls_cert_file: Path | None = None
     tls_key_file: Path | None = None
     allow_plaintext_http: bool = False
+    # S-016: CSP mode — "enforce" (default) or "report-only" for an
+    # operator's clean-period rehearsal before enforcement.
+    csp_mode: str = "enforce"
 
     @property
     def db_path(self) -> Path:
@@ -78,6 +81,8 @@ def _from_file(cfg: Config, path: Path) -> None:
         cfg.tls_key_file = Path(s["tls_key_file"]).expanduser()
     if "allow_plaintext_http" in s:
         cfg.allow_plaintext_http = _parse_bool(s["allow_plaintext_http"])
+    if "csp_mode" in s:
+        cfg.csp_mode = s["csp_mode"].strip().lower()
 
 
 def _from_env(cfg: Config, env: dict[str, str]) -> None:
@@ -100,6 +105,8 @@ def _from_env(cfg: Config, env: dict[str, str]) -> None:
     if env.get("SAMVERK_ALLOW_PLAINTEXT_HTTP"):
         cfg.allow_plaintext_http = _parse_bool(
             env["SAMVERK_ALLOW_PLAINTEXT_HTTP"])
+    if env.get("SAMVERK_CSP_MODE"):
+        cfg.csp_mode = env["SAMVERK_CSP_MODE"].strip().lower()
 
 
 def load_config(

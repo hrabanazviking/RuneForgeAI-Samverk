@@ -235,8 +235,25 @@ Volmarr's original repos onto his own machines.
   including the literal acceptance — refusal outside loopback,
   and the override landing exactly one verifiable audit row.
   Cumulative battery: **133/133**.
-- **Campaign position: S-001…S-015 DONE.** Next: S-016 content
-  security policy for the web UI.
+- **S-016 DONE (2026-10-30)** — content security policy:
+  `samverk/csp.py` — one canonical policy (`default-src 'self'`
+  with every fetch directive spelled out, `object-src 'none'`,
+  `frame-ancestors 'none'`, `base-uri`/`form-action 'self'`,
+  and no `unsafe-inline`/`unsafe-eval` anywhere — the browser
+  half of S-010's no-inline-scripts promise), sent by the
+  server's single send path so no route can forget it. The
+  acceptance lifecycle is a config switch (`csp_mode`,
+  file + env): `report-only` sends the *identical* policy value
+  under `Content-Security-Policy-Report-Only`, `enforce`
+  (default) under `Content-Security-Policy`; an unknown mode
+  raises at startup rather than silently shipping no CSP.
+  Battery `tests/test_csp.py`: **5 passed / 0 failed**,
+  including real-HTTP checks that every core response
+  (health, root, 404, and the CSRF gate's 403) carries the
+  enforced header and that report-only mode swaps the header
+  name only. Cumulative battery: **138/138**.
+- **Campaign position: S-001…S-016 DONE.** Next: S-017
+  dependency policy (stdlib-first register, CI-style battery).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

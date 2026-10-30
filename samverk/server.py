@@ -23,6 +23,7 @@ from urllib.parse import parse_qs
 
 from . import __version__
 from .config import Config
+from .csp import csp_header
 from .http_security import (
     CSRF_FORM_FIELD,
     CSRF_HEADER,
@@ -59,6 +60,10 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
+        # S-016: every response carries the CSP — this is the one
+        # send path, so no route can forget it.
+        csp_name, csp_value = csp_header(self._cfg.csp_mode)
+        self.send_header(csp_name, csp_value)
         pending = getattr(self, "_pending_cookie", None)
         if pending is not None:
             self.send_header("Set-Cookie", pending)
