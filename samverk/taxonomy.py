@@ -115,6 +115,9 @@ REPO_EVENTS = frozenset({
     # S-133 additions (append-only, per the taxonomy rules):
     "repo.issue.transfer_out",
     "repo.issue.transfer_in",
+    # S-137 additions (append-only, per the taxonomy rules):
+    "repo.issue.convert",
+    "repo.pull_request.create",
 })
 
 ADMIN_EVENTS = frozenset({

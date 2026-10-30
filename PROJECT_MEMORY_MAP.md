@@ -110,7 +110,11 @@ Volmarr's original repos onto his own machines.
   passed — exactly the prior 866 plus this run's 14
   battery tests; the one skip is S-095's named
   real-sshd cell);
-  next S-137 issue → PR conversion path.
+  S-137 banked 2026-10-30 (8-test battery, foreground;
+  combined with taxonomy + timeline + issues +
+  dependencies 35 passed / 0 failed; migration 46;
+  taxonomy append-only +2, 87 events);
+  next S-138 moderation — hide/delete abusive comments.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2509,6 +2513,37 @@ Volmarr's original repos onto his own machines.
   subtests passed — exactly the prior 866 plus this
   run's 14 battery tests; the skip is S-095's named
   real-sshd cell, NOT PROVEN on this host).
+- **S-137 DONE (2026-10-30)** — issue → PR conversion:
+  `samverk/issue_conversion.py` + schema migration 46
+  (`pull_requests`: branch pair, both oids at birth,
+  draft flag, `source_issue_id` UNIQUE link). One act
+  creates a real linked branch through S-053's ref seam
+  at the base branch's commit (default name
+  `<number>-<title slug>`; explicit names honoured under
+  the branch-name law; an existing branch is
+  `branch_taken`, never overwritten) and a draft PR
+  claiming the next shared S-121 number (its `issues`
+  row carries `kind='pull_request'`, the issue's title,
+  and a body linking back to the issue). Writers only
+  (`permission_denied` for a mere reader, even the
+  author; uniform `issue_not_found` for a stranger to a
+  private repository); closed issues refused
+  (`issue_closed`); a missing base — including an empty
+  repository — is `base_not_found`; a second conversion
+  is `already_converted` naming the existing PR. Every
+  refusal lands before any number is claimed or branch
+  created, and a database failure after branch creation
+  deletes the branch again (all-or-nothing). Audited on
+  both sides (taxonomy append-only +2:
+  `repo.issue.convert` / `repo.pull_request.create`,
+  87 events: 29 auth, 46 repo, 12 admin; doc + code +
+  counts together), and S-131's timeline learned the
+  conversion from the same audit record. Part VII's
+  creation / ready-for-review roads build on this PR
+  record. Battery `tests/test_issue_conversion.py`:
+  **8 passed / 0 failed** (foreground; combined with
+  taxonomy + timeline + issues + dependencies 35
+  passed / 0 failed).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3076,3 +3111,21 @@ Volmarr's original repos onto his own machines.
   `main`; **no GitHub push** — pushes stay gated on
   Volmarr's word. Next slice: S-137 issue → PR
   conversion path.
+- **2026-10-30 (keeper run, Part VI continued)** — Previous
+  run had closed its recount correction at e4b779d
+  (clean tree, no process live, no subagent worker), so
+  this run resumed at the map's named next slice and
+  built **S-137** issue → PR conversion path (8-test
+  battery, foreground; combined with taxonomy +
+  timeline + issues + dependencies 35 passed /
+  0 failed; migration 46; taxonomy append-only +2,
+  87 events). No bugs were found in shipped code by
+  the new battery. A fresh full-suite governing
+  recount was NOT run this tick (the last governing
+  recount stands at 880 passed / 1 skipped); the
+  arithmetic expectation is 888 passed / 1 skipped
+  and the next keeper run should verify it from a log
+  file before banking further slices. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-138
+  moderation — hide/delete abusive comments.

@@ -812,6 +812,30 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_saved_filters_user"
         " ON saved_filters (user_id, repo_id, name_lower)",
     ]),
+    # S-137: pull requests — the branch pair and draft
+    # state for a numbered item whose kind is
+    # 'pull_request' (its title/body/state live on the
+    # shared issues row, S-121). source_issue_id links a
+    # PR born from an issue (S-137) to that issue's row;
+    # PRs created directly in Part VII leave it NULL.
+    # One conversion PR per source issue (UNIQUE).
+    (46, [
+        "CREATE TABLE pull_requests ("
+        "  id INTEGER PRIMARY KEY,"
+        "  issue_id INTEGER NOT NULL UNIQUE,"
+        "  repo_id INTEGER NOT NULL,"
+        "  source_issue_id INTEGER UNIQUE,"
+        "  base_branch TEXT NOT NULL,"
+        "  head_branch TEXT NOT NULL,"
+        "  base_oid TEXT NOT NULL DEFAULT '',"
+        "  head_oid TEXT NOT NULL DEFAULT '',"
+        "  is_draft INTEGER NOT NULL DEFAULT 1,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pull_requests_repo"
+        " ON pull_requests (repo_id, issue_id)",
+    ]),
 ]
 
 

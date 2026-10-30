@@ -9,7 +9,9 @@ issue page interleaves it with the conversation.
 (S-132's locks and pins joined the stream from the
 same audit record the day they landed; S-133's
 transfer arrival joined the same way — the stream of a
-transferred issue says which repository it came from.)
+transferred issue says which repository it came from;
+S-137's conversion joined the same way — the stream
+says which branch and draft PR an issue gained.)
 
 - **Derived, not duplicated.** The timeline invents no
   second record. Each kind is read from the one record
@@ -83,6 +85,7 @@ _KIND_RANK = {
     "closed": 4, "reopened": 4,
     "locked": 4, "unlocked": 4,
     "transferred": 4,
+    "converted": 4,
     "referenced": 5,
     "mentioned": 6,
 }
@@ -102,6 +105,9 @@ _AUDIT_KINDS = {
     # S-133's arrival row, addressed to the issue at its
     # new home (full_name#new_number, origin in detail).
     "repo.issue.transfer_in": "transferred",
+    # S-137's conversion row, addressed to the issue
+    # (branch + the PR's number in detail).
+    "repo.issue.convert": "converted",
 }
 
 
@@ -123,6 +129,8 @@ class TimelineEvent:
     target_number: int = 0   # referenced: the named #n (0 = commit)
     target_sha: str = ""     # referenced: the named commit (full oid)
     is_closing: bool = False  # referenced: marked to close on merge
+    branch: str = ""         # converted: the branch created
+    pr_number: int = 0       # converted: the draft PR's #n
 
 
 def describe_event(event: TimelineEvent) -> str:
@@ -159,6 +167,10 @@ def describe_event(event: TimelineEvent) -> str:
             return (f"{actor} transferred this issue from "
                     f"{event.source_repo}#{event.source_number}")
         return f"{actor} transferred this issue from another repository"
+    if event.kind == "converted":
+        return (f"{actor} created the {event.branch} branch "
+                f"and draft pull request #{event.pr_number} "
+                "from this issue")
     if event.kind == "pinned":
         return f"{actor} pinned this issue"
     if event.kind == "unpinned":
@@ -256,7 +268,8 @@ class TimelineStore:
                 " 'repo.issue.assign', 'repo.issue.unassign',"
                 " 'repo.issue.milestone', 'repo.issue.lock',"
                 " 'repo.issue.unlock', 'repo.issue.pin',"
-                " 'repo.issue.unpin', 'repo.issue.transfer_in')"
+                " 'repo.issue.unpin', 'repo.issue.transfer_in',"
+                " 'repo.issue.convert')"
                 " ORDER BY seq",
                 (current.full_name,
                  f"{current.full_name}#{issue.number}")).fetchall():
@@ -277,7 +290,9 @@ class TimelineStore:
                 assignee=str(detail.get("assignee") or ""),
                 milestone=str(detail.get("milestone") or ""),
                 source_repo=str(detail.get("from") or ""),
-                source_number=int(detail.get("from_number") or 0)),
+                source_number=int(detail.get("from_number") or 0),
+                branch=str(detail.get("branch") or ""),
+                pr_number=int(detail.get("to_number") or 0)),
                 int(row["seq"]))
 
         # Mentions (incoming) and cross-references
