@@ -526,6 +526,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX push_events_repo_idx"
         " ON push_events (repo_id, id)",
     ]),
+    # S-121: the shared issue/PR numbering sequence and the
+    # numbered-items table. repo_counters.last_number only
+    # ever moves forward (a number is never reused); every
+    # claimed number has exactly one issues row carrying its
+    # kind, so #n is unambiguous in a repository. Title/body/
+    # state/version columns are S-122's create/read/update
+    # surface, placed here so no second migration is needed.
+    (34, [
+        "CREATE TABLE repo_counters ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  last_number INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE TABLE issues ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  number INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL DEFAULT 'issue',"
+        "  author_id INTEGER NOT NULL,"
+        "  title TEXT NOT NULL DEFAULT '',"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  version INTEGER NOT NULL DEFAULT 1,"
+        "  created_at INTEGER NOT NULL DEFAULT 0,"
+        "  updated_at INTEGER NOT NULL DEFAULT 0,"
+        "  UNIQUE (repo_id, number)"
+        ")",
+        "CREATE INDEX idx_issues_repo ON issues (repo_id, number)",
+        "CREATE INDEX idx_issues_repo_state ON issues (repo_id, state)",
+    ]),
 ]
 
 
