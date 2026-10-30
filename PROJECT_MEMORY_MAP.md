@@ -477,6 +477,26 @@ Volmarr's original repos onto his own machines.
   the S-006 and S-022 batteries too. Battery
   `tests/test_login.py`: **7 passed / 0 failed**. Cumulative
   battery: **216/216**.
+- **S-028 DONE (2026-10-30)** — password change and reset:
+  `samverk/password_reset.py` + schema migration 6
+  (`password_reset_tokens`, hashes only, `via` recorded).
+  Change requires the current password (a wrong one changes
+  nothing — no hash moves, no session dies), enforces S-025's
+  policy, and on success revokes **all** sessions. Reset:
+  `request_reset` always answers identically (no enumeration);
+  a letter is minted only for an existing active account with
+  an email when a mailer is configured — 256-bit, SHA-256 at
+  rest, **single-use, 1-hour expiry**, fresh requests retire
+  older tokens. The operator road (`issue_operator_reset`)
+  mints host-side for the no-mail instance, same redemption,
+  audit records `via: operator`. Redemption validates the new
+  password *before* consuming the token (a refused password
+  does not burn the letter), then replaces the hash and revokes
+  all sessions. Audited: `auth.password.change`,
+  `auth.password.reset`. Battery `tests/test_password_reset.py`:
+  **10 passed / 0 failed**, including the DB-leak test and the
+  acceptance in literal form (single-use, expiring,
+  all-sessions-revoked). Cumulative battery: **226/226**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -546,3 +566,17 @@ Volmarr's original repos onto his own machines.
   amended once to carry this log entry, so its hash differs
   from the one first printed here; tree content is unchanged.)
   Next: Part II, S-025 registration.
+- **2026-10-30 (keeper run, Part II opened)** — Previous keeper
+  run had closed Part I at 01:37 EDT (head a44bc79, clean tree,
+  its session log written, no process live), so this run
+  resumed from the map's named next slice and built four Part
+  II slices in the established pattern: **S-025** registration
+  (199/199), **S-026** email verification — token road +
+  operator road, taxonomy append-only +2 events (209/209),
+  **S-027** login/logout (216/216; the battery found
+  `SessionStore.revoke` double-counting an already-revoked
+  token — fixed in the S-006 seam in-slice), and **S-028**
+  password change/reset (226/226). All banked locally on
+  `yrsa/samverk-part1` and fast-forwarded to local `main`;
+  **no GitHub push** — pushes stay gated on Volmarr's word.
+  Next slice: S-029 profiles.

@@ -95,6 +95,22 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_email_verification_user"
         " ON email_verification_tokens (user_id)",
     ]),
+    # S-028: password reset tokens — same law as S-026's tokens
+    # (hashes only, single-use, expiring); `via` records whether
+    # the token was minted for the email road or the operator road.
+    (6, [
+        "CREATE TABLE password_reset_tokens ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  token_hash TEXT NOT NULL UNIQUE,"
+        "  via TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_password_reset_user"
+        " ON password_reset_tokens (user_id)",
+    ]),
 ]
 
 
