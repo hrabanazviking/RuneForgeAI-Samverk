@@ -478,5 +478,8 @@ Volmarr's original repos onto his own machines.
   log-redaction leak, the `a@.com` empty-label parse, and the
   previously unexercised TLS wrap). All work banked locally on
   `yrsa/samverk-part1` and fast-forwarded to local `main`
-  (head 08ec155 at gate time); **no GitHub push** — pushes stay
-  gated on Volmarr's word. Next: Part II, S-025 registration.
+  (first banked as 08ec155; amended once for this log); **no GitHub push** — pushes stay
+  gated on Volmarr's word. (Head note: the gate commit was
+  amended once to carry this log entry, so its hash differs
+  from the one first printed here; tree content is unchanged.)
+  Next: Part II, S-025 registration.
