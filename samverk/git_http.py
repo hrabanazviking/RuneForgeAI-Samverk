@@ -183,3 +183,22 @@ class SmartHttpService:
         return self._serve_rpc(
             viewer, owner, repo, "git-upload-pack", body,
             protocol_version=protocol_version)
+
+    def receive_pack(self, viewer: User | None, owner: object,
+                     repo: object, body: object,
+                     *, protocol_version: int | None = None) -> TransportResponse:
+        """S-079: the push POST (`git-receive-pack`), write-gated
+        before the pack program is spawned — fail-closed.
+
+        The classic forge hole is an unauthenticated receive-pack
+        endpoint: a public repository is *readable* by everyone,
+        and a gate that only asked "can they see it?" would let
+        the whole world push. Here the write gate is in
+        `_resolve`, shared with the receive-pack advertisement,
+        so both legs refuse together: anonymous and read-only
+        callers are refused before git ever runs, and the named
+        battery test keeps the hole closed.
+        """
+        return self._serve_rpc(
+            viewer, owner, repo, "git-receive-pack", body,
+            protocol_version=protocol_version)
