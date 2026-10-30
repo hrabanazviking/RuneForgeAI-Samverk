@@ -100,13 +100,15 @@ class TransportResponse:
 class SmartHttpService:
     def __init__(self, conn: sqlite3.Connection, data_root: Path,
                  accounts: AccountStore, repositories: RepositoryStore,
-                 receive_gate=None, push_events=None):
+                 receive_gate=None, push_events=None,
+                 transfer_limits=None):
         self._conn = conn
         self._data_root = Path(data_root)
         self._accounts = accounts
         self._repos = repositories
         self._receive_gate = receive_gate
         self._push_events = push_events
+        self._transfer_limits = transfer_limits
 
     # -- the gate -------------------------------------------------
 
@@ -200,6 +202,16 @@ class SmartHttpService:
                     f"Push refused: {gate_result.reason}")
         if not isinstance(body, (bytes, bytearray)):
             raise TransportError("body_invalid", "Request body must be bytes.")
+        if self._transfer_limits is not None:
+            # S-091: pack size enforced on the measurable body,
+            # before git spawns; the wall clock becomes the
+            # pack program's timeout below.
+            from .transfer_limits import TransferLimitError
+            try:
+                self._transfer_limits.enforce_pack_size("http", len(body))
+            except TransferLimitError as exc:
+                raise TransportError("pack_too_large", str(exc)) from None
+            timeout = self._transfer_limits.wall_clock_timeout("http")
         refs_before: dict[str, str] = {}
         want_event = (service_name == "git-receive-pack"
                       and self._push_events is not None)
