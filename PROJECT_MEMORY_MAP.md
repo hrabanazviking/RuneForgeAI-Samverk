@@ -497,6 +497,24 @@ Volmarr's original repos onto his own machines.
   **10 passed / 0 failed**, including the DB-leak test and the
   acceptance in literal form (single-use, expiring,
   all-sessions-revoked). Cumulative battery: **226/226**.
+- **S-029 DONE (2026-10-30)** — profiles: `samverk/profiles.py`
+  + schema migration 7 (`profiles`, one row per account).
+  Display name (≤50) and bio (≤500, newlines allowed) are
+  control-character-free plain text. Avatar upload is S-012 law
+  narrowed to images (2 MiB cap, image-only policy): sniff beats
+  declared, disguised/non-image payloads refused, quarantine
+  first, then promotion to `<data_root>/avatars/<sha256><ext>`
+  (mode 600) under the content-addressed name. **Alt text is
+  mandatory** (Volmarr's image-accessibility law): an avatar
+  with empty/missing alt is refused and stores nothing. The
+  profile page (`render_profile_page`) renders only through
+  S-010's escaping seam and always emits the stored alt on the
+  avatar `<img>`. Taxonomy grew append-only by one event
+  (`auth.profile.update`; 40 total, doc + code + counts updated
+  together). Battery `tests/test_profiles.py`: **10 passed /
+  0 failed**, including the literal acceptance (avatar under
+  S-012 law + every image carries alt text). Cumulative
+  battery: **236/236**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

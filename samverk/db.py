@@ -111,6 +111,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_password_reset_user"
         " ON password_reset_tokens (user_id)",
     ]),
+    # S-029: profiles — one row per account; avatar facts are the
+    # S-012-proven ones (content SHA-256 + sniffed type) plus the
+    # mandatory alt text (image-accessibility law).
+    (7, [
+        "CREATE TABLE profiles ("
+        "  user_id INTEGER PRIMARY KEY,"
+        "  display_name TEXT,"
+        "  bio TEXT,"
+        "  avatar_sha256 TEXT,"
+        "  avatar_content_type TEXT,"
+        "  avatar_alt TEXT,"
+        "  updated_at INTEGER NOT NULL DEFAULT 0"
+        ")",
+    ]),
 ]
 
 
