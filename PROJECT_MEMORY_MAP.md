@@ -61,13 +61,14 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part V in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-100
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-106
   banked 2026-10-30 — governing recounts reproduced from
-  the tree: pytest 656 passed / 3 skipped / 0 failed
-  (659 collected); unittest discover 659 ran, 656 passed
-  / 3 skipped / 0 failed; the third skip is S-095's named
-  real-sshd cell,
-  NOT PROVEN on this host); next S-101 blame view.
+  log files read back after each run finished: pytest
+  679 passed / 3 skipped / 0 failed (682 collected);
+  unittest discover 682 ran, 679 passed / 3 skipped /
+  0 failed; the third skip is S-095's named real-sshd
+  cell, NOT PROVEN on this host); next S-107 markdown
+  pipeline.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1740,6 +1741,75 @@ Volmarr's original repos onto his own machines.
   0 failed**. Cumulative: **659 collected, 656 passed**
   — matching this run's governing recount exactly (see
   the correction entry in the session log).
+- **S-101 DONE (2026-10-30)** — blame view:
+  `samverk/blame_view.py` — per-line attribution via
+  `git blame --line-porcelain` (`blame` added to S-014's
+  allowlist with its reason), paginated by line (default
+  100, max 500) with true totals and page counts. Each
+  line carries its commit, author, time, summary, its
+  number in its own commit, and the filename it lived
+  under there — a rename in the file's own past stays
+  visible (proven by battery). Honest limit, stated on
+  the page: no copy/move tracing (`-C`/`-M` off), so a
+  line copied in from another file is credited to the
+  commit that brought it here. Binary refused by name,
+  LFS pointers reported as pointers, oversized refused
+  by name. Battery `tests/test_blame_view.py`:
+  **5 passed / 0 failed**.
+- **S-102 DONE (2026-10-30)** — commit list:
+  `samverk/commit_list.py` — paginated history for any
+  ref: totals from `rev-list --count`, pages fetched
+  with `--skip`/`--max-count`, a page past the end
+  answers empty with true totals. Verification badge is
+  a **slot**: `verification_badge=None` on every row,
+  rendered "Not checked" in words — Part XV fills it,
+  and nothing here claims a check that has not run.
+  Battery `tests/test_commit_list.py`: **4 passed /
+  0 failed**.
+- **S-103 DONE (2026-10-30)** — commit detail:
+  `samverk/commit_detail.py` — full per-file diff from
+  `diff-tree -p --root --find-renames`, counted
+  additions/deletions per file, parent links (a root is
+  named a root in words), and browse-at-this-point into
+  S-098 at the commit oid. Battery-found bug fixed
+  in-slice: binary files have no `---`/`+++` lines, so
+  paths are first taken from the `diff --git` header.
+  Battery `tests/test_commit_detail.py`: **3 passed /
+  0 failed**.
+- **S-104 DONE (2026-10-30)** — diff engine:
+  `samverk/diff_engine.py` — the shared patch parser
+  (hunk headers number every line on both sides),
+  unified and split renderers (split pairs change
+  blocks old/new), whitespace toggle re-run through
+  git's own `-w` at compute time, and folding past 400
+  patch lines that names the true counts and shows no
+  patch text. Compute seams `commit_diff` (against the
+  first parent; root against the empty tree) and
+  `range_diff` serve commits and, later, PRs. One
+  parser bug found by the battery and fixed in-slice:
+  the trailing-newline split artifact became a phantom
+  context line — a real patch line is never empty.
+  Battery `tests/test_diff_engine.py`: **5 passed /
+  0 failed**.
+- **S-105 DONE (2026-10-30)** — compare view:
+  `samverk/compare_view.py` — any two refs: ahead and
+  behind counted both ways (a diverged pair says so in
+  numbers), commit list capped at 250 with the true
+  ahead total and any truncation named in words, files
+  changed through S-104's engine. Battery
+  `tests/test_compare_view.py`: **3 passed / 0 failed**
+  (one test expectation corrected in-slice: a diverged
+  compare also counts the other side's file as changed).
+- **S-106 DONE (2026-10-30)** — contributors and
+  counts: `samverk/repo_stats.py` — headline
+  commits/branches/tags from S-072's graph cache; a
+  missing/stale cache is refreshed on the spot and the
+  summary says so (`from_cache=False`), a fresh row is
+  served as cached. Per-contributor counts group the
+  history by authored identity (`name <email>`),
+  stated as author identities, not instance accounts.
+  Battery `tests/test_repo_stats.py`: **3 passed /
+  0 failed**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2102,3 +2172,31 @@ Volmarr's original repos onto his own machines.
   Per-slice cumulative figures in the S-097..S-100
   entries were running sums and are superseded by
   these governing recounts, as those entries state.
+- **2026-10-30 (keeper run, Part V continued)** — Previous
+  run had closed its correction at 06:55 EDT (head
+  098929e, clean tree, no process live), so this run
+  resumed at the map's named next slice and built
+  **S-101** blame view (5), **S-102** commit list (4),
+  **S-103** commit detail (3), **S-104** diff engine
+  (5), **S-105** compare view (3), and **S-106**
+  contributors and counts (3) — governing recounts
+  re-run one at a time into log files and **read back
+  from the files themselves** after each process
+  finished: pytest **679 passed / 3 skipped / 0 failed
+  (682 collected, 844.0 s)**; unittest discover **682
+  ran, 679 passed / 3 skipped / 0 failed (869.1 s)**.
+  Bugs found and fixed in-slice, never left: binary
+  files carry no `---`/`+++` lines, so S-103 first
+  takes paths from the `diff --git` header; S-104's
+  parser turned the trailing-newline split artifact
+  into a phantom context line. One phantom report was
+  caught and discarded in-run: a backgrounded battery
+  run reported exit 0 while a foreground re-run from
+  its log file showed the S-103 binary failure — the
+  foreground log is what stands. Environment: `/tmp`
+  still 100% full (unrelated Aesir file, not touched);
+  TMPDIR stayed pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-107 markdown
+  pipeline.
