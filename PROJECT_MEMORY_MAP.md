@@ -127,8 +127,24 @@ Volmarr's original repos onto his own machines.
   `tests/test_taxonomy.py`: **6 passed / 0 failed** — doc and code
   name exactly the same set, every event emittable, unknown names
   refused and enter nothing. Cumulative battery: **56/56**.
-- **Campaign position: S-001…S-008 DONE.** Next: S-009 HTTP security
-  baseline (cookies + CSRF).
+- **S-009 DONE (2026-10-30)** — HTTP security baseline:
+  `samverk/http_security.py` — session cookies (`HttpOnly` always,
+  `Secure` when the operator declares HTTPS via the new
+  `secure_cookies` config flag, `SameSite=Lax`, `Path=/`, no
+  `Domain`, plain `session` name, header-injection values refused)
+  and CSRF synchroniser tokens (HMAC-SHA256 keyed by the session
+  token itself: unforgeable without the session, reveals nothing
+  about it, stores nothing, rotates with the session; validation
+  via the S-005 constant-time seam, fails closed on missing /
+  foreign / tampered tokens). The server enforces the gate *before
+  routing* every state-changing method, so later routes inherit it
+  by construction. Battery `tests/test_http_security.py`:
+  **17 passed / 0 failed**, including the literal acceptance —
+  forged cross-site POSTs (no token, foreign token, no session)
+  refused 403 over real HTTP, legitimate header- and form-token
+  POSTs pass the gate. Cumulative battery: **73/73**.
+- **Campaign position: S-001…S-009 DONE.** Next: S-010
+  output-escaping and sanitisation standard.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -163,3 +179,10 @@ Volmarr's original repos onto his own machines.
   verifier + CLI, taxonomy v1 enforced at the emitter. README never
   touched. Platform proof cells beyond this machine remain
   **NOT PROVEN** (Part XXII). Next slice: S-009.
+- **2026-10-30 (keeper run)** — No live worker was found (last commit
+  ~3 h old, no Samverk process, worktrees clean at a9490e2), so the
+  keeper resumed the campaign itself per the keeper law: baseline
+  re-verified from the tree (56/56), then **S-009 DONE** and banked
+  locally on `yrsa/samverk-part1` (73/73 cumulative). GitHub push
+  NOT done — pushes stay gated on Volmarr's explicit word per the
+  keeper's binding laws. Next slice: S-010.

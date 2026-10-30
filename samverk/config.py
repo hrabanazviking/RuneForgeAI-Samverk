@@ -32,10 +32,18 @@ class Config:
     data_root: Path = field(default_factory=platform_seam.data_root_default)
     secret_file: Path | None = None
     log_level: str = "INFO"
+    # S-009: the operator declares the instance is served over HTTPS;
+    # session cookies then carry the Secure flag. S-015 owns the TLS
+    # law that makes HTTPS the default posture.
+    secure_cookies: bool = False
 
     @property
     def db_path(self) -> Path:
         return self.data_root / "samverk.db"
+
+
+def _parse_bool(value: str) -> bool:
+    return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _from_file(cfg: Config, path: Path) -> None:
@@ -55,6 +63,8 @@ def _from_file(cfg: Config, path: Path) -> None:
         cfg.secret_file = Path(s["secret_file"]).expanduser()
     if "log_level" in s:
         cfg.log_level = s["log_level"].strip().upper()
+    if "secure_cookies" in s:
+        cfg.secure_cookies = _parse_bool(s["secure_cookies"])
 
 
 def _from_env(cfg: Config, env: dict[str, str]) -> None:
@@ -68,6 +78,8 @@ def _from_env(cfg: Config, env: dict[str, str]) -> None:
         cfg.secret_file = Path(env["SAMVERK_SECRET_FILE"]).expanduser()
     if env.get("SAMVERK_LOG_LEVEL"):
         cfg.log_level = env["SAMVERK_LOG_LEVEL"].upper()
+    if env.get("SAMVERK_SECURE_COOKIES"):
+        cfg.secure_cookies = _parse_bool(env["SAMVERK_SECURE_COOKIES"])
 
 
 def load_config(
