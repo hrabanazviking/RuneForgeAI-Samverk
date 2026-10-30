@@ -37,6 +37,8 @@ from pathlib import Path
 from .accounts import AccountStore, User
 from .permissions import can_read, can_write
 from .proc import run_git_pack
+from .push_events import diff_refs
+from .refs import RefStore
 from .repositories import Repository, RepositoryStore
 
 # service name (as it arrives in ?service=) ->
@@ -97,11 +99,14 @@ class TransportResponse:
 
 class SmartHttpService:
     def __init__(self, conn: sqlite3.Connection, data_root: Path,
-                 accounts: AccountStore, repositories: RepositoryStore):
+                 accounts: AccountStore, repositories: RepositoryStore,
+                 receive_gate=None, push_events=None):
         self._conn = conn
         self._data_root = Path(data_root)
         self._accounts = accounts
         self._repos = repositories
+        self._receive_gate = receive_gate
+        self._push_events = push_events
 
     # -- the gate -------------------------------------------------
 
@@ -181,8 +186,28 @@ class SmartHttpService:
         """
         service_name, program, minimum = self._service(service)
         _current, path = self._resolve(viewer, owner, repo, minimum)
+        if service_name == "git-receive-pack" \
+                and self._receive_gate is not None:
+            # S-089: the pre-receive gate point — after the
+            # permission gate (_resolve), before the pack spawns.
+            gate_result = self._receive_gate.check(
+                owner=_current.owner, repo=_current.name,
+                actor=viewer.username if viewer is not None else None,
+                transport="http")
+            if not gate_result.allowed:
+                raise TransportError(
+                    "push_refused",
+                    f"Push refused: {gate_result.reason}")
         if not isinstance(body, (bytes, bytearray)):
             raise TransportError("body_invalid", "Request body must be bytes.")
+        refs_before: dict[str, str] = {}
+        want_event = (service_name == "git-receive-pack"
+                      and self._push_events is not None)
+        if want_event:
+            try:
+                refs_before = {r.name: r.oid for r in RefStore(path).list_refs()}
+            except Exception:
+                refs_before = {}
         result = run_git_pack(
             path, program, stateless=True, input_bytes=bytes(body),
             protocol_version=protocol_version, timeout=timeout)
@@ -190,6 +215,20 @@ class SmartHttpService:
             raise TransportError(
                 "transport_failed",
                 result.stderr.decode("utf-8", "replace").strip()[:200])
+        if want_event and viewer is not None:
+            # S-090: record the canonical push event from the
+            # refs that actually landed; post-receive recording
+            # never vetoes a landed push.
+            try:
+                refs_after = {r.name: r.oid for r in RefStore(path).list_refs()}
+                updates = diff_refs(refs_before, refs_after)
+                if updates:
+                    self._push_events.record_push(
+                        _current.owner, _current.name, actor_kind="user",
+                        actor_id=viewer.id, transport="http",
+                        updates=updates)
+            except Exception:
+                pass
         return TransportResponse(
             content_type=f"application/x-{service_name}-result",
             body=result.stdout)

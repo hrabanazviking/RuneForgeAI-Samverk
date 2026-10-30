@@ -52,6 +52,8 @@ from .audit import AuditLog
 from .deploy_keys import DeployKeyStore
 from .permissions import can_read, can_write
 from .proc import run_git_pack_stdio
+from .push_events import diff_refs
+from .refs import RefStore
 from .repo_paths import validate_owner_name, validate_repo_name
 from .repositories import RepositoryStore
 from .ssh_auth import SshPrincipal
@@ -116,6 +118,8 @@ class SshServeService:
         repositories: RepositoryStore,
         audit: AuditLog | None = None,
         pack_runner: Callable[..., int] = run_git_pack_stdio,
+        receive_gate=None,
+        push_events=None,
     ):
         self._conn = conn
         self._data_root = Path(data_root)
@@ -123,6 +127,8 @@ class SshServeService:
         self._repos = repositories
         self._audit = audit
         self._runner = pack_runner
+        self._receive_gate = receive_gate
+        self._push_events = push_events
         self._ssh_keys = SshKeyStore(conn, accounts)
         self._deploy_keys = DeployKeyStore(conn, accounts)
 
@@ -188,6 +194,16 @@ class SshServeService:
                 return self._refuse(
                     stderr, "permission_denied",
                     "You do not have write permission on this repository.")
+        # -- S-089: the pre-receive gate point, before any pack --
+        if service == "git-receive-pack" and self._receive_gate is not None:
+            actor = (principal.user.username
+                     if principal.user is not None else "deploy_key")
+            gate_result = self._receive_gate.check(
+                owner=owner, repo=repo, actor=actor, transport="ssh")
+            if not gate_result.allowed:
+                return self._refuse(
+                    stderr, "push_refused",
+                    f"Push refused: {gate_result.reason}")
         # -- authenticated + authorised: stamp use, run git -----
         if principal.kind == "deploy_key":
             assert principal.deploy_key is not None
@@ -196,9 +212,38 @@ class SshServeService:
             self._ssh_keys.record_use(principal.ssh_key.id)
         path = self._repos.path_for(current.owner, current.name)
         protocol_version = 2 if git_protocol == "version=2" else None
+        refs_before: dict[str, str] = {}
+        if service == "git-receive-pack" and self._push_events is not None:
+            try:
+                refs_before = {r.name: r.oid for r in RefStore(path).list_refs()}
+            except Exception:
+                refs_before = {}
         rc = self._runner(
             path, program, stdin=stdin, stdout=stdout, stderr=stderr,
             protocol_version=protocol_version)
+        if service == "git-receive-pack" and rc == 0 \
+                and self._push_events is not None:
+            # S-090: the canonical push event, ranges read back
+            # from the refs that actually landed. Post-receive
+            # never vetoes: a recording failure changes nothing.
+            try:
+                refs_after = {r.name: r.oid for r in RefStore(path).list_refs()}
+                updates = diff_refs(refs_before, refs_after)
+                if updates:
+                    if principal.kind == "deploy_key":
+                        assert principal.deploy_key is not None
+                        self._push_events.record_push(
+                            owner, repo, actor_kind="deploy_key",
+                            actor_id=principal.deploy_key.id,
+                            transport="ssh", updates=updates)
+                    else:
+                        assert principal.user is not None
+                        self._push_events.record_push(
+                            owner, repo, actor_kind="user",
+                            actor_id=principal.user.id,
+                            transport="ssh", updates=updates)
+            except Exception:
+                pass
         if service == "git-receive-pack" and rc == 0 \
                 and self._audit is not None:
             if principal.kind == "deploy_key":
