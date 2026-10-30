@@ -92,6 +92,8 @@ any name not in this document's set.*
 | `repo.issue_template.create` | An issue template (Markdown or YAML form) created in a repository (S-129) | `{"template": ..., "kind": ...}` |
 | `repo.issue_template.update` | An issue template edited or replaced (S-129) | `{"template": ..., "kind": ...}` |
 | `repo.issue_template.delete` | An issue template deleted (S-129) | `{"template": ..., "kind": ...}` |
+| `repo.issue.close` | An issue closed, with its reason (S-130) | `{"number": ..., "reason": ...}` — `completed` or `not_planned` |
+| `repo.issue.reopen` | A closed issue reopened (S-130) | `{"number": ...}` |
 
 ## admin — instance administration
 
@@ -166,3 +168,6 @@ S-129 (2026-10-30) added `repo.issue_template.create`,
 36 repo, 12 admin. (The blank-issue toggle rides the
 frozen `repo.settings.change` with its key named, per
 the S-066 settings pattern.)
+S-130 (2026-10-30) added `repo.issue.close` and
+`repo.issue.reopen` — 79 events: 29 auth, 38 repo,
+12 admin.

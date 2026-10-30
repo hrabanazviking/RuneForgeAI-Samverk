@@ -727,6 +727,25 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  allow_blank_issues INTEGER NOT NULL DEFAULT 1"
         ")",
     ]),
+    # S-130: close/reopen — the issue row carries its
+    # closing reason ('completed' / 'not_planned' / ''
+    # while open), and every real state transition is an
+    # issue_events row: the state-change stream S-131's
+    # timeline reads, in order, with its actor and reason.
+    (42, [
+        "ALTER TABLE issues ADD COLUMN"
+        " state_reason TEXT NOT NULL DEFAULT ''",
+        "CREATE TABLE issue_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  issue_id INTEGER NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  reason TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_issue_events_issue"
+        " ON issue_events (issue_id, id)",
+    ]),
 ]
 
 

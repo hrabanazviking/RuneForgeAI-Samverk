@@ -1,4 +1,5 @@
-"""Issues — model and numbering (S-121); create/read/update (S-122).
+"""Issues — model and numbering (S-121); create/read/update (S-122);
+close and reopen with reason (S-130).
 
 Part VI opens with the number. In every GitHub-class forge
 the habit users rely on is that ``#n`` names exactly one
@@ -24,9 +25,7 @@ and this module is where it lives:
   through `resolve_number` / `exists`, never around it.
 - **Issues (S-122).** An issue is a claimed row filled in:
   title (plain text, required), Markdown body, author, and
-  state (`open` at birth; closing and reopening with their
-  reasons are S-130's, and arrive as timeline events, not
-  as edits here). Reads follow S-054: anyone who can read
+  state (`open` at birth). Reads follow S-054: anyone who can read
   the repository can read its issues; a stranger to a
   private repository receives the uniform `issue_not_found`
   — the same answer as a number that was never claimed, so
@@ -39,6 +38,18 @@ and this module is where it lives:
   is refused as `edit_conflict` and changes nothing, so
   two editors racing the same issue cannot silently
   overwrite each other.
+- **Close and reopen (S-130).** Closing carries a reason
+  in plain words — `completed` or `not_planned`, nothing
+  else (`reason_invalid`) — stored on the issue as
+  `state_reason` and said in words wherever the state is
+  shown, never as a colour alone. Every real transition
+  writes an `issue_events` row in the same transaction
+  (the state-change stream S-131's timeline reads) and
+  an audit row (`repo.issue.close` / `repo.issue.reopen`).
+  Closing a closed issue or reopening an open one is a
+  quiet no-op — retries are safe and the record is not
+  rewritten. The actor is the issue's author or a
+  repository writer, the same hands that may edit it.
 """
 
 from __future__ import annotations
@@ -55,6 +66,9 @@ from .repositories import Repository, RepositoryStore
 
 KINDS = frozenset({"issue", "pull_request"})
 ISSUE_STATES = frozenset({"open", "closed"})
+CLOSE_REASONS = frozenset({"completed", "not_planned"})
+REASON_WORDS = {"completed": "completed",
+                "not_planned": "not planned"}
 TITLE_MAX = 256
 BODY_MAX = 65536
 
@@ -85,10 +99,40 @@ class Issue:
     version: int       # optimistic-edit version (S-122)
     created_at: int
     updated_at: int
+    state_reason: str = ""   # S-130: '' | 'completed' | 'not_planned'
 
     @property
     def ref(self) -> str:
         return f"#{self.number}"
+
+    @property
+    def state_words(self) -> str:
+        """The state as words: 'open', 'closed as completed',
+        'closed as not planned' — never a colour alone."""
+        if self.state == "open":
+            return "open"
+        words = REASON_WORDS.get(self.state_reason)
+        return f"closed as {words}" if words else "closed"
+
+
+@dataclass(frozen=True)
+class IssueStateEvent:
+    id: int
+    issue_id: int
+    actor_id: int
+    actor: str         # the actor's username, display case
+    kind: str          # 'closed' | 'reopened'
+    reason: str        # closing reason, '' for a reopen
+    created_at: int
+
+
+def describe_state_event(event: IssueStateEvent) -> str:
+    """One state event in plain words, for timelines."""
+    if event.kind == "reopened":
+        return f"{event.actor} reopened this issue"
+    words = REASON_WORDS.get(event.reason, "")
+    suffix = f" as {words}" if words else ""
+    return f"{event.actor} closed this issue{suffix}"
 
 
 def _row_to_issue(row: sqlite3.Row) -> Issue:
@@ -96,7 +140,8 @@ def _row_to_issue(row: sqlite3.Row) -> Issue:
         id=row["id"], repo_id=row["repo_id"], number=row["number"],
         author_id=row["author_id"], title=row["title"], body=row["body"],
         state=row["state"], version=row["version"],
-        created_at=row["created_at"], updated_at=row["updated_at"])
+        created_at=row["created_at"], updated_at=row["updated_at"],
+        state_reason=row["state_reason"])
 
 
 class IssueStore:
@@ -300,6 +345,78 @@ class IssueStore:
                 detail={"number": issue.number,
                         "version": updated.version})
         return updated
+
+    # -- S-130: close / reopen ------------------------------------
+    def close_issue(self, actor: User, owner: object, repo: object,
+                    number: object, reason: object = "completed",
+                    *, source_ip: str | None = None) -> Issue:
+        if reason not in CLOSE_REASONS:
+            raise IssueError(
+                "reason_invalid",
+                "An issue closes as 'completed' or 'not_planned'.")
+        return self._transition(
+            actor, owner, repo, number, to_state="closed",
+            reason=str(reason), source_ip=source_ip)
+
+    def reopen_issue(self, actor: User, owner: object, repo: object,
+                     number: object,
+                     *, source_ip: str | None = None) -> Issue:
+        return self._transition(
+            actor, owner, repo, number, to_state="open",
+            reason="", source_ip=source_ip)
+
+    def _transition(self, actor: User, owner: object, repo: object,
+                    number: object, *, to_state: str, reason: str,
+                    source_ip: str | None) -> Issue:
+        issue = self.get_issue(actor, owner, repo, number)
+        current = self._require_repo(owner, repo)
+        if actor.id != issue.author_id and not can_write(actor, current):
+            raise IssueError(
+                "permission_denied",
+                "Only the author or a repository writer can change "
+                "this issue's state.")
+        if issue.state == to_state:
+            return issue  # a retry, not a second event
+        now = int(self._now())
+        kind = "closed" if to_state == "closed" else "reopened"
+        with self._conn:  # state, reason, and event land together
+            self._conn.execute(
+                "UPDATE issues SET state = ?, state_reason = ?,"
+                " version = version + 1, updated_at = ? WHERE id = ?",
+                (to_state, reason, now, issue.id))
+            self._conn.execute(
+                "INSERT INTO issue_events (issue_id, actor_id, kind,"
+                " reason, created_at) VALUES (?, ?, ?, ?, ?)",
+                (issue.id, actor.id, kind, reason, now))
+        updated = self._issue_by_row_id(issue.id)
+        assert updated is not None
+        if self._audit is not None:
+            detail: dict = {"number": issue.number}
+            if kind == "closed":
+                detail["reason"] = reason
+            self._audit.append(
+                actor_kind="user", actor_id=actor.id,
+                action=f"repo.issue.{'close' if kind == 'closed' else 'reopen'}",
+                target_kind="repo",
+                target_id=f"{current.full_name}#{issue.number}",
+                outcome="success", source_ip=source_ip, detail=detail)
+        return updated
+
+    def state_events_for(self, viewer: User | None, owner: object,
+                         repo: object, number: object
+                         ) -> list[IssueStateEvent]:
+        """The issue's state-change stream in order — the
+        seam S-131's timeline reads state changes through."""
+        issue = self.get_issue(viewer, owner, repo, number)
+        rows = self._conn.execute(
+            "SELECT e.*, u.username AS actor_name FROM issue_events e"
+            " JOIN users u ON u.id = e.actor_id"
+            " WHERE e.issue_id = ? ORDER BY e.id",
+            (issue.id,)).fetchall()
+        return [IssueStateEvent(
+            id=r["id"], issue_id=r["issue_id"], actor_id=r["actor_id"],
+            actor=r["actor_name"], kind=r["kind"], reason=r["reason"],
+            created_at=r["created_at"]) for r in rows]
 
     # -- internals --------------------------------------------------
     def _issue_by_row_id(self, row_id: int) -> Issue | None:

@@ -84,7 +84,9 @@ Volmarr's original repos onto his own machines.
   S-095's named real-sshd cell);
   S-129 banked 2026-10-30 (11-test battery, foreground;
   combined with taxonomy + dependencies 22 passed /
-  0 failed); next S-130 close and reopen.
+  0 failed); S-130 banked 2026-10-30 (6-test battery,
+  foreground; combined run 44 passed / 0 failed);
+  next S-131 timeline.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2290,6 +2292,30 @@ Volmarr's original repos onto his own machines.
   0 failed** (foreground; combined with taxonomy +
   dependencies **22 passed / 0 failed**, read back
   from the log file).
+- **S-130 DONE (2026-10-30)** — close and reopen:
+  `samverk/issues.py` extended + schema migration 42
+  (`issues.state_reason`, `issue_events`) — closing
+  carries a reason in plain words, `completed` or
+  `not_planned` and nothing else (`reason_invalid`),
+  stored on the issue and said in words by
+  `Issue.state_words` ("closed as not planned"), never
+  a colour alone. Every real transition writes an
+  `issue_events` row in the same transaction as the
+  state change — the stream S-131's timeline will read
+  through `state_events_for`, with `describe_state_event`
+  rendering it in plain words — and an audit row
+  (`repo.issue.close` / `repo.issue.reopen`, taxonomy
+  append-only +2, 79 events: 29 auth, 38 repo,
+  12 admin). Closing a closed issue or reopening an
+  open one is a quiet no-op (a reclose does not rewrite
+  the recorded reason); the actor is the issue's author
+  or a repository writer, and strangers to a private
+  repo get the uniform `issue_not_found`. Battery
+  `tests/test_issue_close_reopen.py`: **6 passed /
+  0 failed** (foreground; combined with issues,
+  taxonomy, dependencies, templates, and
+  cross-references **44 passed / 0 failed**, read back
+  from the log files).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

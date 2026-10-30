@@ -104,6 +104,9 @@ REPO_EVENTS = frozenset({
     "repo.issue_template.create",
     "repo.issue_template.update",
     "repo.issue_template.delete",
+    # S-130 additions (append-only, per the taxonomy rules):
+    "repo.issue.close",
+    "repo.issue.reopen",
 })
 
 ADMIN_EVENTS = frozenset({
