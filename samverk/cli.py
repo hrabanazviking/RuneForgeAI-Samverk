@@ -23,6 +23,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_serve.add_argument("--config", default=None, help="path to samverk.ini")
     p_serve.add_argument("--host", default=None, help="override listen host")
     p_serve.add_argument("--port", type=int, default=None, help="override listen port")
+
+    p_audit = sub.add_parser("audit", help="audit log tools")
+    audit_sub = p_audit.add_subparsers(dest="audit_command", required=True)
+    p_verify = audit_sub.add_parser("verify", help="verify the audit hash chain")
+    p_verify.add_argument("--config", default=None, help="path to samverk.ini")
     return parser
 
 
@@ -36,6 +41,22 @@ def main(argv: list[str] | None = None) -> int:
             cfg.port = args.port
         serve(cfg)
         return 0
+    if args.command == "audit" and args.audit_command == "verify":
+        from .audit import verify_chain
+        from .db import init_db
+
+        cfg = load_config(args.config)
+        conn = init_db(cfg.db_path)
+        try:
+            ok, bad_seq, count = verify_chain(conn)
+        finally:
+            conn.close()
+        if ok:
+            print(f"audit chain OK ({count} entries verified)")
+            return 0
+        print(f"audit chain BROKEN at seq {bad_seq} "
+              f"({count} entries verified before the break)")
+        return 1
     return 2  # unreachable: subparsers are required
 
 

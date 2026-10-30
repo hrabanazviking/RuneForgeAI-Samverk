@@ -45,6 +45,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_sessions_user ON sessions (user_id)",
     ]),
+    # S-007: the audit chain (study 35). Append-only by discipline:
+    # no code path UPDATEs or DELETEs from this table.
+    (3, [
+        "CREATE TABLE audit_log ("
+        "  seq INTEGER PRIMARY KEY,"
+        "  ts INTEGER NOT NULL,"
+        "  actor_kind TEXT NOT NULL,"
+        "  actor_id INTEGER,"
+        "  action TEXT NOT NULL,"
+        "  target_kind TEXT NOT NULL,"
+        "  target_id TEXT,"
+        "  source_ip TEXT,"
+        "  outcome TEXT NOT NULL,"
+        "  detail TEXT,"
+        "  prev_hash TEXT NOT NULL,"
+        "  entry_hash TEXT NOT NULL"
+        ")",
+    ]),
 ]
 
 
