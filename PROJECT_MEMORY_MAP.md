@@ -86,7 +86,8 @@ Volmarr's original repos onto his own machines.
   combined with taxonomy + dependencies 22 passed /
   0 failed); S-130 banked 2026-10-30 (6-test battery,
   foreground; combined run 44 passed / 0 failed);
-  next S-131 timeline.
+  S-131 banked 2026-10-30 (8-test battery, foreground);
+  next S-132 locking and pinning.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2316,6 +2317,32 @@ Volmarr's original repos onto his own machines.
   taxonomy, dependencies, templates, and
   cross-references **44 passed / 0 failed**, read back
   from the log files).
+- **S-131 DONE (2026-10-30)** — timeline:
+  `samverk/issue_timeline.py` — one ordered stream of
+  everything that happened to an issue, derived and
+  never duplicated: creation from the issue row,
+  state changes through S-130's `state_events_for`
+  seam, label / assignment / milestone changes read
+  from the audit log (the record those acts already
+  write, read the way S-047 reads it), and mentions
+  (incoming) plus cross-references (outgoing, closing
+  marks said in words) from S-127's record — a
+  back-reference whose source repo the viewer cannot
+  read is hidden, exactly as S-127 hides it. Order is
+  time, then a fixed kind rank, then the source
+  record's id, so a rebuild is identical; every event
+  renders in plain words (`describe_event`), and
+  `render_timeline` escapes through S-010's seam.
+  Comments are the conversation, not events (surfaces
+  interleave them by time); edits and reactions are
+  not happenings either. No migration, no audit event
+  of its own (79 events stand). Battery
+  `tests/test_issue_timeline.py`: **8 passed /
+  0 failed** (foreground, read back from the log
+  file) — the full nine-event stream in order with
+  its exact wordings, quiet no-ops leaving no state
+  events, both xref directions, a commit mention, and
+  the private-source hiding proof.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
