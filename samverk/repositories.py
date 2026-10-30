@@ -220,6 +220,111 @@ class RepositoryStore:
                 detail={"visibility": created.visibility})
         return created
 
+    # -- S-050: metadata ------------------------------------------
+    def update_metadata(
+        self, actor_user_id: int, owner: object, repo: object, *,
+        description: object = None, visibility: object = None,
+        default_branch: object = None,
+        source_ip: str | None = None,
+    ) -> Repository:
+        actor, current = self._require_owner(actor_user_id, owner, repo)
+        new_description = current.description if description is None else _validate_description(description)  # type: ignore[arg-type]
+        new_visibility = current.visibility if visibility is None else _validate_visibility(visibility)  # type: ignore[arg-type]
+        new_branch = current.default_branch if default_branch is None else validate_branch_name(default_branch)
+        if new_branch != current.default_branch:
+            # HEAD moves first claim: if git refuses, metadata must not lie.
+            path = self.path_for(current.owner, current.name)
+            res = run_git_in(path, ["symbolic-ref", "HEAD", f"refs/heads/{new_branch}"], timeout=15.0)
+            if res.returncode != 0:
+                raise RepositoryError(
+                    "git_head_failed",
+                    "git could not move HEAD to the new default branch.")
+        with self._conn:
+            self._conn.execute(
+                "UPDATE repositories SET description = ?, visibility = ?,"
+                " default_branch = ? WHERE id = ?",
+                (new_description, new_visibility, new_branch, current.id))
+        if self._audit is not None:
+            if new_visibility != current.visibility:
+                self._audit.append(
+                    actor_kind="user", actor_id=actor.id,
+                    action="repo.visibility.change", target_kind="repo",
+                    target_id=current.full_name, outcome="success",
+                    source_ip=source_ip,
+                    detail={"from": current.visibility, "to": new_visibility})
+            if (new_description != current.description
+                    or new_branch != current.default_branch):
+                self._audit.append(
+                    actor_kind="user", actor_id=actor.id,
+                    action="repo.settings.change", target_kind="repo",
+                    target_id=current.full_name, outcome="success",
+                    source_ip=source_ip,
+                    detail={"key": "metadata",
+                            "description": new_description,
+                            "default_branch": new_branch})
+        updated = self.get_by_id(current.id)
+        assert updated is not None
+        return updated
+
+    def rename(
+        self, actor_user_id: int, owner: object, repo: object,
+        new_name: object, *, source_ip: str | None = None,
+    ) -> Repository:
+        """Rename a repository: directory and row move together."""
+        actor, current = self._require_owner(actor_user_id, owner, repo)
+        _, _, new_disp, new_lower = canonical_owner_repo(current.owner, new_name)
+        if new_lower == current.name_lower:
+            if new_disp == current.name:
+                raise RepositoryError("rename_same", "That is already the repository's name.")
+            # Case-only rename: filesystem may be case-insensitive;
+            # move via a temp name so the row and disk never diverge.
+            old_path = self.path_for(current.owner, current.name)
+            new_path = self.path_for(current.owner, new_disp)
+            if old_path != new_path:
+                tmp_path = old_path.with_name(old_path.name + ".rename-tmp")
+                os.rename(old_path, tmp_path)
+                try:
+                    os.rename(tmp_path, new_path)
+                except OSError:
+                    os.rename(tmp_path, old_path)
+                    raise
+            with self._conn:
+                self._conn.execute(
+                    "UPDATE repositories SET name = ? WHERE id = ?",
+                    (new_disp, current.id))
+            return self._finish_rename(actor, current, source_ip)
+        if self.get_repository(current.owner_lower, new_lower) is not None:
+            raise RepositoryError("repo_taken", "That name is already taken in this account.")
+        old_path = self.path_for(current.owner, current.name)
+        new_path = self.path_for(current.owner, new_disp)
+        if new_path.exists():
+            raise RepositoryError(
+                "repo_path_exists",
+                "A directory already exists at the new name's path.")
+        os.rename(old_path, new_path)  # atomic within the one root
+        try:
+            with self._conn:
+                self._conn.execute(
+                    "UPDATE repositories SET name = ?, name_lower = ? WHERE id = ?",
+                    (new_disp, new_lower, current.id))
+        except Exception:
+            os.rename(new_path, old_path)  # roll the disk back with the row
+            raise
+        return self._finish_rename(actor, current, source_ip)
+
+    def _finish_rename(self, actor, current: Repository, source_ip) -> Repository:
+        renamed = self.get_by_id(current.id)
+        assert renamed is not None
+        if self._audit is not None:
+            self._audit.append(
+                actor_kind="user", actor_id=actor.id,
+                action="repo.settings.change", target_kind="repo",
+                target_id=renamed.full_name, outcome="success",
+                source_ip=source_ip,
+                detail={"key": "rename", "from": current.full_name,
+                        "to": renamed.full_name})
+        return renamed
+
     def _require_owner(self, actor_user_id: int, owner: object, repo: object):
         actor = self._accounts.get_by_id(actor_user_id)
         if actor is None:

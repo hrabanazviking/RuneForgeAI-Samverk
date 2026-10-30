@@ -877,6 +877,20 @@ Volmarr's original repos onto his own machines.
   `tests/test_repositories.py`: **6 passed / 0 failed**,
   including the separate-connection visibility check.
   Cumulative battery: **374/374**.
+- **S-050 DONE (2026-10-30)** — repository metadata model:
+  description (≤350 plain-text chars), visibility (`public` /
+  `private`, default `private`) and default branch live on the
+  S-049 row (columns landed with migration 22, so this slice
+  needed no new migration). `RepositoryStore.update_metadata`
+  is owner-only and validated; a default-branch change moves
+  the bare repo's HEAD symbolic ref first, so metadata never
+  claims a branch git does not point at, and a visibility
+  change audits `repo.visibility.change` separately from
+  `repo.settings.change`. `rename` moves directory and row
+  together — a single `os.rename` inside the one repos root,
+  the row in one transaction, and a failed row update rolls
+  the directory back. Battery `tests/test_repo_metadata.py`:
+  **6 passed / 0 failed**. Cumulative battery: **380/380**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
