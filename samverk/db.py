@@ -476,6 +476,23 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-070: mirrors — a mirror is an ordinary repository
+    # row + bare repo (no second storage engine) plus this
+    # record: where it mirrors from and how the last sync
+    # ended. Source is a validated remote URL or an absolute
+    # local path; credentials never appear in either (S-069
+    # law forbids them inside URLs).
+    (31, [
+        "CREATE TABLE repo_mirrors ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  source TEXT NOT NULL,"
+        "  source_kind TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  last_sync_at INTEGER,"
+        "  last_status TEXT,"
+        "  last_detail TEXT"
+        ")",
+    ]),
 ]
 
 

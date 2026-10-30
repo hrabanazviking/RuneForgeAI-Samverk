@@ -1270,6 +1270,29 @@ Volmarr's original repos onto his own machines.
   DB-file + audit sweep proving the token appears nowhere.
   Cumulative battery: **473/473** (full recount at the
   next gate). Next: S-070 mirror storage layout.
+- **S-070 DONE (2026-10-30)** — mirror storage layout:
+  `samverk/mirrors.py` + schema migration 31
+  (`repo_mirrors`). A mirror is an **ordinary bare repo
+  plus a mirror record** — same S-013 path, same
+  `repositories` row, same S-058 measurement and S-051/52
+  reads, no second storage engine; the record holds only
+  the source (a validated S-069 URL or an absolute local
+  path to an existing repo) and the sync outcome.
+  `create_mirror` makes the ordinary repo + record;
+  `attach_mirror` / `detach_mirror` mark/unmark an existing
+  repo (owner-only, one source at a time, detaching never
+  touches content). `sync_mirror` converges the mirror
+  through the dedicated fetch seam (`run_git_fetch_from`,
+  landed with S-069 — generic `fetch` stays refused under
+  S-014) and **records success and failure alike**
+  (`last_sync_at` / `last_status` / `last_detail`); a
+  failed sync leaves existing content untouched and
+  readable. Battery `tests/test_mirrors.py`: **6 passed /
+  0 failed**, including local-source convergence across a
+  second commit and a `git daemon` URL sync. Cumulative
+  battery: **479/479** — full counted run on this VM at
+  this slice, verifying the whole run's arithmetic
+  (S-067…S-070). Next: S-071 consistency checker.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
