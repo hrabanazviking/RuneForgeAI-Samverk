@@ -633,6 +633,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issues_milestone"
         " ON issues (milestone_id, state)",
     ]),
+    # S-126: assignees — many accounts per issue, each
+    # row an assignment (who, by whom, when); the audit
+    # log carries the assign/unassign event record.
+    (38, [
+        "CREATE TABLE issue_assignees ("
+        "  issue_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  assigned_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (issue_id, user_id)"
+        ")",
+        "CREATE INDEX idx_issue_assignees_user"
+        " ON issue_assignees (user_id, issue_id)",
+    ]),
 ]
 
 

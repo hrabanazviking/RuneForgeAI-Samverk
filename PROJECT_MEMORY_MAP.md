@@ -2164,6 +2164,33 @@ Volmarr's original repos onto his own machines.
   70 events: 29 auth, 29 repo, 12 admin). Battery
   `tests/test_milestones.py`: **7 passed / 0 failed**
   (foreground, in the 21-test combined run above).
+- **S-126 DONE (2026-10-30)** — assignees:
+  `samverk/assignees.py` + schema migration 38
+  (`issue_assignees`) — multiple assignees per issue,
+  bounded at 10 (`assignee_limit` names the cap),
+  each row recording who was assigned, by whom, and
+  when, listed in assignment order (insertion order,
+  so same-second assignments never reorder by account
+  id — a battery-found flaw fixed in-slice). Every
+  assign/unassign is an audit event
+  (`repo.issue.assign` / `repo.issue.unassign`,
+  taxonomy append-only, 72 events: 29 auth, 31 repo,
+  12 admin); repeats are quiet no-ops emitting no
+  second event, so retries are safe. An assignee must
+  be able to read the repository under S-054
+  (`assignee_cannot_read` refuses a stranger to a
+  private repo — assigning them would leak the issue
+  and strand the work). A writer may assign anyone
+  eligible; any reader may assign *themselves* and
+  unassign themselves; unassigning someone else is a
+  writer act. `issues_assigned_to` is the
+  'assigned to me' seam (per repository, optional
+  state filter — the rows S-135's `assignee:`
+  qualifier will execute over). Battery
+  `tests/test_assignees.py`: **6 passed / 0 failed**
+  (foreground; combined Part VI run at banking:
+  labels + milestones + assignees + taxonomy
+  **27 passed / 0 failed**).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

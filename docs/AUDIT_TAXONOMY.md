@@ -85,6 +85,8 @@ any name not in this document's set.*
 | `repo.milestone.update` | Milestone edited, closed, or reopened (S-125) | `{"milestone": ...}` |
 | `repo.milestone.delete` | Milestone deleted; its issues are unassigned, never deleted (S-125) | `{"milestone": ...}` |
 | `repo.issue.milestone` | An issue's milestone set or cleared (S-125) | `{"number": ..., "milestone": ...}` — milestone is null when cleared |
+| `repo.issue.assign` | An account assigned to an issue (S-126) | `{"number": ..., "assignee": ...}` |
+| `repo.issue.unassign` | An account unassigned from an issue (S-126) | `{"number": ..., "assignee": ...}` |
 
 ## admin — instance administration
 
@@ -144,4 +146,7 @@ S-124 (2026-10-30) added `repo.label.create`,
 S-125 (2026-10-30) added `repo.milestone.create`,
 `repo.milestone.update`, `repo.milestone.delete` and
 `repo.issue.milestone` — 70 events: 29 auth, 29 repo,
+12 admin.
+S-126 (2026-10-30) added `repo.issue.assign` and
+`repo.issue.unassign` — 72 events: 29 auth, 31 repo,
 12 admin.

@@ -39,9 +39,10 @@ class TaxonomyTests(unittest.TestCase):
         # repo.issue.label_add/label_remove.
         # S-125 added repo.milestone.create/update/delete and
         # repo.issue.milestone.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 70)
+        # S-126 added repo.issue.assign/unassign.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 72)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 29)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 31)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):

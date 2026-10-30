@@ -94,6 +94,9 @@ REPO_EVENTS = frozenset({
     "repo.milestone.update",
     "repo.milestone.delete",
     "repo.issue.milestone",
+    # S-126 additions (append-only, per the taxonomy rules):
+    "repo.issue.assign",
+    "repo.issue.unassign",
 })
 
 ADMIN_EVENTS = frozenset({
