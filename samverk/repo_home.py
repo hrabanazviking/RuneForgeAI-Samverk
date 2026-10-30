@@ -250,7 +250,7 @@ class RepoHomeService:
         ref_name, commit_oid = resolve_commit(path, requested)
         reader = ObjectReader(path)
         entries = tuple(tree_at(reader, commit_oid, ()))
-        readme = self._readme(reader, entries)
+        readme = self._readme(reader, entries, current, commit_oid)
         return RepoHome(
             full_name=current.full_name, owner=current.owner,
             name=current.name, description=current.description,
@@ -263,7 +263,8 @@ class RepoHomeService:
 
     # -- pieces -----------------------------------------------------
     def _readme(self, reader: ObjectReader,
-                entries: tuple[TreeEntry, ...]) -> Readme | None:
+                entries: tuple[TreeEntry, ...], current,
+                commit_oid: str) -> Readme | None:
         by_lower = {e.name.lower(): e for e in entries if e.type == "blob"}
         for candidate in README_CANDIDATES:
             entry = by_lower.get(candidate)
@@ -271,8 +272,14 @@ class RepoHomeService:
                 continue
             raw = reader.read_blob(entry.oid)
             text = raw.decode("utf-8", "replace")
+            # S-108: the README lives at the root, and its
+            # relative links resolve against the pinned commit.
+            from .repo_links import make_link_resolver
+            resolver = make_link_resolver(
+                owner=current.owner, name=current.name, ref=commit_oid)
             return Readme(name=entry.name, text=text,
-                          html=render_readme_html(text))
+                          html=render_readme_html(
+                              text, link_resolver=resolver))
         return None
 
     def _clone_options(self, current) -> tuple[tuple[CloneOption, ...],
