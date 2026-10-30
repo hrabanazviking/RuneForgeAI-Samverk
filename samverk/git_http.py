@@ -222,3 +222,87 @@ class SmartHttpService:
         return self._serve_rpc(
             viewer, owner, repo, "git-receive-pack", body,
             protocol_version=protocol_version)
+
+
+# -- S-083: the anonymous / existence shape -------------------------
+
+WWW_AUTHENTICATE = 'Basic realm="Samverk"'
+
+
+@dataclass(frozen=True)
+class GateDecision:
+    """One transport request's shape decision (S-083)."""
+
+    allowed: bool
+    status: int                 # HTTP status when refused; 200 when allowed
+    viewer: User | None         # the resolved caller when allowed
+    reason: str                 # ok | credentials_needed | repo_not_found |
+                                # permission_denied | service_invalid
+    challenge: bool             # send WWW-Authenticate with the refusal
+
+
+class TransportGate:
+    """Decides, for one transport request, whether it proceeds
+    and — when it does not — the exact HTTP shape of its
+    refusal. This is where S-083's decided shape lives:
+
+    - **Public read is anonymous.** A public repository's
+      upload legs answer credential-free callers directly; its
+      existence is public knowledge, so this leaks nothing.
+    - **Everything else without credentials gets one uniform
+      401 challenge** — public write, private anything, and
+      *nonexistent* anything are indistinguishable: same
+      status, same `WWW-Authenticate`, same reason. A caller
+      probing for private repositories learns only "log in".
+    - **Credentials that do not grant access get a uniform
+      404** on anything not publicly readable — a private repo
+      and a missing repo answer byte-identically, so a failed
+      login never confirms a repository exists. (On a public
+      repo, bad credentials for a *read* are simply ignored —
+      the read was free anyway; for a *write* they meet the
+      401 challenge again, so a real client can retry.)
+    - **A caller who may read but not write** a repository
+      meets an honest 403 at the write gate: they already
+      lawfully know the repository exists.
+
+    The gate decides shape and identity; the service still
+    re-checks permission before serving (S-077's law) — the
+    gate is never the only lock on the door.
+    """
+
+    def __init__(self, repositories: RepositoryStore, authenticator):
+        self._repos = repositories
+        self._auth = authenticator
+
+    def decide(self, owner: object, repo: object, service: object,
+               authorization_header: object) -> GateDecision:
+        if service not in SERVICES:
+            return GateDecision(False, 400, None, "service_invalid", False)
+        _program, minimum = SERVICES[str(service)]
+        current = self._repos.get_repository(owner, repo)
+        public_read = (current is not None
+                       and current.visibility == "public"
+                       and minimum == "read")
+        presented = (isinstance(authorization_header, str)
+                     and authorization_header.strip().lower()
+                     .startswith("basic "))
+        if not presented:
+            if public_read:
+                return GateDecision(True, 200, None, "ok", False)
+            return GateDecision(
+                False, 401, None, "credentials_needed", True)
+        viewer = self._auth.authorize_basic(
+            authorization_header, owner, repo, minimum)
+        if viewer is None:
+            if public_read:
+                return GateDecision(True, 200, None, "ok", False)
+            if current is not None and current.visibility == "public":
+                return GateDecision(
+                    False, 401, None, "credentials_needed", True)
+            return GateDecision(False, 404, None, "repo_not_found", False)
+        if current is None or not can_read(viewer, current):
+            return GateDecision(False, 404, None, "repo_not_found", False)
+        if minimum == "write" and not can_write(viewer, current):
+            return GateDecision(
+                False, 403, None, "permission_denied", False)
+        return GateDecision(True, 200, viewer, "ok", False)
