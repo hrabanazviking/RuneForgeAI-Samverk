@@ -70,7 +70,7 @@ class RepoHomeTests(unittest.TestCase):
         self.assertEqual(names, {"README.md", "hello.txt", "src"})
         self.assertIsNotNone(home.readme)
         self.assertEqual(home.readme.name, "README.md")
-        self.assertIn("<h1>Samverk</h1>", home.readme.html)
+        self.assertIn('<h1 id="samverk">Samverk', home.readme.html)
         self.assertIn("<strong>bold</strong>", home.readme.html)
         self.assertIn("<li>one</li>", home.readme.html)
         self.assertEqual(set(home.branches), {"main", "feature"})
@@ -103,7 +103,7 @@ class RepoHomeTests(unittest.TestCase):
         self.assertIn('value="ssh://git@forge.example/volmarr/samverk.git"', page)
         self.assertIn("/volmarr/samverk/tree/feature", page)
         self.assertIn("main</a> (current)", page)
-        self.assertIn("<h1>Samverk</h1>", page)
+        self.assertIn('<h1 id="samverk">Samverk', page)
 
     def test_permission_shape_is_uniform_not_found(self):
         for viewer in (self.stranger, None):

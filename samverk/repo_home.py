@@ -22,13 +22,12 @@ surface inherits:
 - **Rendering goes through the one seam.** Every
   user-controlled value — repo name, description, file
   names, README text — reaches HTML only via S-010's
-  escaping functions. The README rendering here is a safe
-  interim pipeline (headings, code fences, lists, paragraphs,
-  inline code and bold, all built from already-escaped text,
-  so stored markup renders as visible text, never as tags);
-  S-107 owns the full Markdown pipeline and S-108 repo-
-  relative links, and will replace this renderer's internals
-  without changing the home's shape.
+  escaping functions. The README renders through S-107's
+  full Markdown pipeline (`samverk/markdown_pipeline.py`),
+  which replaced this module's interim renderer without
+  changing the home's shape, exactly as S-097 promised;
+  S-108 wires repo-relative links into it through the
+  pipeline's resolver seam.
 - **Transports are told honestly.** Clone addresses are
   built from the instance's configured transport bases,
   exactly as S-065's empty state builds them: a transport
@@ -196,61 +195,16 @@ class RepoHome:
     is_empty: bool
 
 
-def render_readme_html(text: str) -> str:
-    """The interim safe README renderer (see module docstring):
-    headings, fenced code, bullet lists and paragraphs, with
-    inline code and bold. Every raw segment is escaped BEFORE
-    any markup is built, so no stored tag can survive."""
-    out: list[str] = []
-    lines = text.splitlines()
-    i = 0
-    in_list = False
-
-    def close_list():
-        nonlocal in_list
-        if in_list:
-            out.append("</ul>")
-            in_list = False
-
-    def inline(raw: str) -> str:
-        escaped = escape_html_text(raw)
-        escaped = re.sub(r"`([^`]+)`", r"<code>\1</code>", escaped)
-        escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
-        return escaped
-
-    while i < len(lines):
-        line = lines[i]
-        stripped = line.strip()
-        if stripped.startswith("```"):
-            close_list()
-            i += 1
-            code: list[str] = []
-            while i < len(lines) and not lines[i].strip().startswith("```"):
-                code.append(lines[i])
-                i += 1
-            i += 1  # the closing fence (or EOF)
-            out.append(
-                "<pre><code>" + escape_html_text("\n".join(code))
-                + "</code></pre>")
-            continue
-        heading = re.match(r"^(#{1,6})\s+(.*)$", stripped)
-        if heading:
-            close_list()
-            level = len(heading.group(1))
-            out.append(f"<h{level}>{inline(heading.group(2))}</h{level}>")
-        elif re.match(r"^[-*]\s+", stripped):
-            if not in_list:
-                out.append("<ul>")
-                in_list = True
-            out.append(f"<li>{inline(re.sub(r'^[-*][ ]+', '', stripped))}</li>")
-        elif stripped == "":
-            close_list()
-        else:
-            close_list()
-            out.append(f"<p>{inline(stripped)}</p>")
-        i += 1
-    close_list()
-    return "\n".join(out)
+def render_readme_html(text: str, *,
+                       link_resolver=None,
+                       reference_resolver=None) -> str:
+    """README rendering, owned by S-107's Markdown pipeline
+    since that slice replaced the interim renderer this
+    function used to carry. The signature's shape is S-097's;
+    the resolver seams are the pipeline's own (S-108/S-109)."""
+    from .markdown_pipeline import render_markdown
+    return render_markdown(text, link_resolver=link_resolver,
+                           reference_resolver=reference_resolver)
 
 
 class RepoHomeService:
