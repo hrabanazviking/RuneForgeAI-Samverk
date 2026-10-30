@@ -438,6 +438,15 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_lfs_locks_repo ON lfs_locks (repo_id)",
     ]),
+    # S-064: repository templates — a repo may be marked as a
+    # template; a repo created from one records its source in
+    # template_of_id (lineage only, like fork_of_id, but a
+    # template creation is not a fork).
+    (28, [
+        "ALTER TABLE repositories ADD COLUMN is_template"
+        " INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE repositories ADD COLUMN template_of_id INTEGER",
+    ]),
 ]
 
 

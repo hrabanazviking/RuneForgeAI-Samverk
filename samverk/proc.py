@@ -82,6 +82,8 @@ GIT_SUBCOMMANDS = frozenset({
     "gc",             # S-059 garbage collection (off-path runner only)
     "count-objects",  # S-059/object diagnostics (read-only counts)
     "archive",        # S-063 archive downloads (streamed, read-only)
+    "mktree",         # S-064 template README substitution (tree rebuild)
+    "commit-tree",    # S-064 template substitution commit
 })
 
 # Refused in any argument position, as a whole token or as a
@@ -259,6 +261,7 @@ def run_git_in(
     *,
     timeout: float = 30.0,
     input_bytes: bytes | None = None,
+    env_extra: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess:
     """Run git against *repo_path* — a bare-repository path the
     caller resolved through S-013. `--git-dir` is inserted here,
@@ -278,7 +281,7 @@ def run_git_in(
         input=input_bytes,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        env=_clean_env(),
+        env=_clean_env(env_extra),
     )
 
 

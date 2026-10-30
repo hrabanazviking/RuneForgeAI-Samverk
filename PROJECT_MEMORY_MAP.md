@@ -1144,6 +1144,31 @@ Volmarr's original repos onto his own machines.
   `<repo>-<ref>` prefixes rightly differ.) Cumulative
   battery: **440/440** (full counted run on this VM at
   this slice). Next: S-064 repository templates.
+- **S-064 DONE (2026-10-30)** — repository templates:
+  `samverk/repo_templates.py` + schema migration 28
+  (`repositories.is_template`, `template_of_id`). A repo is
+  a template only when its owner marks it (`set_template`,
+  owner-only); unmarked repos refuse as `not_a_template`.
+  Creation rides S-014's local clone seam under S-054's
+  read gate (unreadable private template = not found; a
+  private template can never create a public repo), is
+  **not** a fork (`fork_of_id` empty, `template_of_id`
+  records the source), and substitutes variables in the
+  **root README only**: `{{ key }}` placeholders with
+  caller-supplied values, unknown placeholders left as
+  written and reported, every other file byte-identical
+  (proven on a code file carrying the same placeholder).
+  A landed substitution is one new commit on the copied
+  HEAD, authored by the creator; no match → no commit
+  invented, history untouched. `mktree`/`commit-tree`
+  joined S-014's allowlist here, with reasons; `run_git_in`
+  gained an `env_extra` parameter (the commit's author
+  identity). Audited `repo.create` with the template
+  source named. Battery `tests/test_repo_templates.py`:
+  **6 passed / 0 failed**. Cumulative battery: **446/446**
+  (slice battery + affected suites re-run at this slice;
+  full recount at the next gate). Next: S-065
+  empty-repository state.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
