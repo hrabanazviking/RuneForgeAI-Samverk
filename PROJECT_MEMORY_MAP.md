@@ -58,7 +58,7 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part III next** (Part I gate passed 2026-10-30;
+- **Phase: Part III in progress** (Part I gate passed 2026-10-30;
   Part II gate S-048 passed 2026-10-30 at 368/368).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -861,6 +861,22 @@ Volmarr's original repos onto his own machines.
   Volmarr's explicit word. **Part II is complete.**
   Next: Part III — Git Core, opening at S-049 bare
   repository creation.
+- **S-049 DONE (2026-10-30)** — bare repository creation:
+  `samverk/repositories.py` + schema migration 22
+  (`repositories`: canonical lowercase owner/name UNIQUE,
+  display case kept; the row also carries S-050's metadata
+  columns with defaults so no second migration is needed).
+  Creation validates both halves under S-013, requires the
+  actor to be the owner account, runs `git init --bare
+  --initial-branch=<default>` through S-014, and only then
+  writes the row — committing before the answer, so a separate
+  connection sees it at once. All-or-nothing: a failed row
+  write removes the just-created directory, and a directory
+  already on disk is refused, never silently adopted (drift
+  is S-071's to name). Audited `repo.create`. Battery
+  `tests/test_repositories.py`: **6 passed / 0 failed**,
+  including the separate-connection visibility check.
+  Cumulative battery: **374/374**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

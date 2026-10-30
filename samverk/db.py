@@ -351,6 +351,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_external_identities_user"
         " ON external_identities (user_id)",
     ]),
+    # S-049: repositories — the metadata row for a bare repo on
+    # disk (bytes are git's, S-013 path law); identity is the
+    # canonical lowercase owner/name pair, display case kept.
+    (22, [
+        "CREATE TABLE repositories ("
+        "  id INTEGER PRIMARY KEY,"
+        "  owner TEXT NOT NULL,"
+        "  owner_lower TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  visibility TEXT NOT NULL DEFAULT 'private',"
+        "  default_branch TEXT NOT NULL DEFAULT 'main',"
+        "  UNIQUE (owner_lower, name_lower)"
+        ")",
+        "CREATE INDEX idx_repositories_owner"
+        " ON repositories (owner_lower)",
+    ]),
 ]
 
 
