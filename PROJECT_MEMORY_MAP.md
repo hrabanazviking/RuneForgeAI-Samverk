@@ -2120,9 +2120,50 @@ Volmarr's original repos onto his own machines.
   `repo.issue.label_add` / `.label_remove` (taxonomy
   append-only, 66 events: 29 auth, 25 repo, 12
   admin). Battery `tests/test_labels.py`: **8 passed
-  / 0 failed**; a local battery over labels +
-  taxonomy + repositories + issues + comments ran
-  34 passed / 0 failed at banking.
+  / 0 failed**. **Correction (same keeper run,
+  foreground re-run):** the first local-battery
+  report for this slice arrived as a backgrounded
+  delivery claiming 34 passed in 47.78 s — a phantom
+  of the kind this campaign has met before (the
+  duration was impossible for 34 scrypt-heavy
+  batteries, and a foreground run immediately found
+  two test-authoring bugs in the new battery: an
+  audit query ordering by `id` where the column is
+  `seq`, and one expectation naming `LabelError`
+  where the uniform private answer arrives as
+  S-122's `IssueError`). Both fixed in the battery
+  (module behaviour stood in both); the governing
+  counts are the foreground ones: labels + milestones
+  + taxonomy **21 passed / 0 failed**, and labels +
+  taxonomy + repositories + issues + comments
+  **34 passed / 0 failed in 83.03 s** — the number
+  34 now stands on a foreground log, not on the
+  discarded phantom.
+- **S-125 DONE (2026-10-30)** — milestones:
+  `samverk/milestones.py` + schema migration 37
+  (`milestones`; `issues.milestone_id`) — CRUD under
+  S-054 (managing is a writer act; strangers to a
+  private repo get the uniform `repo_not_found`).
+  Titles are mandatory plain text, unique per
+  repository case-insensitively; due dates must be
+  real calendar `YYYY-MM-DD` dates (30 February
+  refused, datetimes refused; a leap day is a date).
+  Progress is counted live from the issues table —
+  open / closed / total and the closed share as a
+  whole percent, `0 of 0` said in words for an empty
+  milestone — and `render_progress` prints counts,
+  percent, due date, and the word *Overdue* as text
+  (an open milestone past its date, against the
+  store clock), never as a colour-only bar.
+  Assignment rides `set_issue_milestone` (writer or
+  issue author; None clears); deleting a milestone
+  unassigns its issues in the same transaction —
+  issues are never deleted with it. Audited
+  `repo.milestone.create` / `.update` / `.delete`
+  and `repo.issue.milestone` (taxonomy append-only,
+  70 events: 29 auth, 29 repo, 12 admin). Battery
+  `tests/test_milestones.py`: **7 passed / 0 failed**
+  (foreground, in the 21-test combined run above).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

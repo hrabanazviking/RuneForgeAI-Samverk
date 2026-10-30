@@ -97,7 +97,7 @@ class LabelTests(unittest.TestCase):
         self.assertEqual(caught.exception.reason, "label_not_found")
         rows = self.conn.execute(
             "SELECT action FROM audit_log WHERE action LIKE 'repo.label.%'"
-            " ORDER BY id").fetchall()
+            " ORDER BY seq").fetchall()
         self.assertEqual([r["action"] for r in rows],
                          ["repo.label.create", "repo.label.update", "repo.label.delete"])
 
@@ -137,7 +137,10 @@ class LabelTests(unittest.TestCase):
     def test_private_issue_labels_are_hidden(self):
         priv = self.issues.create_issue(self.owner, "volmarr", "priv", "Secret")
         self.labels.add_to_issue(self.owner, "volmarr", "priv", priv.number, "bug")
-        with self.assertRaises(LabelError) as caught:
+        # The uniform answer comes through S-122's own error
+        # type, exactly as in the S-123 comments battery.
+        from samverk.issues import IssueError
+        with self.assertRaises(IssueError) as caught:
             self.labels.labels_for_issue(self.other, "volmarr", "priv", priv.number)
         self.assertEqual(caught.exception.reason, "issue_not_found")
 
