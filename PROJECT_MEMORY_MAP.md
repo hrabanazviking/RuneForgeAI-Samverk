@@ -962,6 +962,21 @@ Volmarr's original repos onto his own machines.
   fork independence (a ref deleted in the fork leaves the
   upstream untouched). Cumulative battery: **400/400**.
   Next: S-056 repository deletion.
+- **S-056 DONE (2026-10-30)** — repository deletion:
+  `samverk/repo_deletion.py` + schema migration 24
+  (`repo_deletions`) — the S-043 process shape for repos:
+  owner-only and sudo-gated (fail-closed verifier seam), a
+  7-day tombstone grace during which the disk is untouched
+  and `cancel` restores the repo whole, and execution only
+  at/after the scheduled time — row deleted, bare directory
+  reclaimed, and forks (independent clones since S-055)
+  survive with their upstream link cleared. Audited:
+  request/cancel under `repo.settings.change`, execution
+  under the frozen `repo.delete`. Battery
+  `tests/test_repo_deletion.py`: **4 passed / 0 failed**,
+  including not-due execution destroying nothing and the
+  disk surviving the whole grace. Cumulative battery:
+  **404/404**. Next: S-057 repository transfer.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

@@ -379,6 +379,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_repositories_fork_of"
         " ON repositories (fork_of_id)",
     ]),
+    # S-056: repository deletion requests — the grace-period
+    # record. One pending request per repository; the disk is
+    # reclaimed only when execution runs after scheduled_at.
+    (24, [
+        "CREATE TABLE repo_deletions ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  requested_by INTEGER NOT NULL,"
+        "  requested_at INTEGER NOT NULL,"
+        "  scheduled_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
