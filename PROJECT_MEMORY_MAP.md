@@ -390,8 +390,30 @@ Volmarr's original repos onto his own machines.
   end-to-end (real handshake + HTTPS health route + plaintext
   refused by the TLS port; commit 4ee3b61). Cumulative
   battery: **187/187** (recounted at the S-024 gate below).
-- **Campaign position: S-001…S-023 DONE.** Next: S-024, the
-  Part I gate.
+- **S-024 DONE (2026-10-30) — PART I GATE.** Counted security
+  run executed fresh at the gate on this VM (Linux x86-64):
+  `python3 -m unittest discover -s tests` → **187 passed /
+  0 failed**, including the S-022 attack battery (9) against
+  the assembled system. Every Part I slice S-001…S-023 is
+  banked with its own counted battery green at its commit.
+  **Open findings, named, none hidden:**
+  (1) Platform cells beyond Linux x86-64 are **NOT PROVEN** —
+  Windows, macOS, ARM/Pi (claims C-10; Part XXII owns proof).
+  (2) Classic IDOR has no surface yet — no accounts or
+  per-user resources exist; the S-022 battery strikes the
+  identifier surfaces that exist and is inherited by Part
+  II's gate (S-048), where the IDOR class grows teeth.
+  (3) CSP report-only mode has no server-side report
+  endpoint yet — reports are the browser's half; collection
+  lands with the web UI parts.
+  (4) The TLS posture is proven end-to-end with a scratch
+  self-signed cert (4ee3b61); operator-certificate handling
+  at install time belongs to Part XVIII.
+  (5) Everything banked this campaign sits on local `main` /
+  `yrsa/samverk-part1` only — **no GitHub push made**: pushes
+  stay gated on Volmarr's explicit word.
+  **Part I is complete.** Next: Part II — Accounts & Identity,
+  opening at S-025 registration.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -440,3 +462,21 @@ Volmarr's original repos onto his own machines.
   slices banked in this run sit on `yrsa/samverk-part1` and were
   fast-forwarded to local `main` in the same run (the campaign's
   established pattern); no GitHub push was made.
+- **2026-10-30 (keeper run, Part I closed)** — No live worker was
+  found (previous run's last commit ~11 min old, no Samverk
+  process, clean tree), so the keeper resumed from S-013 and
+  built slice after slice to the end of Part I: **S-013**
+  (116/116), **S-014** (124/124), **S-015** (133/133), **S-016**
+  (138/138), **S-017** (143/143), **S-018** (150/150), **S-019**
+  (157/157), **S-020** (165/165), **S-021** (173/173), **S-022**
+  (182/182), **S-023** (claims register), the S-015 TLS
+  end-to-end hardening (4ee3b61), and the **S-024 Part I gate**
+  at a fresh counted **187 passed / 0 failed** with open
+  findings named in the gate entry above. Four flaws were
+  found by batteries and fixed inside their own slices (the
+  rev-parse `--git-dir` query distinction, the `csrf_token`
+  log-redaction leak, the `a@.com` empty-label parse, and the
+  previously unexercised TLS wrap). All work banked locally on
+  `yrsa/samverk-part1` and fast-forwarded to local `main`
+  (head 08ec155 at gate time); **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next: Part II, S-025 registration.
