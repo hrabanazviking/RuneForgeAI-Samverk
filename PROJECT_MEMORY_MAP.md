@@ -905,6 +905,17 @@ Volmarr's original repos onto his own machines.
   spawn-per-object reader would blow. (The roadmap's 10k
   figure re-verifies at the Part III gate, S-076.)
   Cumulative battery: **383/383**.
+- **S-052 DONE (2026-10-30)** — ref listing and resolution:
+  `samverk/refs.py` — one `for-each-ref` spawn returns every
+  ref with oid, type and peeled oid (annotated tags peel to
+  their commit); HEAD is read through `symbolic-ref`, the
+  indirection itself, and resolution goes through
+  `rev-parse --verify`. Packed-refs stay git's business.
+  Ref names are validated before reaching git, so a name can
+  never be read as a flag. Battery `tests/test_refs.py`:
+  **3 passed / 0 failed**, including annotated-tag peeling
+  and the empty-repo case (no refs, HEAD on the default
+  branch, no head oid). Cumulative battery: **386/386**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
