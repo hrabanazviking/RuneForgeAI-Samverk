@@ -611,6 +611,25 @@ Volmarr's original repos onto his own machines.
   including the findability walk (settings home → token
   page) and one-call revocation of both kinds. Cumulative
   battery: **276/276**.
+- **S-035 DONE (2026-10-30)** — two-factor TOTP enrolment:
+  `samverk/totp.py` + schema migration 12 (`totp_credentials`).
+  RFC 6238/4226 HMAC-SHA1 TOTP (30 s step, 6 digits, ±1-step
+  skew window) proven against the RFC known-answer vectors.
+  Enrolment offers the provisioning URI (the QR encodes it)
+  + the Base32 secret for manual entry; enabling is a step-up
+  act through S-030's re-auth seam, failing closed, and only a
+  live code confirms (`auth.twofactor.enable`, method totp).
+  The 160-bit secret is stored **encrypted** under a caller-
+  supplied 256-bit instance key (HMAC-SHA256 keystream, fresh
+  nonce per enrolment; no key → enrolment refuses), never
+  plain, and each counter may be spent once (`last_counter`
+  replay law). Battery `tests/test_totp.py`: **10 passed /
+  0 failed**, including the DB-leak test (the plaintext
+  secret appears neither in the stored value nor the DB
+  file). (Two test-authoring slips fixed in-slice: two RFC
+  vectors first typed from the table's SHA-256 column, and
+  the provisioning label's colon over-encoded.) Cumulative
+  battery: **286/286**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

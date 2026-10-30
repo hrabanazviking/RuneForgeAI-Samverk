@@ -198,6 +198,19 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_fine_tokens_repo"
         " ON fine_grained_tokens (owner, repo)",
     ]),
+    # S-035: TOTP credentials — secret stored encrypted under an
+    # instance key (see totp.py), never plain, never hashed;
+    # last_counter is the replay law (a spent counter is dead).
+    (12, [
+        "CREATE TABLE totp_credentials ("
+        "  user_id INTEGER PRIMARY KEY,"
+        "  secret_enc TEXT NOT NULL,"
+        "  confirmed INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL,"
+        "  confirmed_at INTEGER,"
+        "  last_counter INTEGER NOT NULL DEFAULT -1"
+        ")",
+    ]),
 ]
 
 
