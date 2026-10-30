@@ -58,7 +58,8 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part II underway** (Part I gate passed 2026-10-30).
+- **Phase: Part III next** (Part I gate passed 2026-10-30;
+  Part II gate S-048 passed 2026-10-30 at 368/368).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -773,6 +774,93 @@ Volmarr's original repos onto his own machines.
   `tests/test_account_rename.py`: **7 passed / 0 failed**,
   including tombstone lapse (after 90 days the name frees
   and the redirect ends). Cumulative battery: **338/338**.
+- **S-043 DONE (2026-10-30)** — account deletion:
+  `samverk/account_deletion.py` + schema migration 19
+  (`account_deletions`). Deletion is a process: an
+  **inventory** counts everything the account holds across
+  every store before the act; the request needs the
+  username **typed** as confirmation and fresh sudo
+  re-auth through the S-036 seam (fail-closed); a **7-day
+  grace period** follows (status `pending_deletion`, login
+  refused, nothing destroyed, `cancel` restores the account
+  whole); only after grace does execution delete every
+  per-user row and the user row in one transaction, leaving
+  the name tombstoned 90 days against instant impersonation.
+  The audit log is never deleted — it is the witness — and
+  request/cancel/execute are audited under taxonomy
+  additions `auth.deletion.request` / `.cancel` / `.execute`.
+  Battery `tests/test_account_deletion.py`: **4 passed /
+  0 failed**. Cumulative battery: **342/342**.
+- **S-044 DONE (2026-10-30)** — account suspension:
+  `samverk/account_suspension.py` + schema migration 20
+  (`account_suspensions`). Admin-only (self-suspension
+  refused), **reason required** and kept on the record;
+  suspension sets status `suspended`, revokes all sessions
+  at once, and hides the account's content through the one
+  `is_content_visible` policy seam — **never deletes**:
+  profile and every other row survive, and `unsuspend`
+  restores the account whole. Audited `admin.user.suspend`
+  / `admin.user.unsuspend` (taxonomy additions; 54 events
+  total with S-043/S-045: 29 auth, 13 repo, 12 admin).
+  Battery `tests/test_account_suspension.py`: **3 passed /
+  0 failed**. Cumulative battery: **345/345**.
+- **S-045 DONE (2026-10-30)** — identity-linking data
+  shape: `samverk/identity_linking.py` + schema migration
+  21 (`external_identities`, UNIQUE (provider, external_id)
+  and (user_id, provider)). An account links one external
+  principal per provider — **Samtal first** (`samtal`) —
+  and a principal can be claimed by only one account;
+  re-linking is unlink + link, both audited
+  (`auth.identity.link` / `.unlink`). **Shape only**, by
+  the roadmap's word: no seam, no sync, no external login,
+  no federation; the store deliberately exposes no
+  authenticate seam (asserted by the battery). Battery
+  `tests/test_identity_linking.py`: **5 passed / 0 failed**.
+  Cumulative battery: **350/350**.
+- **S-046 DONE (2026-10-30)** — reserved and impersonation
+  defence: `samverk/lookalike.py` — warnings, not refusals
+  (refusal stays S-025's for exact names). A candidate's
+  skeleton lowercases, drops separators, folds leetspeak
+  and the visual confusables `rn`→`m` / `vv`→`w`; equal
+  skeletons or edit distance 1 against reserved names or
+  live accounts produce a plain-language warning naming
+  what it resembles. `registration_warnings` reads the
+  live account set. Battery `tests/test_lookalike.py`:
+  **5 passed / 0 failed**. (Two flaws found by the battery
+  and fixed in-slice: leet `1` folds to `i`, not `l`
+  — `adm1n` is admin — and `rn`-for-`m` is two edits wide
+  but one glance wide, so it belongs in the skeleton.)
+  Cumulative battery: **355/355**.
+- **S-047 DONE (2026-10-30)** — login history:
+  `samverk/login_history.py` — the owner-visible record
+  read from the audit log itself: rows where the account
+  is actor, target of an admin act, or the attempted name
+  on a failed login (shown as an attempt, per study 35
+  §4). Newest first, limit clamped 1..500, a sign-ins-only
+  filter, and a page rendering every value through S-010's
+  seam. There is no cross-account view in this seam.
+  Battery `tests/test_login_history.py`: **5 passed /
+  0 failed**. Cumulative battery: **360/360**.
+- **S-048 DONE (2026-10-30) — PART II GATE.** Gate battery
+  `tests/test_identity_battery.py`: **8 passed / 0 failed**,
+  striking the *assembled* Part II system across accounts —
+  fabricated credentials authenticate no one, cross-account
+  token and session revocation fail, the fine-grained
+  permission matrix holds, histories and identity links do
+  not cross accounts, a DB leak buys no identity, and the
+  **token findability walk is recorded**: settings home →
+  `/settings/tokens` in one click → token listed with its
+  revoke form → one-call revocation → status word Revoked.
+  Full counted run at the gate on this VM:
+  `python3 -m unittest discover -s tests` → **368 passed /
+  0 failed**. Open findings, named: (1) S-045 is shape
+  only — the Samtal seam is Part XIX, by design; (2)
+  platform cells beyond Linux x86-64 remain NOT PROVEN
+  (Part XXII); (3) everything banked sits on local `main`
+  only — **no GitHub push**: pushes stay gated on
+  Volmarr's explicit word. **Part II is complete.**
+  Next: Part III — Git Core, opening at S-049 bare
+  repository creation.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -896,3 +984,16 @@ Volmarr's original repos onto his own machines.
   **338 passed / 0 failed**. All banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
   Next slice: S-043 account deletion.
+- **2026-10-30 (keeper run, Part II closed)** — Previous run
+  had banked S-042 at 02:41 EDT (clean tree, no process
+  live), so this run resumed at the map's named next slice
+  and built **S-043** deletion (342/342), **S-044**
+  suspension (345/345), **S-045** identity-linking shape
+  (350/350), **S-046** lookalike defence (355/355; two
+  battery-found flaws fixed in-slice), **S-047** login
+  history (360/360), and the **S-048 Part II gate**
+  (368/368) — taxonomy append-only +7 events across the
+  run (54 total). Full suite re-counted fresh at the gate:
+  **368 passed / 0 failed**. All banked locally on `main`;
+  **no GitHub push** — pushes stay gated on Volmarr's word.
+  Next: Part III, S-049 bare repository creation.
