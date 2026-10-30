@@ -82,7 +82,18 @@ Volmarr's original repos onto his own machines.
   **9 passed / 0 failed**, including the literal acceptance — a
   seeded DB (with a `secret:NAME` reference row) greps clean of both
   file- and env-sourced secret values. Cumulative battery: 19/19.
-- Next: S-004 password hashing.
+- **S-004 DONE (2026-10-29)** — password hashing: `samverk/passwords.py`
+  — scrypt (stdlib `hashlib`, n=32768/r=8/p=1, ~32 MiB) with per-user
+  128-bit salts, self-describing stored format, legacy pbkdf2-sha256
+  verify-only rows, upgrade-on-login via `verify_and_upgrade`.
+  Battery `tests/test_passwords.py`: **9 passed / 0 failed** —
+  known-answer vectors for both algorithms, wrong-password and
+  malformed-row rejection, timing floor proving the work factor,
+  upgrade path end-to-end. (One test-authoring slip found and fixed
+  during the run: a hand-typed base64 salt in the KAT strings; the
+  KDF digests were verified byte-exact against fresh computation.)
+  Cumulative battery: 28/28.
+- Next: S-005 constant-time comparison + login throttling.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
