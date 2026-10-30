@@ -61,14 +61,16 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part V in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-109
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-112
   banked 2026-10-30 — governing recounts reproduced from
   log files read back after each run finished: pytest
-  697 passed / 3 skipped / 0 failed (700 collected);
-  unittest discover 700 ran, 697 passed / 3 skipped /
-  0 failed; the third skip is S-095's named real-sshd
-  cell, NOT PROVEN on this host); next S-110 file
-  finder.
+  714 passed / 1 skipped / 0 failed (715 collected);
+  unittest discover 715 ran, 714 passed / 1 skipped /
+  0 failed; the one skip is S-095's named real-sshd
+  cell, NOT PROVEN on this host (this run's recounts ran
+  with git-lfs on PATH, so the two LFS client cells that
+  skipped in the prior recount ran and passed); next
+  S-113 empty and error states.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1860,6 +1862,50 @@ Volmarr's original repos onto his own machines.
   wired with its account store and repo path. Battery
   `tests/test_prose_references.py`: **5 passed /
   0 failed**.
+- **S-110 DONE (2026-10-30)** — file finder:
+  `samverk/file_finder.py` — fuzzy path search within a
+  repo (the `t` habit), keyboard-first. One
+  `ls-tree -r -z` spawn through S-014 at the commit the
+  requested ref resolved to lists every blob path
+  (gitlinks excluded by object type). A query matches
+  when its letters appear in order in the path
+  (case-insensitive subsequence); scoring rewards
+  basename exactness, basename prefix, contiguity and
+  segment starts, and penalises spread, length and
+  depth, with path tie-breaks so ranking is
+  deterministic. Limits are named, never silent: at
+  most 100 results with the true match total carried,
+  and a repo past 100,000 files answers
+  `too_many_files` by name. The page is a plain GET
+  form (autofocused input, ranked ordinary blob links
+  at the viewed ref) — no script needed. S-054's
+  uniform not-found shape applies. Battery
+  `tests/test_file_finder.py`: **5 passed / 0 failed**.
+- **S-111 DONE (2026-10-30)** — keyboard baseline:
+  `samverk/keyboard.py` — one frozen registry of global
+  shortcuts (`t` file finder, `/` search focus, `?`
+  help, `Escape` release, `g c`/`g i`/`g p` repository
+  navigation) with a data manifest for the external
+  client script; the one help page renders *from* the
+  registry so it cannot drift. Never trapping is
+  structural: every binding carries
+  `active_when_typing=False`, duplicate bindings are
+  refused at import, and no inline script is rendered
+  (S-016). Battery `tests/test_keyboard.py`: **5
+  passed / 0 failed**.
+- **S-112 DONE (2026-10-30)** — permission-aware
+  chrome: `samverk/repo_chrome.py` — tabs and actions
+  built from S-054's single `role_for` answer: Code /
+  Issues / Pull requests for readers, Settings only
+  for admins, write actions exactly at their role,
+  Fork and Find-a-file at read; a private repository's
+  chrome for a stranger is the uniform `repo_not_found`.
+  Forbidden controls are *absent* — the module has no
+  disabled rendering path at all — and the battery
+  proves the API still enforces regardless
+  (`require_role` refuses the same viewers the chrome
+  hides things from). Battery
+  `tests/test_repo_chrome.py`: **5 passed / 0 failed**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2273,3 +2319,29 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-110 file
   finder.
+- **2026-10-30 (keeper run, Part V continued)** — Previous
+  run had closed its session log at 08:25 EDT (head
+  3b8bcdd, clean tree, no process live), so this run
+  resumed at the map's named next slice and built
+  **S-110** file finder (5), **S-111** keyboard
+  baseline (5), and **S-112** permission-aware chrome
+  (5) — governing recounts re-run one at a time into
+  log files and **read back from the files themselves**
+  after each process finished: pytest **714 passed /
+  1 skipped / 0 failed (715 collected, 925.5 s)**;
+  unittest discover **715 ran, 714 passed / 1 skipped /
+  0 failed (1070.8 s)** — the prior 697 plus this run's
+  15 battery tests plus the two LFS client cells, which
+  ran and passed because this run's recounts carried
+  git-lfs on PATH; the one remaining skip is S-095's
+  named real-sshd cell, verified by name with a
+  targeted `-rs` run. One lost run, named honestly: the
+  first unittest background session died mid-run (its
+  log held no final count and does not stand); the
+  recount was re-run cleanly and only the second log
+  governs. Environment: `/tmp` still 100% full
+  (unrelated Aesir file, not touched); TMPDIR stayed
+  pointed at `~/workspace/.verify-tmp/samverk-tmp`.
+  All banked locally on `main`; **no GitHub push** —
+  pushes stay gated on Volmarr's word. Next slice:
+  S-113 empty and error states.
