@@ -84,6 +84,8 @@ GIT_SUBCOMMANDS = frozenset({
     "archive",        # S-063 archive downloads (streamed, read-only)
     "mktree",         # S-064 template README substitution (tree rebuild)
     "commit-tree",    # S-064 template substitution commit
+    "bundle",         # S-074 repository backup primitive (create/verify)
+    "fsck",           # S-075 corruption assessment (read-only check)
 })
 
 # Refused in any argument position, as a whole token or as a
@@ -247,7 +249,11 @@ def run_git_clone_local(
                 "clone_path_not_trusted",
                 "clone paths must be resolved local Path objects")
     executable = resolve_program("git")
-    argv = [str(executable), "clone", "--bare",
+    # --no-hardlinks: a local clone otherwise hardlinks the
+    # source's object files, so the clone would share inodes
+    # with its source — S-055's fork-independence claim (and
+    # S-073's clone measurement) require a real copy.
+    argv = [str(executable), "clone", "--bare", "--no-hardlinks",
             str(source_path), str(dest_path)]
     return subprocess.run(
         argv, shell=False, timeout=timeout,

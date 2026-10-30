@@ -1321,6 +1321,26 @@ Volmarr's original repos onto his own machines.
   making the cache stale by fingerprint alone. Cumulative
   battery: **490/490** (full recount at the S-076 gate).
   Next: S-073 large-repository budgets.
+- **S-073 DONE (2026-10-30)** — large-repository budgets:
+  `samverk/repo_budgets.py` — the reference repo shape is
+  defined in code (1,000 commits / 2,000 blobs), clone
+  budgets are stated per hardware class, and
+  `measure_local_clone` times a clone through the S-055
+  seam against the budget of the class it ran on. Measured
+  on this VM (x86-64): the full reference clone lands
+  inside its 30 s budget (battery-fast in practice).
+  **Pi-class is NOT PROVEN** — its 60 s budget is stated,
+  and Part XXI/XXII own running this measurement there.
+  **Flaw found by this slice's work and fixed in-slice:**
+  git's local clone hardlinks object files by default, so
+  a clone shared inodes with its source — S-055's fork
+  independence and this slice's measurement both require a
+  real copy; `run_git_clone_local` now passes
+  `--no-hardlinks` (fork/template/proc batteries re-run
+  green after the fix). Battery
+  `tests/test_repo_budgets.py`: **3 passed / 0 failed**.
+  Cumulative battery: **493/493** (full recount at the
+  S-076 gate). Next: S-074 repository backup primitive.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
