@@ -33,9 +33,10 @@ class TaxonomyTests(unittest.TestCase):
         # S-044 added admin.user.suspend/unsuspend;
         # S-045 added auth.identity.link/unlink.
         # S-055 added repo.fork; S-094 added repo.fetch.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 56)
+        # S-122 added repo.issue.create/update.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 58)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 15)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 17)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):

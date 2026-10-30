@@ -76,6 +76,9 @@ REPO_EVENTS = frozenset({
     "repo.fork",
     # S-094 addition (append-only, per the taxonomy rules):
     "repo.fetch",
+    # S-122 additions (append-only, per the taxonomy rules):
+    "repo.issue.create",
+    "repo.issue.update",
 })
 
 ADMIN_EVENTS = frozenset({

@@ -71,6 +71,8 @@ any name not in this document's set.*
 | `repo.settings.change` | Security-relevant repo setting changed | `{"key": ..., "from": ..., "to": ...}` |
 | `repo.fork` | Repository forked; upstream link recorded (S-055) | `{"fork_of": ...}` |
 | `repo.fetch` | Private repository content fetched/cloned/archived via a transport (S-094) | `{"transport": ..., "service": ...}` — never pack or file contents; public reads are not recorded |
+| `repo.issue.create` | Issue created in a repository (S-122) | `{"number": ...}` — never the title or body |
+| `repo.issue.update` | Issue title/body edited (S-122) | `{"number": ..., "version": ...}` — never the title or body |
 
 ## admin — instance administration
 
@@ -118,3 +120,5 @@ S-045 added `auth.identity.link` and `auth.identity.unlink`
 S-055 (2026-10-30) added `repo.fork` — 55 events.
 S-094 (2026-10-30) added `repo.fetch` — 56 events:
 29 auth, 15 repo, 12 admin.
+S-122 (2026-10-30) added `repo.issue.create` and
+`repo.issue.update` — 58 events: 29 auth, 17 repo, 12 admin.
