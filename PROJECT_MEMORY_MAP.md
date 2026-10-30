@@ -1169,6 +1169,24 @@ Volmarr's original repos onto his own machines.
   (slice battery + affected suites re-run at this slice;
   full recount at the next gate). Next: S-065
   empty-repository state.
+- **S-065 DONE (2026-10-30)** — empty-repository state:
+  `samverk/empty_repo.py` — emptiness is read from git
+  itself (no refs, no HEAD object), never a flag, and the
+  state ends the moment a first commit lands
+  (`repo_not_empty`). `EmptyStateService.instructions_for`
+  generates first-push instructions **per transport** from
+  the instance's configured addresses (HTTP base, SSH
+  host/user) and the repo's real default branch: clone URL
+  plus two copyable command blocks (new local repo /
+  existing local repo) with no shell prompts inside the
+  blocks. Unconfigured transports produce no guessed
+  address — they are named in `unavailable_transports`;
+  credential-carrying HTTP bases are refused at
+  construction. S-054's read gate applies (a private
+  repo's emptiness is private). Battery
+  `tests/test_empty_repo.py`: **4 passed / 0 failed**.
+  Cumulative battery: **450/450** (full recount at the
+  next gate). Next: S-066 repository settings.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
