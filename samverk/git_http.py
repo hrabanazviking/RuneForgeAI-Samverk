@@ -46,6 +46,8 @@ from .repositories import Repository, RepositoryStore
 SERVICES = {
     "git-upload-pack": ("upload-pack", "read"),
     "git-receive-pack": ("receive-pack", "write"),
+    # S-093: archive downloads on the wire (S-063 over HTTP).
+    "git-upload-archive": ("upload-archive", "read"),
 }
 
 NO_CACHE = "no-cache, max-age=0, must-revalidate"
@@ -156,6 +158,17 @@ class SmartHttpService:
         """
         service_name, program, minimum = self._service(service)
         _current, path = self._resolve(viewer, owner, repo, minimum)
+        if program == "upload-archive":
+            # S-093: upload-archive has no ref advertisement
+            # and no --advertise-refs flag — its protocol opens
+            # with a bare ACK greeting (the shape http-backend
+            # emits). Spawning git here would make it wait for
+            # request arguments instead of answering.
+            body = (pkt_line(f"# service={service_name}\n".encode("ascii"))
+                    + PKT_FLUSH + pkt_line(b"ACK\n") + PKT_FLUSH)
+            return TransportResponse(
+                content_type=f"application/x-{service_name}-advertisement",
+                body=body)
         result = run_git_pack(
             path, program, advertise=True, stateless=True,
             protocol_version=protocol_version, timeout=30.0)
@@ -286,6 +299,23 @@ class SmartHttpService:
         """
         return self._serve_rpc(
             viewer, owner, repo, "git-receive-pack", body,
+            protocol_version=protocol_version)
+
+    def upload_archive(self, viewer: User | None, owner: object,
+                       repo: object, body: object,
+                       *, protocol_version: int | None = None) -> TransportResponse:
+        """S-093: the archive POST (`git-upload-archive`),
+        read-gated like upload-pack — S-063's archive download
+        speaking git's own remote-archive protocol, the same
+        service git's http-backend serves. Named honestly: a
+        *stock* `git archive --remote=http://…` never reaches
+        this door — remote-curl has no archive operation and
+        the client refuses before any request (traced
+        first-hand at this slice) — so the HTTP proof here is
+        at the protocol level; the stock-client archive proof
+        lives on the SSH door, where git does speak it."""
+        return self._serve_rpc(
+            viewer, owner, repo, "git-upload-archive", body,
             protocol_version=protocol_version)
 
 

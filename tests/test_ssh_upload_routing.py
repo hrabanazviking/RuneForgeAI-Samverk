@@ -177,12 +177,14 @@ class UploadRoutingTests(unittest.TestCase):
         self.assertIn(b"Authentication required", err)
         self.assertEqual(self.runner.calls, [])
 
-    def test_archive_is_named_not_served_yet(self):
-        rc, _, err = serve(
-            self.w, self.w["owner_fp"],
-            "git-upload-archive 'volmarr/samverk'")
-        self.assertEqual(rc, REFUSAL_EXIT)
-        self.assertIn(b"not served yet", err)
+    def test_archive_parses_and_is_refused_until_s093(self):
+        # Superseded by S-093: upload-archive is a served read
+        # service now — see tests/test_upload_archive.py. Here
+        # the parser shape is what this battery still proves.
+        self.assertEqual(
+            parse_original_command(
+                "git-upload-archive 'volmarr/samverk'"),
+            ("git-upload-archive", "volmarr", "samverk"))
 
 
 WRAPPER = '''#!/usr/bin/env python3

@@ -433,7 +433,7 @@ def run_git_fetch_from(
         tempdir.cleanup()
 
 
-PACK_PROGRAMS = frozenset({"upload-pack", "receive-pack"})
+PACK_PROGRAMS = frozenset({"upload-pack", "receive-pack", "upload-archive"})
 
 
 def run_git_pack(
@@ -479,7 +479,10 @@ def run_git_pack(
             "pack_protocol_invalid", repr(protocol_version))
     executable = resolve_program("git")
     argv = [str(executable), program]
-    if stateless:
+    if stateless and program != "upload-archive":
+        # upload-archive has no --stateless-rpc flag (it dies
+        # with a usage error): the archiver is one-shot by
+        # nature, and http-backend serves it bare — S-093.
         argv.append("--stateless-rpc")
     if advertise:
         argv.append("--advertise-refs")

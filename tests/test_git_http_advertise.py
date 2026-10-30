@@ -132,7 +132,7 @@ class AdvertisementTests(unittest.TestCase):
         self.assertEqual(caught.exception.reason, "repo_not_found")
 
     def test_unknown_services_are_refused_by_name(self):
-        for bad in ("git-upload-archive", "dumb", "", None):
+        for bad in ("git-receive-archive", "dumb", "", None):
             with self.assertRaises(TransportError) as caught:
                 self.service.advertise(None, "volmarr", "open", bad)
             self.assertEqual(caught.exception.reason, "service_invalid")

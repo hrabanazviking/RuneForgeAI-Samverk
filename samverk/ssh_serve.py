@@ -162,10 +162,6 @@ class SshServeService:
         except SshServeError as exc:
             return self._refuse(stderr, exc.reason, exc.message)
         program, minimum = SERVICES[service]
-        if service == "git-upload-archive":
-            return self._refuse(
-                stderr, "service_not_ready",
-                "git-upload-archive is not served yet.")
         current = self._repos.get_repository(owner, repo)
         if current is None:
             return self._refuse(
