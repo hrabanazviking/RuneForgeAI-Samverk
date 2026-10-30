@@ -68,6 +68,26 @@ PKT_FLUSH = b"0000"
 PKT_DELIMITER = b"0001"
 
 
+def protocol_version_from_header(value: object) -> int | None:
+    """S-080: read the `Git-Protocol` header the way git sends
+    it (`version=2`, possibly among other `key=value` pairs).
+
+    Returns 2 when the client asked for protocol v2, else None
+    (v0 — the default dialect, and the honest fallback for a
+    version we do not speak: git's own negotiation treats an
+    unadvertised version as "fall back", never as an error).
+    The header chooses the dialect only; it can never change
+    what the caller is permitted to do.
+    """
+    if not isinstance(value, str):
+        return None
+    for part in value.split(":"):
+        key, _, val = part.strip().partition("=")
+        if key == "version" and val == "2":
+            return 2
+    return None
+
+
 @dataclass(frozen=True)
 class TransportResponse:
     content_type: str
