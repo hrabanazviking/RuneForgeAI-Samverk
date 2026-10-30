@@ -114,6 +114,72 @@ class OverrideTests(unittest.TestCase):
                 conn.close()
 
 
+class TlsEndToEndTests(unittest.TestCase):
+    def test_serve_answers_over_a_real_tls_handshake(self):
+        """The TLS posture, proven on the wire (added at the
+        S-024 gate, which found the wrap previously unexercised):
+        a self-signed scratch cert, serve() in a thread, and an
+        HTTPS GET of the health route — plus plaintext to the
+        same port failing, as it must."""
+        import http.client
+        import shutil
+        import ssl
+        import subprocess
+        import threading
+
+        if shutil.which("openssl") is None:
+            self.skipTest("openssl not available to mint a scratch cert")
+        with tempfile.TemporaryDirectory() as td:
+            cert = Path(td) / "cert.pem"
+            key = Path(td) / "key.pem"
+            subprocess.run(
+                ["openssl", "req", "-x509", "-newkey", "rsa:2048",
+                 "-keyout", str(key), "-out", str(cert), "-days", "1",
+                 "-nodes", "-subj", "/CN=localhost"],
+                check=True, capture_output=True)
+            cfg = _cfg(td, host="127.0.0.1", port=0,
+                       tls_cert_file=cert, tls_key_file=key)
+            # serve() binds before serving; run the real serve()
+            # on an ephemeral port by way of make-then-serve is not
+            # its shape — instead exercise serve() in a thread with
+            # a pre-chosen free port.
+            import socket as _socket
+            with _socket.socket() as probe:
+                probe.bind(("127.0.0.1", 0))
+                cfg.port = probe.getsockname()[1]
+            thread = threading.Thread(target=serve, args=(cfg,),
+                                      daemon=True)
+            thread.start()
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            # The listener may need a moment to come up: retry
+            # with a fresh connection per attempt.
+            import time as _time
+            resp = body = None
+            for _ in range(50):
+                conn = http.client.HTTPSConnection(
+                    "127.0.0.1", cfg.port, timeout=10, context=context)
+                try:
+                    conn.request("GET", "/healthz")
+                    resp = conn.getresponse()
+                    body = resp.read()
+                    break
+                except OSError:
+                    _time.sleep(0.1)
+                finally:
+                    conn.close()
+            self.assertIsNotNone(resp)
+            self.assertEqual(resp.status, 200)
+            self.assertIn(b'"status": "ok"', body)
+            # Plaintext HTTP against the TLS port must fail.
+            plain = http.client.HTTPConnection(
+                "127.0.0.1", cfg.port, timeout=5)
+            with self.assertRaises(Exception):
+                plain.request("GET", "/healthz")
+                plain.getresponse().read()
+
+
 class ConfigWiringTests(unittest.TestCase):
     def test_tls_and_override_settings_load_from_env(self):
         cfg = load_config(env={
