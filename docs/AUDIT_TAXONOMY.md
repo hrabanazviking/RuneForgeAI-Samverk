@@ -87,6 +87,8 @@ any name not in this document's set.*
 | `repo.issue.milestone` | An issue's milestone set or cleared (S-125) | `{"number": ..., "milestone": ...}` — milestone is null when cleared |
 | `repo.issue.assign` | An account assigned to an issue (S-126) | `{"number": ..., "assignee": ...}` |
 | `repo.issue.unassign` | An account unassigned from an issue (S-126) | `{"number": ..., "assignee": ...}` |
+| `repo.issue.reaction_add` | A reaction given to an issue or comment; only a real change is recorded (S-128) | `{"number": ..., "reaction": ...}` — the reaction's stored name, plus `"comment_id"` when the target is a comment |
+| `repo.issue.reaction_remove` | A reaction taken back by its giver (S-128) | `{"number": ..., "reaction": ...}`, plus `"comment_id"` when the target is a comment |
 
 ## admin — instance administration
 
@@ -150,3 +152,8 @@ S-125 (2026-10-30) added `repo.milestone.create`,
 S-126 (2026-10-30) added `repo.issue.assign` and
 `repo.issue.unassign` — 72 events: 29 auth, 31 repo,
 12 admin.
+S-128 (2026-10-30) added `repo.issue.reaction_add` and
+`repo.issue.reaction_remove` — 74 events: 29 auth,
+33 repo, 12 admin. (S-127's cross-references are derived
+data recomputed from already-audited prose, so they add
+no event of their own.)
