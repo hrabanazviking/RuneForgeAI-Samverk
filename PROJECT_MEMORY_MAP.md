@@ -63,9 +63,10 @@ Volmarr's original repos onto his own machines.
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
   Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-100
   banked 2026-10-30 — governing recounts reproduced from
-  the tree: pytest 663 passed / 3 skipped / 0 failed;
-  unittest discover 659 ran, 656 passed / 3 skipped /
-  0 failed; the third skip is S-095's named real-sshd cell,
+  the tree: pytest 656 passed / 3 skipped / 0 failed
+  (659 collected); unittest discover 659 ran, 656 passed
+  / 3 skipped / 0 failed; the third skip is S-095's named
+  real-sshd cell,
   NOT PROVEN on this host); next S-101 blame view.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -1736,8 +1737,9 @@ Volmarr's original repos onto his own machines.
   result is the pointer itself, flagged, with a pointer
   page stating the bytes are not on this instance.
   Battery `tests/test_raw_download.py`: **6 passed /
-  0 failed**. Cumulative: **663** — matching this run's
-  governing recount exactly.
+  0 failed**. Cumulative: **659 collected, 656 passed**
+  — matching this run's governing recount exactly (see
+  the correction entry in the session log).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2075,3 +2077,28 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-101 blame
   view.
+- **2026-10-30 (keeper correction, same run)** — The
+  recount figures first recorded for this run (pytest
+  663) were **wrong, and are corrected here**. This
+  run's long background test executions produced
+  premature, crossed completion reports while their
+  processes were in fact still running in D-state under
+  heavy VM-wide I/O contention; the numbers taken from
+  those reports do not stand. The stale runners were
+  killed, the S-097 battery was re-run in the
+  foreground — where it caught two real defects the
+  phantom reports had hidden: README list items kept
+  their bullet marker (a doubled backslash in the
+  strip pattern) and a switcher test asserted a marker
+  shape the page never rendered (test fixed to the
+  rendered shape). Both fixed and banked (4bbe5ae);
+  the battery then passed 7/7 in the foreground. The
+  governing recounts were then re-run one at a time
+  into log files and **read back from the files
+  themselves**: pytest **656 passed / 3 skipped /
+  0 failed (659 collected, 812.7 s)**; unittest
+  discover **659 ran, 656 passed / 3 skipped /
+  0 failed (824.9 s)**. Those are this run's counts.
+  Per-slice cumulative figures in the S-097..S-100
+  entries were running sums and are superseded by
+  these governing recounts, as those entries state.
