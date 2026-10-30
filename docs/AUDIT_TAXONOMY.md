@@ -73,6 +73,9 @@ any name not in this document's set.*
 | `repo.fetch` | Private repository content fetched/cloned/archived via a transport (S-094) | `{"transport": ..., "service": ...}` — never pack or file contents; public reads are not recorded |
 | `repo.issue.create` | Issue created in a repository (S-122) | `{"number": ...}` — never the title or body |
 | `repo.issue.update` | Issue title/body edited (S-122) | `{"number": ..., "version": ...}` — never the title or body |
+| `repo.issue.comment` | Comment added to an issue (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
+| `repo.issue.comment_edit` | Comment edited by its author; previous body kept in the visible edit history (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
+| `repo.issue.comment_delete` | Comment deleted by its author or a repository admin; tombstone remains (S-123) | `{"number": ..., "comment_id": ...}` — never the body |
 
 ## admin — instance administration
 
@@ -122,3 +125,6 @@ S-094 (2026-10-30) added `repo.fetch` — 56 events:
 29 auth, 15 repo, 12 admin.
 S-122 (2026-10-30) added `repo.issue.create` and
 `repo.issue.update` — 58 events: 29 auth, 17 repo, 12 admin.
+S-123 (2026-10-30) added `repo.issue.comment`,
+`repo.issue.comment_edit` and `repo.issue.comment_delete`
+— 61 events: 29 auth, 20 repo, 12 admin.

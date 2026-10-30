@@ -555,6 +555,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issues_repo ON issues (repo_id, number)",
         "CREATE INDEX idx_issues_repo_state ON issues (repo_id, state)",
     ]),
+    # S-123: issue comments and their visible edit history.
+    # Deletion is a tombstone on the comment row (body
+    # cleared, deleted_at/deleted_by stamped); every edit
+    # first records the previous body in issue_comment_edits.
+    (35, [
+        "CREATE TABLE issue_comments ("
+        "  id INTEGER PRIMARY KEY,"
+        "  issue_id INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  deleted_at INTEGER,"
+        "  deleted_by INTEGER"
+        ")",
+        "CREATE INDEX idx_issue_comments_issue"
+        " ON issue_comments (issue_id, id)",
+        "CREATE TABLE issue_comment_edits ("
+        "  id INTEGER PRIMARY KEY,"
+        "  comment_id INTEGER NOT NULL,"
+        "  editor_id INTEGER NOT NULL,"
+        "  previous_body TEXT NOT NULL,"
+        "  edited_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_issue_comment_edits_comment"
+        " ON issue_comment_edits (comment_id, id)",
+    ]),
 ]
 
 
