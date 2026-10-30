@@ -61,16 +61,16 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part V in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-112
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-115
   banked 2026-10-30 — governing recounts reproduced from
   log files read back after each run finished: pytest
-  714 passed / 1 skipped / 0 failed (715 collected);
-  unittest discover 715 ran, 714 passed / 1 skipped /
-  0 failed; the one skip is S-095's named real-sshd
-  cell, NOT PROVEN on this host (this run's recounts ran
-  with git-lfs on PATH, so the two LFS client cells that
-  skipped in the prior recount ran and passed); next
-  S-113 empty and error states.
+  729 passed / 3 skipped / 0 failed (732 collected);
+  unittest discover 732 ran, 729 passed / 3 skipped /
+  0 failed; the three skips are named cells, NOT PROVEN
+  on this host: S-095's real-sshd cell and the two
+  git-lfs client cells (git-lfs is not installed on this
+  host in this run — a targeted `-rs` run names both);
+  next S-116 print and export of code views.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1906,6 +1906,51 @@ Volmarr's original repos onto his own machines.
   (`require_role` refuses the same viewers the chrome
   hides things from). Battery
   `tests/test_repo_chrome.py`: **5 passed / 0 failed**.
+- **S-113 DONE (2026-10-30)** — empty and error states:
+  `samverk/page_states.py` — one frozen registry of
+  designed empty states for every surface built so far
+  (repo home, file browser, commit list, compare,
+  contributors, file finder, blob, blame), each with an
+  honest why, a next step in words, and one action; a
+  state without a next step cannot be constructed.
+  Error states are built from S-019's registered codes
+  plus the opaque error id alone — no parameter exists
+  through which an exception message, path, or stack
+  trace could reach the page — and `not_found` keeps
+  S-054's uniform shape ("may not exist, or may be
+  private", one sentence for both). Battery
+  `tests/test_page_states.py`: **7 passed / 0 failed**.
+- **S-114 DONE (2026-10-30)** — binary and image files:
+  `samverk/media_view.py`, the view S-099 points at.
+  Raster images are recognised by magic bytes (never by
+  name — PNG bytes in a `.txt` file are an image; text
+  in a `.png` is refused back to the blob view) and
+  render through S-100's raw route at the pinned commit
+  with genuine alt text (file, repo, header-proven
+  dimensions, size — the image-accessibility law).
+  Dimensions are parsed from the PNG/GIF/JPEG/WebP
+  headers and stated only when the header proves them.
+  SVG is described, never rendered inline (script
+  carrier, S-012/S-100 law); any other binary shows
+  size, type, and a download action with none of its
+  bytes on the page — no hex dump, no base64. LFS
+  pointers are reported as pointers. Battery
+  `tests/test_media_view.py`: **6 passed / 0 failed**.
+- **S-115 DONE (2026-10-30)** — repository
+  insights-lite: `samverk/repo_insights.py` — only what
+  the instance truly knows: commits/branches/tags/
+  contributors from S-106's cached derivations (with
+  their fresh/cached honesty), accepted pushes counted
+  exactly from S-090's event store with the most recent
+  push time, recorded read transfers counted from
+  S-094's audit for private repositories and stated
+  *not applicable* (never zero) for public ones, and
+  size on disk measured (S-058 walk). Clone counts for
+  anonymous/public reads, page views, and referrers are
+  named on the page under "Not tracked" with their
+  reasons, and no `clone_count` field exists anywhere
+  in the module. Battery `tests/test_repo_insights.py`:
+  **4 passed / 0 failed**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2345,3 +2390,34 @@ Volmarr's original repos onto his own machines.
   All banked locally on `main`; **no GitHub push** —
   pushes stay gated on Volmarr's word. Next slice:
   S-113 empty and error states.
+- **2026-10-30 (keeper run, Part V continued)** — Previous
+  run had closed its session log at 09:18 EDT (head
+  5928b40, clean tree, no process live), so this run
+  resumed at the map's named next slice and built
+  **S-113** empty and error states (7), **S-114** binary
+  and image files (6), and **S-115** repository
+  insights-lite (4) — governing recounts re-run one at a
+  time into log files and **read back from the files
+  themselves** after each process finished: pytest
+  **729 passed / 3 skipped / 0 failed (732 collected,
+  1353.4 s)**; unittest discover **732 ran, 729 passed /
+  3 skipped / 0 failed (1053.3 s)** — the prior 714 plus
+  this run's 17 battery tests, minus the two git-lfs
+  client cells, which skipped again because git-lfs is
+  not installed on this host in this run (a targeted
+  `-rs` run names both cells, as it names S-095's
+  real-sshd cell: all three skips are named NOT PROVEN
+  cells, not failures). One crossed report was caught
+  and discarded in-run: the pytest background session's
+  delivered stdout claimed 731 passed / 1 skipped in
+  1252 s, but its own log file — whose 1353.4 s duration
+  matches the session's measured duration — records
+  729 / 3; the file governs, per the standing phantom
+  lesson. No bugs were found by the new batteries; no
+  slice needed repair. Environment: `/tmp` had room
+  again this run (the earlier full state cleared by its
+  owner); TMPDIR stayed pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-116 print and
+  export of code views.
