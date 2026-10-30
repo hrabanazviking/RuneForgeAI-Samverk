@@ -867,6 +867,25 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_event_outbox_repo"
         " ON issue_event_outbox (repo_id, id)",
     ]),
+    # S-142: cross-fork pull requests — a PR whose head
+    # branch lives in another repository (a fork of the
+    # base repository) carries one row here naming the
+    # head repository and the maintainer-edits permission
+    # flag the author chose at opening. The PR's own row
+    # (migration 46) keeps the branch pair and the oids
+    # compared at opening; same-repository PRs have no
+    # row here, so presence of a row IS the cross-fork
+    # fact, never a flag that can disagree with it.
+    (49, [
+        "CREATE TABLE pull_request_forks ("
+        "  pull_request_id INTEGER PRIMARY KEY,"
+        "  head_repo_id INTEGER NOT NULL,"
+        "  maintainer_can_edit INTEGER NOT NULL DEFAULT 1,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pull_request_forks_head"
+        " ON pull_request_forks (head_repo_id, pull_request_id)",
+    ]),
 ]
 
 

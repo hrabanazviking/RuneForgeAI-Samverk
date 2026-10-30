@@ -135,10 +135,23 @@ Volmarr's original repos onto his own machines.
   dependencies 30 passed / 0 failed; no migration, no
   new audit event — creation rides S-137's existing
   repo.pull_request.create, taxonomy stands at 90);
-  next S-142 PR creation, cross-fork. A fresh
+  governing full-suite recount owed by S-141 was paid
+  by the next keeper run and read back from its log
+  file: pytest 914 passed / 1 skipped / 0 failed
+  (915 collected, 5 subtests passed, 1719.11 s —
+  exactly the prior 906 plus S-141's 8 battery tests;
+  the one skip is S-095's named real-sshd cell);
+  S-142 banked 2026-10-30 (10-test battery, foreground;
+  combined with same-repo PRs + conversion + forks +
+  proc + taxonomy + dependencies + secrets 59 passed /
+  0 failed; migration 49; new dedicated S-014 fetch
+  seam `run_git_fetch_ref`; no new audit event —
+  creation rides repo.pull_request.create with
+  same_repo false in the detail, taxonomy stands
+  at 90); next S-143 draft pull requests. A fresh
   full-suite governing recount is owed before further
-  slices bank (last governing recount 906 passed /
-  1 skipped; arithmetic expectation 914 passed /
+  slices bank (last governing recount 914 passed /
+  1 skipped; arithmetic expectation 924 passed /
   1 skipped).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -2662,6 +2675,61 @@ Volmarr's original repos onto his own machines.
   Volmarr's explicit word. **Part VI is complete.**
   Next: Part VII — Pull Requests & Code Review,
   opening at S-141 PR creation, same-repo.
+- **S-142 DONE (2026-10-30)** — PR creation, cross-fork:
+  new module `samverk/pull_request_forks.py`
+  (`ForkPullRequestStore`), migration 49
+  (`pull_request_forks`: head_repo_id +
+  maintainer_can_edit; a row's presence IS the
+  cross-fork fact), and one new dedicated S-014 seam
+  in `samverk/proc.py` — `run_git_fetch_ref`, fetching
+  one named ref from a trusted local path into a
+  scratch ref (generic `fetch` stays refused). The
+  head repository must descend from the base through
+  S-055's `fork_of_id` chain (`not_a_fork` otherwise;
+  `same_repository` routes back to S-141); the walked
+  chain is returned and `relationship_words` says it
+  in plain words, direct or through each intermediate
+  fork, on the preview, the created record, and the
+  rendered page. The compare fetches the base branch's
+  current tip into the fork under the scratch ref
+  `refs/samverk-compare/base` (deleted in every
+  outcome — asserted gone by the battery), so ahead /
+  behind / commits / diff are true against the base as
+  it stands today even when the upstream moved after
+  the fork; a battery cell proves the moved-base case
+  (ahead 1 / behind 1, creation recording the new base
+  oid). Permission is the fork bargain: write on the
+  head repository + read on the base — the fork's owner
+  opens into a base they cannot write; the base's owner
+  cannot offer somebody else's fork branch
+  (`permission_denied`); unreadable head/base answer
+  the uniform `head_repo_not_found` / `repo_not_found`.
+  Creation validates whole (base/head existence,
+  branch law, `no_commits`, `already_exists` scoped to
+  the same head repository) before claiming the base
+  repository's next shared S-121 number; born open,
+  not draft; audited under the existing
+  repo.pull_request.create with `same_repo: false`,
+  the head repo's full name, and the flag in the
+  detail (taxonomy unchanged, 90 events). The
+  maintainer-edits flag (default true) is stored, said
+  in words everywhere the PR is shown, and answerable
+  through `maintainer_edit_allowed` — true only for a
+  base writer on a flagged cross-fork PR. Battery
+  `tests/test_pull_request_forks.py`: **10 passed /
+  0 failed** (foreground), and standalone **10 passed**;
+  combined with same-repo PRs + conversion + forks +
+  proc + taxonomy + dependencies + secrets **59 passed
+  / 0 failed**. The governing recount this run owed
+  was paid first and read back from its log file:
+  pytest **914 passed / 1 skipped / 0 failed** (915
+  collected, 5 subtests passed, 1719.11 s — exactly
+  the prior 906 plus S-141's 8); the one skip is
+  S-095's named real-sshd cell, NOT PROVEN on this
+  host. No bugs were found in shipped code by the new
+  battery. Next: S-143 draft pull requests. A fresh
+  governing recount is owed before further slices bank
+  (expectation 924 passed / 1 skipped).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3307,3 +3375,33 @@ Volmarr's original repos onto his own machines.
   on `main`; **no GitHub push** — pushes stay gated
   on Volmarr's word. Next slice: S-142 PR creation,
   cross-fork.
+- **2026-10-30 (keeper run, Part VII continued)** — Previous
+  run had banked S-141 at 18:12 EDT and closed its
+  session log in that commit (clean tree, no process
+  live, no subagent worker at this tick's check), so
+  this run first paid the governing recount S-141 owed
+  (log file read back after it finished: pytest **914
+  passed / 1 skipped / 0 failed**, 915 collected, 5
+  subtests passed, 1719.11 s — exactly the prior 906
+  plus S-141's 8 battery tests; the one skip is
+  S-095's named real-sshd cell, NOT PROVEN on this
+  host), then built **S-142** PR creation, cross-fork
+  (new module `samverk/pull_request_forks.py`;
+  migration 49; new dedicated S-014 seam
+  `run_git_fetch_ref` in proc.py; taxonomy unchanged
+  at 90 events). 10-test battery, foreground; combined
+  with same-repo PRs + conversion + forks + proc +
+  taxonomy + dependencies + secrets **59 passed /
+  0 failed**; the battery standalone **10 passed**.
+  No bugs were found in shipped code by the new
+  battery. A fresh full-suite governing recount was
+  NOT run after this slice (last governing recount
+  stands at 914 passed / 1 skipped; arithmetic
+  expectation 924 passed / 1 skipped) — the next
+  keeper run verifies it from a log file before
+  banking further slices. Environment: TMPDIR pointed
+  at `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`. All banked locally
+  on `main`; **no GitHub push** — pushes stay gated
+  on Volmarr's word. Next slice: S-143 draft pull
+  requests.

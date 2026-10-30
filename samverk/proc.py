@@ -48,6 +48,7 @@ home first, and this is it.
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -432,6 +433,53 @@ def run_git_fetch_from(
             env=_clean_env(env_extra))
     finally:
         tempdir.cleanup()
+
+
+_FETCH_REF_RE = re.compile(
+    r"^refs/[A-Za-z0-9][A-Za-z0-9._/-]*$")
+
+
+def run_git_fetch_ref(
+    repo_path: Path,
+    source_path: Path,
+    source_ref: str,
+    dest_ref: str,
+    *,
+    timeout: float = 120.0,
+) -> subprocess.CompletedProcess:
+    """Fetch ONE named ref from one local repository into a
+    scratch ref in another — the S-142 cross-fork compare seam.
+
+    Generic `fetch` stays refused under S-014, exactly as with
+    the mirror seam above: both repositories are trusted local
+    `Path` parameters the caller resolved through S-013, both
+    ref names must be full `refs/…` names with no `..`, no
+    empty component and no leading/trailing slash, and this
+    function builds the argv itself — a single forced refspec
+    from the named source ref to the named destination ref,
+    tags never followed. Callers use it to make one upstream
+    branch's objects readable inside a fork for comparison,
+    under a scratch ref they delete afterwards; no branch in
+    either repository is ever moved by this seam.
+    """
+    for value in (repo_path, source_path):
+        if not isinstance(value, Path) or not value.is_absolute():
+            raise ProcRefused(
+                "fetch_path_not_trusted",
+                "fetch repositories must be resolved local Path objects")
+    for ref in (source_ref, dest_ref):
+        if not isinstance(ref, str) or not _FETCH_REF_RE.match(ref) \
+                or ".." in ref or "//" in ref or ref.endswith("/") \
+                or ref.endswith(".lock"):
+            raise ProcRefused("fetch_ref_invalid", repr(ref))
+    executable = resolve_program("git")
+    argv = [str(executable), f"--git-dir={repo_path}", "fetch",
+            "--no-tags", str(source_path),
+            f"+{source_ref}:{dest_ref}"]
+    return subprocess.run(
+        argv, shell=False, timeout=timeout,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        env=_clean_env())
 
 
 PACK_PROGRAMS = frozenset({"upload-pack", "receive-pack", "upload-archive"})
