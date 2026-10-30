@@ -647,6 +647,57 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_assignees_user"
         " ON issue_assignees (user_id, issue_id)",
     ]),
+    # S-127: cross-references — the both-ways link record
+    # derived from prose (issue/PR bodies, comments, commit
+    # messages). Sentinel defaults (0 / '') stand in for
+    # absent parts so the UNIQUE key dedupes in SQLite,
+    # where NULLs never collide. A row names its source
+    # (a numbered item, one of its comments, or a commit)
+    # and its proven target (a numbered item in this or
+    # another repository, or a resolver-confirmed commit).
+    (39, [
+        "CREATE TABLE cross_references ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  source_kind TEXT NOT NULL,"
+        "  source_number INTEGER NOT NULL DEFAULT 0,"
+        "  source_comment_id INTEGER NOT NULL DEFAULT 0,"
+        "  source_sha TEXT NOT NULL DEFAULT '',"
+        "  source_author_id INTEGER,"
+        "  target_repo_id INTEGER NOT NULL DEFAULT 0,"
+        "  target_number INTEGER NOT NULL DEFAULT 0,"
+        "  target_sha TEXT NOT NULL DEFAULT '',"
+        "  is_closing INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, source_kind, source_number,"
+        "  source_comment_id, source_sha, target_repo_id,"
+        "  target_number, target_sha)"
+        ")",
+        "CREATE INDEX idx_xrefs_target"
+        " ON cross_references (target_repo_id, target_number)",
+        "CREATE INDEX idx_xrefs_target_sha"
+        " ON cross_references (target_sha)",
+        "CREATE INDEX idx_xrefs_source"
+        " ON cross_references (repo_id, source_number)",
+    ]),
+    # S-128: reactions — one row per (target, account,
+    # reaction); the target is an issue (comment_id = 0)
+    # or one of its comments. Removing your reaction
+    # deletes your row; counts are counted live from
+    # these rows, never cached.
+    (40, [
+        "CREATE TABLE reactions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  issue_id INTEGER NOT NULL,"
+        "  comment_id INTEGER NOT NULL DEFAULT 0,"
+        "  user_id INTEGER NOT NULL,"
+        "  reaction TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (issue_id, comment_id, user_id, reaction)"
+        ")",
+        "CREATE INDEX idx_reactions_target"
+        " ON reactions (issue_id, comment_id, reaction)",
+    ]),
 ]
 
 

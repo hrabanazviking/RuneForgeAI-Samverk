@@ -62,7 +62,7 @@ Volmarr's original repos onto his own machines.
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
   Part IV gate S-096 passed 2026-10-30 at 640; Part V gate
-  S-120 passed 2026-10-30; S-121..S-123 banked 2026-10-30 —
+  S-120 passed 2026-10-30; S-121..S-128 banked 2026-10-30 —
   governing recounts reproduced from log files read back
   after each run finished: pytest 783 passed / 1 skipped /
   0 failed (784 collected); unittest discover 784 ran,
@@ -70,8 +70,16 @@ Volmarr's original repos onto his own machines.
   named cell, NOT PROVEN on this host: S-095's real-sshd
   cell. The two git-lfs client cells ran and passed —
   the recounts prepended `~/workspace/.tools` to PATH,
-  as the S-112 run did and the S-115 correction directed);
-  next S-124 labels.
+  as the S-112 run did and the S-115 correction directed.
+  S-124..S-128 stand on their own counted batteries plus
+  foreground combined runs read back from log files
+  (S-127 run: cross-references + taxonomy + dependencies
+  + issues + numbering + comments + labels + milestones
+  + assignees 61 passed / 0 failed; S-128 run: reactions
+  + taxonomy + dependencies 16 passed / 0 failed); a
+  fresh full-suite governing recount is the next keeper
+  run's first duty before S-129);
+  next S-129 issue templates.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2191,6 +2199,57 @@ Volmarr's original repos onto his own machines.
   (foreground; combined Part VI run at banking:
   labels + milestones + assignees + taxonomy
   **27 passed / 0 failed**).
+- **S-127 DONE (2026-10-30)** — cross-references:
+  `samverk/cross_references.py` + schema migration 39
+  (`cross_references`) — mentioning `#n` or a commit
+  links both ways. The parser works on prose only
+  (fenced blocks and inline code never record), folds
+  duplicates, and marks references governed by closing
+  keywords (`close(s/d)`, `fix(es/ed)`, `resolve(s/d)`,
+  including governed lists like `Closes a/b#1, #2 and
+  resolves #6`). Recording is a sync that replaces a
+  source's rows with what its current text says — an
+  edit that removes a mention removes the
+  back-reference, and a tombstoned comment's references
+  die with its body. Honesty law, as S-109: a `#n` is
+  recorded only when `resolve_number` proves it claimed
+  (same-repo or `owner/repo#n`), a commit SHA only when
+  the caller's resolver confirms a real commit there;
+  self-references are never rows. `references_to` hides
+  back-references whose source repo the viewer cannot
+  read, so private conversations never leak through a
+  public target. `closing_references` / `closing_notice`
+  are the shown-before-merge seam ("Will close
+  owner/repo#n on merge." in plain words); acting on
+  the mark at merge is Part VII's. No audit event of
+  its own — derived data from already-audited prose,
+  named in the taxonomy doc's version note. Battery
+  `tests/test_cross_references.py`: **9 passed /
+  0 failed** (foreground); combined foreground run with
+  taxonomy + dependencies + issues + numbering +
+  comments + labels + milestones + assignees:
+  **61 passed / 0 failed**, read back from the log file.
+- **S-128 DONE (2026-10-30)** — reactions:
+  `samverk/reactions.py` + schema migration 40
+  (`reactions`) — the small honest set: eight reactions
+  stored by plain-words name (`thumbs_up` … `eyes`),
+  each with label + glyph; anything outside the set is
+  refused `reaction_invalid`. Targets are an issue or
+  one of its comments, never mixed. Counts are counted
+  live from the rows and every summary carries the
+  who-reacted list in reaction order; `render_summary`
+  prints glyph, name, count, and names as text.
+  Giving/taking back is a reader act under S-054
+  (uniform `issue_not_found` for strangers to a private
+  repo); repeats are quiet no-ops, only real changes
+  are audited, and you can only remove your own
+  (`repo.issue.reaction_add` / `repo.issue.reaction_remove`,
+  taxonomy append-only +2, 74 events: 29 auth, 33 repo,
+  12 admin; doc + test counts updated together).
+  Battery `tests/test_reactions.py`: **5 passed /
+  0 failed** (foreground; combined with taxonomy +
+  dependencies **16 passed / 0 failed**, read back
+  from the log file).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2696,3 +2755,23 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-119
   repository header summary.
+- **2026-10-30 (keeper run, Part VI continued)** — Previous
+  run had banked S-126 at 13:40 EDT (clean tree, no
+  process live), so this run resumed at the map's named
+  next slice (the header's stale "next S-124" line was
+  repaired in this run — S-124..S-126 were already
+  banked with detailed entries) and built **S-127**
+  cross-references (9-test battery) and **S-128**
+  reactions (5-test battery; taxonomy append-only +2,
+  74 events) — foreground combined runs read back from
+  log files: S-127 combined **61 passed / 0 failed**,
+  S-128 combined **16 passed / 0 failed**. No bugs were
+  found by the new batteries. A fresh full-suite
+  governing recount was NOT run this tick (the last
+  governing recount stands at S-123's 783 passed /
+  1 skipped); it is the next keeper run's first duty,
+  named in the header. Environment: TMPDIR pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-129 issue
+  templates.
