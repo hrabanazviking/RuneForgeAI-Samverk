@@ -58,15 +58,15 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part V next** (Part I gate passed 2026-10-30;
-  Part II gate S-048 passed 2026-10-30 at 368/368; Part III
-  gate S-076 passed 2026-10-30 at 510/510; Part IV gate
-  S-096 passed 2026-10-30 — governing recounts reproduced
-  from the tree: pytest 640 passed / 3 skipped / 0 failed;
-  unittest discover 636 ran, 633 passed / 3 skipped /
+- **Phase: Part V in progress** (Part I gate passed
+  2026-10-30; Part II gate S-048 passed 2026-10-30 at
+  368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-100
+  banked 2026-10-30 — governing recounts reproduced from
+  the tree: pytest 663 passed / 3 skipped / 0 failed;
+  unittest discover 659 ran, 656 passed / 3 skipped /
   0 failed; the third skip is S-095's named real-sshd cell,
-  NOT PROVEN on this host); next S-097 repository home,
-  opening Part V.
+  NOT PROVEN on this host); next S-101 blame view.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1682,6 +1682,62 @@ Volmarr's original repos onto his own machines.
   gated on Volmarr's explicit word. **Part IV is
   complete.** Next: Part V — Web Repository Experience,
   opening at S-097 repository home.
+- **S-097 DONE (2026-10-30)** — repository home:
+  `samverk/repo_home.py` — root listing, README rendered
+  at the root through S-010 (interim safe pipeline:
+  headings, code fences, lists, inline code/bold, all
+  built from already-escaped text; S-107 owns the full
+  Markdown pipeline and will replace its internals),
+  branch/tag switcher with the current ref marked in
+  words, clone URLs for both transports from the
+  instance's configured bases with copy buttons (visible
+  read-only fields + `data-copy-target` hooks, no inline
+  script; unconfigured transports named, never guessed),
+  an honest empty-repo home, and S-054's uniform
+  not-found permission shape. The module also carries
+  Part V's shared helpers (ref resolution, repo-path
+  validation, tree/blob walking) that S-098..S-100 build
+  on. Battery `tests/test_repo_home.py`: **7 passed /
+  0 failed**. Cumulative battery: **647/647** by running
+  count (the governing recount at this run's end governs).
+- **S-098 DONE (2026-10-30)** — file browser:
+  `samverk/file_browser.py` — tree navigation at any ref
+  with breadcrumb, directories-first listing, and
+  last-commit-per-entry from one `git log --name-only`
+  walk (newest touch wins; a directory is touched by
+  anything under it). One battery-found bug fixed
+  in-slice: the log format's record marker first trailed
+  each header, which attached each commit's file names
+  to the *next* commit — the marker now leads the
+  format. Battery `tests/test_file_browser.py`:
+  **5 passed / 0 failed**. Cumulative: **652**.
+- **S-099 DONE (2026-10-30)** — blob view:
+  `samverk/blob_view.py` — server-side highlighting (a
+  per-language tokeniser over a shared extension table
+  with shebang fallback; every raw segment escaped
+  before any span is wrapped), line numbers, and line
+  permalinks pinned to the *resolved commit oid*, so a
+  link pasted into an issue still means the same line
+  after the branch moves. Binary files refused by name
+  (S-114 owns their view), LFS pointers reported as
+  pointers, files over the 1 MB view limit refused by
+  name *before* their bytes are read (`cat-file -s`
+  first). Battery `tests/test_blob_view.py`: **5 passed
+  / 0 failed**. Cumulative: **657**.
+- **S-100 DONE (2026-10-30)** — raw and download:
+  `samverk/raw_download.py` — exact bytes with correct
+  content types (extension table + content sniff),
+  downloads as attachments, SVG attachment-only (never
+  inline), no size cap and never a silent truncation
+  (a file past S-099's view limit comes back whole).
+  An LFS pointer resolves to the real bytes when the
+  object is in the repo's own LFS store (size checked
+  against the pointer first); when it is not, the
+  result is the pointer itself, flagged, with a pointer
+  page stating the bytes are not on this instance.
+  Battery `tests/test_raw_download.py`: **6 passed /
+  0 failed**. Cumulative: **663** — matching this run's
+  governing recount exactly.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1995,3 +2051,27 @@ Volmarr's original repos onto his own machines.
   All banked locally on `main` (head at the gate commit);
   **no GitHub push** — pushes stay gated on Volmarr's
   word. Next: Part V, S-097 repository home.
+- **2026-10-30 (keeper run, Part V opened)** — Previous
+  run had closed Part IV at 05:47 EDT (head a1ab842,
+  clean tree, no process live), so this run resumed at
+  the map's named next slice: baseline re-verified from
+  the tree (pytest 640 passed / 3 skipped / 0 failed),
+  then **S-097** repository home (7), **S-098** file
+  browser (5), **S-099** blob view (5), and **S-100**
+  raw and download (6) — full suite re-counted fresh at
+  this run's end, both methods reproduced: pytest
+  **663 passed / 3 skipped / 0 failed**, unittest
+  discover **659 ran, 656 passed / 3 skipped /
+  0 failed**. One battery-found bug fixed in-slice
+  (S-098's log record marker attached file names to
+  the wrong commit). Noted honestly: research studies
+  17 and 43, which Part V draws on, are still empty
+  files — the slices were built from the roadmap's own
+  text and the established seams; the studies remain
+  to be written and are not claimed. Environment:
+  `/tmp` still 100% full (unrelated Aesir file, not
+  touched); TMPDIR stayed pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-101 blame
+  view.
