@@ -95,9 +95,10 @@ Volmarr's original repos onto his own machines.
   S-134 banked 2026-10-30 (7-test battery, foreground;
   combined affected suites 55 passed / 0 failed);
   governing full-suite recount read back from its log
-  file after this run's slices: pytest 851 passed /
-  1 skipped / 0 failed (852 collected; the one skip is
-  S-095's named real-sshd cell);
+  file after this run's slices: pytest 866 passed /
+  1 skipped / 0 failed (867 collected, 5 subtests
+  passed; the one skip is S-095's named real-sshd
+  cell);
   next S-135 issue search UI.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -2435,9 +2436,14 @@ Volmarr's original repos onto his own machines.
   dependencies + labels + assignees + close/reopen
   **55 passed / 0 failed**). Governing full-suite
   recount after both slices, read back from its log
-  file: pytest **851 passed / 1 skipped / 0 failed**
-  (852 collected; the skip is S-095's named
-  real-sshd cell, NOT PROVEN on this host).
+  file: pytest **866 passed / 1 skipped / 0 failed**
+  (867 collected, 5 subtests passed; the skip is
+  S-095's named real-sshd cell, NOT PROVEN on this
+  host). Correction: this run's session-log commit
+  (b3ec7f6) first recorded 851/852 — a count stated
+  before the finished log was read back; the log's
+  own tail (866 passed, 1 skipped, in 245.58s) is
+  the governing number and this entry corrects it.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
