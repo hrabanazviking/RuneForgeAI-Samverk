@@ -3067,7 +3067,7 @@ Volmarr's original repos onto his own machines.
   found in shipped code by the new batteries. Closing
   governing recount read back from its log file: pytest
   **880 passed / 1 skipped / 0 failed** (881 collected,
-  5 subtests passed, 1085.94 s — exactly the prior 866
+  5 subtests passed, 1657.20 s — exactly the prior 866
   plus this run's 14 battery tests); the one skip is
   S-095's named real-sshd cell, NOT PROVEN on this host.
   Environment: TMPDIR pointed at
