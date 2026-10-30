@@ -61,14 +61,14 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part V in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-106
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-109
   banked 2026-10-30 — governing recounts reproduced from
   log files read back after each run finished: pytest
-  679 passed / 3 skipped / 0 failed (682 collected);
-  unittest discover 682 ran, 679 passed / 3 skipped /
+  697 passed / 3 skipped / 0 failed (700 collected);
+  unittest discover 700 ran, 697 passed / 3 skipped /
   0 failed; the third skip is S-095's named real-sshd
-  cell, NOT PROVEN on this host); next S-107 markdown
-  pipeline.
+  cell, NOT PROVEN on this host); next S-110 file
+  finder.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1810,6 +1810,56 @@ Volmarr's original repos onto his own machines.
   stated as author identities, not instance accounts.
   Battery `tests/test_repo_stats.py`: **3 passed /
   0 failed**.
+- **S-107 DONE (2026-10-30)** — Markdown pipeline:
+  `samverk/markdown_pipeline.py` — the full sanitised
+  renderer behind the S-010 seam, replacing S-097's
+  interim renderer inside `render_readme_html` without
+  changing the home's shape: headings with deduplicated
+  slug anchors and permalinks, task lists (disabled
+  checkboxes), tables with alignment, code fences with
+  language classes, nested lists, blockquotes,
+  reference-style and bare-URL links. Every destination
+  passes `safe_url`; unsafe links/images degrade to
+  their text/alt, never a clickable hole. Carries the
+  `link_resolver` (S-108) and `reference_resolver`
+  (S-109) seams. Battery
+  `tests/test_markdown_pipeline.py`: **8 passed /
+  0 failed**, its XSS section parsing the rendered
+  output and attacking every construct. Bugs found and
+  fixed in-slice, never left: balanced-paren
+  destinations were truncated at the first `)` (a stray
+  paren leaked into prose), and an unterminated fence
+  turned the document's final newline into a phantom
+  blank code line.
+- **S-108 DONE (2026-10-30)** — repo-relative links:
+  `samverk/repo_links.py` — relative links/images in
+  repo Markdown resolve against the Markdown file's
+  directory and the pinned commit oid through S-107's
+  seam: links to the blob view, images to the raw view,
+  fragments/queries preserved, segments percent-encoded.
+  Absolute/mailto/anchor/instance-root destinations pass
+  through untouched; dangerous schemes are refused and
+  a `..` climb above the repo root refuses the link
+  (pipeline degrades it to visible text). Repo home
+  README wired with root context + pinned commit.
+  Battery `tests/test_repo_links.py`: **5 passed /
+  0 failed**.
+- **S-109 DONE (2026-10-30)** — mentions and
+  references in prose: `samverk/prose_references.py` —
+  `@user`, `#issue`, and commit-SHA autolinking through
+  S-107's `reference_resolver` seam, confirmed never
+  guessed: mentions resolve through the account store
+  (canonical display case), SHAs through git
+  `rev-parse --verify <sha>^{commit}` in the prose's
+  own repository and link by full oid; a hex word
+  naming no commit stays text, and references never
+  fire inside code spans or email addresses. `#issues`
+  stay plain text until Part VI wires its store into
+  the `issue_exists` seam — linking to pages that
+  cannot exist yet would be dishonest. Repo home README
+  wired with its account store and repo path. Battery
+  `tests/test_prose_references.py`: **5 passed /
+  0 failed**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2200,3 +2250,26 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-107 markdown
   pipeline.
+- **2026-10-30 (keeper run, Part V continued)** — Previous
+  run had closed its session log at 07:37 EDT (head
+  f3361b0, clean tree, no process live), so this run
+  resumed at the map's named next slice and built
+  **S-107** Markdown pipeline (8), **S-108**
+  repo-relative links (5), and **S-109** mentions and
+  references in prose (5) — governing recounts re-run
+  one at a time into log files and **read back from
+  the files themselves** after each process finished:
+  pytest **697 passed / 3 skipped / 0 failed
+  (700 collected, 879.1 s)**; unittest discover **700
+  ran, 697 passed / 3 skipped / 0 failed (878.2 s)** —
+  exactly the prior 679 plus this run's 18 battery
+  tests on both runners. Bugs found and fixed
+  in-slice, never left: balanced-paren link
+  destinations truncated at the first `)`; an
+  unterminated code fence's phantom trailing line.
+  Environment: `/tmp` still 100% full (unrelated Aesir
+  file, not touched); TMPDIR stayed pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-110 file
+  finder.
