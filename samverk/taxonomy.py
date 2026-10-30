@@ -49,6 +49,13 @@ AUTH_EVENTS = frozenset({
     "auth.signin.notify",
     # S-042 addition (append-only, per the taxonomy rules):
     "auth.username.change",
+    # S-043 additions (append-only, per the taxonomy rules):
+    "auth.deletion.request",
+    "auth.deletion.cancel",
+    "auth.deletion.execute",
+    # S-045 additions (append-only, per the taxonomy rules):
+    "auth.identity.link",
+    "auth.identity.unlink",
 })
 
 REPO_EVENTS = frozenset({
@@ -79,6 +86,9 @@ ADMIN_EVENTS = frozenset({
     "admin.key.rotate",
     # S-026 addition (append-only, per the taxonomy rules):
     "admin.user.approve",
+    # S-044 additions (append-only, per the taxonomy rules):
+    "admin.user.suspend",
+    "admin.user.unsuspend",
 })
 
 AUDIT_EVENTS = AUTH_EVENTS | REPO_EVENTS | ADMIN_EVENTS

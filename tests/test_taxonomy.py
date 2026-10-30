@@ -28,11 +28,14 @@ class TaxonomyTests(unittest.TestCase):
         # S-037 added auth.recovery.generate + auth.recovery.use;
         # S-039 added auth.passkey.add/remove/login;
         # S-041 added auth.signin.notify;
-        # S-042 added auth.username.change.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 47)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 24)
+        # S-042 added auth.username.change;
+        # S-043 added auth.deletion.request/cancel/execute;
+        # S-044 added admin.user.suspend/unsuspend;
+        # S-045 added auth.identity.link/unlink.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 54)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 13)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 10)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):
         pattern = re.compile(r"^(auth|repo|admin)(\.[a-z0-9_]+)+$")

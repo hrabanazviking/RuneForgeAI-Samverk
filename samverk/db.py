@@ -310,6 +310,47 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  expires_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-043: account deletion requests — the grace-period
+    # record. One pending request per account; execution
+    # after scheduled_at is the irreversible step.
+    (19, [
+        "CREATE TABLE account_deletions ("
+        "  user_id INTEGER PRIMARY KEY,"
+        "  requested_at INTEGER NOT NULL,"
+        "  scheduled_at INTEGER NOT NULL"
+        ")",
+    ]),
+    # S-044: suspension history — every suspend/unsuspend
+    # with its reason and the acting admin, so a suspension
+    # is never silent and never a deletion in disguise.
+    (20, [
+        "CREATE TABLE account_suspensions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  reason TEXT,"
+        "  actor_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_suspensions_user"
+        " ON account_suspensions (user_id)",
+    ]),
+    # S-045: external identities — the data shape for linking
+    # an account to an external principal (Samtal first).
+    # Shape only: no seam, no sync, no federation lives here.
+    (21, [
+        "CREATE TABLE external_identities ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  provider TEXT NOT NULL,"
+        "  external_id TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (provider, external_id),"
+        "  UNIQUE (user_id, provider)"
+        ")",
+        "CREATE INDEX idx_external_identities_user"
+        " ON external_identities (user_id)",
+    ]),
 ]
 
 

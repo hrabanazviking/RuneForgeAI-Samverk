@@ -46,6 +46,11 @@ any name not in this document's set.*
 | `auth.passkey.login` | Passkey assertion verified — second factor or passwordless (S-039) | `{"credential_id": ...}` |
 | `auth.signin.notify` | New-device sign-in notice fired (S-041) | `{"device": ...}` — the label only, never a fingerprint |
 | `auth.username.change` | Account renamed; old name tombstoned (S-042) | `{"from": ..., "to": ...}` — usernames are public identifiers |
+| `auth.deletion.request` | Account deletion requested; grace begins (S-043) | `{"scheduled_at": ...}` |
+| `auth.deletion.cancel` | Pending deletion cancelled by its owner (S-043) | — |
+| `auth.deletion.execute` | Account irreversibly deleted after grace (S-043) | `{"username": ...}` — the name only, no content |
+| `auth.identity.link` | External identity linked (S-045) | `{"provider": ...}` — never the external secret, there is none stored beyond the public principal id |
+| `auth.identity.unlink` | External identity unlinked (S-045) | `{"provider": ...}` |
 
 ## repo — repositories and their security surface
 
@@ -79,6 +84,8 @@ any name not in this document's set.*
 | `admin.audit.export` | Audit log exported | `{"scope": ..., "entries": ...}` |
 | `admin.key.rotate` | Instance key rotated (S-020) | `{"key": ...}` — the key's name, never its value |
 | `admin.user.approve` | Operator approved a pending account (S-026, the no-SMTP road) | `{"from_status": ...}` |
+| `admin.user.suspend` | Admin suspended an account, with reason (S-044) | `{"reason": ...}` |
+| `admin.user.unsuspend` | Admin lifted a suspension (S-044) | `{"reason": ...}` on the record, if given |
 
 ## Version note
 
@@ -101,3 +108,8 @@ S-041 (2026-10-30) added `auth.signin.notify` — 46 events:
 23 auth, 13 repo, 10 admin.
 S-042 (2026-10-30) added `auth.username.change` — 47 events:
 24 auth, 13 repo, 10 admin.
+S-043 (2026-10-30) added `auth.deletion.request`,
+`auth.deletion.cancel` and `auth.deletion.execute`;
+S-044 added `admin.user.suspend` and `admin.user.unsuspend`;
+S-045 added `auth.identity.link` and `auth.identity.unlink`
+— 54 events: 29 auth, 13 repo, 12 admin.
