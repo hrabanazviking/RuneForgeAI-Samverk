@@ -118,8 +118,11 @@ Volmarr's original repos onto his own machines.
   combined with taxonomy + timeline + comments +
   dependencies 34 passed / 0 failed; migration 47;
   taxonomy append-only +3, 90 events);
-  next S-139 issue events out — Part XI events +
-  Part XII webhooks for every issue mutation.
+  S-139 banked 2026-10-30 (6-test battery, foreground;
+  combined with dependencies 11 passed / 0 failed;
+  migration 48; no new audit events — the outbox
+  derives from the audit record);
+  next S-140 Part VI gate — full counted recount.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2572,6 +2575,33 @@ Volmarr's original repos onto his own machines.
   `tests/test_moderation.py`: **7 passed / 0 failed**
   (foreground; combined with taxonomy + timeline +
   comments + dependencies 34 passed / 0 failed).
+- **S-139 DONE (2026-10-30)** — issue events out:
+  `samverk/issue_events_out.py` + schema migration 48
+  (`issue_event_outbox`, audit_seq UNIQUE). Every
+  issue mutation emits an outbound event for Part XI's
+  feeds and Part XII's webhooks, derived from the audit
+  witness on the S-090/S-127 pattern: one outbox row
+  per audited mutation, materialised by `sync_repo` /
+  `sync_all` with OR IGNORE over the UNIQUE seq, so
+  emission is exactly-once, quiet retries emit nothing,
+  and refused mutations emit nothing. The verb set is
+  the issue family, computed from the frozen taxonomy
+  (every `repo.issue.*` / `repo.label.*` /
+  `repo.milestone.*` action + `repo.pull_request.create`;
+  templates, pushes, and repo acts stay out — named as
+  a boundary, not an omission). Detail is the audit
+  row's own safe specifics, unchanged. `webhook_payload`
+  / `payload_json` give Samverk's own payload shape
+  (event, action, repository, number, actor, detail,
+  occurred_at, stable `evt-<id>` delivery id) — Part
+  XII's S-247 maps these verbs to its documented
+  payloads and S-250's worker delivers from this store;
+  S-221 completes Part XI's canonical store over this
+  shape. Reads sync first (never stale) under S-054.
+  No new audit events (the outbox *is* derived from
+  them). Battery `tests/test_issue_events_out.py`:
+  **6 passed / 0 failed** (foreground; combined with
+  the S-017 dependencies scan 11 passed / 0 failed).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

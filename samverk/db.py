@@ -847,6 +847,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE issue_comments ADD COLUMN"
         " hide_reason TEXT NOT NULL DEFAULT ''",
     ]),
+    # S-139: the issue event outbox — one outbound row per
+    # audited issue mutation, keyed by its audit seq
+    # (UNIQUE, so materialising is exactly-once). Part XI's
+    # feeds and Part XII's webhook worker consume this
+    # store; the audit log remains the witness it derives
+    # from.
+    (48, [
+        "CREATE TABLE issue_event_outbox ("
+        "  id INTEGER PRIMARY KEY,"
+        "  audit_seq INTEGER NOT NULL UNIQUE,"
+        "  repo_id INTEGER NOT NULL,"
+        "  actor_id INTEGER,"
+        "  verb TEXT NOT NULL,"
+        "  target_id TEXT NOT NULL,"
+        "  detail_json TEXT NOT NULL DEFAULT '{}',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_issue_event_outbox_repo"
+        " ON issue_event_outbox (repo_id, id)",
+    ]),
 ]
 
 
