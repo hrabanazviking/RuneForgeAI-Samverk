@@ -61,19 +61,17 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part V in progress** (Part I gate passed
   2026-10-30; Part II gate S-048 passed 2026-10-30 at
   368/368; Part III gate S-076 passed 2026-10-30 at 510/510;
-  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-115
+  Part IV gate S-096 passed 2026-10-30 at 640; S-097..S-118
   banked 2026-10-30 — governing recounts reproduced from
   log files read back after each run finished: pytest
-  729 passed / 3 skipped / 0 failed (732 collected);
-  unittest discover 732 ran, 729 passed / 3 skipped /
-  0 failed; the three skips are named cells, NOT PROVEN
-  on this host: S-095's real-sshd cell and the two
-  git-lfs client cells (this run's recounts did not
-  carry the pristine git-lfs 3.6.1 kept at
-  `~/workspace/.tools/git-lfs` on PATH — a targeted
-  `-rs` run names both cells; future recounts prepend
-  `~/workspace/.tools` to PATH, as the S-112 run did);
-  next S-116 print and export of code views.
+  749 passed / 1 skipped / 0 failed (750 collected);
+  unittest discover 750 ran, 749 passed / 1 skipped /
+  0 failed; the one skip is a named cell, NOT PROVEN
+  on this host: S-095's real-sshd cell. The two git-lfs
+  client cells ran and passed — this run's recounts
+  prepended `~/workspace/.tools` to PATH, as the
+  S-112 run did and the S-115 correction directed);
+  next S-119 repository header summary.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1954,6 +1952,69 @@ Volmarr's original repos onto his own machines.
   reasons, and no `clone_count` field exists anywhere
   in the module. Battery `tests/test_repo_insights.py`:
   **4 passed / 0 failed**.
+- **S-116 DONE (2026-10-30)** — print and export of code
+  views: `samverk/print_export.py` — the print
+  stylesheet is external by S-016's law (canonical CSS
+  text `PRINT_CSS`, served at `/static/samverk-print.css`,
+  linked `media="print"` from the blob, commit, and
+  compare page heads; no inline `<style>` anywhere):
+  `@media print` hides chrome/forms/actions, strips
+  colour to black on white, keeps syntax meaning in
+  weight/style (keywords bold, comments italic),
+  restores the diff's `+`/`-` markers the line text
+  omits (a printed diff must not depend on colour),
+  wraps code instead of clipping it. Print pages render
+  blob and diff as open sections (never `<details>`,
+  whose closed content does not reliably reach paper)
+  under a header naming repo, path, full commit pin,
+  and counts, with S-104 folding unchanged. Text
+  exports are complete: the diff export rebuilds the
+  unified patch from S-104's parsed structure
+  (re-parses to the identical DiffSet, folded lines
+  included) and the blob export restores the file's
+  text, refusing an LFS pointer by name. Battery
+  `tests/test_print_export.py`: **6 passed / 0 failed**
+  (one test-expectation fix in-slice: S-104 counts the
+  hunk header as a patch line, so 500 additions fold
+  at 501 patch lines — the module already agreed).
+- **S-117 DONE (2026-10-30)** — deep links:
+  `samverk/deep_links.py` — one canonical URL shape
+  per built view (home, tree, blob, raw, blame,
+  commit, commits, compare, summary, find, insights),
+  minted and parsed by this one module; `blob_url`
+  with a line is S-099's permalink byte for byte.
+  Anchors carry strict `#L{n}` / `#L{a}-L{b}` grammar
+  (positive, end at or after start; fragments refused
+  on non-blob views rather than silently dropped).
+  The chat shorthand `path@ref#line` expands to the
+  canonical blob URL. Names ride S-013's law, paths
+  S-098's, segments percent-encoded and round-tripping.
+  The slash limit is named: path-view builders refuse
+  slash-carrying refs (`ref_ambiguous` — a URL's shape
+  cannot tell `feature/x` from a path) while commits
+  and compare accept them (compare's `...` separator
+  cannot appear inside a git ref). Battery
+  `tests/test_deep_links.py`: **7 passed / 0 failed**.
+- **S-118 DONE (2026-10-30)** — search box in repo
+  scope: `samverk/repo_search.py` — a plain GET form
+  (no script) jumping to the instance search page as
+  `type=code` with `repo:{owner}/{name}` first in `q`.
+  The jump contract is fixed here for Part X to
+  consume (`scoped_query`, `repo_search_url`, and
+  `extract_repo_scope` as the reverse seam); no
+  results page is built or pretended. The box shows
+  its scope in the prefilled input and teaches
+  widening in plain words (delete the qualifier to
+  search everywhere); a malformed `repo:` qualifier
+  refuses (`scope_invalid`) rather than silently
+  unscoping into a wider search; terms are
+  hygiene-cleaned to one typed line; the
+  permission-aware entry point answers strangers to
+  a private repository with the uniform
+  `repo_not_found` and renders no box. Battery
+  `tests/test_repo_search.py`: **5 passed / 0 failed**
+  (one test-expectation fix in-slice: the jump URL is
+  percent-encoded, as URLs are).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2431,3 +2492,31 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-116 print and
   export of code views.
+- **2026-10-30 (keeper run, Part V continued)** — Previous
+  run had closed its correction at 10:16 EDT (head
+  091cc1e, clean tree, no process live, no subagent
+  worker), so this run resumed at the map's named next
+  slice and built **S-116** print and export of code
+  views (6), **S-117** deep links (7), and **S-118**
+  search box in repo scope (5) — governing recounts
+  re-run one at a time into log files and **read back
+  from the files themselves** after each process
+  finished: pytest **749 passed / 1 skipped / 0 failed
+  (750 collected, 1130.2 s)**; unittest discover **750
+  ran, 749 passed / 1 skipped / 0 failed (1098.8 s)** —
+  the prior 729 plus this run's 18 battery tests plus
+  the two git-lfs client cells, which ran and passed
+  because this run's recounts prepended
+  `~/workspace/.tools` to PATH per the S-115
+  correction; the one remaining skip is S-095's named
+  real-sshd cell. Two test-expectation slips were
+  caught and fixed in-slice, module behaviour standing
+  in both: S-104 counts the hunk header as a patch
+  line (500 additions fold at 501 patch lines), and
+  the S-118 jump URL is percent-encoded, as URLs are.
+  No bugs were found in shipped code by the new
+  batteries. Environment: TMPDIR stayed pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`. All banked
+  locally on `main`; **no GitHub push** — pushes stay
+  gated on Volmarr's word. Next slice: S-119
+  repository header summary.
