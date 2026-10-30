@@ -143,8 +143,21 @@ Volmarr's original repos onto his own machines.
   forged cross-site POSTs (no token, foreign token, no session)
   refused 403 over real HTTP, legitimate header- and form-token
   POSTs pass the gate. Cumulative battery: **73/73**.
-- **Campaign position: S-001…S-009 DONE.** Next: S-010
-  output-escaping and sanitisation standard.
+- **S-010 DONE (2026-10-30)** — output-escaping standard:
+  `samverk/escaping.py` is the one seam (mechanically enforced like
+  the platform seam: no other module may escape directly) —
+  `escape_html_text` for content, `escape_html_attr` for quoted
+  attributes, `safe_url` as the href/src sanitiser (http/https/
+  mailto + instance-relative only; `javascript:`/`data:`/obfuscated
+  and protocol-relative URLs refused; the check also runs on the
+  entity-decoded form — a battery-found bypass, `&#106;avascript:`,
+  fixed in-slice). No JS-string escaper by design (no inline-script
+  interpolation; S-016's CSP will forbid them). Battery
+  `tests/test_escaping.py`: **12 passed / 0 failed**, including the
+  stored-XSS payload battery rendered through a profile snippet.
+  Cumulative battery: **85/85**.
+- **Campaign position: S-001…S-010 DONE.** Next: S-011 rate
+  limiting (per-IP and per-account token buckets).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -185,4 +198,6 @@ Volmarr's original repos onto his own machines.
   re-verified from the tree (56/56), then **S-009 DONE** and banked
   locally on `yrsa/samverk-part1` (73/73 cumulative). GitHub push
   NOT done — pushes stay gated on Volmarr's explicit word per the
-  keeper's binding laws. Next slice: S-010.
+  keeper's binding laws. The same keeper run continued slice after
+  slice: **S-010 DONE** (85/85 cumulative) — see the S-010 entry
+  above. Next slice: S-011.
