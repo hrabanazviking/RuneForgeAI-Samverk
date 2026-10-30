@@ -977,6 +977,24 @@ Volmarr's original repos onto his own machines.
   including not-due execution destroying nothing and the
   disk surviving the whole grace. Cumulative battery:
   **404/404**. Next: S-057 repository transfer.
+- **S-057 DONE (2026-10-30)** — repository transfer:
+  `samverk/repo_transfer.py` + schema migration 25
+  (`repo_transfers`, `repo_redirects`) — ownership moves only
+  with the recipient's acceptance: the owner initiates (a
+  missing recipient, a self-transfer, a pending offer, or a
+  recipient name collision are each refused by name), nothing
+  moves until the named recipient — and only they — accepts,
+  and then the directory and row move together under the
+  S-050 rollback discipline and a redirect from the old
+  canonical name is left behind for 90 days. Decline (recipient)
+  and cancel (owner) move nothing. This slice also extends
+  S-056's execution to clear a pending transfer when its repo
+  is deleted — sequenced here because the table arrives here;
+  the intermediate S-056-only tree was caught referencing it
+  early by its own battery and fixed before this slice landed.
+  Audited under the frozen `repo.transfer`. Battery
+  `tests/test_repo_transfer.py`: **4 passed / 0 failed**.
+  Cumulative battery: **408/408**. Next: S-058 size accounting.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

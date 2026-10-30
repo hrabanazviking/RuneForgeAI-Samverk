@@ -150,6 +150,9 @@ class RepoDeletion:
                 (repo_id,))
             self._conn.execute(
                 "DELETE FROM repo_deletions WHERE repo_id = ?", (repo_id,))
+            # S-057: a pending transfer offer dies with its repo.
+            self._conn.execute(
+                "DELETE FROM repo_transfers WHERE repo_id = ?", (repo_id,))
             self._conn.execute(
                 "DELETE FROM repositories WHERE id = ?", (repo_id,))
         shutil.rmtree(path, ignore_errors=True)

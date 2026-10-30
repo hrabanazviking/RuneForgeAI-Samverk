@@ -390,6 +390,27 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  scheduled_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-057: repository transfers — a pending offer the recipient
+    # must accept, and the redirects an accepted transfer leaves
+    # behind (old canonical name -> new canonical name, expiring).
+    (25, [
+        "CREATE TABLE repo_transfers ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  from_owner_lower TEXT NOT NULL,"
+        "  to_owner_lower TEXT NOT NULL,"
+        "  requested_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE TABLE repo_redirects ("
+        "  old_owner_lower TEXT NOT NULL,"
+        "  old_name_lower TEXT NOT NULL,"
+        "  new_owner_lower TEXT NOT NULL,"
+        "  new_name_lower TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (old_owner_lower, old_name_lower)"
+        ")",
+    ]),
 ]
 
 
