@@ -916,6 +916,19 @@ Volmarr's original repos onto his own machines.
   **3 passed / 0 failed**, including annotated-tag peeling
   and the empty-repo case (no refs, HEAD on the default
   branch, no head oid). Cumulative battery: **386/386**.
+- **S-053 DONE (2026-10-30)** — atomic ref updates:
+  `RefStore.update_ref` in `samverk/refs.py` — branch
+  create/delete/rename and general updates through
+  `update-ref` with compare-and-swap: naming the expected
+  old value makes git check-and-set under its own lock, and
+  a loser is refused as `stale_ref` instead of tearing the
+  ref. Rename is a create+delete pair in one
+  `update-ref --stdin` invocation, verified against the old
+  value. Battery `tests/test_ref_updates.py`: **3 passed /
+  0 failed**, including the race — ten threads CAS the same
+  ref from the same expected value and exactly one wins.
+  Cumulative battery: **389/389** (full counted run on this
+  VM at this slice).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

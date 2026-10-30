@@ -138,3 +138,64 @@ class RefStore:
 
     def head_oid(self) -> str | None:
         return self.resolve("HEAD")
+
+    # -- S-053: atomic updates ------------------------------------
+    def update_ref(self, full_ref: object, new_oid: object,
+                   *, expected_old: object = None) -> None:
+        """Compare-and-swap a ref under git's own lock.
+
+        With `expected_old`, git performs the check and the set
+        atomically: a racer who moved the ref first makes this
+        call fail as `stale_ref` instead of tearing the ref.
+        """
+        ref = validate_ref_name(full_ref, full=True)
+        new = self._validate_oid(new_oid, allow_zero=True)
+        args = ["update-ref", ref, new]
+        if expected_old is not None:
+            args.append(self._validate_oid(expected_old, allow_zero=True))
+        result = run_git_in(self._repo, args, timeout=15.0)
+        if result.returncode != 0:
+            raise RefError(
+                "stale_ref" if expected_old is not None else "update_failed",
+                result.stderr.decode("utf-8", "replace").strip()[:200])
+
+    def create_branch(self, short_name: object, oid: object) -> Ref:
+        ref = branch_ref(short_name)
+        self.update_ref(ref, oid, expected_old="0" * 40)
+        return Ref(name=ref, oid=str(oid), type="commit")
+
+    def delete_branch(self, short_name: object, *, expected_old: object = None) -> None:
+        ref = branch_ref(short_name)
+        args = ["update-ref", "-d", ref]
+        if expected_old is not None:
+            args.append(self._validate_oid(expected_old))
+        result = run_git_in(self._repo, args, timeout=15.0)
+        if result.returncode != 0:
+            raise RefError(
+                "stale_ref",
+                result.stderr.decode("utf-8", "replace").strip()[:200])
+
+    def rename_branch(self, old_short: object, new_short: object) -> Ref:
+        old_ref, new_ref = branch_ref(old_short), branch_ref(new_short)
+        oid = self.resolve(old_ref)
+        if oid is None:
+            raise RefError("no_such_ref", f"No such branch: {old_short!r}")
+        if self.resolve(new_ref) is not None:
+            raise RefError("ref_taken", f"Branch already exists: {new_short!r}")
+        script = f"create {new_ref} {oid}\ndelete {old_ref} {oid}\n"
+        result = run_git_in(
+            self._repo, ["update-ref", "--stdin"],
+            input_bytes=script.encode(), timeout=15.0)
+        if result.returncode != 0:
+            raise RefError(
+                "rename_failed",
+                result.stderr.decode("utf-8", "replace").strip()[:200])
+        return Ref(name=new_ref, oid=oid, type="commit")
+
+    @staticmethod
+    def _validate_oid(oid: object, *, allow_zero: bool = False) -> str:
+        if isinstance(oid, str) and oid in ZERO_OIDS and allow_zero:
+            return oid
+        if not isinstance(oid, str) or not _OID_RE.match(oid.lower()):
+            raise RefError("oid_invalid", f"Not an object id: {oid!r}")
+        return oid.lower()
