@@ -1208,6 +1208,25 @@ Volmarr's original repos onto his own machines.
   Cumulative battery: **456/456** (full counted run on
   this VM at this slice, verifying the S-064/S-065
   arithmetic too). Next: S-067 server-side hooks seam.
+- **S-067 DONE (2026-10-30)** — server-side hooks seam:
+  `samverk/hooks.py` — a `HookRunner` with named, ordered
+  handlers per phase. **Pre-receive fails closed**: a hook
+  returning a string / `False` or raising `HookVeto` vetoes
+  the push (chain stops, reason carried for the pusher);
+  an exception or a timeout also refuses. **Post-receive
+  can never veto**: every hook runs, outcomes are recorded
+  (`completed` / `vetoed` / `error` / `timeout`) and the
+  runner moves on. **Timeout and kill discipline is
+  structural**: each hook runs in a forked child process,
+  the parent waits only the runner's budget (default 10 s),
+  and an overrunning child is terminated, then killed,
+  then reaped — a hung hook costs one refused push, never
+  a hung server. This is the seam S-089's protection gate
+  and Part XV's scanning hang on. Battery
+  `tests/test_hooks.py`: **6 passed / 0 failed**, including
+  a 60-second-sleep hook refused in ~the 0.5 s budget.
+  Cumulative battery: **462/462** (full recount at the
+  next gate). Next: S-068 repository quotas.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
