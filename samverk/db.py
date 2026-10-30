@@ -158,6 +158,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_deploy_keys_repo ON deploy_keys (owner, repo)",
     ]),
+    # S-032: classic personal access tokens — only SHA-256
+    # hashes are stored (the S-006 law); prefix identifies a
+    # token in lists, scopes is the comma-joined closed set.
+    (10, [
+        "CREATE TABLE access_tokens ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  token_hash TEXT NOT NULL UNIQUE,"
+        "  prefix TEXT NOT NULL,"
+        "  scopes TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  last_used_at INTEGER,"
+        "  revoked INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE INDEX idx_access_tokens_user ON access_tokens (user_id)",
+    ]),
 ]
 
 

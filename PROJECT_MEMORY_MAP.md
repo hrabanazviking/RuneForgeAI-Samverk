@@ -558,6 +558,24 @@ Volmarr's original repos onto his own machines.
   flaw fixed in-slice: the new test's cross-test import
   (`tests.test_ssh_keys`) tripped S-017's import scan —
   helpers inlined instead. Cumulative battery: **251/251**.
+- **S-032 DONE (2026-10-30)** — personal access tokens,
+  classic shape: `samverk/access_tokens.py` + schema
+  migration 10 (`access_tokens`, hashes only). Tokens are
+  `svk_` + 256-bit CSPRNG, **shown once** at creation; only
+  the SHA-256 hash is stored (S-006 law), with a 12-char
+  identifying prefix for lists. **Scopes are required and
+  closed** (`CLASSIC_SCOPES`: repo/issues/profile read+write;
+  unknown scopes refused; write implies its read sibling via
+  the one `token_allows` seam). **Expiry is required**, at
+  most one year out; expired/revoked tokens authenticate to
+  nothing. Revocation is owner-only; create/revoke audit as
+  `auth.token.create` / `auth.token.revoke` (already in the
+  frozen taxonomy; detail carries id + scopes, never the
+  token). Battery `tests/test_access_tokens.py`: **9 passed /
+  0 failed**, including the literal acceptance — the DB-leak
+  test (stored hashes and prefix authenticate no one; the raw
+  token is absent from the DB file). Cumulative battery:
+  **260/260**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -649,3 +667,9 @@ Volmarr's original repos onto his own machines.
   (auth.profile.update, 40 total). All banked locally on
   `main`; **no GitHub push** — pushes stay gated on Volmarr's
   word. Next slice: S-032 personal access tokens.
+- **2026-10-30 (keeper run)** — Previous run had banked S-031
+  at 01:55 EDT (clean tree, no process live), so this run
+  resumed at the map's named next slice and built **S-032**
+  personal access tokens (260/260). Banked locally on `main`;
+  **no GitHub push** — pushes stay gated on Volmarr's word.
+  Next slice: S-033 fine-grained tokens.
