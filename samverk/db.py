@@ -698,6 +698,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_reactions_target"
         " ON reactions (issue_id, comment_id, reaction)",
     ]),
+    # S-129: issue templates — one row per (repository,
+    # canonical name); a form template's parsed fields ride
+    # as JSON beside the YAML source as given. The options
+    # row carries the owner's blank-issue toggle (absent =
+    # blank issues allowed, the birth default).
+    (41, [
+        "CREATE TABLE issue_templates ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  title TEXT NOT NULL DEFAULT '',"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  fields_json TEXT NOT NULL DEFAULT '[]',"
+        "  labels_json TEXT NOT NULL DEFAULT '[]',"
+        "  source TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_issue_templates_repo"
+        " ON issue_templates (repo_id, name_lower)",
+        "CREATE TABLE repo_issue_options ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  allow_blank_issues INTEGER NOT NULL DEFAULT 1"
+        ")",
+    ]),
 ]
 
 

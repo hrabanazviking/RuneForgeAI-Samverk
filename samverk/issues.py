@@ -187,10 +187,24 @@ class IssueStore:
     # -- S-122: create / read / update ----------------------------
     def create_issue(self, actor: User, owner: object, repo: object,
                      title: object, body: object = "",
-                     *, source_ip: str | None = None) -> Issue:
+                     *, source_ip: str | None = None,
+                     via_template: bool = False) -> Issue:
         current = self._repos.get_repository(owner, repo)
         if current is None or not can_read(actor, current):
             raise IssueError("repo_not_found", "No such repository.")
+        if not via_template:
+            # S-129: the owner's blank-issue toggle, enforced
+            # here at the one creation seam so no surface can
+            # walk around it. An absent row is the birth
+            # default: blank issues allowed.
+            row = self._conn.execute(
+                "SELECT allow_blank_issues FROM repo_issue_options"
+                " WHERE repo_id = ?", (current.id,)).fetchone()
+            if row is not None and not row["allow_blank_issues"]:
+                raise IssueError(
+                    "blank_issue_not_allowed",
+                    "This repository's owners ask reporters to use "
+                    "an issue template; blank issues are turned off.")
         title = _validate_title(title)
         body = _validate_body(body)
         now = int(self._now())

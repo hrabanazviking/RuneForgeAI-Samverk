@@ -89,6 +89,9 @@ any name not in this document's set.*
 | `repo.issue.unassign` | An account unassigned from an issue (S-126) | `{"number": ..., "assignee": ...}` |
 | `repo.issue.reaction_add` | A reaction given to an issue or comment; only a real change is recorded (S-128) | `{"number": ..., "reaction": ...}` — the reaction's stored name, plus `"comment_id"` when the target is a comment |
 | `repo.issue.reaction_remove` | A reaction taken back by its giver (S-128) | `{"number": ..., "reaction": ...}`, plus `"comment_id"` when the target is a comment |
+| `repo.issue_template.create` | An issue template (Markdown or YAML form) created in a repository (S-129) | `{"template": ..., "kind": ...}` |
+| `repo.issue_template.update` | An issue template edited or replaced (S-129) | `{"template": ..., "kind": ...}` |
+| `repo.issue_template.delete` | An issue template deleted (S-129) | `{"template": ..., "kind": ...}` |
 
 ## admin — instance administration
 
@@ -157,3 +160,9 @@ S-128 (2026-10-30) added `repo.issue.reaction_add` and
 33 repo, 12 admin. (S-127's cross-references are derived
 data recomputed from already-audited prose, so they add
 no event of their own.)
+S-129 (2026-10-30) added `repo.issue_template.create`,
+`repo.issue_template.update` and
+`repo.issue_template.delete` — 77 events: 29 auth,
+36 repo, 12 admin. (The blank-issue toggle rides the
+frozen `repo.settings.change` with its key named, per
+the S-066 settings pattern.)

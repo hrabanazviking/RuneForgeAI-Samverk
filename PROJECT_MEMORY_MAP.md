@@ -76,10 +76,15 @@ Volmarr's original repos onto his own machines.
   (S-127 run: cross-references + taxonomy + dependencies
   + issues + numbering + comments + labels + milestones
   + assignees 61 passed / 0 failed; S-128 run: reactions
-  + taxonomy + dependencies 16 passed / 0 failed); a
-  fresh full-suite governing recount is the next keeper
-  run's first duty before S-129);
-  next S-129 issue templates.
+  + taxonomy + dependencies 16 passed / 0 failed). The
+  fresh full-suite governing recount this run owed before
+  S-129 was read back from its log file: pytest 818
+  passed / 1 skipped / 0 failed — exactly the prior 783
+  plus S-124..S-128's 35 battery tests; the one skip is
+  S-095's named real-sshd cell);
+  S-129 banked 2026-10-30 (11-test battery, foreground;
+  combined with taxonomy + dependencies 22 passed /
+  0 failed); next S-130 close and reopen.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2249,6 +2254,41 @@ Volmarr's original repos onto his own machines.
   Battery `tests/test_reactions.py`: **5 passed /
   0 failed** (foreground; combined with taxonomy +
   dependencies **16 passed / 0 failed**, read back
+  from the log file).
+- **S-129 DONE (2026-10-30)** — issue templates:
+  `samverk/issue_templates.py` + schema migration 41
+  (`issue_templates`, `repo_issue_options`) — two kinds
+  behind one guided door. Markdown templates (name,
+  plain-words description, starting title, body) render
+  as a prefilled title/body form; YAML issue forms are
+  parsed by a documented stdlib subset parser (indentation
+  maps/lists, quoted/plain scalars, inline lists,
+  true/false/null, integers, `|`/`>` block scalars;
+  tabs, flow mappings, anchors refused `form_invalid`)
+  into validated fields (markdown notes, input, textarea,
+  dropdown, checkboxes; labels mandatory in plain words,
+  ids unique, `validations.required` honoured). A
+  submission assembles into an ordinary issue — one
+  `### label` section per answered field, checkboxes as
+  a task list — with refusals naming the field
+  (`field_required` / `field_option_invalid` /
+  `field_unknown`); template-named labels are checked
+  before the issue exists, so a broken template fails
+  whole. Managing is a writer act under S-054, using a
+  reader act, strangers to a private repo get the
+  uniform `repo_not_found`. Blank issues: owners may
+  disallow them (writer act, audited under the frozen
+  `repo.settings.change` with the key named), enforced
+  at the one creation seam in `IssueStore.create_issue`
+  (`blank_issue_not_allowed` unless `via_template`);
+  the toggle refuses to switch off with zero templates
+  (`no_templates`) so reporting can never be locked
+  entirely. Taxonomy append-only +3
+  (`repo.issue_template.create` / `.update` / `.delete`,
+  77 events: 29 auth, 36 repo, 12 admin). Battery
+  `tests/test_issue_templates.py`: **11 passed /
+  0 failed** (foreground; combined with taxonomy +
+  dependencies **22 passed / 0 failed**, read back
   from the log file).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
