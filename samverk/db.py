@@ -464,6 +464,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  PRIMARY KEY (repo_id, old_branch)"
         ")",
     ]),
+    # S-068: repository quotas — an explicit per-repo byte
+    # limit; the instance default (when set) lives in the
+    # settings table under repo_quota_default_bytes. Absence
+    # of both means no quota: a limit exists only when an
+    # operator or owner has actually set one.
+    (30, [
+        "CREATE TABLE repo_quotas ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  quota_bytes INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 

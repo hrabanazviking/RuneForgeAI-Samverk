@@ -1227,6 +1227,25 @@ Volmarr's original repos onto his own machines.
   a 60-second-sleep hook refused in ~the 0.5 s budget.
   Cumulative battery: **462/462** (full recount at the
   next gate). Next: S-068 repository quotas.
+- **S-068 DONE (2026-10-30)** — repository quotas:
+  `samverk/repo_quotas.py` + schema migration 30
+  (`repo_quotas`). A quota is a byte limit enforced **at
+  receive time**: `enforce_receive` is the gate the receive
+  path calls before accepting objects, and a push that
+  would exceed the limit is refused with a plain message
+  naming what the repo holds, its limit, and what the push
+  adds — nothing half-lands. Usage is S-058's measured walk
+  (the number enforced is the number displayed). Two
+  explicit levels only: a per-repo quota (owner or site
+  admin) wins over an admin-set instance default in
+  `settings`; neither set means unlimited — a limit is
+  never invented. `check_receive` returns the decision
+  object for surfaces; changes audit `repo.settings.change`.
+  Battery `tests/test_repo_quotas.py`: **5 passed /
+  0 failed**, including the literal refusal message checked
+  number by number. Cumulative battery: **467/467**
+  (full recount at the next gate). Next: S-069 import by
+  clone URL.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
