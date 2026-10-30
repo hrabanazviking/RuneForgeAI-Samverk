@@ -107,6 +107,11 @@ REPO_EVENTS = frozenset({
     # S-130 additions (append-only, per the taxonomy rules):
     "repo.issue.close",
     "repo.issue.reopen",
+    # S-132 additions (append-only, per the taxonomy rules):
+    "repo.issue.lock",
+    "repo.issue.unlock",
+    "repo.issue.pin",
+    "repo.issue.unpin",
 })
 
 ADMIN_EVENTS = frozenset({

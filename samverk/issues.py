@@ -100,6 +100,8 @@ class Issue:
     created_at: int
     updated_at: int
     state_reason: str = ""   # S-130: '' | 'completed' | 'not_planned'
+    locked: bool = False     # S-132: conversation locked
+    lock_reason: str = ""    # S-132: '' | the lock vocabulary
 
     @property
     def ref(self) -> str:
@@ -136,12 +138,15 @@ def describe_state_event(event: IssueStateEvent) -> str:
 
 
 def _row_to_issue(row: sqlite3.Row) -> Issue:
+    keys = row.keys()
     return Issue(
         id=row["id"], repo_id=row["repo_id"], number=row["number"],
         author_id=row["author_id"], title=row["title"], body=row["body"],
         state=row["state"], version=row["version"],
         created_at=row["created_at"], updated_at=row["updated_at"],
-        state_reason=row["state_reason"])
+        state_reason=row["state_reason"],
+        locked=bool(row["locked"]) if "locked" in keys else False,
+        lock_reason=row["lock_reason"] if "lock_reason" in keys else "")
 
 
 class IssueStore:

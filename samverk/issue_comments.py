@@ -24,6 +24,11 @@ three laws:
   as for the issue itself. Editing is the author's alone
   (moderators delete, they do not put words in another
   person's mouth).
+- **A locked conversation refuses new comments**
+  (S-132): `add_comment` is the one comment seam, so the
+  lock is enforced here — everyone except repository
+  writers/admins is refused `conversation_locked`, with
+  the lock's reason named in words.
 """
 
 from __future__ import annotations
@@ -35,8 +40,9 @@ from dataclasses import dataclass
 
 from .accounts import AccountStore, User
 from .audit import AuditLog
+from .issue_locking import LOCK_REASON_WORDS
 from .issues import BODY_MAX, IssueError, IssueStore
-from .permissions import can_admin
+from .permissions import can_admin, can_write
 from .repositories import RepositoryStore
 
 
@@ -101,6 +107,18 @@ class IssueCommentStore:
                     number: object, body: object,
                     *, source_ip: str | None = None) -> Comment:
         issue = self._issues.get_issue(actor, owner, repo, number)
+        if issue.locked:
+            # S-132: a locked conversation refuses new comments
+            # from everyone except repository writers/admins,
+            # with the lock's reason said in words.
+            current = self._repos.get_repository(owner, repo)
+            if current is None or not can_write(actor, current):
+                words = LOCK_REASON_WORDS.get(issue.lock_reason, "")
+                suffix = f" as {words}" if words else ""
+                raise IssueError(
+                    "conversation_locked",
+                    f"This conversation is locked{suffix}; only "
+                    "repository writers can still comment.")
         text = _validate_comment_body(body)
         now = int(self._now())
         with self._conn:  # commits before the answer

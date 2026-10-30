@@ -15,6 +15,7 @@ from samverk.accounts import AccountStore
 from samverk.assignees import AssigneeStore
 from samverk.audit import AuditLog
 from samverk.cross_references import CrossReferenceStore
+from samverk.issue_locking import IssueLockPinStore
 from samverk.issue_timeline import TimelineStore, describe_event, render_timeline
 from samverk.issues import IssueError, IssueStore
 from samverk.labels import LabelStore
@@ -162,6 +163,20 @@ class TimelineTests(unittest.TestCase):
         with self.assertRaises(IssueError) as caught:
             self.timeline.timeline_for(None, "volmarr", "priv", secret.number)
         self.assertEqual(caught.exception.reason, "issue_not_found")
+
+    def test_lock_and_pin_events_join_the_stream(self):
+        controls = IssueLockPinStore(
+            self.conn, self.repos, self.accounts, self.issues,
+            audit=self.audit, time_fn=self.clock)
+        controls.pin_issue(self.owner, "volmarr", "pub", 1)
+        controls.lock_issue(self.owner, "volmarr", "pub", 1, reason="too_heated")
+        controls.unlock_issue(self.owner, "volmarr", "pub", 1)
+        controls.unpin_issue(self.owner, "volmarr", "pub", 1)
+        events = self.timeline.timeline_for(None, "volmarr", "pub", 1)
+        self.assertEqual([e.kind for e in events],
+                         ["created", "pinned", "locked", "unlocked", "unpinned"])
+        self.assertEqual(describe_event(events[2]),
+                         "volmarr locked this conversation as too heated")
 
     def test_rebuild_is_identical_and_render_is_words(self):
         self.labels.create_label(self.owner, "volmarr", "pub", "<b>bold</b>", "#123456")

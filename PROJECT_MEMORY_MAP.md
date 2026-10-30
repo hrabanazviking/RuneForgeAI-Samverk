@@ -87,7 +87,11 @@ Volmarr's original repos onto his own machines.
   0 failed); S-130 banked 2026-10-30 (6-test battery,
   foreground; combined run 44 passed / 0 failed);
   S-131 banked 2026-10-30 (8-test battery, foreground);
-  next S-132 locking and pinning.
+  S-132 banked 2026-10-30 (7-test battery, foreground;
+  combined with taxonomy + comments + dependencies
+  25 passed / 0 failed; the timeline extension's
+  combined run 16 passed / 0 failed);
+  next S-133 transfer issue.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2343,6 +2347,38 @@ Volmarr's original repos onto his own machines.
   its exact wordings, quiet no-ops leaving no state
   events, both xref directions, a commit mention, and
   the private-source hiding proof.
+- **S-132 DONE (2026-10-30)** — locking and pinning:
+  `samverk/issue_locking.py` + schema migration 43
+  (`issues.locked/lock_reason/locked_by/locked_at`,
+  `issue_pins`) — a lock carries one reason from a
+  small plain-words vocabulary (`off_topic` /
+  `too_heated` / `resolved` / `spam`, anything else
+  `reason_invalid`), stored on the issue (the `Issue`
+  row now carries it) and said in words by
+  `IssueLock.words`, never a colour alone. Enforcement
+  lives at the one comment seam: S-123's `add_comment`
+  refuses a locked conversation
+  (`conversation_locked`, the reason named) for
+  everyone except repository writers/admins. Pinning
+  lifts at most three issues per repository
+  (`pin_limit` names the cap; pins list in pin order —
+  the pin row's own insertion id, after the first
+  battery caught same-second pins reordering by issue
+  number, S-126's law applied again). Both tools are
+  moderator-only (repository admins, S-123's trusted
+  hands — the issue's author alone cannot lock), real
+  changes only are audited, and retries are quiet
+  no-ops that never rewrite the recorded reason
+  (taxonomy append-only +4: `repo.issue.lock` /
+  `.unlock` / `.pin` / `.unpin`, 83 events: 29 auth,
+  42 repo, 12 admin; doc + code + counts together).
+  S-131's timeline learned the four new events from
+  the same audit record in this slice (one added
+  battery cell). Battery `tests/test_issue_locking.py`:
+  **7 passed / 0 failed** (foreground; combined with
+  taxonomy + comments + dependencies **25 passed /
+  0 failed**; timeline + locking combined **16 passed
+  / 0 failed**, read back from the log files).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

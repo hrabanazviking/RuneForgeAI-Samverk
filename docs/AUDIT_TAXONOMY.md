@@ -94,6 +94,10 @@ any name not in this document's set.*
 | `repo.issue_template.delete` | An issue template deleted (S-129) | `{"template": ..., "kind": ...}` |
 | `repo.issue.close` | An issue closed, with its reason (S-130) | `{"number": ..., "reason": ...}` — `completed` or `not_planned` |
 | `repo.issue.reopen` | A closed issue reopened (S-130) | `{"number": ...}` |
+| `repo.issue.lock` | An issue's conversation locked by a moderator, with its reason (S-132) | `{"number": ..., "reason": ...}` — the lock vocabulary |
+| `repo.issue.unlock` | A locked conversation unlocked by a moderator (S-132) | `{"number": ...}` |
+| `repo.issue.pin` | An issue pinned by a moderator (at most three per repository) (S-132) | `{"number": ...}` |
+| `repo.issue.unpin` | An issue unpinned by a moderator (S-132) | `{"number": ...}` |
 
 ## admin — instance administration
 
@@ -170,4 +174,9 @@ frozen `repo.settings.change` with its key named, per
 the S-066 settings pattern.)
 S-130 (2026-10-30) added `repo.issue.close` and
 `repo.issue.reopen` — 79 events: 29 auth, 38 repo,
+12 admin. (S-131's timeline is derived data read from
+already-audited records, so it adds no event of its own.)
+S-132 (2026-10-30) added `repo.issue.lock`,
+`repo.issue.unlock`, `repo.issue.pin` and
+`repo.issue.unpin` — 83 events: 29 auth, 42 repo,
 12 admin.

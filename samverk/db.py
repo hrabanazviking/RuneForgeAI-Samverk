@@ -746,6 +746,30 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_events_issue"
         " ON issue_events (issue_id, id)",
     ]),
+    # S-132: locking and pinning — the issue row carries
+    # its lock (locked / reason in the S-132 vocabulary /
+    # by whom / when; unlocked is locked = 0 with the rest
+    # cleared), and issue_pins holds each repository's
+    # pinned set (at most three, enforced by the store;
+    # the table's shape makes a fourth row representable
+    # only through the seam that refuses it).
+    (43, [
+        "ALTER TABLE issues ADD COLUMN"
+        " locked INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE issues ADD COLUMN"
+        " lock_reason TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE issues ADD COLUMN locked_by INTEGER",
+        "ALTER TABLE issues ADD COLUMN locked_at INTEGER",
+        "CREATE TABLE issue_pins ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  issue_id INTEGER NOT NULL UNIQUE,"
+        "  pinned_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_issue_pins_repo"
+        " ON issue_pins (repo_id, created_at, issue_id)",
+    ]),
 ]
 
 

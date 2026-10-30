@@ -6,6 +6,8 @@ assignment, milestone move, mention, and cross-reference
 — in the order it happened, each event said in plain
 words. Part XI's activity feeds read this stream; an
 issue page interleaves it with the conversation.
+(S-132's locks and pins joined the stream from the
+same audit record the day they landed.)
 
 - **Derived, not duplicated.** The timeline invents no
   second record. Each kind is read from the one record
@@ -61,6 +63,7 @@ from dataclasses import dataclass
 
 from .accounts import AccountStore, User
 from .escaping import escape_html_text
+from .issue_locking import LOCK_REASON_WORDS
 from .issues import REASON_WORDS, IssueStore
 from .permissions import can_read
 from .repositories import RepositoryStore
@@ -74,7 +77,9 @@ _KIND_RANK = {
     "labelled": 1, "unlabelled": 1,
     "assigned": 2, "unassigned": 2,
     "milestone": 3,
+    "pinned": 3, "unpinned": 3,
     "closed": 4, "reopened": 4,
+    "locked": 4, "unlocked": 4,
     "referenced": 5,
     "mentioned": 6,
 }
@@ -85,6 +90,12 @@ _AUDIT_KINDS = {
     "repo.issue.assign": "assigned",
     "repo.issue.unassign": "unassigned",
     "repo.issue.milestone": "milestone",
+    # S-132's acts ride two target shapes: lock/pin rows are
+    # addressed to the issue itself (full_name#number).
+    "repo.issue.lock": "locked",
+    "repo.issue.unlock": "unlocked",
+    "repo.issue.pin": "pinned",
+    "repo.issue.unpin": "unpinned",
 }
 
 
@@ -131,6 +142,16 @@ def describe_event(event: TimelineEvent) -> str:
         if event.assignee and event.assignee == event.actor:
             return f"{actor} removed their own assignment"
         return f"{actor} removed {event.assignee}'s assignment"
+    if event.kind == "locked":
+        words = LOCK_REASON_WORDS.get(event.reason, "")
+        suffix = f" as {words}" if words else ""
+        return f"{actor} locked this conversation{suffix}"
+    if event.kind == "unlocked":
+        return f"{actor} unlocked this conversation"
+    if event.kind == "pinned":
+        return f"{actor} pinned this issue"
+    if event.kind == "unpinned":
+        return f"{actor} unpinned this issue"
     if event.kind == "milestone":
         if event.milestone:
             return (f"{actor} added this issue to the "
@@ -219,11 +240,14 @@ class TimelineStore:
         # slice writes exactly one row, in seq order).
         for row in self._conn.execute(
                 "SELECT seq, ts, actor_id, action, detail FROM audit_log"
-                " WHERE target_id = ? AND action IN ("
+                " WHERE target_id IN (?, ?) AND action IN ("
                 " 'repo.issue.label_add', 'repo.issue.label_remove',"
                 " 'repo.issue.assign', 'repo.issue.unassign',"
-                " 'repo.issue.milestone') ORDER BY seq",
-                (current.full_name,)).fetchall():
+                " 'repo.issue.milestone', 'repo.issue.lock',"
+                " 'repo.issue.unlock', 'repo.issue.pin',"
+                " 'repo.issue.unpin') ORDER BY seq",
+                (current.full_name,
+                 f"{current.full_name}#{issue.number}")).fetchall():
             try:
                 detail = json.loads(row["detail"] or "{}")
             except ValueError:
@@ -236,6 +260,7 @@ class TimelineStore:
                 kind=kind, actor_id=row["actor_id"],
                 actor=actor.username if actor else "",
                 created_at=int(row["ts"]),
+                reason=str(detail.get("reason") or ""),
                 label=str(detail.get("label") or ""),
                 assignee=str(detail.get("assignee") or ""),
                 milestone=str(detail.get("milestone") or "")),
