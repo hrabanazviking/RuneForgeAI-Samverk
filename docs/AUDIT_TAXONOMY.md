@@ -81,6 +81,10 @@ any name not in this document's set.*
 | `repo.label.delete` | Label deleted; its issue assignments die with it (S-124) | `{"label": ...}` |
 | `repo.issue.label_add` | Label added to an issue (S-124) | `{"number": ..., "label": ...}` |
 | `repo.issue.label_remove` | Label removed from an issue (S-124) | `{"number": ..., "label": ...}` |
+| `repo.milestone.create` | Milestone created in a repository (S-125) | `{"milestone": ...}` |
+| `repo.milestone.update` | Milestone edited, closed, or reopened (S-125) | `{"milestone": ...}` |
+| `repo.milestone.delete` | Milestone deleted; its issues are unassigned, never deleted (S-125) | `{"milestone": ...}` |
+| `repo.issue.milestone` | An issue's milestone set or cleared (S-125) | `{"number": ..., "milestone": ...}` — milestone is null when cleared |
 
 ## admin — instance administration
 
@@ -137,3 +141,7 @@ S-124 (2026-10-30) added `repo.label.create`,
 `repo.label.update`, `repo.label.delete`,
 `repo.issue.label_add` and `repo.issue.label_remove`
 — 66 events: 29 auth, 25 repo, 12 admin.
+S-125 (2026-10-30) added `repo.milestone.create`,
+`repo.milestone.update`, `repo.milestone.delete` and
+`repo.issue.milestone` — 70 events: 29 auth, 29 repo,
+12 admin.

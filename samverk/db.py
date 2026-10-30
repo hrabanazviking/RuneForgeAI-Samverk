@@ -610,6 +610,29 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_labels_label"
         " ON issue_labels (label_id, issue_id)",
     ]),
+    # S-125: milestones — one row per (repository,
+    # canonical title); due_on is a real YYYY-MM-DD date
+    # or NULL. Issues carry their milestone as a column
+    # (NULL = none); deleting a milestone nulls it.
+    (37, [
+        "CREATE TABLE milestones ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  title_lower TEXT NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  due_on TEXT,"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, title_lower)"
+        ")",
+        "CREATE INDEX idx_milestones_repo"
+        " ON milestones (repo_id, title_lower)",
+        "ALTER TABLE issues ADD COLUMN milestone_id INTEGER",
+        "CREATE INDEX idx_issues_milestone"
+        " ON issues (milestone_id, state)",
+    ]),
 ]
 
 
