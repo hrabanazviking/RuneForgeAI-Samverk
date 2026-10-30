@@ -1306,6 +1306,21 @@ Volmarr's original repos onto his own machines.
   nothing. Battery `tests/test_consistency.py`: **6 passed /
   0 failed**. Cumulative battery: **485/485** (full recount
   at the S-076 gate). Next: S-072 commit graph caches.
+- **S-072 DONE (2026-10-30)** — commit graph caches:
+  `samverk/graph_cache.py` + schema migration 32
+  (`repo_graph_cache`). Derived data (commit count,
+  contributor list, branch/tag counts) is computed only in
+  `refresh` — the off-path entry, walking `git log --all`
+  once — and served by `cached_stats`, which never walks:
+  it compares the stored **refs fingerprint** (SHA-256 over
+  every ref name + oid) against the live refs and answers
+  None when stale, exactly as when absent. `invalidate` is
+  the push path's explicit drop. An empty repo refreshes to
+  an honest zero. Battery `tests/test_graph_cache.py`:
+  **5 passed / 0 failed**, including a push moving a ref
+  making the cache stale by fingerprint alone. Cumulative
+  battery: **490/490** (full recount at the S-076 gate).
+  Next: S-073 large-repository budgets.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

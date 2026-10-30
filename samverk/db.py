@@ -493,6 +493,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  last_detail TEXT"
         ")",
     ]),
+    # S-072: commit graph cache — derived data (counts,
+    # contributors) keyed by the refs fingerprint it was
+    # computed from; a fingerprint mismatch is staleness,
+    # proven on read, never a stale answer.
+    (32, [
+        "CREATE TABLE repo_graph_cache ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  fingerprint TEXT NOT NULL,"
+        "  commit_count INTEGER NOT NULL,"
+        "  contributors TEXT NOT NULL,"
+        "  branch_count INTEGER NOT NULL,"
+        "  tag_count INTEGER NOT NULL,"
+        "  computed_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
