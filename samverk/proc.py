@@ -433,6 +433,66 @@ def run_git_fetch_from(
         tempdir.cleanup()
 
 
+PACK_PROGRAMS = frozenset({"upload-pack", "receive-pack"})
+
+
+def run_git_pack(
+    repo_path: Path,
+    program: str,
+    *,
+    advertise: bool = False,
+    stateless: bool = False,
+    input_bytes: bytes | None = None,
+    protocol_version: int | None = None,
+    timeout: float = 120.0,
+) -> subprocess.CompletedProcess:
+    """Run a git pack program for a transport — the Part IV seam
+    (S-077…S-080), built like the clone/fetch seams: the generic
+    subcommand path cannot serve here, because `upload-pack` and
+    `receive-pack` take the repository as their *positional*
+    argument and do not honour the `--git-dir` global the way
+    other plumbing does.
+
+    The law, on top of S-014's:
+
+    - *program* is one of `PACK_PROGRAMS`, named by the caller
+      from its own service table — never from client input.
+    - The only flags this seam can emit are `--advertise-refs`
+      and `--stateless-rpc`, chosen by boolean parameters; no
+      caller string reaches argv at all.
+    - *repo_path* is a trusted resolved `Path` (S-013), passed
+      as the final positional argument by this function itself.
+    - Protocol v2 is an *environment* fact (`GIT_PROTOCOL`),
+      set explicitly from *protocol_version* — and scrubbed
+      when the caller did not ask for it, so an inherited
+      environment can never silently change the dialect a
+      transport speaks.
+    """
+    if program not in PACK_PROGRAMS:
+        raise ProcRefused("pack_program_not_allowlisted", str(program))
+    if not isinstance(repo_path, Path) or not repo_path.is_absolute():
+        raise ProcRefused(
+            "pack_path_not_trusted",
+            "pack repository must be a resolved local Path object")
+    if protocol_version not in (None, 0, 2):
+        raise ProcRefused(
+            "pack_protocol_invalid", repr(protocol_version))
+    executable = resolve_program("git")
+    argv = [str(executable), program]
+    if stateless:
+        argv.append("--stateless-rpc")
+    if advertise:
+        argv.append("--advertise-refs")
+    argv.append(str(repo_path))
+    env = _clean_env()
+    env.pop("GIT_PROTOCOL", None)
+    if protocol_version == 2:
+        env["GIT_PROTOCOL"] = "version=2"
+    return subprocess.run(
+        argv, shell=False, timeout=timeout, input=input_bytes,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+
+
 def run_git_in(
     repo_path: Path,
     args: list[str],
