@@ -99,7 +99,18 @@ Volmarr's original repos onto his own machines.
   1 skipped / 0 failed (867 collected, 5 subtests
   passed; the one skip is S-095's named real-sshd
   cell);
-  next S-135 issue search UI.
+  S-135 banked 2026-10-30 (8-test battery, foreground;
+  research file 19 written — the full query grammar);
+  S-136 banked 2026-10-30 (6-test battery, foreground;
+  combined with S-135 + dependencies 19 passed /
+  0 failed; migration 45);
+  governing full-suite recount read back from its log
+  file after this run's slices: pytest 880 passed /
+  1 skipped / 0 failed (881 collected, 5 subtests
+  passed — exactly the prior 866 plus this run's 14
+  battery tests; the one skip is S-095's named
+  real-sshd cell);
+  next S-137 issue → PR conversion path.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2444,6 +2455,60 @@ Volmarr's original repos onto his own machines.
   before the finished log was read back; the log's
   own tail (866 passed, 1 skipped, in 245.58s) is
   the governing number and this entry corrects it.
+- **S-135 DONE (2026-10-30)** — issue search UI:
+  `samverk/issue_search.py` + research file 19 written
+  (the full grammar: token shape, quoting, AND
+  composition, the qualifier table, the reserved Part X
+  qualifiers for S-206, and the failure law). The
+  implemented subset is the roadmap's: `is:open` /
+  `is:closed` / `is:issue`, `label:`, `author:`,
+  `assignee:`, `milestone:` — values may be quoted so
+  names carrying spaces stay one token; every other
+  token is free text matched case-insensitively against
+  title and body; all qualifiers and terms AND together
+  and contradictory states match nothing honestly.
+  Unknown qualifiers, empty values, unterminated
+  quotes, and bad `is:` values are all refused
+  `query_invalid` by name — never silently dropped (a
+  dropped qualifier would silently widen the search,
+  the S-118 law). Matching reads through the owning
+  seams (S-122's list, S-124's labels, S-126's
+  assignees, S-125's milestone column) and permission
+  rides S-054 through the list seam, so a stranger to a
+  private repository gets the uniform `issue_not_found`.
+  `render_search_page` teaches the qualifiers in plain
+  words, says each result's state in words, and carries
+  a teaching empty state; all user text through S-010.
+  No audit event of its own (a read). Battery
+  `tests/test_issue_search.py`: **8 passed / 0 failed**
+  (foreground).
+- **S-136 DONE (2026-10-30)** — saved filters:
+  `samverk/saved_filters.py` + schema migration 45
+  (`saved_filters`). A filter is a name plus an S-135
+  query targeting `issues` or `pull_requests`, validated
+  through S-135's parser at save time (`query_invalid`
+  refused at the door, never stored to fail later) and
+  parsed again at run time through the same seam.
+  Filters are personal: list/get/run/delete all scope
+  by the owner's account id, so no seam lists another
+  user's filters; names are unique per user per
+  repository case-insensitively (`name_taken`). Running
+  grants no access — S-054 through S-135's search, the
+  uniform `repo_not_found` for a stranger to a private
+  repository. No audit event of its own (a personal
+  reading preference; the S-127/S-131/S-135 pattern).
+  `render_sidebar` groups filters by target in plain
+  words with URL-encoded query links, names escaped
+  through S-010, and a teaching empty state. Battery
+  `tests/test_saved_filters.py`: **6 passed / 0
+  failed** (foreground; combined with S-135's battery
+  and the S-017 dependencies scan: 19 passed / 0
+  failed). Governing full-suite recount after both
+  slices, read back from its log file: pytest **880
+  passed / 1 skipped / 0 failed** (881 collected, 5
+  subtests passed — exactly the prior 866 plus this
+  run's 14 battery tests; the skip is S-095's named
+  real-sshd cell, NOT PROVEN on this host).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -2989,3 +3054,25 @@ Volmarr's original repos onto his own machines.
   cell, NOT PROVEN on this host. All banked locally on
   `main`; **no GitHub push** — pushes stay gated on
   Volmarr's word. Next slice: S-131 timeline.
+- **2026-10-30 (keeper run, Part VI continued)** — Previous
+  run had banked S-134 at 16:31 EDT and closed its
+  correction at be01964 (clean tree, no process live, no
+  subagent worker), so this run resumed at the map's named
+  next slice and built **S-135** issue search UI (8-test
+  battery; research file 19 written — the full query
+  grammar, with the Part X reserved qualifiers named for
+  S-206) and **S-136** saved filters (6-test battery;
+  migration 45; combined run with S-135 + the S-017
+  dependencies scan 19 passed / 0 failed). No bugs were
+  found in shipped code by the new batteries. Closing
+  governing recount read back from its log file: pytest
+  **880 passed / 1 skipped / 0 failed** (881 collected,
+  5 subtests passed, 1085.94 s — exactly the prior 866
+  plus this run's 14 battery tests); the one skip is
+  S-095's named real-sshd cell, NOT PROVEN on this host.
+  Environment: TMPDIR pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`, recount PATH
+  prepended `~/workspace/.tools`. All banked locally on
+  `main`; **no GitHub push** — pushes stay gated on
+  Volmarr's word. Next slice: S-137 issue → PR
+  conversion path.
