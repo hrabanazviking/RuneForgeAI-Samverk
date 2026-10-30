@@ -29,6 +29,7 @@ from .commit_list import _FORMAT, parse_log_output
 from .diff_engine import DiffSet, range_diff
 from .escaping import escape_html_text
 from .permissions import can_read
+from .print_export import stylesheet_link_tag
 from .proc import run_git_in
 from .repo_home import RepoHomeError, resolve_commit
 from .repositories import RepositoryStore
@@ -116,7 +117,9 @@ def render_compare_page(view: CompareView) -> str:
         "<!DOCTYPE html>",
         '<html lang="en"><head><meta charset="utf-8">',
         f"<title>{escape_html_text(view.full_name)} — compare — "
-        "Samverk</title></head>",
+        "Samverk</title>",
+        stylesheet_link_tag(),
+        "</head>",
         "<body>",
         f"<h1>Compare — {escape_html_text(view.full_name)}</h1>",
         f'<p class="meta">{escape_html_text(view.base_ref)} … '

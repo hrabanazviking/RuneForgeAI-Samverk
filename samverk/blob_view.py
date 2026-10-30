@@ -39,6 +39,7 @@ from .escaping import escape_html_attr, escape_html_text
 from .lfs_store import LFSError, parse_pointer
 from .objects import ObjectReader
 from .permissions import can_read
+from .print_export import stylesheet_link_tag
 from .proc import run_git_in
 from .repo_home import RepoHomeError, blob_at, resolve_commit, validate_repo_path
 from .repositories import RepositoryStore
@@ -300,7 +301,9 @@ def render_blob_page(view: BlobView) -> str:
         "<!DOCTYPE html>",
         '<html lang="en"><head><meta charset="utf-8">',
         f"<title>{escape_html_text(view.full_name)} — "
-        f"{escape_html_text(view.path)} — Samverk</title></head>",
+        f"{escape_html_text(view.path)} — Samverk</title>",
+        stylesheet_link_tag(),
+        "</head>",
         "<body>",
         f"<h1>{escape_html_text(view.path)}</h1>",
         f'<p class="meta">{escape_html_text(view.full_name)} · '

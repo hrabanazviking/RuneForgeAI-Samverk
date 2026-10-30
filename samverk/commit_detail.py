@@ -34,6 +34,7 @@ from .accounts import User
 from .escaping import escape_html_text
 from .objects import ObjectReader
 from .permissions import can_read
+from .print_export import stylesheet_link_tag
 from .proc import run_git_in
 from .repo_home import RepoHomeError, validate_ref
 from .repositories import RepositoryStore
@@ -204,7 +205,9 @@ def render_commit_page(detail: CommitDetail) -> str:
         "<!DOCTYPE html>",
         '<html lang="en"><head><meta charset="utf-8">',
         f"<title>{escape_html_text(detail.full_name)} — "
-        f"{escape_html_text(detail.oid[:12])} — Samverk</title></head>",
+        f"{escape_html_text(detail.oid[:12])} — Samverk</title>",
+        stylesheet_link_tag(),
+        "</head>",
         "<body>",
         f"<h1>{escape_html_text(detail.subject)}</h1>",
         f'<p class="meta">{escape_html_text(detail.full_name)} · '
