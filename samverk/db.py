@@ -81,6 +81,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  created_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-026: email verification tokens — only SHA-256 hashes are
+    # stored (the S-006 law), single-use via used_at, expiring.
+    (5, [
+        "CREATE TABLE email_verification_tokens ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  token_hash TEXT NOT NULL UNIQUE,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_email_verification_user"
+        " ON email_verification_tokens (user_id)",
+    ]),
 ]
 
 

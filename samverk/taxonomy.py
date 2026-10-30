@@ -34,6 +34,8 @@ AUTH_EVENTS = frozenset({
     "auth.twofactor.disable",
     "auth.twofactor.reset",
     "auth.session.revoke",
+    # S-026 addition (append-only, per the taxonomy rules):
+    "auth.email.verify",
 })
 
 REPO_EVENTS = frozenset({
@@ -62,6 +64,8 @@ ADMIN_EVENTS = frozenset({
     "admin.audit.ip_disclosure",
     "admin.audit.export",
     "admin.key.rotate",
+    # S-026 addition (append-only, per the taxonomy rules):
+    "admin.user.approve",
 })
 
 AUDIT_EVENTS = AUTH_EVENTS | REPO_EVENTS | ADMIN_EVENTS

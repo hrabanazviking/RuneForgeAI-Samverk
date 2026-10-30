@@ -22,10 +22,12 @@ from samverk.audit import AuditLog
 
 class TaxonomyTests(unittest.TestCase):
     def test_taxonomy_size_and_families(self):
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 37)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 15)
+        # 37 at the S-008 freeze; append-only additions since:
+        # S-026 added auth.email.verify + admin.user.approve.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 39)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 16)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 13)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 9)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 10)
 
     def test_names_are_well_formed(self):
         pattern = re.compile(r"^(auth|repo|admin)(\.[a-z0-9_]+)+$")

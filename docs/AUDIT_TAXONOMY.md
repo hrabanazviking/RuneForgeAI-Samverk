@@ -37,6 +37,7 @@ any name not in this document's set.*
 | `auth.twofactor.disable` | 2FA removed | — |
 | `auth.twofactor.reset` | 2FA reset via recovery | — |
 | `auth.session.revoke` | A session (or all) revoked | `{"scope": "one"\|"all"}` |
+| `auth.email.verify` | Email verification token redeemed (S-026; outcome distinguishes success from denied) | `{"reason": ...}` on denial only |
 
 ## repo — repositories and their security surface
 
@@ -69,6 +70,7 @@ any name not in this document's set.*
 | `admin.audit.ip_disclosure` | Audit IP display enabled/disabled for a scope | `{"scope": ..., "enabled": true\|false}` |
 | `admin.audit.export` | Audit log exported | `{"scope": ..., "entries": ...}` |
 | `admin.key.rotate` | Instance key rotated (S-020) | `{"key": ...}` — the key's name, never its value |
+| `admin.user.approve` | Operator approved a pending account (S-026, the no-SMTP road) | `{"from_status": ...}` |
 
 ## Version note
 
@@ -76,3 +78,7 @@ Taxonomy v1, frozen 2026-10-29 with S-008. 37 events: 15 auth,
 13 repo, 9 admin. The machine-readable set lives in
 `samverk/taxonomy.py`; a battery test asserts this document and the
 code name exactly the same set.
+
+Additions (append-only, meanings of existing names unchanged):
+S-026 (2026-10-30) added `auth.email.verify` and
+`admin.user.approve` — 39 events: 16 auth, 13 repo, 10 admin.

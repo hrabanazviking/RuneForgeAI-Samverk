@@ -436,6 +436,27 @@ Volmarr's original repos onto his own machines.
   **12 passed / 0 failed**, including the literal acceptance —
   duplicate (any case) and reserved attempts refused clearly.
   Cumulative battery: **199/199**.
+- **S-026 DONE (2026-10-30)** — email verification:
+  `samverk/email_verification.py` + schema migration 5
+  (`email_verification_tokens`, hashes only). Two roads, chosen
+  by what the instance has: with a mailer seam (SMTP configured)
+  a 256-bit token is minted, only its SHA-256 stored, the raw
+  token handed to the mailer once; redemption is single-use,
+  24 h expiry, a fresh request retires older tokens, and success
+  marks the email verified and activates a
+  `pending_verification` account. Without a mailer no token is
+  minted or pretended — the account moves to `pending_approval`
+  and `approve_user` (the operator's word, audited as
+  `admin.user.approve` with the operator named) activates it;
+  no-email accounts can only take this road. Failures answer
+  generically (`invalid_or_expired` — invalid, expired, and
+  used are indistinguishable). Taxonomy grew append-only by two
+  events (`auth.email.verify`, `admin.user.approve`; 39 total,
+  doc + code + counts updated together). Battery
+  `tests/test_email_verification.py`: **10 passed / 0 failed**,
+  including the DB-leak test (stored hashes redeem nothing, raw
+  token absent from the DB file) and audit checks for both
+  roads. Cumulative battery: **209/209**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
