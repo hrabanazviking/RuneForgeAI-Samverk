@@ -663,6 +663,21 @@ Volmarr's original repos onto his own machines.
   `tests/test_recovery_codes.py`: **6 passed / 0 failed**,
   including the DB-leak sweep for every plaintext code.
   Cumulative battery: **298/298**.
+- **S-038 DONE (2026-10-30)** — two-factor enforcement policy:
+  `samverk/twofactor_policy.py` over the instance `settings`
+  table (no new migration). An instance may require two-factor
+  for **admins**: turning it on starts a grace clock once
+  (default 7 days; re-saving never restarts it), inside grace
+  an admin without S-035 two-factor is warned in plain words
+  naming the time left, after grace `is_blocked` answers True,
+  and enrolment satisfies the policy at any point. Non-admins
+  are outside it entirely. Changes are audited
+  `admin.settings.change`. **Org scope is refused with its
+  reason named** (`org_scope_not_available`) — organisations
+  land in a later part, and pretending to evaluate org
+  adminship now would be a claim, not a control. Battery
+  `tests/test_twofactor_policy.py`: **7 passed / 0 failed**.
+  Cumulative battery: **305/305**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -762,3 +777,14 @@ Volmarr's original repos onto his own machines.
   (276/276), all in the same run. Banked locally on `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
   Next slice: S-035 two-factor TOTP enrolment.
+- **2026-10-30 (keeper run)** — Previous run had banked S-034
+  at 02:12 EDT (clean tree, no process live), so this run
+  resumed at the map's named next slice and built **S-035**
+  TOTP enrolment (286/286), **S-036** sudo mode (292/292),
+  **S-037** recovery codes (298/298; taxonomy append-only
+  +2 events, 42 total), and **S-038** two-factor enforcement
+  policy (305/305), each with its counted battery green and
+  the full suite re-counted at this run's end: **305 passed /
+  0 failed**. All banked locally on `main`; **no GitHub
+  push** — pushes stay gated on Volmarr's word. Next slice:
+  S-039 passkeys/WebAuthn.
