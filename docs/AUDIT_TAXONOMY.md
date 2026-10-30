@@ -44,6 +44,7 @@ any name not in this document's set.*
 | `auth.passkey.add` | Passkey enrolled (S-039) | `{"credential_id": ..., "format": ...}` — the id is a public identifier, never key material beyond the stored public key |
 | `auth.passkey.remove` | Passkey removed by its owner (S-039) | `{"credential_id": ...}` |
 | `auth.passkey.login` | Passkey assertion verified — second factor or passwordless (S-039) | `{"credential_id": ...}` |
+| `auth.signin.notify` | New-device sign-in notice fired (S-041) | `{"device": ...}` — the label only, never a fingerprint |
 
 ## repo — repositories and their security surface
 
@@ -95,3 +96,5 @@ S-037 (2026-10-30) added `auth.recovery.generate` and
 S-039 (2026-10-30) added `auth.passkey.add`,
 `auth.passkey.remove` and `auth.passkey.login` — 45 events:
 22 auth, 13 repo, 10 admin.
+S-041 (2026-10-30) added `auth.signin.notify` — 46 events:
+23 auth, 13 repo, 10 admin.

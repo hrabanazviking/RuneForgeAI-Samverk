@@ -61,6 +61,8 @@ class LoginService:
         sessions: SessionStore,
         audit: AuditLog | None = None,
         throttle: LoginThrottle | None = None,
+        signin_notifier: Callable[[int, str | None, str | None], bool]
+        | None = None,
         time_fn: Callable[[], float] = time.time,
     ):
         self._conn = conn
@@ -68,6 +70,7 @@ class LoginService:
         self._sessions = sessions
         self._audit = audit
         self._throttle = throttle if throttle is not None else LoginThrottle()
+        self._notifier = signin_notifier
         self._now = time_fn
 
     def _audit_failure(self, username: str, source_ip: str | None,
@@ -123,6 +126,10 @@ class LoginService:
                 action="auth.login.success", target_kind="user",
                 target_id=str(user.id), outcome="success",
                 source_ip=source_ip, detail={"method": "password"})
+        if self._notifier is not None:
+            # S-041's seam: a new device notifies its owner;
+            # the sign-in itself is already complete either way.
+            self._notifier(user.id, source_ip, device_label)
         return token
 
     def logout(self, token: object, source_ip: str | None = None) -> bool:

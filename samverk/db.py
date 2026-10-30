@@ -271,6 +271,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE sessions ADD COLUMN device_label TEXT",
         "ALTER TABLE sessions ADD COLUMN source_ip TEXT",
     ]),
+    # S-041: new-sign-in notification. known_devices is the
+    # "have we seen this device before" memory (keyed by a
+    # hash of label + address, so the table holds no raw
+    # fingerprint material beyond what the owner sees);
+    # signin_notifications is the in-app notice inbox.
+    (17, [
+        "CREATE TABLE known_devices ("
+        "  user_id INTEGER NOT NULL,"
+        "  device_key TEXT NOT NULL,"
+        "  device_label TEXT,"
+        "  source_ip TEXT,"
+        "  first_seen_at INTEGER NOT NULL,"
+        "  last_seen_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (user_id, device_key)"
+        ")",
+        "CREATE TABLE signin_notifications ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  device_label TEXT,"
+        "  source_ip TEXT,"
+        "  created_at INTEGER NOT NULL,"
+        "  read_at INTEGER"
+        ")",
+        "CREATE INDEX idx_signin_notifications_user"
+        " ON signin_notifications (user_id)",
+    ]),
 ]
 
 

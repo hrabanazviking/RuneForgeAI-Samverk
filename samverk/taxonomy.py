@@ -45,6 +45,8 @@ AUTH_EVENTS = frozenset({
     "auth.passkey.add",
     "auth.passkey.remove",
     "auth.passkey.login",
+    # S-041 addition (append-only, per the taxonomy rules):
+    "auth.signin.notify",
 })
 
 REPO_EVENTS = frozenset({

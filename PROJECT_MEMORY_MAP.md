@@ -730,6 +730,29 @@ Volmarr's original repos onto his own machines.
   session's token resolves to nobody on its very next
   request while its sibling session lives on. Cumulative
   battery: **325/325**.
+- **S-041 DONE (2026-10-30)** — new-sign-in notification:
+  `samverk/signin_notifications.py` + schema migration 17
+  (`known_devices`, keyed by a SHA-256 of the label+address
+  pair; `signin_notifications`, the in-app inbox). A device
+  is the pair a sign-in arrived with (S-040's label +
+  address): first sighting fires, repeats only move
+  `last_seen_at` — **once per new device, never per
+  sign-in**, and an account's first-ever sign-in fires too
+  (nothing is known yet; everything is new). Two channels in
+  trust order: the in-app notice always (device, address,
+  time; owner-only read marks), then email through a mailer
+  seam when the instance has one and the account has an
+  address — best-effort, committed notice first, a mailer
+  failure unmakes nothing. Wired into S-027's login service
+  as the optional `signin_notifier=` seam (unwired instances
+  behave exactly as before). Taxonomy grew append-only by
+  one event (`auth.signin.notify`; 46 total, doc + code +
+  counts updated together). Battery
+  `tests/test_signin_notifications.py`: **6 passed /
+  0 failed**, including the literal acceptance driven
+  through the real login service (two identical logins →
+  exactly one notice and one audit row). Cumulative
+  battery: **331/331**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
