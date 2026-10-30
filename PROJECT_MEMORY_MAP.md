@@ -111,7 +111,24 @@ Volmarr's original repos onto his own machines.
   file. (The S-003 migration test was updated to assert against the
   latest migration number rather than a hard-coded 1 — intent
   preserved.) Cumulative battery: 44/44.
-- Next: S-007 audit log core.
+- **S-007 DONE (2026-10-29)** — audit log core: `samverk/audit.py`
+  (schema migration 3) — append-only hash-chained table (canonical
+  serialisation fixed in code, genesis-anchored), serialised appends
+  under lock + transaction, `verify_chain` verifier, and the
+  `samverk audit verify` operator command. Battery
+  `tests/test_audit.py`: **6 passed / 0 failed** — clean chain
+  verifies, a tampered row is detected at its seq, a deleted row is
+  detected, chain linkage/genesis checked, no update/delete API,
+  CLI verify exits 0 clean / 1 broken. Cumulative battery: 50/50.
+- **S-008 DONE (2026-10-29)** — audit taxonomy v1:
+  `docs/AUDIT_TAXONOMY.md` + `samverk/taxonomy.py` — 37 frozen event
+  names (15 auth, 13 repo, 9 admin); `AuditLog.append` refuses
+  unknown names, so no call site can invent events. Battery
+  `tests/test_taxonomy.py`: **6 passed / 0 failed** — doc and code
+  name exactly the same set, every event emittable, unknown names
+  refused and enter nothing. Cumulative battery: **56/56**.
+- **Campaign position: S-001…S-008 DONE.** Next: S-009 HTTP security
+  baseline (cookies + CSRF).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -138,3 +155,11 @@ Volmarr's original repos onto his own machines.
   **S-001 DONE** (threat model ratified). Work proceeds on branch
   `yrsa/samverk-part1`; banking to main is the coordinator's step,
   verified by ls-remote.
+- **2026-10-29 (opening run)** — S-002…S-008 built and banked in one
+  run, each with its counted battery green (cumulative 56 passed /
+  0 failed on Linux x86-64, this VM): skeleton + platform seam,
+  secrets law + SQLite factory, scrypt password hashing, constant-time
+  compare + login throttle, session tokens, audit hash chain +
+  verifier + CLI, taxonomy v1 enforced at the emitter. README never
+  touched. Platform proof cells beyond this machine remain
+  **NOT PROVEN** (Part XXII). Next slice: S-009.

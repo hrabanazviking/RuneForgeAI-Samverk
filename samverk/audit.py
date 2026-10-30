@@ -25,6 +25,8 @@ import threading
 import time
 from collections.abc import Callable
 
+from .taxonomy import is_known_event
+
 GENESIS_HASH = hashlib.sha256(b"samverk/audit-genesis/v1").hexdigest()
 _SEP = "\x1f"  # unit separator: unambiguous, never in normal fields
 
@@ -60,7 +62,16 @@ class AuditLog:
                outcome: str, actor_id: int | None = None,
                target_id: str | None = None, source_ip: str | None = None,
                detail: dict | None = None) -> int:
-        """Append one event; return its sequence number."""
+        """Append one event; return its sequence number.
+
+        The action must come from the taxonomy (S-008): an unknown
+        name is a programming error at the call site and raises, so a
+        misspelled or invented event can never enter the chain.
+        """
+        if not is_known_event(action):
+            raise ValueError(
+                f"unknown audit event {action!r}: not in taxonomy v1 "
+                "(samverk/taxonomy.py, docs/AUDIT_TAXONOMY.md)")
         detail_text = (
             json.dumps(detail, sort_keys=True, separators=(",", ":"))
             if detail is not None else None

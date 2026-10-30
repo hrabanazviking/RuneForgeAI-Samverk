@@ -1,0 +1,74 @@
+"""S-008 acceptance battery: audit event taxonomy v1.
+
+Acceptance (roadmap S-008): taxonomy doc + emitter tests — emitters
+can only use taxonomy names, and the doc and the code agree exactly.
+
+Counted with: python3 -m unittest discover -s tests -v
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from samverk import db, taxonomy
+from samverk.audit import AuditLog
+
+
+class TaxonomyTests(unittest.TestCase):
+    def test_taxonomy_size_and_families(self):
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 37)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 15)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 9)
+
+    def test_names_are_well_formed(self):
+        pattern = re.compile(r"^(auth|repo|admin)(\.[a-z0-9_]+)+$")
+        for name in taxonomy.AUDIT_EVENTS:
+            self.assertRegex(name, pattern)
+
+    def test_doc_and_code_agree_exactly(self):
+        doc = (Path(__file__).resolve().parent.parent
+               / "docs" / "AUDIT_TAXONOMY.md").read_text(encoding="utf-8")
+        in_doc = set(re.findall(r"`((?:auth|repo|admin)(?:\.[a-z0-9_]+)+)`", doc))
+        self.assertEqual(in_doc, set(taxonomy.AUDIT_EVENTS))
+
+
+class EmitterTests(unittest.TestCase):
+    def setUp(self):
+        self._td = tempfile.TemporaryDirectory()
+        self.conn = db.init_db(Path(self._td.name) / "samverk.db")
+        self.log = AuditLog(self.conn)
+
+    def tearDown(self):
+        self.conn.close()
+        self._td.cleanup()
+
+    def test_every_taxonomy_event_can_be_emitted(self):
+        for name in sorted(taxonomy.AUDIT_EVENTS):
+            seq = self.log.append(
+                actor_kind="system", action=name,
+                target_kind="instance", outcome="success")
+            self.assertGreaterEqual(seq, 1)
+
+    def test_unknown_event_is_refused(self):
+        for bad in ("auth.login.sucess", "repo.explode", "user.ban", ""):
+            with self.assertRaises(ValueError, msg=bad):
+                self.log.append(actor_kind="user", action=bad,
+                                target_kind="user", outcome="success")
+
+    def test_refused_event_enters_nothing(self):
+        with self.assertRaises(ValueError):
+            self.log.append(actor_kind="user", action="repo.explode",
+                            target_kind="repo", outcome="success")
+        count = self.conn.execute("SELECT COUNT(*) c FROM audit_log").fetchone()["c"]
+        self.assertEqual(count, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
