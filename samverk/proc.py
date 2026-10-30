@@ -255,6 +255,178 @@ def run_git_clone_local(
         env=_clean_env())
 
 
+# Schemes a remote git address may use. `file:`, local paths,
+# and git's `ext::` transport are deliberately absent: a clone
+# source that can name a local path or an arbitrary command is
+# a remote-code-execution primitive, not an import feature.
+REMOTE_URL_SCHEMES = frozenset({"https", "http", "git", "ssh"})
+
+
+def validate_remote_url(url: object) -> str:
+    """Validate a remote git URL for the clone/fetch seams.
+
+    The law: a remote scheme with a real host; no whitespace
+    or control bytes; never a leading dash (it would be read
+    as a flag); and **no credentials inside the URL** — a
+    `user:password@host` address would leak its secret into
+    every log, process list, and audit row that mentions it.
+    Private imports pass their token through the credential
+    seam of `run_git_clone_remote` instead, never the URL.
+    """
+    from urllib.parse import urlparse
+    if not isinstance(url, str) or not url:
+        raise ProcRefused("clone_url_invalid", "empty address")
+    if url.startswith("-") or any(
+            ord(c) <= 0x20 or ord(c) == 0x7F for c in url):
+        raise ProcRefused("clone_url_invalid",
+                           "address carries whitespace or controls")
+    parsed = urlparse(url)
+    if parsed.scheme not in REMOTE_URL_SCHEMES:
+        raise ProcRefused("clone_url_invalid",
+                          f"scheme {parsed.scheme!r} is not a remote "
+                          "git transport")
+    if not parsed.hostname:
+        raise ProcRefused("clone_url_invalid", "address has no host")
+    if parsed.username or parsed.password:
+        raise ProcRefused(
+            "clone_url_invalid",
+            "credentials must never travel inside a URL; "
+            "use the token seam")
+    if parsed.fragment:
+        raise ProcRefused("clone_url_invalid",
+                          "address carries a fragment")
+    if not parsed.path or parsed.path == "/":
+        raise ProcRefused("clone_url_invalid",
+                          "address names no repository")
+    return url
+
+
+def _askpass_env(token: str, token_username: str) -> tuple[dict[str, str], object]:
+    """Build the credential environment for a private import.
+
+    The token itself lives only in the child process's
+    environment. A tiny askpass script — containing no secret,
+    only the *names* of the environment variables — answers
+    git's username/password prompts from that environment, so
+    the token never appears in argv, in the URL, in a config
+    file, or in any log line this module can produce. Returns
+    (env_extra, tempdir) — the caller keeps the tempdir alive
+    for the duration of the spawn and it is removed after.
+    """
+    import stat
+    import tempfile
+    tempdir = tempfile.TemporaryDirectory(prefix="samverk-askpass-")
+    script = Path(tempdir.name) / "askpass.sh"
+    script.write_text(
+        "#!/bin/sh\n"
+        "case \"$1\" in\n"
+        "*Username*) printf '%s' \"$SAMVERK_IMPORT_USERNAME\" ;;\n"
+        "*) printf '%s' \"$SAMVERK_IMPORT_TOKEN\" ;;\n"
+        "esac\n")
+    script.chmod(stat.S_IRWXU)
+    env = {
+        "GIT_ASKPASS": str(script),
+        "GIT_TERMINAL_PROMPT": "0",
+        "SAMVERK_IMPORT_TOKEN": token,
+        "SAMVERK_IMPORT_USERNAME": token_username,
+    }
+    return env, tempdir
+
+
+def run_git_clone_remote(
+    url: str,
+    dest_path: Path,
+    *,
+    timeout: float = 120.0,
+    token: str | None = None,
+    token_username: str = "x-access-token",
+) -> subprocess.CompletedProcess:
+    """Clone a *remote* repository — the S-069 import seam,
+    and the only remote clone in Samverk.
+
+    Generic `clone` stays off `GIT_SUBCOMMANDS` (S-014's
+    battery still refuses `run_git(["clone", …])`): this
+    function takes the address as a dedicated parameter,
+    validates it through `validate_remote_url`, takes the
+    destination as a trusted resolved `Path` from S-013, and
+    builds its argv itself. A token, when given, travels
+    only through the askpass environment (see `_askpass_env`)
+    — never the URL, never argv, never output.
+    """
+    url = validate_remote_url(url)
+    if not isinstance(dest_path, Path) or not dest_path.is_absolute():
+        raise ProcRefused(
+            "clone_path_not_trusted",
+            "clone destination must be a resolved local Path object")
+    executable = resolve_program("git")
+    argv = [str(executable), "clone", "--bare", url, str(dest_path)]
+    if token is None:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env())
+    env_extra, tempdir = _askpass_env(token, token_username)
+    try:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env(env_extra))
+    finally:
+        tempdir.cleanup()
+
+
+def run_git_fetch_from(
+    repo_path: Path,
+    source: str | Path,
+    *,
+    timeout: float = 120.0,
+    token: str | None = None,
+    token_username: str = "x-access-token",
+) -> subprocess.CompletedProcess:
+    """Fetch every head and tag from one source into a bare
+    repository — the S-070 mirror seam, and the only fetch
+    in Samverk (generic `fetch` stays refused under S-014).
+
+    The source is either a trusted local `Path` (an on-disk
+    repository the caller resolved) or a remote URL string
+    validated by `validate_remote_url`; the destination
+    repository is likewise a trusted `Path` parameter. This
+    function builds its argv itself — `--git-dir` from the
+    parameter, a fixed mirror refspec — so no caller string
+    can redirect the fetch. Tokens use the same askpass
+    environment as the clone seam and are never logged.
+    """
+    if isinstance(source, Path):
+        if not source.is_absolute():
+            raise ProcRefused(
+                "fetch_source_not_trusted",
+                "a local fetch source must be a resolved Path object")
+        source_arg = str(source)
+    else:
+        source_arg = validate_remote_url(source)
+    if not isinstance(repo_path, Path) or not repo_path.is_absolute():
+        raise ProcRefused(
+            "fetch_path_not_trusted",
+            "fetch destination must be a resolved local Path object")
+    executable = resolve_program("git")
+    argv = [str(executable), f"--git-dir={repo_path}", "fetch",
+            "--prune", source_arg,
+            "+refs/heads/*:refs/heads/*", "+refs/tags/*:refs/tags/*"]
+    if token is None:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env())
+    env_extra, tempdir = _askpass_env(token, token_username)
+    try:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env(env_extra))
+    finally:
+        tempdir.cleanup()
+
+
 def run_git_in(
     repo_path: Path,
     args: list[str],

@@ -1246,6 +1246,30 @@ Volmarr's original repos onto his own machines.
   number by number. Cumulative battery: **467/467**
   (full recount at the next gate). Next: S-069 import by
   clone URL.
+- **S-069 DONE (2026-10-30)** — import by clone URL:
+  `samverk/repo_import.py` + the dedicated seams in
+  `samverk/proc.py` (`validate_remote_url`,
+  `run_git_clone_remote`, and `run_git_fetch_from` landed
+  here for S-070). Generic `clone` stays refused under
+  S-014 — the import seam validates the address itself
+  (remote schemes https/http/git/ssh only, a real host, no
+  whitespace/controls, no leading dash, no fragment, and
+  **no credentials inside the URL**), takes the destination
+  as a trusted S-013 `Path`, and builds its argv itself.
+  Creation is S-049's all-or-nothing shape: clone first,
+  row after (default branch read from the clone's HEAD),
+  a failed clone leaves neither directory nor row. **The
+  token is never logged**: a private import's token travels
+  only in the child process's environment, answered to
+  git's prompts by an askpass script that contains variable
+  names, never the secret; audit and error messages name
+  only the source host. Battery `tests/test_repo_import.py`:
+  **6 passed / 0 failed**, including a real `git daemon`
+  round-trip (import → refs resolve to the source commit),
+  the URL-law battery, cleanup after a failed clone, and a
+  DB-file + audit sweep proving the token appears nowhere.
+  Cumulative battery: **473/473** (full recount at the
+  next gate). Next: S-070 mirror storage layout.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
