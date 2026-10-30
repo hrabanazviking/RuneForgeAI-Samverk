@@ -7,7 +7,9 @@ assignment, milestone move, mention, and cross-reference
 words. Part XI's activity feeds read this stream; an
 issue page interleaves it with the conversation.
 (S-132's locks and pins joined the stream from the
-same audit record the day they landed.)
+same audit record the day they landed; S-133's
+transfer arrival joined the same way — the stream of a
+transferred issue says which repository it came from.)
 
 - **Derived, not duplicated.** The timeline invents no
   second record. Each kind is read from the one record
@@ -80,6 +82,7 @@ _KIND_RANK = {
     "pinned": 3, "unpinned": 3,
     "closed": 4, "reopened": 4,
     "locked": 4, "unlocked": 4,
+    "transferred": 4,
     "referenced": 5,
     "mentioned": 6,
 }
@@ -96,6 +99,9 @@ _AUDIT_KINDS = {
     "repo.issue.unlock": "unlocked",
     "repo.issue.pin": "pinned",
     "repo.issue.unpin": "unpinned",
+    # S-133's arrival row, addressed to the issue at its
+    # new home (full_name#new_number, origin in detail).
+    "repo.issue.transfer_in": "transferred",
 }
 
 
@@ -148,6 +154,11 @@ def describe_event(event: TimelineEvent) -> str:
         return f"{actor} locked this conversation{suffix}"
     if event.kind == "unlocked":
         return f"{actor} unlocked this conversation"
+    if event.kind == "transferred":
+        if event.source_repo:
+            return (f"{actor} transferred this issue from "
+                    f"{event.source_repo}#{event.source_number}")
+        return f"{actor} transferred this issue from another repository"
     if event.kind == "pinned":
         return f"{actor} pinned this issue"
     if event.kind == "unpinned":
@@ -245,7 +256,8 @@ class TimelineStore:
                 " 'repo.issue.assign', 'repo.issue.unassign',"
                 " 'repo.issue.milestone', 'repo.issue.lock',"
                 " 'repo.issue.unlock', 'repo.issue.pin',"
-                " 'repo.issue.unpin') ORDER BY seq",
+                " 'repo.issue.unpin', 'repo.issue.transfer_in')"
+                " ORDER BY seq",
                 (current.full_name,
                  f"{current.full_name}#{issue.number}")).fetchall():
             try:
@@ -263,7 +275,9 @@ class TimelineStore:
                 reason=str(detail.get("reason") or ""),
                 label=str(detail.get("label") or ""),
                 assignee=str(detail.get("assignee") or ""),
-                milestone=str(detail.get("milestone") or "")),
+                milestone=str(detail.get("milestone") or ""),
+                source_repo=str(detail.get("from") or ""),
+                source_number=int(detail.get("from_number") or 0)),
                 int(row["seq"]))
 
         # Mentions (incoming) and cross-references

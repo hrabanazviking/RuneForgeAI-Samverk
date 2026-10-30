@@ -770,6 +770,28 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_issue_pins_repo"
         " ON issue_pins (repo_id, created_at, issue_id)",
     ]),
+    # S-133: issue transfer — the forwarding record left
+    # behind at the vacated (repository, number). The issue
+    # row itself moves (its id, and everything keyed by it,
+    # travels); this table is the note at the old address:
+    # where it went, who moved it, and when. A vacated
+    # number is never reused (S-121), so one row per
+    # (source_repo_id, source_number) is the whole story.
+    (44, [
+        "CREATE TABLE issue_transfers ("
+        "  id INTEGER PRIMARY KEY,"
+        "  issue_id INTEGER NOT NULL,"
+        "  source_repo_id INTEGER NOT NULL,"
+        "  source_number INTEGER NOT NULL,"
+        "  dest_repo_id INTEGER NOT NULL,"
+        "  dest_number INTEGER NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (source_repo_id, source_number)"
+        ")",
+        "CREATE INDEX idx_issue_transfers_dest"
+        " ON issue_transfers (dest_repo_id, dest_number)",
+    ]),
 ]
 
 

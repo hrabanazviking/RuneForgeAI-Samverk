@@ -98,6 +98,8 @@ any name not in this document's set.*
 | `repo.issue.unlock` | A locked conversation unlocked by a moderator (S-132) | `{"number": ...}` |
 | `repo.issue.pin` | An issue pinned by a moderator (at most three per repository) (S-132) | `{"number": ...}` |
 | `repo.issue.unpin` | An issue unpinned by a moderator (S-132) | `{"number": ...}` |
+| `repo.issue.transfer_out` | An issue transferred out of this repository to another repository of the same owner (S-133) | `{"number": ..., "to": ..., "to_number": ...}` |
+| `repo.issue.transfer_in` | An issue transferred into this repository from another repository of the same owner (S-133) | `{"number": ..., "from": ..., "from_number": ...}` |
 
 ## admin — instance administration
 
@@ -180,3 +182,6 @@ S-132 (2026-10-30) added `repo.issue.lock`,
 `repo.issue.unlock`, `repo.issue.pin` and
 `repo.issue.unpin` — 83 events: 29 auth, 42 repo,
 12 admin.
+S-133 (2026-10-30) added `repo.issue.transfer_out`
+and `repo.issue.transfer_in` — 85 events: 29 auth,
+44 repo, 12 admin.

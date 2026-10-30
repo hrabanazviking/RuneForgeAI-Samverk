@@ -112,6 +112,9 @@ REPO_EVENTS = frozenset({
     "repo.issue.unlock",
     "repo.issue.pin",
     "repo.issue.unpin",
+    # S-133 additions (append-only, per the taxonomy rules):
+    "repo.issue.transfer_out",
+    "repo.issue.transfer_in",
 })
 
 ADMIN_EVENTS = frozenset({
