@@ -72,9 +72,9 @@ _LINK_RE = re.compile(
     r"|(!?)\[([^\]]+)\](?![\[(])")
 _BARE_URL_RE = re.compile(r"https?://[^\s<\x00]+")
 _REF_TOKEN_RE = re.compile(
-    r"(?<![\w.-])@([A-Za-z0-9][A-Za-z0-9-]{0,38})"
+    r"(?<![\w.-])@([A-Za-z0-9][A-Za-z0-9_-]{0,38})"
     r"|(?<![\w#])#(\d+)"
-    r"|\b([0-9a-f]{7,40})\b")
+    r"|\b([0-9a-fA-F]{7,40})\b")
 _TRAILING_PUNCT = ".,;:!?)]}'\""
 
 

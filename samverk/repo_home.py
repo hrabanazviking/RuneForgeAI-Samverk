@@ -250,7 +250,7 @@ class RepoHomeService:
         ref_name, commit_oid = resolve_commit(path, requested)
         reader = ObjectReader(path)
         entries = tuple(tree_at(reader, commit_oid, ()))
-        readme = self._readme(reader, entries, current, commit_oid)
+        readme = self._readme(reader, entries, current, commit_oid, path)
         return RepoHome(
             full_name=current.full_name, owner=current.owner,
             name=current.name, description=current.description,
@@ -264,7 +264,7 @@ class RepoHomeService:
     # -- pieces -----------------------------------------------------
     def _readme(self, reader: ObjectReader,
                 entries: tuple[TreeEntry, ...], current,
-                commit_oid: str) -> Readme | None:
+                commit_oid: str, repo_path: Path) -> Readme | None:
         by_lower = {e.name.lower(): e for e in entries if e.type == "blob"}
         for candidate in README_CANDIDATES:
             entry = by_lower.get(candidate)
@@ -274,12 +274,22 @@ class RepoHomeService:
             text = raw.decode("utf-8", "replace")
             # S-108: the README lives at the root, and its
             # relative links resolve against the pinned commit.
+            # S-109: mentions and commit SHAs in its prose link
+            # only where the account store / this repository
+            # prove the target exists; #issues stay text until
+            # Part VI wires its store into the same seam.
+            from .prose_references import make_reference_resolver
             from .repo_links import make_link_resolver
             resolver = make_link_resolver(
                 owner=current.owner, name=current.name, ref=commit_oid)
+            references = make_reference_resolver(
+                accounts=getattr(self._repos, "_accounts", None),
+                owner=current.owner, name=current.name,
+                repo_path=repo_path)
             return Readme(name=entry.name, text=text,
                           html=render_readme_html(
-                              text, link_resolver=resolver))
+                              text, link_resolver=resolver,
+                              reference_resolver=references))
         return None
 
     def _clone_options(self, current) -> tuple[tuple[CloneOption, ...],
