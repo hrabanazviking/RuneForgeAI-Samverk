@@ -58,14 +58,15 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part IV in progress** (Part I gate passed 2026-10-30;
+- **Phase: Part V next** (Part I gate passed 2026-10-30;
   Part II gate S-048 passed 2026-10-30 at 368/368; Part III
-  gate S-076 passed 2026-10-30 at 510/510; S-077…S-088
-  banked 2026-10-30, full suite green at the corrected
-  recount (pytest 588 passed / 2 skipped; unittest discover
-  585 ran, 583 passed / 2 skipped / 0 failed — see the
-  S-017 scan correction in the session log); next S-089
-  pre-receive gate point).
+  gate S-076 passed 2026-10-30 at 510/510; Part IV gate
+  S-096 passed 2026-10-30 — governing recounts reproduced
+  from the tree: pytest 640 passed / 3 skipped / 0 failed;
+  unittest discover 636 ran, 633 passed / 3 skipped /
+  0 failed; the third skip is S-095's named real-sshd cell,
+  NOT PROVEN on this host); next S-097 repository home,
+  opening Part V.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -1555,6 +1556,132 @@ Volmarr's original repos onto his own machines.
   S-083's; the scan is fixed and the governing recounts are
   pytest **588 passed / 2 skipped / 0 failed** and unittest
   discover **585 ran, 583 passed / 2 skipped / 0 failed**.)
+- **S-089 DONE (2026-10-30)** — pre-receive gate point:
+  `samverk/receive_gate.py` — one `ReceiveGate` whose stages
+  run in the documented, binding **GATE_ORDER** (transport
+  permission is stage 0, in the transports; then
+  `protection` — Part VIII's plug-in stage; `secret_scan` —
+  Part XV's stage; `quota` — S-068's decision, consulted when
+  a size is known; `hooks` — S-067's chain, last). First
+  refusal wins, plug-in exceptions fail closed, no plug-ins
+  allows (the rules land in their own parts). Both receive
+  transports consult it after permission and before any pack
+  byte (SSH refuses 128 with the reason; HTTP raises
+  `push_refused`). Battery `tests/test_receive_gate.py`:
+  **10 passed / 0 failed**, including order, veto-stops-chain,
+  quota refusal from measured usage, and both wirings.
+- **S-090 DONE (2026-10-30)** — post-receive push events:
+  `samverk/push_events.py` + schema migration 33
+  (`push_events`) — the canonical product record of every
+  accepted push (actor kind/id, transport, ref ranges),
+  seeded for Part XI's store and kept distinct from the
+  audit witness. Ranges are **read back from the refs that
+  actually landed** (before/after diff in both transports),
+  never trusted from the request; unmoved/empty ranges
+  record nothing; a post-receive hook handler adapter feeds
+  the same store from S-067 contexts. Battery
+  `tests/test_push_events.py`: **8 passed / 0 failed**,
+  including a stock-git HTTP push landing exactly one event
+  with the true old→new range. (The transports' event-wiring
+  code rides in S-089's commit — the two slices share
+  `git_http.py`/`ssh_serve.py`; recorded here so the map
+  does not claim a cleaner split than the tree has.)
+- **S-091 DONE (2026-10-30)** — transfer limits:
+  `samverk/transfer_limits.py` — per-transport
+  (`http`/`ssh`, independently configurable) pack-size cap,
+  wall-clock and idle budgets (defaults: no size cap, 600 s
+  wall, 60 s idle — time budgets always exist). Refusals
+  explain themselves: transport, measured amount, limit,
+  and remedy, as a decision object first and an exception
+  second (S-068's shape). The HTTP door enforces pack size
+  on the request body before git spawns and takes the pack
+  timeout from the wall clock; `WallClock`/`IdleWatch` give
+  other callers the same budgets as checkable clocks.
+  Battery `tests/test_transfer_limits.py`: **7 passed /
+  0 failed**.
+- **S-092 DONE (2026-10-30)** — concurrent push behaviour:
+  `samverk/push_locks.py` — **fail fast, with a clear
+  message**: a second push to a held (repo, ref) is refused
+  immediately, naming repo and ref and the retry, before any
+  pack moves, so no ref can tear. Locks are files
+  (`O_CREAT|O_EXCL` under `<data_root>/locks/`) because SSH
+  sessions are separate processes; a lock older than 600 s
+  (past S-091's wall clock, so a live push is never mistaken
+  for a dead one) heals once. Both receive transports hold
+  the repo-wide lock around the pack run. Battery
+  `tests/test_push_locks.py`: **7 passed / 0 failed**,
+  including the two-thread race (exactly one holder) and
+  stale-lock healing.
+- **S-093 DONE (2026-10-30)** — upload-archive on the wire:
+  the SSH door now serves `git-upload-archive` (it parsed
+  but refused before), read-gated like upload-pack, and a
+  **stock `git archive --remote=` over SSH returns the tar
+  with contents verified**. The HTTP door serves the same
+  service: its advertisement is the protocol's ACK greeting
+  (upload-archive has no ref advertisement and no
+  `--advertise-refs` flag — spawning git for it made it wait
+  for request arguments; found and fixed at this slice,
+  along with the pack seam's `--stateless-rpc`, which
+  upload-archive does not accept), and a protocol-level POST
+  through a real HTTP harness returns the archive bytes.
+  **Named honestly:** stock git's remote-curl has *no
+  archive operation* — `git archive --remote=http://…`
+  refuses client-side before any request (traced
+  first-hand), so no stock-client HTTP archive cell exists
+  to prove; the SSH door carries that proof. Two superseded
+  assertions updated in place (S-077's unknown-service list,
+  S-086's not-served-yet test). Battery
+  `tests/test_upload_archive.py`: **5 passed / 0 failed**.
+- **S-094 DONE (2026-10-30)** — transport audit:
+  `samverk/transport_audit.py` + taxonomy append-only
+  **`repo.fetch`** (56 events total: 29 auth, 15 repo,
+  12 admin; doc, code, and counts updated together — the
+  doc's stale 54-line also corrected through the S-055/S-094
+  additions it had missed). The level law, decided in one
+  place so transports cannot drift: **all pushes** witnessed
+  (HTTP now records `repo.push` beside SSH's S-087 rows),
+  **private** clone/fetch/archive witnessed as `repo.fetch`,
+  **public reads never recorded**, contents never recorded,
+  refused transfers record nothing. Battery
+  `tests/test_transport_audit.py`: **6 passed / 0 failed**,
+  including a stock HTTP clone of a private repo landing
+  `repo.fetch` while a public clone lands none, chain
+  verifying throughout.
+- **S-095 DONE (2026-10-30)** — interop battery:
+  `tests/test_transport_battery.py` — the scripted stock-git
+  matrix: HTTP public anonymous clone; HTTP private
+  clone/push/pull as owner; HTTP token credential cell
+  (read token reads, write refused, at the S-082 seam);
+  SSH-door private clone+push by key. **4 passed / 1
+  skipped**: the real-sshd cell is **NOT PROVEN on this
+  host** (no sshd binary installed — the earlier session
+  log's note) and skips *by name*, with a tripwire: if an
+  sshd appears, the cell fails loudly until it is scripted,
+  rather than passing silently.
+- **S-096 DONE (2026-10-30) — PART IV GATE.** Gate battery
+  `tests/test_part_iv_gate.py`: **3 passed / 0 failed** —
+  one assembled service carrying gate + limits + lock +
+  event store + auditor at once serves a stock clone+push
+  (event with true range, `repo.push` and `repo.fetch`
+  audit rows, chain verifies), a gate veto on that same
+  service refuses a push with the ref unmoved, and the
+  protocol-v2 advertisement offers `ls-refs`/`fetch`.
+  Full counted runs at the gate on this VM, both methods,
+  reproduced: pytest **640 passed / 3 skipped / 0 failed**;
+  unittest discover **636 ran, 633 passed / 3 skipped /
+  0 failed**. **Open findings, named:** (1) the real-sshd
+  interop cell is NOT PROVEN — no sshd on this host;
+  Part XXII / an sshd host owns its proof; (2) stock git
+  cannot archive over HTTP at all (remote-curl limitation,
+  S-093) — the HTTP archive door is protocol-proven only;
+  (3) the S-089 gate's protection and secret-scan stages
+  are plug-in *points* — their rules land in Parts VIII
+  and XV; (4) platform cells beyond Linux x86-64 remain
+  NOT PROVEN (Part XXII); (5) everything banked sits on
+  local `main` only — **no GitHub push**: pushes stay
+  gated on Volmarr's explicit word. **Part IV is
+  complete.** Next: Part V — Web Repository Experience,
+  opening at S-097 repository home.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1840,3 +1967,31 @@ Volmarr's original repos onto his own machines.
   sshd** (`sshd` not installed), so the real-sshd interop
   cell needs the server package or another host when its
   turn comes.
+- **2026-10-30 (keeper run, Part IV closed)** — Previous
+  run had closed its correction at 05:20 EDT (head 61bc3e2,
+  clean tree, no process live; its session log and the
+  daily-log correction entry were both already written), so
+  this run resumed at the map's named next slice and built
+  **S-089** pre-receive gate point (10), **S-090** push
+  events (8; migration 33), **S-091** transfer limits (7),
+  **S-092** concurrent push locks (7), **S-093**
+  upload-archive (5), **S-094** transport audit (6;
+  taxonomy append-only +1, 56 events), **S-095** interop
+  battery (4 passed / 1 named skip), and the **S-096
+  Part IV gate** (3) — full suite re-counted fresh at the
+  gate, both methods reproduced: pytest **640 passed /
+  3 skipped / 0 failed**, unittest discover **636 ran,
+  633 passed / 3 skipped / 0 failed** (skips: 2 pre-existing
+  platform cells + the named real-sshd cell). Bugs found
+  and fixed in-slice, never left: the pack seam passed
+  `--stateless-rpc` to upload-archive, which has no such
+  flag (usage-error death), and the HTTP advertisement
+  tried to spawn git for upload-archive, which has no ref
+  advertisement — it greets with a bare ACK, now emitted
+  directly. One environment finding: `/tmp` is 100% full
+  (an unrelated Aesir file, `/tmp/s043-bank`, 512 MB — not
+  Samverk's, not touched); this run pointed TMPDIR at
+  `~/workspace/.verify-tmp/samverk-tmp` for its test runs.
+  All banked locally on `main` (head at the gate commit);
+  **no GitHub push** — pushes stay gated on Volmarr's
+  word. Next: Part V, S-097 repository home.
