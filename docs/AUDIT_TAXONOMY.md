@@ -69,6 +69,7 @@ any name not in this document's set.*
 | `repo.webhook.add` | Webhook added (an exfiltration path; watched) | `{"host": ...}` — never the secret |
 | `repo.webhook.remove` | Webhook removed | `{"host": ...}` |
 | `repo.settings.change` | Security-relevant repo setting changed | `{"key": ..., "from": ..., "to": ...}` |
+| `repo.fork` | Repository forked; upstream link recorded (S-055) | `{"fork_of": ...}` |
 
 ## admin — instance administration
 

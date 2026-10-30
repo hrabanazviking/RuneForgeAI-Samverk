@@ -59,6 +59,7 @@ ALLOWED_PROGRAMS = frozenset({"git"})
 # as they land — never at a call site.
 GIT_SUBCOMMANDS = frozenset({
     "init",           # S-049 bare repository creation
+    "clone",          # S-055 server-side fork clone (local trusted paths only, from S-013)
     "rev-parse",      # ref / object resolution
     "rev-list",       # history walks
     "cat-file",       # object reads

@@ -371,6 +371,14 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_repositories_owner"
         " ON repositories (owner_lower)",
     ]),
+    # S-055: forks — a fork row points at its direct upstream
+    # repository (NULL for a network root). The fork's git bytes
+    # are its own server-side clone, so the link is lineage only.
+    (23, [
+        "ALTER TABLE repositories ADD COLUMN fork_of_id INTEGER",
+        "CREATE INDEX idx_repositories_fork_of"
+        " ON repositories (fork_of_id)",
+    ]),
 ]
 
 

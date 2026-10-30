@@ -72,6 +72,7 @@ class Repository:
     description: str = ""
     visibility: str = DEFAULT_VISIBILITY
     default_branch: str = DEFAULT_BRANCH
+    fork_of_id: int | None = None   # S-055: direct upstream repo id
 
     @property
     def full_name(self) -> str:
@@ -107,7 +108,8 @@ def _row_to_repo(row: sqlite3.Row) -> Repository:
         created_by=row["created_by"], created_at=row["created_at"],
         description=row["description"] if "description" in keys else "",
         visibility=row["visibility"] if "visibility" in keys else DEFAULT_VISIBILITY,
-        default_branch=row["default_branch"] if "default_branch" in keys else DEFAULT_BRANCH)
+        default_branch=row["default_branch"] if "default_branch" in keys else DEFAULT_BRANCH,
+        fork_of_id=row["fork_of_id"] if "fork_of_id" in keys else None)
 
 
 class RepositoryStore:

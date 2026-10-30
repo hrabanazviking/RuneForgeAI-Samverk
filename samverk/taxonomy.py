@@ -72,6 +72,8 @@ REPO_EVENTS = frozenset({
     "repo.webhook.add",
     "repo.webhook.remove",
     "repo.settings.change",
+    # S-055 addition (append-only, per the taxonomy rules):
+    "repo.fork",
 })
 
 ADMIN_EVENTS = frozenset({

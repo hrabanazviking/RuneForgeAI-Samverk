@@ -947,6 +947,21 @@ Volmarr's original repos onto his own machines.
   early, as the roadmap asks. Cumulative battery:
   **395/395** (full counted run on this VM at this slice).
   Next: S-055 forking.
+- **S-055 DONE (2026-10-30)** — forking: `samverk/forks.py` +
+  schema migration 23 (`repositories.fork_of_id`) — a fork is a
+  server-side `git clone --bare` (S-014 gains `clone`, local
+  S-013 paths only) with its own object store, so upstream
+  damage can never break it; the row records the direct
+  upstream link. Forking is gated by S-054's `can_read` (an
+  unreadable private repo answers as not-found), a private
+  source can never be forked public, `fork_count` counts direct
+  forks, and `network_for` walks to the root and lists the
+  whole network. Audited `repo.fork` (taxonomy append-only +1
+  event, 55 total; doc and code updated together). Battery
+  `tests/test_forks.py`: **5 passed / 0 failed**, including
+  fork independence (a ref deleted in the fork leaves the
+  upstream untouched). Cumulative battery: **400/400**.
+  Next: S-056 repository deletion.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
