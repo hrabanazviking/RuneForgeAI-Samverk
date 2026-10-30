@@ -515,6 +515,27 @@ Volmarr's original repos onto his own machines.
   0 failed**, including the literal acceptance (avatar under
   S-012 law + every image carries alt text). Cumulative
   battery: **236/236**.
+- **S-030 DONE (2026-10-30)** — SSH keys: `samverk/ssh_keys.py`
+  + schema migration 8 (`ssh_keys`, fingerprint globally
+  UNIQUE). Parsing is strict: admitted algorithms only
+  (ed25519, ecdsa nistp256/384/521, rsa — legacy ssh-dss
+  refused), strict base64, and the blob's inner algorithm
+  string must match its outer label. Fingerprint is the
+  OpenSSH shape (`SHA256:<base64, padding stripped>`); list
+  shows title, fingerprint, created and last-used
+  (`record_use` stamps it for Part III's transport). **Key
+  add requires sudo-mode re-auth through a fail-closed seam:**
+  `SshKeyStore` takes a `reauth_verifier` callable (S-036
+  supplies the real sudo mode); no verifier or a "no" answer
+  refuses the add `sudo_required` and stores nothing —
+  S-036's battery inherits the seam. One key, one account:
+  re-registering your own key or another account's key is
+  refused alike. Delete is owner-only and audit-logged with
+  the fingerprint (`auth.ssh_key.add` / `auth.ssh_key.remove`,
+  both already in the frozen taxonomy). Battery
+  `tests/test_ssh_keys.py`: **8 passed / 0 failed**, including
+  the literal acceptance (add gated on re-auth). Cumulative
+  battery: **244/244**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -598,3 +619,11 @@ Volmarr's original repos onto his own machines.
   `yrsa/samverk-part1` and fast-forwarded to local `main`;
   **no GitHub push** — pushes stay gated on Volmarr's word.
   Next slice: S-029 profiles.
+- **2026-10-30 (keeper run)** — Previous run had banked S-028
+  at 01:47 EDT (head ce69f92, clean tree, no process live), so
+  this run resumed at the map's named next slice and built
+  **S-029** profiles (236/236) and **S-030** SSH keys (244/244)
+  in the established pattern. Taxonomy append-only +1 event
+  (auth.profile.update, 40 total). All banked locally on
+  `main`; **no GitHub push** — pushes stay gated on Volmarr's
+  word. Next slice: S-031 deploy keys.

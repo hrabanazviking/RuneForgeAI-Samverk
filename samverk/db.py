@@ -125,6 +125,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL DEFAULT 0"
         ")",
     ]),
+    # S-030: personal SSH keys. The fingerprint is globally
+    # UNIQUE — one key, one account (attribution law, S-030).
+    (8, [
+        "CREATE TABLE ssh_keys ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  key_type TEXT NOT NULL,"
+        "  key_blob TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL UNIQUE,"
+        "  created_at INTEGER NOT NULL,"
+        "  last_used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_ssh_keys_user ON ssh_keys (user_id)",
+    ]),
 ]
 
 
