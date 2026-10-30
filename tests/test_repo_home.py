@@ -102,7 +102,7 @@ class RepoHomeTests(unittest.TestCase):
         self.assertIn('value="https://forge.example/volmarr/samverk.git"', page)
         self.assertIn('value="ssh://git@forge.example/volmarr/samverk.git"', page)
         self.assertIn("/volmarr/samverk/tree/feature", page)
-        self.assertIn("main (current)", page)
+        self.assertIn("main</a> (current)", page)
         self.assertIn("<h1>Samverk</h1>", page)
 
     def test_permission_shape_is_uniform_not_found(self):

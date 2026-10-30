@@ -242,7 +242,7 @@ def render_readme_html(text: str) -> str:
             if not in_list:
                 out.append("<ul>")
                 in_list = True
-            out.append(f"<li>{inline(re.sub(r'^[-*]\\s+', '', stripped))}</li>")
+            out.append(f"<li>{inline(re.sub(r'^[-*][ ]+', '', stripped))}</li>")
         elif stripped == "":
             close_list()
         else:
