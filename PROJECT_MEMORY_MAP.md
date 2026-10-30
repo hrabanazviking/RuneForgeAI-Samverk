@@ -58,8 +58,9 @@ Volmarr's original repos onto his own machines.
 
 ## Current state
 
-- **Phase: Part I underway** (Volmarr's go-ahead, 2026-10-29 ~21:39
-  EDT). Campaign branch: `yrsa/samverk-part1`.
+- **Phase: Part II underway** (Part I gate passed 2026-10-30).
+  Campaign branch: `yrsa/samverk-part1` (local banking continues
+  on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
   model), 35 (audit log), 42 (data model & storage), 07 (passwords &
   sessions) written and committed.
@@ -414,6 +415,27 @@ Volmarr's original repos onto his own machines.
   stay gated on Volmarr's explicit word.
   **Part I is complete.** Next: Part II — Accounts & Identity,
   opening at S-025 registration.
+- **S-025 DONE (2026-10-30)** — registration: `samverk/accounts.py`
+  + schema migration 4 (`users`: display case kept, canonical
+  `username_lower`/`email_lower` UNIQUE keys, email nullable so
+  NULLs never collide). Username law: 3–39 chars, letters/digits/
+  hyphen/underscore, no leading/trailing separator shape, must
+  also pass S-013's owner law; reserved names (admin/root/
+  support/samverk/api/www + Windows devices via S-013) refused
+  with a clear reason. Email optional-but-supported: given
+  addresses are shape-checked (S-021 parser + local-part law)
+  and unique case-insensitively. Password policy is study 07
+  §3.3: min 10 / max 128, no composition rules, screened against
+  a bundled common list + the username; stored only as S-004
+  scrypt. S-021's SignupGuard is consulted when supplied.
+  Refusals create nothing and are audit-logged
+  (`auth.signup.denied` with reason); successes commit before
+  answering and log `auth.signup.success`. The
+  `verification_mode` gate (none/smtp/operator) sets the new
+  account's status for S-026. Battery `tests/test_accounts.py`:
+  **12 passed / 0 failed**, including the literal acceptance —
+  duplicate (any case) and reserved attempts refused clearly.
+  Cumulative battery: **199/199**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

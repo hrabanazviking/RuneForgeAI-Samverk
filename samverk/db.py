@@ -63,6 +63,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  entry_hash TEXT NOT NULL"
         ")",
     ]),
+    # S-025: users. username_lower / email_lower are the canonical
+    # case-insensitive uniqueness keys; display case is preserved in
+    # username / email. Email is optional: NULLs never collide under
+    # UNIQUE, which is exactly the optional-but-supported law.
+    (4, [
+        "CREATE TABLE users ("
+        "  id INTEGER PRIMARY KEY,"
+        "  username TEXT NOT NULL,"
+        "  username_lower TEXT NOT NULL UNIQUE,"
+        "  email TEXT,"
+        "  email_lower TEXT UNIQUE,"
+        "  password_hash TEXT NOT NULL,"
+        "  email_verified INTEGER NOT NULL DEFAULT 0,"
+        "  status TEXT NOT NULL DEFAULT 'active',"
+        "  is_admin INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
