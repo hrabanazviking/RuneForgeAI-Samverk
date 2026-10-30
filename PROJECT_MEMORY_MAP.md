@@ -182,8 +182,21 @@ Volmarr's original repos onto his own machines.
   including the literal acceptance — script/executable/HTML
   payloads declaring themselves `image/png` all rejected.
   Cumulative battery: **106/106**.
-- **Campaign position: S-001…S-012 DONE.** Next: S-013 repository
-  path resolution (traversal-proof).
+- **S-013 DONE (2026-10-30)** — repository path resolution:
+  `samverk/repo_paths.py` — the one mapping from names to disk
+  paths (`<data_root>/repos/<owner>/<repo>.git`). Two defences:
+  a strict name law (allowlist shape, no `..`/separators/controls,
+  no trailing dot, Windows device names refused on every OS,
+  a single trailing `.git` canonicalised away) and a containment
+  law (the candidate is fully resolved and must land strictly
+  inside the resolved repos root, so a planted symlink — owner
+  dir or repo path — pointing outside is refused at resolve
+  time, on every call, never cached). Battery
+  `tests/test_repo_paths.py`: **10 passed / 0 failed**,
+  including the literal acceptance — the `..`/symlink escape
+  battery. Cumulative battery: **116/116**.
+- **Campaign position: S-001…S-013 DONE.** Next: S-014 subprocess
+  discipline (git without a shell, argument allowlists).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
