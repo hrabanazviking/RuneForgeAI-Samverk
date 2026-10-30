@@ -61,7 +61,10 @@ Volmarr's original repos onto his own machines.
 - **Phase: Part IV in progress** (Part I gate passed 2026-10-30;
   Part II gate S-048 passed 2026-10-30 at 368/368; Part III
   gate S-076 passed 2026-10-30 at 510/510; S-077…S-088
-  banked 2026-10-30, full suite 587/587; next S-089
+  banked 2026-10-30, full suite green at the corrected
+  recount (pytest 588 passed / 2 skipped; unittest discover
+  585 ran, 583 passed / 2 skipped / 0 failed — see the
+  S-017 scan correction in the session log); next S-089
   pre-receive gate point).
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
@@ -1544,9 +1547,14 @@ Volmarr's original repos onto his own machines.
   stamped. Battery `tests/test_ssh_deploy_keys.py`:
   **7 passed / 0 failed**, including stock-git clone+push with
   a read/write deploy principal and clone-works/push-refused
-  with a read-only one (bare ref verified unmoved). Cumulative
-  at this run's verified full recount: **587 passed /
-  0 failed**. Next: S-089 pre-receive gate point.
+  with a read-only one (bare ref verified unmoved). Next:
+  S-089 pre-receive gate point. (The cumulative count first
+  written here, 587/587, was wrong — see the correction entry
+  in the session log: the S-017 import scan was failing, half
+  on this run's new batteries and half pre-existing from
+  S-083's; the scan is fixed and the governing recounts are
+  pytest **588 passed / 2 skipped / 0 failed** and unittest
+  discover **585 ran, 583 passed / 2 skipped / 0 failed**.)
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -1799,3 +1807,36 @@ Volmarr's original repos onto his own machines.
   All banked locally on `main`; **no GitHub push** — pushes
   stay gated on Volmarr's word. Next slice: S-089
   pre-receive gate point.
+- **2026-10-30 (keeper correction, same run)** — The recount
+  first recorded for this run (587/587) was **wrong, and is
+  corrected here**. A late-finishing background baseline run
+  surfaced a failure in the S-017 dependency import scan
+  (`test_no_unregistered_third_party_imports_anywhere`), and
+  three fresh checks (pytest single-file, unittest
+  single-file, full unittest discover, plus a manual AST
+  scan) all agreed: the scan was failing on four sibling
+  test-module imports — `test_ssh_key_resolution` and
+  `test_ssh_upload_routing` (new in this run's batteries)
+  and `test_git_basic_auth` + `test_git_http_upload`
+  (**pre-existing** from the S-083 battery's cross-imports,
+  so earlier "green" recounts in this campaign, including
+  the 553 this run started from, were likewise not
+  reproducible as stated). Root cause in the scan itself:
+  it treated first-party sibling test modules — a battery
+  pattern established at S-078 — as unregistered
+  third-party imports. Fix, banked with this entry: the
+  scan now admits any top-level name that is a file in the
+  scanned tree (first-party code), while the third-party
+  gate is unchanged for everything else. One earlier full
+  run in this session did report "587 OK"; that result
+  could not be reproduced and is superseded — never trust a
+  count that does not repeat. **Governing recounts after
+  the fix, both reproduced from the tree:** pytest
+  **588 passed / 2 skipped / 0 failed**; unittest discover
+  **585 ran, 583 passed / 2 skipped / 0 failed**. The
+  2 skips are pre-existing platform cells. This run's own
+  batteries stand as counted (12 + 9 + 6 + 7 = 34 tests).
+  Also noted for S-095: this VM has an ssh client but **no
+  sshd** (`sshd` not installed), so the real-sshd interop
+  cell needs the server package or another host when its
+  turn comes.

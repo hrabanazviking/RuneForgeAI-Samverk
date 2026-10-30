@@ -73,7 +73,24 @@ class RegisterAgreementTests(unittest.TestCase):
 class ImportScanTests(unittest.TestCase):
     def test_no_unregistered_third_party_imports_anywhere(self):
         admitted = {dep.import_name for dep in ADMITTED_DEPENDENCIES}
-        allowed = set(sys.stdlib_module_names) | {"samverk"} | admitted
+        # First-party test modules are not third-party imports:
+        # batteries cross-import sibling helpers by top-level name
+        # (the pattern since S-078 — e.g. test_git_anonymous_access
+        # imports test_git_http_upload). A name that is a file in
+        # the scanned tree is this project's own code, so the
+        # register's question — *third-party* imports — does not
+        # apply to it. Everything else still must be stdlib,
+        # samverk, or an admitted dependency. (Found 2026-10-30:
+        # the scan as first written flagged the sibling names and
+        # the failure sat unnoticed behind irreproducible green
+        # recounts; the gate below is unchanged for real outsiders.)
+        first_party = {
+            py.stem
+            for directory in (ROOT / "samverk", ROOT / "tests")
+            for py in directory.rglob("*.py")
+        }
+        allowed = set(sys.stdlib_module_names) | {"samverk"} | admitted \
+            | first_party
         imported = _imported_top_levels(ROOT / "samverk", ROOT / "tests")
         unregistered = imported - allowed
         self.assertEqual(
