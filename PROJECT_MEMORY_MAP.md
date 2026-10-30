@@ -536,6 +536,28 @@ Volmarr's original repos onto his own machines.
   `tests/test_ssh_keys.py`: **8 passed / 0 failed**, including
   the literal acceptance (add gated on re-auth). Cumulative
   battery: **244/244**.
+- **S-031 DONE (2026-10-30)** — deploy keys:
+  `samverk/deploy_keys.py` + schema migration 9
+  (`deploy_keys`, fingerprint UNIQUE). A deploy key binds to
+  **exactly one repository** by canonical owner/repo (both
+  halves under S-013's name law; repositories themselves land
+  in Part III, the binding is by identity). **Read-only by
+  default**; read/write is an explicit `can_write=True` grant
+  at creation — no silent widening later (a grant change is a
+  delete + re-add, two audit rows). `authorize(fingerprint,
+  owner, repo, write=)` returns the key only for its own repo
+  and only within its grant — another repo, another owner, or
+  a write asked of a read-only key all answer None; S-088
+  proves it on the wire. A fingerprint may not be both a
+  personal and a deploy key, nor serve two repos. Adds/removes
+  are owner-only and audit-logged as `repo.settings.change`
+  with fingerprint + grant (never key material beyond the
+  public blob). Battery `tests/test_deploy_keys.py`: **7
+  passed / 0 failed**, including the literal acceptance (a
+  deploy key cannot reach other repos). One battery-found
+  flaw fixed in-slice: the new test's cross-test import
+  (`tests.test_ssh_keys`) tripped S-017's import scan —
+  helpers inlined instead. Cumulative battery: **251/251**.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -626,4 +648,4 @@ Volmarr's original repos onto his own machines.
   in the established pattern. Taxonomy append-only +1 event
   (auth.profile.update, 40 total). All banked locally on
   `main`; **no GitHub push** — pushes stay gated on Volmarr's
-  word. Next slice: S-031 deploy keys.
+  word. Next slice: S-032 personal access tokens.

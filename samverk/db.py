@@ -140,6 +140,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_ssh_keys_user ON ssh_keys (user_id)",
     ]),
+    # S-031: deploy keys — bound to exactly one repository by
+    # canonical owner/repo; can_write is the explicit grant
+    # (default read-only). Fingerprint UNIQUE, as S-030.
+    (9, [
+        "CREATE TABLE deploy_keys ("
+        "  id INTEGER PRIMARY KEY,"
+        "  owner TEXT NOT NULL,"
+        "  repo TEXT NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  key_type TEXT NOT NULL,"
+        "  key_blob TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL UNIQUE,"
+        "  can_write INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL,"
+        "  last_used_at INTEGER"
+        ")",
+        "CREATE INDEX idx_deploy_keys_repo ON deploy_keys (owner, repo)",
+    ]),
 ]
 
 
