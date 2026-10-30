@@ -168,8 +168,22 @@ Volmarr's original repos onto his own machines.
   Battery `tests/test_rate_limit.py`: **11 passed / 0 failed**,
   including the burst test and a 20-thread race granting exactly
   capacity. Cumulative battery: **96/96**.
-- **Campaign position: S-001…S-011 DONE.** Next: S-012 upload
-  handling law.
+- **S-012 DONE (2026-10-30)** — upload handling law:
+  `samverk/uploads.py` — size cap first, then content sniffing
+  beats declared type (magic-number / strict-text sniff; a
+  concrete declared type that disagrees with the sniff is a
+  disguise and is refused; generic `application/octet-stream`
+  defers to the sniff), then quarantine: accepted bytes land
+  content-addressed (SHA-256 + sniffed-type extension, mode 600)
+  in `<data_root>/quarantine/`, the uploader's filename never
+  forms a path, rejected uploads write nothing. SVG is refused
+  by the default policy until a sanitiser can vouch for it.
+  Battery `tests/test_uploads.py`: **10 passed / 0 failed**,
+  including the literal acceptance — script/executable/HTML
+  payloads declaring themselves `image/png` all rejected.
+  Cumulative battery: **106/106**.
+- **Campaign position: S-001…S-012 DONE.** Next: S-013 repository
+  path resolution (traversal-proof).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -212,4 +226,9 @@ Volmarr's original repos onto his own machines.
   NOT done — pushes stay gated on Volmarr's explicit word per the
   keeper's binding laws. The same keeper run continued slice after
   slice: **S-010 DONE** (85/85 cumulative), then **S-011 DONE**
-  (96/96 cumulative) — see their entries above. Next slice: S-012.
+  (96/96 cumulative), then **S-012 DONE** (106/106 cumulative) —
+  see their entries above. Campaign position at this run's end:
+  S-001…S-012 DONE, next slice S-013. Integration note: the four
+  slices banked in this run sit on `yrsa/samverk-part1` and were
+  fast-forwarded to local `main` in the same run (the campaign's
+  established pattern); no GitHub push was made.
