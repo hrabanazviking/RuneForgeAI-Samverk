@@ -29,6 +29,12 @@ three laws:
   lock is enforced here — everyone except repository
   writers/admins is refused `conversation_locked`, with
   the lock's reason named in words.
+- **Hidden comments leave the conversation** (S-138):
+  a comment a moderator hid is filtered from
+  `list_comments` for everyone except its author and
+  the repository's moderators; the row, its body, and
+  the moderation record all remain — hiding governs
+  visibility, it never rewrites the record.
 """
 
 from __future__ import annotations
@@ -58,10 +64,17 @@ class Comment:
     edited_at: int | None
     deleted_at: int | None
     deleted_by: int | None
+    hidden_at: int | None = None     # S-138 moderation
+    hidden_by: int | None = None
+    hide_reason: str = ""            # S-138 vocabulary, '' while visible
 
     @property
     def is_deleted(self) -> bool:
         return self.deleted_at is not None
+
+    @property
+    def is_hidden(self) -> bool:
+        return self.hidden_at is not None
 
     @property
     def was_edited(self) -> bool:
@@ -77,12 +90,16 @@ class CommentEdit:
 
 
 def _row_to_comment(row: sqlite3.Row, number: int) -> Comment:
+    keys = row.keys()
     return Comment(
         id=row["id"], issue_id=row["issue_id"], number=number,
         author_id=row["author_id"], body=row["body"],
         created_at=row["created_at"], updated_at=row["updated_at"],
         edited_at=row["edited_at"], deleted_at=row["deleted_at"],
-        deleted_by=row["deleted_by"])
+        deleted_by=row["deleted_by"],
+        hidden_at=row["hidden_at"] if "hidden_at" in keys else None,
+        hidden_by=row["hidden_by"] if "hidden_by" in keys else None,
+        hide_reason=row["hide_reason"] if "hide_reason" in keys else "")
 
 
 class IssueCommentStore:
@@ -141,7 +158,17 @@ class IssueCommentStore:
             "SELECT * FROM issue_comments WHERE issue_id = ?"
             " AND deleted_at IS NULL ORDER BY id",
             (issue.id,)).fetchall()
-        return [_row_to_comment(r, issue.number) for r in rows]
+        comments = [_row_to_comment(r, issue.number) for r in rows]
+        # S-138: a hidden comment is out of the conversation
+        # for everyone except its author and the repository's
+        # moderators (admins), who still see it to govern it.
+        current = self._repos.get_repository(owner, repo)
+        viewer_is_moderator = (
+            viewer is not None and current is not None
+            and can_admin(viewer, current))
+        return [c for c in comments if not c.is_hidden
+                or viewer_is_moderator
+                or (viewer is not None and viewer.id == c.author_id)]
 
     def get_comment(self, viewer: User | None, owner: object,
                     repo: object, number: object,

@@ -114,7 +114,12 @@ Volmarr's original repos onto his own machines.
   combined with taxonomy + timeline + issues +
   dependencies 35 passed / 0 failed; migration 46;
   taxonomy append-only +2, 87 events);
-  next S-138 moderation — hide/delete abusive comments.
+  S-138 banked 2026-10-30 (7-test battery, foreground;
+  combined with taxonomy + timeline + comments +
+  dependencies 34 passed / 0 failed; migration 47;
+  taxonomy append-only +3, 90 events);
+  next S-139 issue events out — Part XI events +
+  Part XII webhooks for every issue mutation.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2544,6 +2549,29 @@ Volmarr's original repos onto his own machines.
   **8 passed / 0 failed** (foreground; combined with
   taxonomy + timeline + issues + dependencies 35
   passed / 0 failed).
+- **S-138 DONE (2026-10-30)** — moderation:
+  `samverk/moderation.py` + schema migration 47
+  (issue_comments hidden_at / hidden_by / hide_reason)
+  + S-123's list seam learning hidden visibility.
+  Moderators are repository admins only. Hiding stamps
+  a required plain-words reason (`spam` / `abuse` /
+  `off_topic` / `outdated`; anything else
+  `reason_invalid`) and takes the comment out of the
+  conversation for everyone except its author and the
+  moderators — the body is never touched; unhiding
+  restores it whole. Removal strikes S-123's tombstone
+  as a distinct moderation act with its own reason and
+  event, never confused with an author's own delete.
+  No silent edits: every real act is audited (taxonomy
+  append-only +3: `repo.issue.comment_hide` /
+  `.unhide` / `.comment_remove`, 90 events: 29 auth,
+  49 repo, 12 admin; doc + code + counts together) and
+  S-131's timeline learned all three acts from that
+  record; retries are quiet no-ops; a deleted comment
+  can be neither hidden nor removed again. Battery
+  `tests/test_moderation.py`: **7 passed / 0 failed**
+  (foreground; combined with taxonomy + timeline +
+  comments + dependencies 34 passed / 0 failed).
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3129,3 +3157,17 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes stay
   gated on Volmarr's word. Next slice: S-138
   moderation — hide/delete abusive comments.
+- **2026-10-30 (keeper run, Part VI continued)** — Same
+  run, after banking S-137: built **S-138** moderation
+  (7-test battery, foreground; combined with taxonomy
+  + timeline + comments + dependencies 34 passed /
+  0 failed; migration 47; taxonomy append-only +3,
+  90 events). No bugs were found in shipped code by
+  the new battery. A fresh full-suite governing
+  recount is still owed (last governing recount 880
+  passed / 1 skipped; arithmetic expectation now 895
+  passed / 1 skipped) — the next keeper run verifies
+  it from a log file before banking further slices.
+  All banked locally on `main`; **no GitHub push** —
+  pushes stay gated on Volmarr's word. Next slice:
+  S-139 issue events out.

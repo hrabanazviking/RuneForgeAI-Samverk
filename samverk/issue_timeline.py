@@ -11,7 +11,9 @@ same audit record the day they landed; S-133's
 transfer arrival joined the same way — the stream of a
 transferred issue says which repository it came from;
 S-137's conversion joined the same way — the stream
-says which branch and draft PR an issue gained.)
+says which branch and draft PR an issue gained;
+S-138's moderation acts joined the same way, so a
+hide or removal is visible here, never silent.)
 
 - **Derived, not duplicated.** The timeline invents no
   second record. Each kind is read from the one record
@@ -39,7 +41,10 @@ says which branch and draft PR an issue gained.)
   target's timeline.
 - **Comments are the conversation, not events.** A
   comment is speech (S-123), not a happening; surfaces
-  interleave comments and this stream by time. Title
+  interleave comments and this stream by time. The one
+  exception is moderation (S-138): a moderator hiding
+  or removing someone else's speech *is* a happening,
+  and the roadmap requires it visible here. Title
   and body edits are likewise not events (the GitHub
   habit: an edit is shown on the comment/issue itself,
   not as a timeline entry), and reactions are counts
@@ -68,6 +73,7 @@ from dataclasses import dataclass
 from .accounts import AccountStore, User
 from .escaping import escape_html_text
 from .issue_locking import LOCK_REASON_WORDS
+from .moderation import reason_words as moderation_reason_words
 from .issues import REASON_WORDS, IssueStore
 from .permissions import can_read
 from .repositories import RepositoryStore
@@ -86,6 +92,8 @@ _KIND_RANK = {
     "locked": 4, "unlocked": 4,
     "transferred": 4,
     "converted": 4,
+    "comment_hidden": 4, "comment_unhidden": 4,
+    "comment_removed": 4,
     "referenced": 5,
     "mentioned": 6,
 }
@@ -108,6 +116,12 @@ _AUDIT_KINDS = {
     # S-137's conversion row, addressed to the issue
     # (branch + the PR's number in detail).
     "repo.issue.convert": "converted",
+    # S-138's moderation rows, addressed to the issue
+    # (comment id + reason in detail) — moderation is
+    # visible in the timeline, never a silent edit.
+    "repo.issue.comment_hide": "comment_hidden",
+    "repo.issue.comment_unhide": "comment_unhidden",
+    "repo.issue.comment_remove": "comment_removed",
 }
 
 
@@ -167,6 +181,16 @@ def describe_event(event: TimelineEvent) -> str:
             return (f"{actor} transferred this issue from "
                     f"{event.source_repo}#{event.source_number}")
         return f"{actor} transferred this issue from another repository"
+    if event.kind == "comment_hidden":
+        words = moderation_reason_words(event.reason) if event.reason else ""
+        suffix = f" as {words}" if words else ""
+        return f"{actor} hid a comment{suffix}"
+    if event.kind == "comment_unhidden":
+        return f"{actor} unhid a comment"
+    if event.kind == "comment_removed":
+        words = moderation_reason_words(event.reason) if event.reason else ""
+        suffix = f" as {words}" if words else ""
+        return f"{actor} removed a comment{suffix}"
     if event.kind == "converted":
         return (f"{actor} created the {event.branch} branch "
                 f"and draft pull request #{event.pr_number} "
@@ -269,7 +293,9 @@ class TimelineStore:
                 " 'repo.issue.milestone', 'repo.issue.lock',"
                 " 'repo.issue.unlock', 'repo.issue.pin',"
                 " 'repo.issue.unpin', 'repo.issue.transfer_in',"
-                " 'repo.issue.convert')"
+                " 'repo.issue.convert', 'repo.issue.comment_hide',"
+                " 'repo.issue.comment_unhide',"
+                " 'repo.issue.comment_remove')"
                 " ORDER BY seq",
                 (current.full_name,
                  f"{current.full_name}#{issue.number}")).fetchall():

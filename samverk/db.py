@@ -836,6 +836,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pull_requests_repo"
         " ON pull_requests (repo_id, issue_id)",
     ]),
+    # S-138: comment moderation — a hidden comment carries
+    # when it was hidden, by whom, and the reason in the
+    # S-138 vocabulary ('' while visible). Deletion stays
+    # S-123's tombstone columns; moderation removal is a
+    # distinct audited act over the same tombstone.
+    (47, [
+        "ALTER TABLE issue_comments ADD COLUMN hidden_at INTEGER",
+        "ALTER TABLE issue_comments ADD COLUMN hidden_by INTEGER",
+        "ALTER TABLE issue_comments ADD COLUMN"
+        " hide_reason TEXT NOT NULL DEFAULT ''",
+    ]),
 ]
 
 

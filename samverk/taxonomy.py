@@ -118,6 +118,10 @@ REPO_EVENTS = frozenset({
     # S-137 additions (append-only, per the taxonomy rules):
     "repo.issue.convert",
     "repo.pull_request.create",
+    # S-138 additions (append-only, per the taxonomy rules):
+    "repo.issue.comment_hide",
+    "repo.issue.comment_unhide",
+    "repo.issue.comment_remove",
 })
 
 ADMIN_EVENTS = frozenset({

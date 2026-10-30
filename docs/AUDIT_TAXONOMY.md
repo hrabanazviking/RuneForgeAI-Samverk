@@ -102,6 +102,9 @@ any name not in this document's set.*
 | `repo.issue.transfer_in` | An issue transferred into this repository from another repository of the same owner (S-133) | `{"number": ..., "from": ..., "from_number": ...}` |
 | `repo.issue.convert` | An issue converted to a draft pull request: a linked branch created from it (S-137) | `{"number": ..., "to_number": ..., "branch": ...}` |
 | `repo.pull_request.create` | A pull request created, claiming its shared number (S-137; Part VII's creation roads ride the same event) | `{"number": ..., "base": ..., "head": ..., "draft": true}` plus `"from_issue"` when born from an issue |
+| `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
+| `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
+| `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 
 ## admin — instance administration
 
@@ -190,3 +193,7 @@ and `repo.issue.transfer_in` — 85 events: 29 auth,
 S-137 (2026-10-30) added `repo.issue.convert` and
 `repo.pull_request.create` — 87 events: 29 auth,
 46 repo, 12 admin.
+S-138 (2026-10-30) added `repo.issue.comment_hide`,
+`repo.issue.comment_unhide` and
+`repo.issue.comment_remove` — 90 events: 29 auth,
+49 repo, 12 admin.
