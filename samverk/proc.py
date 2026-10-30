@@ -81,6 +81,7 @@ GIT_SUBCOMMANDS = frozenset({
     "version",        # capability probe
     "gc",             # S-059 garbage collection (off-path runner only)
     "count-objects",  # S-059/object diagnostics (read-only counts)
+    "archive",        # S-063 archive downloads (streamed, read-only)
 })
 
 # Refused in any argument position, as a whole token or as a
@@ -275,6 +276,35 @@ def run_git_in(
         shell=False,
         timeout=timeout,
         input=input_bytes,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=_clean_env(),
+    )
+
+
+def popen_git_in(
+    repo_path: Path,
+    args: list[str],
+) -> subprocess.Popen:
+    """Spawn git against *repo_path* for streamed output (S-063).
+
+    Same validation, allowlist, dangerous-flag and environment
+    law as `run_git_in`; the difference is only that the caller
+    consumes stdout incrementally instead of receiving one
+    buffered result. The caller owns the process: it must read
+    stdout to EOF, enforce its own deadline (killing the child
+    on expiry), and check the exit status — there is no
+    unbounded helper here that hides that duty.
+    """
+    args = _validate_git_args(args)
+    if args[0] in {"--version", "version", "init"}:
+        raise ProcRefused(
+            "subcommand_not_repo_scoped", args[0])
+    executable = resolve_program("git")
+    argv = [str(executable), f"--git-dir={Path(repo_path)}", *args]
+    return subprocess.Popen(
+        argv,
+        shell=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         env=_clean_env(),

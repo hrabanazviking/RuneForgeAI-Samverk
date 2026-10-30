@@ -1119,6 +1119,31 @@ Volmarr's original repos onto his own machines.
   the interop repo commits first.) Cumulative battery:
   **434/434** (full counted run on this VM at this slice).
   Next: S-063 archive downloads.
+- **S-063 DONE (2026-10-30)** — archive downloads:
+  `samverk/archives.py` + `archive` on S-014's allowlist and a
+  streamed-spawn seam (`popen_git_in` in `samverk/proc.py`,
+  same validation/environment law, caller owns the deadline).
+  Zip and tar.gz of any ref via `git archive`: S-054's
+  `can_read` gates before any spawn, and missing and
+  unreadable repos answer identically (`repo_not_found`);
+  the ref is resolved through S-052 before archiving
+  (unknown → `ref_not_found`, flag-shaped → `ref_invalid`,
+  nothing spawned); bytes stream in 64 KiB chunks and are
+  counted + SHA-256-hashed as they flow, under a 120 s
+  deadline that kills an overrunning git. The top-level
+  directory and filename are `<repo>-<ref>`. Battery
+  `tests/test_archives.py`: **6 passed / 0 failed**,
+  including the literal acceptance — both formats are
+  checksum-stable across repeated downloads of a fixed
+  ref, contents verify against the fixture files, a
+  320 KB incompressible payload streams in multiple
+  chunks, and HEAD-vs-branch prefix naming is honoured.
+  (Two test-design flaws fixed in-slice, code untouched:
+  compressible payloads made single-chunk archives, and
+  an equality check first compared archives whose
+  `<repo>-<ref>` prefixes rightly differ.) Cumulative
+  battery: **440/440** (full counted run on this VM at
+  this slice). Next: S-064 repository templates.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
