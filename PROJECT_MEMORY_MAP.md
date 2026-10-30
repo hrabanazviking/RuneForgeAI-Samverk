@@ -1020,6 +1020,25 @@ Volmarr's original repos onto his own machines.
   paths are trusted resolved `Path` objects from S-013, the
   function builds its own argv, and no caller string can be a
   clone source. The S-055 entry above is corrected to match.
+- **S-059 DONE (2026-10-30)** — garbage-collection scheduling:
+  `samverk/repo_gc.py` + schema migration 26 (`repo_gc_state`).
+  Policy is a pure function of measured facts (size from
+  S-058's walk, loose-object count): no loose objects → not
+  needed; large (≥32 MiB or ≥500 loose) → daily aggressive;
+  medium (≥1 MiB or ≥50 loose) → weekly; small → monthly.
+  `gc`/`count-objects` joined the S-014 allowlist here, with
+  reasons. The acceptance — *no request waits on gc* — is
+  structural: `GCScheduler.assess` only measures and records
+  a due time (it spawns nothing, proven by the battery: loose
+  objects stay loose after assessing), and `run_due` is the
+  sole gc spawner, an off-path entry point for a background
+  worker/operator; outcomes (ok/failed) and the next due
+  time are recorded per repo. Battery
+  `tests/test_repo_gc.py`: **4 passed / 0 failed**, including
+  a real `git gc` packing 5 loose objects to 0 and the
+  not-due-until-the-interval-passes check. Cumulative
+  battery: **416/416** (full counted run on this VM at this
+  slice). Next: S-060 LFS object store.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

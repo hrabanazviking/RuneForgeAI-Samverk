@@ -79,6 +79,8 @@ GIT_SUBCOMMANDS = frozenset({
     "upload-pack",    # fetch/clone serving (Part III transport)
     "receive-pack",   # push serving (Part III transport)
     "version",        # capability probe
+    "gc",             # S-059 garbage collection (off-path runner only)
+    "count-objects",  # S-059/object diagnostics (read-only counts)
 })
 
 # Refused in any argument position, as a whole token or as a

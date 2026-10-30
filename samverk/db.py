@@ -411,6 +411,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  PRIMARY KEY (old_owner_lower, old_name_lower)"
         ")",
     ]),
+    # S-059: garbage-collection scheduling — one row per repo:
+    # when gc is next due, when it last ran, how it ended. The
+    # scheduler records; only the off-path runner spawns git gc.
+    (26, [
+        "CREATE TABLE repo_gc_state ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  last_run_at INTEGER,"
+        "  last_status TEXT,"
+        "  next_due_at INTEGER NOT NULL DEFAULT 0,"
+        "  runs INTEGER NOT NULL DEFAULT 0"
+        ")",
+    ]),
 ]
 
 
