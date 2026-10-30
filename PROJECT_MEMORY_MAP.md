@@ -101,7 +101,17 @@ Volmarr's original repos onto his own machines.
   **7 passed / 0 failed** — trip after N failures, release after
   backoff, growth + cap, success-clears, per-account independence.
   Cumulative battery: 35/35.
-- Next: S-006 session tokens.
+- **S-006 DONE (2026-10-29)** — session tokens: `samverk/sessions.py`
+  (schema migration 2) — 256-bit CSPRNG tokens, only SHA-256 hashes
+  stored, absolute (30 d) + idle (7 d) expiry, tombstone revocation
+  incl. `revoke_all`, commit-before-answer on creation. Battery
+  `tests/test_sessions.py`: **9 passed / 0 failed**, including the
+  literal acceptance — values stolen from a seeded DB presented as
+  tokens are refused, and the raw token appears nowhere in the DB
+  file. (The S-003 migration test was updated to assert against the
+  latest migration number rather than a hard-coded 1 — intent
+  preserved.) Cumulative battery: 44/44.
+- Next: S-007 audit log core.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

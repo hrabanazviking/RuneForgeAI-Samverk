@@ -95,13 +95,14 @@ class DatabaseTests(unittest.TestCase):
                 conn.close()
 
     def test_migrations_are_idempotent(self):
+        latest = max(v for v, _ in db.MIGRATIONS)
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "samverk.db"
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 1)
+            self.assertEqual(db.schema_version(conn), latest)
             conn.close()
             conn = db.init_db(path)  # second open: no error, same version
-            self.assertEqual(db.schema_version(conn), 1)
+            self.assertEqual(db.schema_version(conn), latest)
             conn.close()
 
     def test_seeded_db_grep_finds_no_secret(self):

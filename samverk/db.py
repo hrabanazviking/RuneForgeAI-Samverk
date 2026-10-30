@@ -30,6 +30,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE TABLE schema_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
         "CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
     ]),
+    # S-006: sessions. user_id has no FK yet — the users table arrives
+    # in Part II, which adds the constraint story then; the value is
+    # the principal's integer id throughout.
+    (2, [
+        "CREATE TABLE sessions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  token_hash TEXT NOT NULL UNIQUE,"
+        "  created_at INTEGER NOT NULL,"
+        "  last_seen_at INTEGER NOT NULL,"
+        "  absolute_expires_at INTEGER NOT NULL,"
+        "  revoked INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE INDEX idx_sessions_user ON sessions (user_id)",
+    ]),
 ]
 
 
