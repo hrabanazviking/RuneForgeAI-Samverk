@@ -73,11 +73,16 @@ keeps them current, so his creations never live only under a landlord's roof.
 - `docs/SAMVERK_MASSIVE_ROADMAP.md` — the massive slice roadmap for the
   whole build,
 - `PROJECT_MEMORY_MAP.md` — the living map of this project, per the Forge
-  Protocol.
+  Protocol,
+- the `samverk/` package and its counted test batteries — Part I of the
+  roadmap (the security spine, S-001 onward) is built and proven slice
+  by slice; see the project map for the current position,
+- `docs/CLAIMS_REGISTER.md` — every security claim in this README,
+  mapped to the battery that proves it or honestly marked NOT PROVEN
+  with the roadmap part that owns its proof.
 
-No Samverk code exists yet, and none is claimed. What is proven will be
-counted; what is not proven will be named NOT PROVEN, in this README and
-everywhere else.
+What is proven will be counted; what is not proven will be named
+NOT PROVEN, in this README and everywhere else.
 
 ## Licence
 

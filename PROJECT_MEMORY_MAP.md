@@ -367,9 +367,31 @@ Volmarr's original repos onto his own machines.
   strikes the identifier surfaces that exist — repo names and
   URL paths — and Part II's gate (S-048) inherits the file.
   Cumulative battery: **182/182**.
-- **Campaign position: S-001…S-022 DONE.** Next: S-023 claims
-  register (every README security claim mapped to a test or
-  marked NOT PROVEN).
+- **S-023 DONE (2026-10-30)** — claims register:
+  `docs/CLAIMS_REGISTER.md` — 12 claims (C-01…C-12) drawn from
+  the README, each **PROVEN** with its counted evidence or
+  **NOT PROVEN** with the roadmap part that owns its proof.
+  Proven (some scoped, scope named in the row): DB-leak ≠
+  credential leak, threat-model-first, audit tamper evidence,
+  CSRF fail-closed, escaping seam + CSP, opaque error ids,
+  stdlib-only/standalone, no-Docker construction. NOT PROVEN:
+  unmodified-git-client transport (Part III), Windows/macOS/
+  ARM-Pi cells (Part XXII), the design-lawbook face (Part XX),
+  the mirror duty (Part XVII). Battery
+  `tests/test_claims_register.py`: **4 passed / 0 failed** —
+  anchor coverage for every tracked claim, PROVEN rows must
+  name evidence files that exist, NOT PROVEN rows must name
+  their owning part, and a tree scan keeps container
+  artifacts out. The README's Status section was hand-updated
+  in place (his text preserved; the stale "no code exists"
+  paragraph replaced with the Part I position + a register
+  pointer). Gate hardening in the same stretch: S-015's TLS
+  wrap, previously unexercised on the wire, was proven
+  end-to-end (real handshake + HTTPS health route + plaintext
+  refused by the TLS port; commit 4ee3b61). Cumulative
+  battery: **187/187** (recounted at the S-024 gate below).
+- **Campaign position: S-001…S-023 DONE.** Next: S-024, the
+  Part I gate.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
