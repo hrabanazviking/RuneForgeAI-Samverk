@@ -140,3 +140,46 @@ class SmartHttpService:
         return TransportResponse(
             content_type=f"application/x-{service_name}-advertisement",
             body=body)
+
+    # -- S-078/S-079: the stateless-rpc POSTs -----------------------
+
+    def _serve_rpc(self, viewer: User | None, owner: object,
+                   repo: object, service: str, body: object,
+                   *, protocol_version: int | None = None,
+                   timeout: float = 120.0) -> TransportResponse:
+        """Feed one POST body to the pack program, verbatim.
+
+        The permission gate re-runs here — an advertisement is
+        not a ticket, and a client may POST without ever having
+        advertised. The client's bytes are the pack program's
+        stdin exactly as sent; Samverk inspects none of them
+        (pack parsing is git's work, and a forge that second-
+        guesses the negotiation can only break it). The
+        program's stdout — negotiation lines, then the pack on
+        side-band 1 with progress on side-band 2 passed through
+        untouched — is the response, verbatim.
+        """
+        service_name, program, minimum = self._service(service)
+        _current, path = self._resolve(viewer, owner, repo, minimum)
+        if not isinstance(body, (bytes, bytearray)):
+            raise TransportError("body_invalid", "Request body must be bytes.")
+        result = run_git_pack(
+            path, program, stateless=True, input_bytes=bytes(body),
+            protocol_version=protocol_version, timeout=timeout)
+        if result.returncode != 0:
+            raise TransportError(
+                "transport_failed",
+                result.stderr.decode("utf-8", "replace").strip()[:200])
+        return TransportResponse(
+            content_type=f"application/x-{service_name}-result",
+            body=result.stdout)
+
+    def upload_pack(self, viewer: User | None, owner: object,
+                    repo: object, body: object,
+                    *, protocol_version: int | None = None) -> TransportResponse:
+        """S-078: the fetch/clone POST (`git-upload-pack`),
+        read-gated, served by `git upload-pack --stateless-rpc`
+        with side-band progress passed through in the response."""
+        return self._serve_rpc(
+            viewer, owner, repo, "git-upload-pack", body,
+            protocol_version=protocol_version)
