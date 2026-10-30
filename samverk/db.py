@@ -447,6 +447,23 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE repositories ADD COLUMN template_of_id INTEGER",
     ]),
+    # S-066: repository settings beyond the S-050 row —
+    # website + topics per repo, and a branch-rename record
+    # so clones of a renamed default branch can be guided.
+    (29, [
+        "CREATE TABLE repo_settings ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  website TEXT NOT NULL DEFAULT '',"
+        "  topics TEXT NOT NULL DEFAULT '[]'"
+        ")",
+        "CREATE TABLE repo_branch_renames ("
+        "  repo_id INTEGER NOT NULL,"
+        "  old_branch TEXT NOT NULL,"
+        "  new_branch TEXT NOT NULL,"
+        "  renamed_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (repo_id, old_branch)"
+        ")",
+    ]),
 ]
 
 

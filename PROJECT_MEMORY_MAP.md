@@ -1187,6 +1187,27 @@ Volmarr's original repos onto his own machines.
   `tests/test_empty_repo.py`: **4 passed / 0 failed**.
   Cumulative battery: **450/450** (full recount at the
   next gate). Next: S-066 repository settings.
+- **S-066 DONE (2026-10-30)** — repository settings:
+  `samverk/repo_settings.py` + schema migration 29
+  (`repo_settings`, `repo_branch_renames`). Description
+  and visibility keep their one S-050 writer (this service
+  delegates); **website** must pass S-010's `safe_url` and
+  be http(s) (`javascript:`/`data:`/`mailto:` refused);
+  **topics** are a closed shape (lowercase/digits/hyphens,
+  ≤20 × ≤50 chars, normalised and deduped). **Default-
+  branch rename** moves the branch itself through S-053's
+  atomic rename, follows with HEAD + the S-050 default,
+  and **records the rename** so `rename_guidance` hands a
+  pre-rename clone the exact copyable steps (`git branch
+  -m …`, `git fetch`, `git branch -u …`, `git remote
+  set-head origin -a`) — guidance, honestly named, since
+  Samverk cannot reach into a clone it does not host. An
+  empty repo's rename is metadata + HEAD only. All changes
+  owner-only, audited `repo.settings.change`. Battery
+  `tests/test_repo_settings.py`: **6 passed / 0 failed**.
+  Cumulative battery: **456/456** (full counted run on
+  this VM at this slice, verifying the S-064/S-065
+  arithmetic too). Next: S-067 server-side hooks seam.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
