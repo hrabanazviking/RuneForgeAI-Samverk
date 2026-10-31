@@ -1202,6 +1202,73 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~12:35 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 12:25 tick (head dcd97ce, verified
+  equal to origin/main by ls-remote after a
+  fetch; worktree clean — the active pytest
+  processes on the box were verified by cwd to
+  belong to other campaigns (yggdrasil-build
+  and others), none to Samverk). The tick opened
+  on the best sustained window in hours —
+  MemAvailable rose ~4.86 → ~5.08 GB across
+  four samples with 1-minute load easing
+  ~6.2 → ~4.6 (swap 0) — so the owed governing
+  recount WAS launched (script
+  run-recount-1235.sh, log
+  recount-2026-10-31-1235-pytest.log in the
+  goal hidden_files), but it never ran a single
+  test: the first detached launch died with its
+  exec session (log left at 0 bytes), and the
+  tracked relaunch hit a transient box-wide
+  write error ("Operation not permitted") on
+  the log file itself — the same write gate
+  that blocked the 09:45 tick's commit — so
+  every redirect failed and pytest never
+  started. By the time writes recovered,
+  contention had returned in force:
+  MemAvailable fell to ~1.2 GB (another
+  campaign's pytest holding ~5.1 GB RSS), so
+  no third launch was attempted into OOM risk
+  on this swapless box. The tally is NOT
+  verified: the recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~12:35 EDT, addendum
+  (same tick, minutes later): the write failure
+  was diagnosed as a box-wide write gate in an
+  aggressive phase, not a Samverk fault — git
+  loose-object writes returned "Operation not
+  permitted" in every repo tried (Samverk,
+  samtal-mvp, yggdrasil-build), a python file
+  write silently landed 0 bytes, cp failed
+  EPERM mid-write, and pytest's own tempdir
+  probe found no usable temporary directory,
+  while some shell writes still landed. The
+  machine itself then went fully quiet
+  (MemAvailable ~6.17 GB, 1-minute load ~1.4 —
+  the best readings all day), but the gate
+  still blocked the recount's log writes and
+  pytest's temp files, so no clean recount is
+  possible while the gate lasts and any tally
+  produced under it could not be trusted. This
+  tick's map entry itself could not be
+  committed (git object writes gated) and
+  stands as an uncommitted worktree edit for
+  the next keeper tick to bank once the gate
+  lifts — the same posture as the 09:45 →
+  10:15 ticks. The recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's
+  combined affected-suites cross-check stay
+  owed; S-151 does not bank until a keeper run
+  verifies the recount from its log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
