@@ -514,6 +514,45 @@ Volmarr's original repos onto his own machines.
   cross-check stay owed, and S-151 does not
   bank until a keeper run on a quiet machine
   verifies the recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~07:25 EDT: no Samverk
+  worker was live (head f0d3691, verified equal
+  to origin/main by ls-remote; worktree clean;
+  the pytest processes on the box belonged to
+  other campaigns — yggdrasil-build,
+  sagnaskemma-build, hermes-hack-build — none
+  to Samverk). This tick DID launch the owed
+  governing recount into the brief post-reboot
+  quiet window (machine up ~6 min, MemAvailable
+  ~1.0–1.1 GB, 1-minute load ~1.0–1.4 — the
+  quietest readings in hours), with the
+  campaign's established environment (TMPDIR
+  `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`), logging to
+  `full-pytest-s150-recount.log` in that TMPDIR.
+  Contention returned within minutes
+  (MemAvailable fell to ~0.40–0.56 GB, load
+  rose to ~5–8, more foreign suites joined);
+  after ~11 minutes the log held 86 test
+  markers, every one passing, none failing —
+  a ~2-hour projected total under that load
+  and a live OOM risk on a swapless box — so
+  the recount was stopped, following the
+  05:15 tick's precedent. The tally is NOT
+  verified: the recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's
+  combined affected-suites cross-check stay
+  owed, and S-151 does not bank until a
+  keeper run on a quiet machine verifies the
+  recount from its log file. Prep banked
+  outside the tree (no slice code written, no
+  test collection disturbed): an S-151 design
+  draft at
+  `~/workspace/goals/samverk-version-control-forge/hidden_files/s151-codeowners-design.md`
+  (parser + matcher shape, migration 56
+  review-requests table riding under S-152,
+  taxonomy +1 to 107, ~14-test battery plan);
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
