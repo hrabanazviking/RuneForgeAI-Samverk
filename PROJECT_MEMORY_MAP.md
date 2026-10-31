@@ -1935,6 +1935,43 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~17:25 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 17:15 tick (head efff40b, verified
+  equal to origin/main by ls-remote; worktree
+  clean — the active pytest processes on the box
+  were verified by cwd to belong to other
+  campaigns (sagnaskemma-build, ember-build),
+  none to Samverk). The box had just rebooted
+  (up ~2 min) and MemAvailable opened at
+  ~4.32 GB, climbing to ~4.81 GB across the
+  watch — the best window in hours — so this
+  tick DID launch the owed governing recount
+  (script run-recount-1725.sh, log
+  recount-2026-10-31-1725-pytest.log in the goal
+  hidden_files, campaign's established
+  environment: TMPDIR
+  ~/workspace/.verify-tmp/samverk-tmp, PATH
+  prepended ~/workspace/.tools). Contention
+  returned during the run: MemAvailable fell
+  4.54 GB → ~2.0 GB as the other campaigns'
+  suites respawned (mythic-coder-build,
+  runmal-build, sagnaskemma-build,
+  yggdrasil-build), the flush rate fell to
+  ~7 tests/min (51 markers in ~7 minutes, 0
+  failures among them, projected ~2.5 h total),
+  so the recount was stopped rather than ridden
+  into OOM risk on this swapless box, following
+  the 05:15 / 07:25 / 11:25 precedents. The
+  partial log is NOT evidence and the tally
+  stays NOT verified. The recount (expectation
+  1027 passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
