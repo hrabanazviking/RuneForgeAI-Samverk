@@ -233,14 +233,11 @@ Volmarr's original repos onto his own machines.
   1 skipped / 0 failed = 995 + S-149's 14), and the
   next keeper run must verify it from a log file
   before banking further slices;
-  S-150 banked 2026-10-31 (17-test battery, foreground;
-  combined with reviews + review freshness + line
-  comments + review threads + same-repo PRs +
-  cross-fork PRs + drafts + conversation + files
-  view + taxonomy + dependencies + issue events out
-  146 passed / 0 failed, read back from its log
-  file; migration 55; taxonomy append-only +2, 106
-  events);
+  S-150 banked 2026-10-31 (18-test battery, foreground,
+  read back from its log file; migration 55; taxonomy
+  append-only +2, 106 events; the combined
+  affected-suites cross-check is owed — see the
+  S-150 entry's correction note below);
   governing full-suite recount was NOT paid this
   tick either: the VM again carried many other
   campaigns' full suites at once (MemAvailable
@@ -248,8 +245,8 @@ Volmarr's original repos onto his own machines.
   launched into that contention would risk OOM and
   prove nothing clean — it stays owed, now covering
   S-148, S-149 and S-150 (arithmetic expectation
-  1026 passed / 1 skipped / 0 failed = 1009 +
-  S-150's 17), and the next keeper run with a quiet
+  1027 passed / 1 skipped / 0 failed = 1009 +
+  S-150's 18), and the next keeper run with a quiet
   machine must verify it from a log file before
   banking further slices;
   next S-151 CODEOWNERS.
@@ -3233,21 +3230,38 @@ Volmarr's original repos onto his own machines.
   names the anchor, never the replacement) carried
   by S-139's outbox. Battery
   `tests/test_pull_request_suggestions.py`:
-  **17 passed / 0 failed** (foreground); combined
-  with reviews + review freshness + line comments +
-  review threads + same-repo PRs + cross-fork PRs +
-  drafts + conversation + files view + taxonomy +
-  dependencies + issue events out **146 passed /
-  0 failed**, read back from its log file. The
-  governing full-suite recount was NOT paid this
-  tick — the VM carried many other campaigns' full
-  suites at once throughout (MemAvailable
-  ~0.6–1.5 GB), the same contention that deferred
-  it at S-148/S-149; it stays owed, now covering
-  S-148, S-149 and S-150 (arithmetic expectation
-  1026 passed / 1 skipped / 0 failed), and the next
-  keeper run with a quiet machine must verify it
-  from a log file before banking further slices.
+  **18 passed / 0 failed** (foreground), read back
+  from its log file. **Correction (same day, never
+  left):** the S-150 commit as first banked recorded
+  a 17-test battery and a combined 146 passed /
+  0 failed "read back from its log file" — both
+  numbers came from run-output deliveries and
+  neither survives the disk: the battery's own log
+  file reads 18 passed (the file holds 18 tests),
+  and the combined set (reviews + review freshness
+  + line comments + review threads + same-repo PRs
+  + cross-fork PRs + drafts + conversation + files
+  view + taxonomy + dependencies + issue events
+  out) collects only 138 tests in total, while its
+  log file carries no summary line at all. A
+  disk-verified combined rerun reached 52% — every
+  test shown passing, none failing — before a
+  1200 s timeout under the same extreme contention
+  (MemAvailable ~0.6 GB). The slice therefore
+  stands on its proven 18-test battery plus each
+  affected suite's own banked battery; the combined
+  cross-check stays owed alongside the governing
+  recount, to be verified from a log file on a
+  quiet machine. The governing full-suite recount
+  was NOT paid this tick — the VM carried many
+  other campaigns' full suites at once throughout
+  (MemAvailable ~0.6–1.5 GB), the same contention
+  that deferred it at S-148/S-149; it stays owed,
+  now covering S-148, S-149 and S-150 (arithmetic
+  expectation 1027 passed / 1 skipped / 0 failed),
+  and the next keeper run with a quiet machine
+  must verify it from a log file before banking
+  further slices.
   Next: S-151 CODEOWNERS.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
@@ -4062,19 +4076,30 @@ Volmarr's original repos onto his own machines.
   the campaign itself: built **S-150** suggested changes
   (new module `samverk/pull_request_suggestions.py`;
   migration 55; taxonomy append-only +2, 106 events).
-  17-test battery, foreground; combined affected suites
-  **146 passed / 0 failed**, read back from its log file.
-  No bugs were found in shipped code by the new battery.
-  The governing full-suite recount owed since S-148 was
-  NOT paid this tick: the VM carried many other campaigns'
-  full suites at once throughout (MemAvailable
-  ~0.6–1.5 GB), and a recount launched into that
-  contention would risk OOM and prove nothing clean — it
-  stays owed, now covering S-148..S-150 (arithmetic
-  expectation 1026 passed / 1 skipped), and the next
-  keeper run with a quiet machine must verify it from a
-  log file before banking further slices. Environment:
+  18-test battery, foreground, read back from its log
+  file. No bugs were found in shipped code by the new
+  battery. **Correction (same day):** this entry as
+  first written recorded a 17-test battery and a
+  combined 146 passed read back from its log file;
+  both came from run-output deliveries and the disk
+  disproves them — the battery log reads 18 passed,
+  the combined set collects 138 tests total and its
+  log carries no summary, and a disk-verified rerun
+  reached 52% all-passing before a 1200 s timeout.
+  The combined cross-check stays owed with the
+  governing recount; see the S-150 entry above for
+  the full correction. The governing full-suite
+  recount owed since S-148 was NOT paid this tick:
+  the VM carried many other campaigns' full suites
+  at once throughout (MemAvailable ~0.6–1.5 GB), and
+  a recount launched into that contention would risk
+  OOM and prove nothing clean — it stays owed, now
+  covering S-148..S-150 (arithmetic expectation
+  1027 passed / 1 skipped), and the next keeper run
+  with a quiet machine must verify it from a log
+  file before banking further slices. Environment:
   TMPDIR `~/workspace/.verify-tmp`, PATH prepended
-  `~/workspace/.tools`. Banked on `main` and pushed to
-  origin per Volmarr's standing go-ahead (2026-10-31),
-  verified by ls-remote. Next slice: S-151 CODEOWNERS.
+  `~/workspace/.tools`. Banked on `main` and pushed
+  to origin per Volmarr's standing go-ahead
+  (2026-10-31), verified by ls-remote. Next slice:
+  S-151 CODEOWNERS.
