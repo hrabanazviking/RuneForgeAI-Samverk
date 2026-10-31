@@ -1681,10 +1681,12 @@ Volmarr's original repos onto his own machines.
   ember-build, hermes-hack-build), none to
   Samverk). The owed recount was checked for
   again and still NOT paid — MemAvailable stayed
-  ~0.47–1.07 GB across the watch (samples
-  769240 / 572644 / 1124552 / 491796 / 605944 /
-  683140 kB, initial check 677232 kB, 5-minute
-  load ~6.3–8.0, swap 0), never near a safe
+  ~0.55–0.73 GB across the watch (samples
+  769240 / 572644 / 687256 / 740848 / 615088 /
+  665104 kB, initial check 677232 kB, 5-minute
+  load ~6.4–8.0, swap 0; corrected from the
+  finished watch log — an interim poll glimpse
+  had mixed in other readings), never near a safe
   threshold for the ~1000-test suite on this
   swapless box, so launching would risk OOM and
   prove nothing clean. The recount (expectation
