@@ -200,7 +200,21 @@ Volmarr's original repos onto his own machines.
   taxonomy + dependencies + issue events out 106
   passed / 0 failed; migration 52; taxonomy
   append-only +5, 103 events);
-  next S-148 review submission.
+  governing full-suite recount owed by S-147 was paid
+  by the next keeper run and read back from its log
+  file: pytest 979 passed / 1 skipped / 0 failed
+  (980 collected, 5 subtests passed, 860.17 s —
+  exactly the prior 954 plus S-146's 13 and S-147's
+  12; the one skip is S-095's named real-sshd cell);
+  S-148 banked 2026-10-30 (16-test battery, foreground;
+  combined with line comments + review threads +
+  same-repo PRs + cross-fork PRs + drafts +
+  conversation + files view + compare + diff engine
+  + conversion + taxonomy + dependencies + issue
+  events out 122 passed / 0 failed, read back from
+  its log file; migration 53; taxonomy append-only
+  +1, 104 events);
+  next S-149 review freshness.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -3014,6 +3028,64 @@ Volmarr's original repos onto his own machines.
   skipped) — the next keeper run verifies it from
   a log file before banking further slices. Next:
   S-148 review submission.
+- **S-148 DONE (2026-10-30)** — review submission:
+  new module `samverk/pull_request_reviews.py`
+  (`PullRequestReviewStore`). A submitted review is
+  one act with one verdict from the closed set
+  (approve / comment / request_changes, stored as
+  approved / commented / changes_requested) and a
+  summary (migration 53, `pull_request_reviews`);
+  it records the head oid as it stood at submission
+  through S-145's diff road, so same-repo and
+  cross-fork heads are both honest — S-149's
+  freshness judgment reads that record. Requesting
+  changes without a summary is refused
+  `summary_required`; an unknown verdict is refused
+  `verdict_invalid`; the pull request's author may
+  comment on their own pull request but approving
+  or requesting changes on it is refused
+  `self_review` (a verdict on your own work vouches
+  for nothing; S-164's gates read approvals as other
+  people's word); a closed pull request takes no
+  reviews (`pull_request_closed`, the S-143 reason).
+  The pending review is the composer's autosaved
+  draft (`pull_request_pending_reviews`, one row per
+  pull request + reviewer, replaced whole on every
+  `save_pending_review` — that replacement IS the
+  autosave): it may hold no verdict yet, it is
+  readable only by its own reviewer, it is not
+  audited (the S-136/S-145 personal-state pattern),
+  and submission falls back to it for whatever the
+  caller does not give explicitly, consuming it in
+  the same transaction that lands the review.
+  `review_summary` counts submitted reviews and each
+  verdict and names each reviewer's latest verdict,
+  the position said in words. Audited under its own
+  event (taxonomy append-only +1:
+  `repo.pull_request.review_submit`, 104 events:
+  29 auth, 63 repo, 12 admin; doc + code + counts
+  together; the detail names the verdict, never the
+  summary), carried by S-139's outbox. Battery
+  `tests/test_pull_request_reviews.py`: **16 passed /
+  0 failed** (foreground; one test-authoring slip
+  found and fixed in-slice — the battery first read
+  the audit detail under a wrong column name); combined
+  with line comments + review threads + same-repo
+  PRs + cross-fork PRs + drafts + conversation +
+  files view + compare + diff engine + conversion +
+  taxonomy + dependencies + issue events out **122
+  passed / 0 failed**, read back from its log file.
+  The governing recount owed by S-147 was paid
+  first this run, read back from its log file:
+  pytest 979 passed / 1 skipped / 0 failed (980
+  collected, 5 subtests passed, 860.17 s — exactly
+  the prior 954 plus S-146's 13 and S-147's 12; the
+  one skip is S-095's named real-sshd cell). A fresh
+  governing recount after S-148 was NOT run this
+  tick (arithmetic expectation now 995 passed / 1
+  skipped) — the next keeper run verifies it from a
+  log file before banking further slices. Next:
+  S-149 review freshness.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need

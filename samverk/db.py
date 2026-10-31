@@ -982,6 +982,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_line_reply_edits_reply"
         " ON pull_request_line_reply_edits (reply_id, id)",
     ]),
+    # S-148: review submission — a submitted review is
+    # one row carrying its verdict, its summary, and the
+    # head oid as it stood at submission (S-149's
+    # freshness judgment reads it). A pending review is
+    # the composer's autosaved draft: one row per (pull
+    # request, reviewer), replaced whole on every save,
+    # removed in the transaction that submits it.
+    (53, [
+        "CREATE TABLE pull_request_reviews ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  reviewer_id INTEGER NOT NULL,"
+        "  verdict TEXT NOT NULL,"
+        "  summary TEXT NOT NULL DEFAULT '',"
+        "  head_oid TEXT NOT NULL DEFAULT '',"
+        "  submitted_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_reviews_pr"
+        " ON pull_request_reviews (pull_request_id, id)",
+        "CREATE TABLE pull_request_pending_reviews ("
+        "  pull_request_id INTEGER NOT NULL,"
+        "  reviewer_id INTEGER NOT NULL,"
+        "  verdict TEXT NOT NULL DEFAULT '',"
+        "  summary TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (pull_request_id, reviewer_id)"
+        ")",
+    ]),
 ]
 
 

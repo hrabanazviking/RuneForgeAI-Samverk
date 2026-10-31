@@ -53,9 +53,10 @@ class TaxonomyTests(unittest.TestCase):
         # line_comment_delete.
         # S-147 added repo.pull_request.line_reply/line_reply_edit/
         # line_reply_delete and thread_resolve/thread_unresolve.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 103)
+        # S-148 added repo.pull_request.review_submit.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 104)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 62)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 63)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):
