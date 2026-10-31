@@ -263,6 +263,28 @@ Volmarr's original repos onto his own machines.
   stay owed, and S-151 does not bank until a
   keeper run on a quiet machine verifies the
   recount from its log file;
+  keeper tick 2026-10-31 ~05:15 EDT: no Samverk
+  worker was live (the one pytest process on the
+  box belonged to another project). The VM
+  rebooted mid-tick and briefly opened a quiet
+  window (MemAvailable ~1.5 GB, load falling), so
+  the owed recount was launched in the campaign's
+  established environment (log:
+  hidden_files/recount-2026-10-31-0515-pytest.log);
+  the window closed within minutes as the other
+  campaigns respawned — MemAvailable fell to
+  ~0.40 GB, load rose to ~5.6, and only ~46 tests
+  flushed in ~9 minutes with no failures among
+  them — so the keeper aborted the recount rather
+  than let a multi-hour contended run risk OOM
+  and prove nothing clean. The tally is NOT
+  verified: the recount (expectation 1027 passed
+  / 1 skipped / 0 failed, covering S-148, S-149
+  and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
