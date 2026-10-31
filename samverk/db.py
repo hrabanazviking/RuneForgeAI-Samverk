@@ -1011,6 +1011,22 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  PRIMARY KEY (pull_request_id, reviewer_id)"
         ")",
     ]),
+    # S-149: review freshness policy — one row per
+    # repository naming how new pushes affect reviews
+    # submitted against an older head (never / approvals
+    # / verdicts). No row means the default, 'never':
+    # reviews keep counting however the head moves.
+    # Freshness itself is judged on read (a review's
+    # stored head_oid against the current head), never
+    # stored, so no per-review table is needed.
+    (54, [
+        "CREATE TABLE repo_review_freshness_policies ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  mode TEXT NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  updated_by INTEGER"
+        ")",
+    ]),
 ]
 
 

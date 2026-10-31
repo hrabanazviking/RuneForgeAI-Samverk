@@ -214,7 +214,26 @@ Volmarr's original repos onto his own machines.
   events out 122 passed / 0 failed, read back from
   its log file; migration 53; taxonomy append-only
   +1, 104 events);
-  next S-149 review freshness.
+  S-149 banked 2026-10-30 (14-test battery, foreground;
+  combined with reviews + review threads + line
+  comments + drafts + same-repo PRs + cross-fork PRs
+  + conversation + files view + taxonomy +
+  dependencies + issue events out 120 passed /
+  0 failed, read back from its log file; migration
+  54; no new audit event — the policy change rides
+  the frozen repo.settings.change with its key named,
+  taxonomy stands at 104);
+  governing full-suite recount owed by S-148 was NOT
+  paid this tick: the VM carried several other
+  campaigns' full suites at once (MemAvailable
+  ~0.7 GB throughout), and a Samverk recount launched
+  into that contention would risk OOM and prove
+  nothing clean — it stays owed, now covering S-148
+  and S-149 (arithmetic expectation 1009 passed /
+  1 skipped / 0 failed = 995 + S-149's 14), and the
+  next keeper run must verify it from a log file
+  before banking further slices;
+  next S-150 suggested changes.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -3086,6 +3105,64 @@ Volmarr's original repos onto his own machines.
   skipped) — the next keeper run verifies it from a
   log file before banking further slices. Next:
   S-149 review freshness.
+- **S-149 DONE (2026-10-30)** — review freshness:
+  new module `samverk/pull_request_review_freshness.py`
+  (`PullRequestReviewFreshnessStore`). The policy is
+  per repository (migration 54,
+  `repo_review_freshness_policies`; no row is the
+  default): `never` — a push never stale-dates a
+  review (S-148's position unchanged until an owner
+  chooses otherwise); `approvals` — an approval
+  submitted against an older head goes stale when
+  the head moves, comments and change requests keep
+  counting (the shape S-172's rules engine dismisses
+  under); `verdicts` — approvals and change requests
+  go stale on a push, comment reviews keep counting
+  under every mode (they gate nothing). Setting the
+  policy is a repository admin's act (`permission_denied`
+  in words for anyone else), audited under the frozen
+  `repo.settings.change` with the key
+  `review_freshness_policy` named (the S-129 settings
+  pattern; taxonomy stands at 104) — a real change
+  writes one row, a same-mode retry is a quiet no-op,
+  an unknown mode is refused `policy_invalid` and
+  stores nothing. Freshness is judged on read, never
+  stored (the S-145/S-146 law): `freshness_for`
+  re-reads the current head through S-145's diff
+  road (same-repo and cross-fork heads both honest,
+  the cross-fork cell proven in the battery) and
+  marks each S-148 review stale iff the policy can
+  stale-date its verdict and its stored head oid is
+  no longer the current head — so changing the
+  policy re-judges already-submitted reviews in
+  both directions, proven in the battery. The
+  `FreshnessReport` says exactly which reviews
+  still count: every entry with its state and
+  reason in words, fresh/stale counts, counting
+  tallies, and `latest_counting_by_reviewer` —
+  each reviewer's latest counting verdict, the
+  record S-164's required-review seam and S-172
+  consult. Private repositories answer uniformly
+  (`pull_request_not_found` on the judgment,
+  `repo_not_found` on the policy surfaces).
+  Battery `tests/test_pull_request_review_freshness.py`:
+  **14 passed / 0 failed** (foreground); combined
+  with reviews + review threads + line comments +
+  drafts + same-repo PRs + cross-fork PRs +
+  conversation + files view + taxonomy +
+  dependencies + issue events out **120 passed /
+  0 failed**, read back from its log file. The
+  governing recount owed by S-148 was NOT paid
+  this tick: the VM carried several other
+  campaigns' full suites at once (MemAvailable
+  ~0.7 GB throughout), and a recount launched into
+  that contention would risk OOM and prove nothing
+  clean — it stays owed, now covering S-148 and
+  S-149 (arithmetic expectation 1009 passed /
+  1 skipped / 0 failed = 995 + this slice's 14),
+  and the next keeper run must verify it from a
+  log file before banking further slices. Next:
+  S-150 suggested changes.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
