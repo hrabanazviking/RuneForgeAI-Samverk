@@ -711,6 +711,29 @@ Volmarr's original repos onto his own machines.
   owed, and S-151 does not bank until a
   keeper run on a quiet machine verifies the
   recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~08:45 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 08:35 tick (head b6ad865, verified
+  equal to origin/main by ls-remote after a
+  fetch; worktree clean — the pytest processes
+  on the box were verified by cwd to belong to
+  other campaigns (sagnaskemma-build,
+  yggdrasil-build, hermes-hack-build), none to
+  Samverk). The owed recount was checked for
+  again and still NOT paid — MemAvailable
+  stayed ~0.41–0.49 GB across the watch
+  (5-minute load ~8.5–8.9, other campaigns'
+  pytest processes running throughout, swap
+  0), never near a safe threshold for the
+  ~1000-test suite, so launching would risk
+  OOM and prove nothing clean. The recount
+  (expectation 1027 passed / 1 skipped /
+  0 failed, covering S-148, S-149 and S-150)
+  plus S-150's combined affected-suites
+  cross-check stay owed, and S-151 does not
+  bank until a keeper run on a quiet machine
+  verifies the recount from its log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
