@@ -167,11 +167,27 @@ Volmarr's original repos onto his own machines.
   conversion 88 passed / 0 failed, read back from its
   log file; taxonomy append-only +3, 95 events; no
   migration);
-  next S-145 PR files view. A fresh full-suite
-  governing recount is owed before further slices
-  bank (last governing recount 933 passed /
-  1 skipped; arithmetic expectation 944 passed /
-  1 skipped).
+  S-145 banked 2026-10-30 (10-test battery, foreground;
+  combined with same-repo PRs + cross-fork PRs +
+  drafts + conversation + compare + diff engine +
+  conversion + taxonomy + dependencies 75 passed /
+  0 failed, read back from its log file; migration
+  50; no audit event of its own — a per-reviewer
+  reading preference, taxonomy stands at 95);
+  governing full-suite recount read back from its
+  log file after this run's slice: pytest 954
+  passed / 1 skipped / 0 failed (955 collected, 5
+  subtests passed, 3149.85 s under heavy VM
+  contention — exactly the prior 933 plus S-144's
+  11 and S-145's 10; the one skip is S-095's named
+  real-sshd cell). One earlier recount this run was
+  discarded, never counted: run without the
+  campaign's established environment (no
+  `~/workspace/.tools` on PATH, no campaign TMPDIR)
+  it read 942 passed / 3 skipped — the two git-lfs
+  client cells skipped instead of passing; the
+  corrected rerun above stands;
+  next S-146 line comments.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2842,6 +2858,54 @@ Volmarr's original repos onto his own machines.
   files view. A fresh governing recount is owed
   before further slices bank (expectation 944
   passed / 1 skipped).
+- **S-145 DONE (2026-10-30)** — PR files view:
+  new module `samverk/pull_request_files.py`
+  (`PullRequestFilesStore`). The diff is S-104's
+  shared engine over the pull request's branches as
+  they stand today — same-repository through S-105's
+  compare seam, cross-fork through S-142's
+  cross-repository compare (its scratch ref deleted
+  in every outcome), whitespace toggle carried by
+  the engine (`-w`) in both cases. Viewed state is
+  per reviewer per file (migration 50,
+  `pull_request_file_views`): marking a file records
+  a SHA-256 hash of the patch that reviewer actually
+  saw; a later push that changes that file's patch
+  changes the hash, so the file reads as *changed
+  since you viewed it* — not viewed, said in words —
+  while a push leaving the patch untouched leaves
+  the mark standing. Unmarking deletes the record;
+  re-marking a changed file vouches for the new
+  patch. Progress is said in words
+  (`progress_words`, "N of M files viewed"), never
+  a colour alone; an anonymous reader of a public
+  repository sees the files and no personal state.
+  Marking a file not in the current diff is refused
+  `file_not_found` and stores nothing; a stranger
+  to a private repository gets the uniform
+  `pull_request_not_found` on every surface. No
+  audit event of its own (a personal reading
+  preference, the S-136 pattern; taxonomy stands
+  at 95 events). Battery
+  `tests/test_pull_request_files.py`: **10 passed /
+  0 failed** (foreground); combined with same-repo
+  PRs + cross-fork PRs + drafts + conversation +
+  compare + diff engine + conversion + taxonomy +
+  dependencies **75 passed / 0 failed**, read back
+  from its log file. Governing full-suite recount
+  read back from its log file after the slice:
+  pytest **954 passed / 1 skipped / 0 failed**
+  (955 collected, 5 subtests passed, 3149.85 s —
+  exactly the prior 933 plus S-144's 11 and this
+  slice's 10; the one skip is S-095's named
+  real-sshd cell, NOT PROVEN on this host). One
+  earlier recount this run was discarded, never
+  counted: run without the campaign environment
+  (no `~/workspace/.tools` on PATH) it read 942
+  passed / 3 skipped, the two git-lfs client cells
+  skipping instead of passing; the corrected rerun
+  stands. No bugs were found in shipped code by
+  the new battery. Next: S-146 line comments.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3571,3 +3635,34 @@ Volmarr's original repos onto his own machines.
   prepended `~/workspace/.tools`. All banked locally
   on `main`; **no GitHub push** — pushes stay gated on
   Volmarr's word. Next slice: S-145 PR files view.
+- **2026-10-30 (keeper run, Part VII continued)** — Previous
+  run had banked S-144 at 19:58 EDT (clean tree, no
+  Samverk process live, no subagent worker at this
+  tick's check), so this run built **S-145** PR files
+  view (new module `samverk/pull_request_files.py`;
+  migration 50; no new audit event — taxonomy stands
+  at 95). 10-test battery, foreground; combined with
+  same-repo PRs + cross-fork PRs + drafts +
+  conversation + compare + diff engine + conversion
+  + taxonomy + dependencies **75 passed / 0 failed**,
+  read back from its log file. The governing recount
+  was paid in full this run and read back from its
+  log file: pytest **954 passed / 1 skipped /
+  0 failed** (955 collected, 5 subtests passed,
+  3149.85 s under heavy VM contention — exactly the
+  prior 933 plus S-144's 11 and S-145's 10; the one
+  skip is S-095's named real-sshd cell). One earlier
+  recount this run was caught and discarded, never
+  counted: launched without the campaign's
+  established environment (no `~/workspace/.tools`
+  on PATH, no campaign TMPDIR) it read 942 passed /
+  3 skipped — the two git-lfs client cells skipped
+  instead of passing; the corrected rerun with the
+  established environment stands as the governing
+  number. No bugs were found in shipped code.
+  Environment for the governing recount: TMPDIR
+  pointed at `~/workspace/.verify-tmp/samverk-tmp`,
+  PATH prepended `~/workspace/.tools`. All banked
+  locally on `main`; **no GitHub push** — pushes
+  stay gated on Volmarr's word. Next slice: S-146
+  line comments.

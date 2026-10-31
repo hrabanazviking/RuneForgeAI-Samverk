@@ -886,6 +886,27 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pull_request_forks_head"
         " ON pull_request_forks (head_repo_id, pull_request_id)",
     ]),
+    # S-145: per-reviewer viewed state for the PR files
+    # view — one row per (pull request, reviewer, file)
+    # recording the patch hash the reviewer actually saw.
+    # A later push that changes that file's patch changes
+    # its hash, so the stored row no longer vouches for
+    # the current patch (the file reads as changed since
+    # viewed, never silently as still viewed).
+    (50, [
+        "CREATE TABLE pull_request_file_views ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  file_path TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  patch_hash TEXT NOT NULL,"
+        "  viewed_at INTEGER NOT NULL,"
+        "  UNIQUE (pull_request_id, user_id, file_path)"
+        ")",
+        "CREATE INDEX idx_pr_file_views_pr_user"
+        " ON pull_request_file_views (pull_request_id, user_id)",
+    ]),
 ]
 
 
