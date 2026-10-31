@@ -1269,6 +1269,39 @@ Volmarr's original repos onto his own machines.
   combined affected-suites cross-check stay
   owed; S-151 does not bank until a keeper run
   verifies the recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~12:55 EDT: no Samverk
+  worker was live. First, this tick banked the
+  12:35 tick's uncommitted map entries (commit
+  aed8611, pushed and verified equal to
+  origin/main by ls-remote) — the box-wide
+  write gate that blocked them has lifted
+  (repeated /tmp and workspace write probes
+  all landed, git object writes work again).
+  The tick opened on a strong window
+  (MemAvailable ~5.8–6.2 GB, swap 0), so the
+  owed governing recount WAS launched in the
+  campaign's established environment (script
+  run-recount-1255.sh, log
+  recount-2026-10-31-1255-pytest.log in the
+  goal hidden_files, HEAD aed8611). Contention
+  from other campaigns' suites (yggdrasil,
+  sagnaskemma, runmal, hermes) kept the rate
+  at ~9 tests/minute despite healthy memory
+  (MemAvailable stayed ~5.7–5.9 GB, 1-minute
+  load rising to ~7.8); after ~10 minutes the
+  log held 91 test markers at the 7% line,
+  every one passing, none failing — a ~2-hour
+  projected total — so the recount was
+  stopped, following the established
+  precedent. The tally is NOT verified: the
+  recount (expectation 1027 passed / 1
+  skipped / 0 failed, covering S-148, S-149
+  and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
