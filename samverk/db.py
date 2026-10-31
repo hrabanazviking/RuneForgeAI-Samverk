@@ -946,6 +946,42 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_line_comment_edits_comment"
         " ON pull_request_line_comment_edits (comment_id, id)",
     ]),
+    # S-147: review threads — replies on a line comment
+    # and the thread's resolution state. A thread's
+    # root is its S-146 line comment; the resolution
+    # record exists only while the thread is resolved
+    # (unresolving removes it — the audit log keeps
+    # the history of both acts). Replies carry S-123's
+    # honest record: edit history + tombstone deletion.
+    (52, [
+        "CREATE TABLE pull_request_review_threads ("
+        "  comment_id INTEGER PRIMARY KEY,"
+        "  resolved_by INTEGER NOT NULL,"
+        "  resolved_at INTEGER NOT NULL"
+        ")",
+        "CREATE TABLE pull_request_line_replies ("
+        "  id INTEGER PRIMARY KEY,"
+        "  comment_id INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  deleted_at INTEGER,"
+        "  deleted_by INTEGER"
+        ")",
+        "CREATE INDEX idx_pr_line_replies_comment"
+        " ON pull_request_line_replies (comment_id, id)",
+        "CREATE TABLE pull_request_line_reply_edits ("
+        "  id INTEGER PRIMARY KEY,"
+        "  reply_id INTEGER NOT NULL,"
+        "  editor_id INTEGER NOT NULL,"
+        "  previous_body TEXT NOT NULL,"
+        "  edited_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_line_reply_edits_reply"
+        " ON pull_request_line_reply_edits (reply_id, id)",
+    ]),
 ]
 
 

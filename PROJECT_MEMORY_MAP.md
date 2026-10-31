@@ -193,7 +193,14 @@ Volmarr's original repos onto his own machines.
   diff engine + conversion + taxonomy + dependencies
   + issue events out 94 passed / 0 failed; migration
   51; taxonomy append-only +3, 98 events);
-  next S-147 review threads.
+  S-147 banked 2026-10-30 (12-test battery, foreground;
+  combined with line comments + same-repo PRs +
+  cross-fork PRs + drafts + conversation + files
+  view + compare + diff engine + conversion +
+  taxonomy + dependencies + issue events out 106
+  passed / 0 failed; migration 52; taxonomy
+  append-only +5, 103 events);
+  next S-148 review submission.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2960,6 +2967,53 @@ Volmarr's original repos onto his own machines.
   1 skipped) — the next keeper run verifies it from
   a log file before banking further slices. Next:
   S-147 review threads.
+- **S-147 DONE (2026-10-30)** — review threads:
+  new module `samverk/pull_request_review_threads.py`
+  (`PullRequestReviewThreadStore`). A thread is one
+  S-146 line comment plus the replies under it
+  (migration 52, `pull_request_line_replies` + its
+  edit-history table), with one explicit resolution
+  state (`pull_request_review_threads`, a record
+  that exists only while resolved; the audit log
+  keeps both acts' history). Replies carry S-123's
+  honest record (author-only edits, tombstone
+  deletion by author or repository admin); a reply
+  to a missing or deleted root is refused
+  `comment_not_found` and stores nothing; replying
+  never changes resolution by itself. Resolve /
+  unresolve belong to the root's author, the pull
+  request's author, or a repository writer — anyone
+  else is refused `permission_denied`, with the rule
+  said in the message — and same-state retries are
+  quiet no-ops with no second audit event. The
+  merge-gate feed is one seam,
+  `resolution_summary`: total / resolved /
+  unresolved counted over live threads, said in
+  words, with `blocks_merge` naming whether
+  unresolved threads remain for S-153…S-155 and
+  Part VIII to enforce; an outdated thread still
+  counts and still resolves (the anchor and the
+  conversation are separate facts). Audited under
+  its own events (taxonomy append-only +5:
+  `repo.pull_request.line_reply` /
+  `.line_reply_edit` / `.line_reply_delete` /
+  `.thread_resolve` / `.thread_unresolve`, 103
+  events: 29 auth, 62 repo, 12 admin; doc + code +
+  counts together), carried by S-139's outbox.
+  Battery `tests/test_pull_request_review_threads.py`:
+  **12 passed / 0 failed** (foreground); combined
+  with line comments + same-repo PRs + cross-fork
+  PRs + drafts + conversation + files view +
+  compare + diff engine + conversion + taxonomy +
+  dependencies + issue events out **106 passed /
+  0 failed**. No bugs were found in shipped code by
+  the new battery. A fresh full-suite governing
+  recount was NOT run this tick (last governing
+  recount stands at 954 passed / 1 skipped;
+  arithmetic expectation now 979 passed / 1
+  skipped) — the next keeper run verifies it from
+  a log file before banking further slices. Next:
+  S-148 review submission.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3744,3 +3798,26 @@ Volmarr's original repos onto his own machines.
   on `main`; **no GitHub push** — pushes stay gated
   on Volmarr's word. Next slice: S-147 review
   threads.
+- **2026-10-30 (keeper run, Part VII continued)** — Same
+  run, after banking S-146: built **S-147** review
+  threads (new module
+  `samverk/pull_request_review_threads.py`;
+  migration 52; taxonomy append-only +5, 103
+  events). 12-test battery, foreground; combined
+  with line comments + same-repo PRs + cross-fork
+  PRs + drafts + conversation + files view +
+  compare + diff engine + conversion + taxonomy +
+  dependencies + issue events out **106 passed /
+  0 failed**, read back from its log file. No bugs
+  were found in shipped code by the new battery. A
+  fresh full-suite governing recount was NOT run
+  this tick (last governing recount stands at 954
+  passed / 1 skipped; arithmetic expectation now
+  979 passed / 1 skipped) — the next keeper run
+  verifies it from a log file before banking
+  further slices. Environment: TMPDIR pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`. All banked
+  locally on `main`; **no GitHub push** — pushes
+  stay gated on Volmarr's word. Next slice: S-148
+  review submission.
