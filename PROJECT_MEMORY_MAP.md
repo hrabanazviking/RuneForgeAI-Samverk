@@ -233,7 +233,26 @@ Volmarr's original repos onto his own machines.
   1 skipped / 0 failed = 995 + S-149's 14), and the
   next keeper run must verify it from a log file
   before banking further slices;
-  next S-150 suggested changes.
+  S-150 banked 2026-10-31 (17-test battery, foreground;
+  combined with reviews + review freshness + line
+  comments + review threads + same-repo PRs +
+  cross-fork PRs + drafts + conversation + files
+  view + taxonomy + dependencies + issue events out
+  146 passed / 0 failed, read back from its log
+  file; migration 55; taxonomy append-only +2, 106
+  events);
+  governing full-suite recount was NOT paid this
+  tick either: the VM again carried many other
+  campaigns' full suites at once (MemAvailable
+  ~0.6–1.5 GB throughout the run), and a recount
+  launched into that contention would risk OOM and
+  prove nothing clean — it stays owed, now covering
+  S-148, S-149 and S-150 (arithmetic expectation
+  1026 passed / 1 skipped / 0 failed = 1009 +
+  S-150's 17), and the next keeper run with a quiet
+  machine must verify it from a log file before
+  banking further slices;
+  next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -3163,6 +3182,73 @@ Volmarr's original repos onto his own machines.
   and the next keeper run must verify it from a
   log file before banking further slices. Next:
   S-150 suggested changes.
+- **S-150 DONE (2026-10-31)** — suggested changes:
+  new module `samverk/pull_request_suggestions.py`
+  (`PullRequestSuggestionStore`, migration 55,
+  `pull_request_suggestions`). A suggestion is a
+  reviewer's committable patch, anchored like
+  S-146's line comments: one file in the PR's current
+  diff and a contiguous range of new-side lines,
+  validated whole (`file_not_found` / `line_not_found`
+  / `range_invalid` / `file_not_text` for binary or
+  non-text files), storing the exact lines being
+  replaced — read from the head commit's own content
+  — the replacement text, an optional note, and the
+  head oid at proposal; a replacement identical to
+  the text already there is refused
+  `suggestion_no_change`. Application is the PR
+  author's act (or, on a cross-fork PR, a base writer
+  through S-142's maintainer-edits seam, the commit
+  landing on the fork's head branch):
+  `apply_suggestion` and `apply_suggestions` (batch)
+  each land **exactly one signed-off commit** —
+  parent the current head, author/committer the
+  applier (S-064 identity shape), message carrying
+  one `Suggested-by:` trailer per proposer and the
+  applier's `Signed-off-by:` — built through
+  plumbing only (hash-object / recursive mktree /
+  commit-tree) and moved onto the head branch by
+  S-053 compare-and-swap (`stale_head` on a race).
+  A batch validates whole before any object is
+  written: membership, pending state, freshness
+  (stored lines still at their stored range in the
+  current head content), and per-file non-overlap
+  (`suggestion_overlap`) — one bad member refuses
+  the batch and the head does not move. Outdated is
+  judged on read, never stored (the S-146 law), and
+  an outdated suggestion cannot be applied
+  (`suggestion_outdated`); applying one suggestion
+  leaves an untouched neighbour pending and
+  applicable, both proven in the battery, as are
+  line deletion (empty replacement), subdirectory
+  files (recursive tree rebuild), and cross-fork
+  application with and without maintainer edits.
+  Closed PRs take neither proposals nor
+  applications; private repositories answer
+  uniformly. Audited under its own events (taxonomy
+  append-only +2:
+  `repo.pull_request.suggestion_propose` /
+  `repo.pull_request.suggestion_apply`, 106 events;
+  doc + code + counts together; proposal detail
+  names the anchor, never the replacement) carried
+  by S-139's outbox. Battery
+  `tests/test_pull_request_suggestions.py`:
+  **17 passed / 0 failed** (foreground); combined
+  with reviews + review freshness + line comments +
+  review threads + same-repo PRs + cross-fork PRs +
+  drafts + conversation + files view + taxonomy +
+  dependencies + issue events out **146 passed /
+  0 failed**, read back from its log file. The
+  governing full-suite recount was NOT paid this
+  tick — the VM carried many other campaigns' full
+  suites at once throughout (MemAvailable
+  ~0.6–1.5 GB), the same contention that deferred
+  it at S-148/S-149; it stays owed, now covering
+  S-148, S-149 and S-150 (arithmetic expectation
+  1026 passed / 1 skipped / 0 failed), and the next
+  keeper run with a quiet machine must verify it
+  from a log file before banking further slices.
+  Next: S-151 CODEOWNERS.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3970,3 +4056,25 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes
   stay gated on Volmarr's word. Next slice: S-148
   review submission.
+- **2026-10-31 (keeper run, Part VII continued)** — No live
+  Samverk worker was found (last commit S-149 ~5 h old, no
+  Samverk process, worktree clean), so the keeper resumed
+  the campaign itself: built **S-150** suggested changes
+  (new module `samverk/pull_request_suggestions.py`;
+  migration 55; taxonomy append-only +2, 106 events).
+  17-test battery, foreground; combined affected suites
+  **146 passed / 0 failed**, read back from its log file.
+  No bugs were found in shipped code by the new battery.
+  The governing full-suite recount owed since S-148 was
+  NOT paid this tick: the VM carried many other campaigns'
+  full suites at once throughout (MemAvailable
+  ~0.6–1.5 GB), and a recount launched into that
+  contention would risk OOM and prove nothing clean — it
+  stays owed, now covering S-148..S-150 (arithmetic
+  expectation 1026 passed / 1 skipped), and the next
+  keeper run with a quiet machine must verify it from a
+  log file before banking further slices. Environment:
+  TMPDIR `~/workspace/.verify-tmp`, PATH prepended
+  `~/workspace/.tools`. Banked on `main` and pushed to
+  origin per Volmarr's standing go-ahead (2026-10-31),
+  verified by ls-remote. Next slice: S-151 CODEOWNERS.

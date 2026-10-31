@@ -1027,6 +1027,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_by INTEGER"
         ")",
     ]),
+    # S-150: suggested changes — one row per proposed
+    # committable patch: its anchor (file + new-side
+    # line range), the exact lines it replaces, the
+    # replacement, and the head it was proposed
+    # against. State is pending until an application
+    # lands it, whose commit oid is recorded on the
+    # row; outdated is judged on read, never stored.
+    (55, [
+        "CREATE TABLE pull_request_suggestions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  proposer_id INTEGER NOT NULL,"
+        "  file_path TEXT NOT NULL,"
+        "  start_line INTEGER NOT NULL,"
+        "  end_line INTEGER NOT NULL,"
+        "  original_text TEXT NOT NULL DEFAULT '',"
+        "  replacement_text TEXT NOT NULL DEFAULT '',"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  head_oid TEXT NOT NULL DEFAULT '',"
+        "  state TEXT NOT NULL DEFAULT 'pending',"
+        "  applied_commit_oid TEXT NOT NULL DEFAULT '',"
+        "  applied_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  applied_at INTEGER"
+        ")",
+        "CREATE INDEX idx_pr_suggestions_pr"
+        " ON pull_request_suggestions (pull_request_id, id)",
+    ]),
 ]
 
 

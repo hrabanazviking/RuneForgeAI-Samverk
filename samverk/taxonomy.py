@@ -141,6 +141,9 @@ REPO_EVENTS = frozenset({
     "repo.pull_request.thread_unresolve",
     # S-148 additions (append-only, per the taxonomy rules):
     "repo.pull_request.review_submit",
+    # S-150 additions (append-only, per the taxonomy rules):
+    "repo.pull_request.suggestion_propose",
+    "repo.pull_request.suggestion_apply",
 })
 
 ADMIN_EVENTS = frozenset({

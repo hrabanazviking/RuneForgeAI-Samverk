@@ -116,6 +116,8 @@ any name not in this document's set.*
 | `repo.pull_request.thread_resolve` | A review thread marked resolved by the comment's author, the pull request's author, or a repository writer (S-147) | `{"number": ..., "comment_id": ...}` |
 | `repo.pull_request.thread_unresolve` | A resolved review thread marked unresolved again by the comment's author, the pull request's author, or a repository writer (S-147) | `{"number": ..., "comment_id": ...}` |
 | `repo.pull_request.review_submit` | A review submitted on a pull request with one verdict — approved, commented, or changes requested (S-148) | `{"number": ..., "review_id": ..., "verdict": ...}` — never the summary |
+| `repo.pull_request.suggestion_propose` | A committable suggested change proposed on a pull request, anchored to a range of new-side lines in one file of its diff (S-150) | `{"number": ..., "suggestion_id": ..., "file": ..., "start_line": ..., "end_line": ...}` — never the replacement |
+| `repo.pull_request.suggestion_apply` | One suggested change or a batch of them applied by the pull request's author (or an allowed maintainer) as exactly one signed-off commit on the head branch (S-150) | `{"number": ..., "suggestion_ids": [...], "commit": ..., "count": ...}` |
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
@@ -230,3 +232,7 @@ S-147 (2026-10-30) added `repo.pull_request.line_reply`,
 29 auth, 62 repo, 12 admin.
 S-148 (2026-10-30) added `repo.pull_request.review_submit`
 — 104 events: 29 auth, 63 repo, 12 admin.
+S-150 (2026-10-31) added
+`repo.pull_request.suggestion_propose` and
+`repo.pull_request.suggestion_apply` — 106 events:
+29 auth, 65 repo, 12 admin.
