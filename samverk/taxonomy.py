@@ -129,6 +129,10 @@ REPO_EVENTS = frozenset({
     "repo.pull_request.comment",
     "repo.pull_request.comment_edit",
     "repo.pull_request.comment_delete",
+    # S-146 additions (append-only, per the taxonomy rules):
+    "repo.pull_request.line_comment",
+    "repo.pull_request.line_comment_edit",
+    "repo.pull_request.line_comment_delete",
 })
 
 ADMIN_EVENTS = frozenset({

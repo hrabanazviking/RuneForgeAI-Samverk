@@ -907,6 +907,45 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_file_views_pr_user"
         " ON pull_request_file_views (pull_request_id, user_id)",
     ]),
+    # S-146: line comments — a comment anchored to one
+    # line of a pull request's diff (file, side, line
+    # number, the line's text, and the head oid it was
+    # written against). The stored text + anchor are
+    # what outdated marking is judged from on every
+    # read: if the current diff no longer carries that
+    # exact line at that exact place, the comment is
+    # outdated — the record is never moved silently.
+    # Edits keep their previous bodies, deletion is a
+    # tombstone, exactly as S-123's comment record.
+    (51, [
+        "CREATE TABLE pull_request_line_comments ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  file_path TEXT NOT NULL,"
+        "  side TEXT NOT NULL,"
+        "  line_number INTEGER NOT NULL,"
+        "  line_text TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  deleted_at INTEGER,"
+        "  deleted_by INTEGER"
+        ")",
+        "CREATE INDEX idx_pr_line_comments_pr"
+        " ON pull_request_line_comments (pull_request_id, id)",
+        "CREATE TABLE pull_request_line_comment_edits ("
+        "  id INTEGER PRIMARY KEY,"
+        "  comment_id INTEGER NOT NULL,"
+        "  editor_id INTEGER NOT NULL,"
+        "  previous_body TEXT NOT NULL,"
+        "  edited_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_line_comment_edits_comment"
+        " ON pull_request_line_comment_edits (comment_id, id)",
+    ]),
 ]
 
 

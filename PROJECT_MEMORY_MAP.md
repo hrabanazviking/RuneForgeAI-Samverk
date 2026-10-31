@@ -187,7 +187,13 @@ Volmarr's original repos onto his own machines.
   it read 942 passed / 3 skipped — the two git-lfs
   client cells skipped instead of passing; the
   corrected rerun above stands;
-  next S-146 line comments.
+  S-146 banked 2026-10-30 (13-test battery, foreground;
+  combined with same-repo PRs + cross-fork PRs +
+  drafts + conversation + files view + compare +
+  diff engine + conversion + taxonomy + dependencies
+  + issue events out 94 passed / 0 failed; migration
+  51; taxonomy append-only +3, 98 events);
+  next S-147 review threads.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
@@ -2906,6 +2912,54 @@ Volmarr's original repos onto his own machines.
   skipping instead of passing; the corrected rerun
   stands. No bugs were found in shipped code by
   the new battery. Next: S-146 line comments.
+- **S-146 DONE (2026-10-30)** — line comments:
+  new module `samverk/pull_request_line_comments.py`
+  (`PullRequestLineCommentStore`). A comment anchors
+  to one exact diff line (migration 51,
+  `pull_request_line_comments` + its edit-history
+  table): file path, side (`old`/`new`), line number
+  on that side, the line's text, and the head oid it
+  was written against. Anchoring validates whole
+  against the current diff through S-145's diff
+  road (same-repo and cross-fork alike): a file not
+  in the diff is refused `file_not_found`, a bad
+  side `side_invalid`, a line that does not exist
+  on that side (an added line on the old side, a
+  removed line on the new side) `line_not_found` —
+  and a refused anchoring stores nothing. Outdated
+  is judged on every read, never stored: the
+  comment is outdated when the current diff no
+  longer carries that exact line (same file, side,
+  number, and text), so a push that rewrites the
+  line, shifts it, or removes the file marks it
+  outdated, said in words (`state_words`); a push
+  leaving the anchored line untouched leaves it
+  current; the record itself is never moved to a
+  new line silently. The record is S-123's honest
+  record — author-only edits with previous bodies
+  kept, tombstone deletion by author or repository
+  admin. Audited under its own events (taxonomy
+  append-only +3: `repo.pull_request.line_comment`
+  / `.line_comment_edit` / `.line_comment_delete`,
+  98 events: 29 auth, 57 repo, 12 admin; doc + code
+  + counts together), carried by S-139's outbox
+  under its `repo.pull_request.*` verb rule; audit
+  detail names the anchor, never the body. A
+  stranger to a private repository gets the uniform
+  `pull_request_not_found` on every surface.
+  Battery `tests/test_pull_request_line_comments.py`:
+  **13 passed / 0 failed** (foreground); combined
+  with same-repo PRs + cross-fork PRs + drafts +
+  conversation + files view + compare + diff engine
+  + conversion + taxonomy + dependencies + issue
+  events out **94 passed / 0 failed**. No bugs were
+  found in shipped code by the new battery. A fresh
+  full-suite governing recount was NOT run this
+  tick (last governing recount stands at 954 passed
+  / 1 skipped; arithmetic expectation 967 passed /
+  1 skipped) — the next keeper run verifies it from
+  a log file before banking further slices. Next:
+  S-147 review threads.
 - The classified inventory of Volmarr's original repos (the mirror
   fixture for Part XVII) lives at `~/workspace/forgejo-backup/` — kept
   outside this repo; its 17 UNCERTAIN-classified repos each need
@@ -3666,3 +3720,27 @@ Volmarr's original repos onto his own machines.
   locally on `main`; **no GitHub push** — pushes
   stay gated on Volmarr's word. Next slice: S-146
   line comments.
+- **2026-10-30 (keeper run, Part VII continued)** — Previous
+  run had banked S-145 at 20:44 EDT (clean tree, no
+  Samverk process live at this tick's check, ~22
+  minutes quiet), so this run built **S-146** line
+  comments (new module
+  `samverk/pull_request_line_comments.py`; migration
+  51; taxonomy append-only +3, 98 events). 13-test
+  battery, foreground; combined with same-repo PRs +
+  cross-fork PRs + drafts + conversation + files
+  view + compare + diff engine + conversion +
+  taxonomy + dependencies + issue events out **94
+  passed / 0 failed**. No bugs were found in shipped
+  code by the new battery. A fresh full-suite
+  governing recount was NOT run this tick (last
+  governing recount stands at 954 passed / 1
+  skipped; arithmetic expectation 967 passed / 1
+  skipped) — the next keeper run verifies it from a
+  log file before banking further slices.
+  Environment: TMPDIR pointed at
+  `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`. All banked locally
+  on `main`; **no GitHub push** — pushes stay gated
+  on Volmarr's word. Next slice: S-147 review
+  threads.
