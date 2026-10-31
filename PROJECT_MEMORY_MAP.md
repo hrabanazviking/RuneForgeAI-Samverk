@@ -1810,6 +1810,35 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~16:35 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 16:25 tick (head 09cdf96, verified
+  equal to origin/main by ls-remote in a bounded
+  foreground check; worktree clean — the only
+  other pytest on the box was verified by cwd
+  to belong to ember-build, none to Samverk).
+  A first git fetch this tick timed out after
+  600 s (GitHub HTTPS degraded, as already
+  noted in this map), but the bounded ls-remote
+  retry succeeded and matches HEAD exactly.
+  The owed recount was checked for again and
+  still NOT paid — MemAvailable stayed
+  ~0.42–0.45 GB across the watch (samples
+  447216 / 420568 / 428540 kB, 5-minute load
+  ~4.3–4.4, swap 0), never near a safe threshold
+  for the ~1000-test suite on this swapless box.
+  The offload host was also checked this tick:
+  purplelongship reported 34.9 GB available but
+  load ~10.1 / 14.8 / 13.2 and temperature
+  82 C, so it is not a quiet or thermally safe
+  governing-recount host either. The recount
+  (expectation 1027 passed / 1 skipped /
+  0 failed, covering S-148, S-149 and S-150)
+  plus S-150's combined affected-suites
+  cross-check stay owed, and S-151 does not
+  bank until a keeper run on a quiet machine
+  verifies the recount from its log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
