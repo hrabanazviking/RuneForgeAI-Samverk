@@ -2072,7 +2072,16 @@ Volmarr's original repos onto his own machines.
   stay owed, and S-151 does not bank until a
   keeper run on a quiet machine verifies the
   recount from its log file;
-  next S-151 CODEOWNERS.
+  next S-151 CODEOWNERS;
+  correction to the 18:05 tick entry above, from
+  the finished watch log read back after banking:
+  the pytest processes verified by cwd were
+  runmal-build and hermes-hack-build (not the
+  five campaigns first listed), and the
+  MemAvailable samples were 1074184 / 1073668 /
+  1061332 / 577540 kB (~1.05 GB → ~0.55 GB).
+  Conclusion unchanged — recount still owed,
+  S-151 not banked.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
