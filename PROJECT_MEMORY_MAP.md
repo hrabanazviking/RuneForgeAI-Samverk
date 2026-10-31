@@ -849,6 +849,107 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~09:45 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 09:35 tick (head e22d2af, verified
+  equal to origin/main by ls-remote; worktree
+  clean — the active python processes on the box
+  belonged to other campaigns (model-tests/janas
+  prefetch at ~80% CPU, a sagnaskemma-build gate
+  loop, ember idle probes), none to Samverk).
+  The owed recount was checked for again and
+  still NOT paid — MemAvailable stayed
+  ~0.33–0.41 GB across the watch (samples
+  407508 / 340536 / 348728 kB, 5-minute load
+  ~4.1–4.3, swap 0), never near a safe
+  threshold for the ~1000-test suite, so
+  launching would risk OOM and prove nothing
+  clean. The recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering S-148,
+  S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~09:55 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 09:35 tick (head e22d2af, verified
+  equal to origin/main by ls-remote; the 09:45
+  tick's map entry was present as an uncommitted
+  worktree edit, its commit blocked last tick by
+  a box-wide write gate — this tick re-attempts
+  that commit + push). The active processes on
+  the box belonged to other campaigns
+  (yggdrasil-build and sagnaskemma-build pytest,
+  model-tests/janas prefetch, ember idle probes),
+  verified by cwd none to Samverk. The owed
+  recount was checked for again and still NOT
+  paid — MemAvailable stayed ~0.25–0.41 GB
+  across the watch (samples 381568 / 251352 /
+  356408 / 407296 kB, 5-minute load ~3.7–4.0,
+  swap 0), never near a safe threshold for the
+  ~1000-test suite, so launching would risk OOM
+  and prove nothing clean. The recount
+  (expectation 1027 passed / 1 skipped / 0
+  failed, covering S-148, S-149 and S-150) plus
+  S-150's combined affected-suites cross-check
+  stay owed, and S-151 does not bank until a
+  keeper run on a quiet machine verifies the
+  recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~10:05 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 09:35 tick (head e22d2af, verified
+  equal to origin/main by ls-remote; the 09:45
+  and 09:55 ticks' map entries were present as
+  uncommitted worktree edits — this tick banks
+  all three entries together). The active
+  processes on the box belonged to other
+  campaigns (yggdrasil-build pytest at ~68% CPU,
+  ember idle probes), verified by cwd none to
+  Samverk. The owed recount was checked for
+  again and still NOT paid — MemAvailable stayed
+  ~0.43–0.49 GB across the watch (samples
+  488044 / 429640 / 469264 kB, 5-minute load
+  ~3.2–3.9, swap 0), never near a safe threshold
+  for the ~1000-test suite, so launching would
+  risk OOM and prove nothing clean. The recount
+  (expectation 1027 passed / 1 skipped / 0
+  failed, covering S-148, S-149 and S-150) plus
+  S-150's combined affected-suites cross-check
+  stay owed, and S-151 does not bank until a
+  keeper run on a quiet machine verifies the
+  recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~10:15 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 09:35 tick (head e22d2af, verified
+  equal to origin/main by ls-remote; the 09:45,
+  09:55 and 10:05 ticks' map entries were present
+  as uncommitted worktree edits — this tick banks
+  all four entries together). The active pytest
+  processes on the box were verified by cwd to
+  belong to other campaigns (sagnaskemma-build,
+  mythic-coder-build, yggdrasil-build), none to
+  Samverk. The owed recount was checked for
+  again and still NOT paid — MemAvailable was
+  ~1.04–1.14 GB across two watches (samples
+  1137056 / 1122444 / 1091140 / 1127432 /
+  1043136 / 1041772 / 1054392 / 1037892 kB, the
+  highest readings in hours, but 5-minute load
+  stayed ~5.6–5.7 with 1-minute spikes to
+  ~9.6–11.8 and swap 0), never near a safe
+  threshold for the ~1000-test suite on this
+  swapless box, so launching would risk OOM
+  and prove nothing clean. The recount
+  (expectation 1027 passed / 1 skipped / 0
+  failed, covering S-148, S-149 and S-150) plus
+  S-150's combined affected-suites cross-check
+  stay owed, and S-151 does not bank until a
+  keeper run on a quiet machine verifies the
+  recount from its log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
