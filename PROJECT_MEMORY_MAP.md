@@ -2276,9 +2276,11 @@ Volmarr's original repos onto his own machines.
   hermes-hack-build, mythic-coder-build,
   mindspark-build), none to Samverk). The owed
   recount was checked for again and still NOT
-  paid — MemAvailable stayed ~0.61–1.07 GB across
+  paid — MemAvailable stayed ~0.61–1.25 GB across
   the watch (samples 914792 / 624320 / 1093856 /
-  737284 kB, 1-minute load ~11.2–17.4, swap 0),
+  1314348 kB, 1-minute load ~8.6–17.4, swap 0;
+  the fourth sample and load floor corrected
+  from the finished sampler log after banking),
   never near a safe threshold for the ~1000-test
   suite on this swapless box, so launching would
   risk OOM and prove nothing clean. The recount
