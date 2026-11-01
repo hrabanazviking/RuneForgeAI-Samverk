@@ -2458,9 +2458,16 @@ Volmarr's original repos onto his own machines.
   launching would risk OOM and prove nothing
   clean. The offload road was also re-checked
   this tick: an SSH attempt to purplelongship
-  timed out after 240 s with no output, so the
-  offload host was not reachable by that route
-  this tick either. The recount (expectation
+  failed — the connection was reset by the
+  egress proxy (198.19.0.1 port 3128) during
+  key exchange, so that is not a working SSH
+  route to the offload host and it was not
+  reachable by that route this tick either.
+  (Correction, same tick: this entry first
+  read "timed out after 240 s with no
+  output"; the finished command log disproves
+  that — the reset above is what it shows.)
+  The recount (expectation
   1027 passed / 1 skipped / 0 failed, covering
   S-148, S-149 and S-150) plus S-150's combined
   affected-suites cross-check stay owed, and
