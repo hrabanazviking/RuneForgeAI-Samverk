@@ -3900,6 +3900,44 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-11-01 ~05:05 EST: no Samverk
+  worker was live and no new slice commits had
+  landed since the 04:55 tick (head aaead1d,
+  verified equal to origin/main by ls-remote
+  after a fetch; worktree clean — the pytest
+  processes on the box were verified by cwd to
+  belong to other campaigns (yggdrasil-build,
+  mythic-coder-build, ember-build,
+  mindspark-build), none to Samverk). The
+  00:25 recount log
+  (`~/workspace/.verify-tmp/samverk_recount_s151_20261101_0026.log`)
+  was re-read from disk again: 1120 bytes,
+  mtime 2026-11-01 01:24, unchanged; progress
+  markers through ~97% then no summary line
+  and no exit marker, so the tally stays NOT
+  verified. Contention was checked across
+  four watches: MemAvailable opened ~2.38 GB,
+  briefly rose to ~4.68–5.35 GB — the best
+  readings in hours — then fell back to
+  ~2.13 GB within two minutes as other
+  campaigns' suites regrew; 5-minute load
+  stayed ~6.3–8.0 on 4 cores throughout,
+  swap 0 — a momentary memory window, never
+  a quiet machine, so launching the
+  ~1000-test recount would risk OOM and
+  prove nothing clean — the recount was NOT
+  launched. The offload road was also
+  checked: purplelongship is offline (device
+  last seen 2026-11-01 02:07 UTC), so no
+  offloaded recount could be started this
+  tick. The recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's
+  combined affected-suites cross-check stay
+  owed, and S-151 does not bank until a
+  keeper run on a quiet machine verifies
+  the recount from its log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
