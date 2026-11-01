@@ -3074,6 +3074,47 @@ Volmarr's original repos onto his own machines.
   (expectation 1027 passed / 1 skipped /
   0 failed, covering S-148, S-149 and S-150)
   before S-151 banks;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-11-01 ~01:25 EDT: the 00:25
+  tick's launched recount was read back from its
+  log file and is NOT verified — the log
+  (`samverk_recount_s151_20261101_0026.log`,
+  1120 bytes, last written 01:24) holds 1008
+  markers of 1028 collected (564 passed /
+  443 failed / 1 skipped) with NO summary line,
+  and no Samverk process was live at this tick
+  (the pytest processes on the box were verified
+  by cwd to belong to yggdrasil-build,
+  sagnaskemma-build, mythic-coder-build and
+  ember, none to Samverk; head 40711a6, verified
+  equal to origin/main by ls-remote; worktree
+  clean). The failure pattern is new and must
+  be recorded plainly: the first ~35% of markers
+  are all passes, failures begin at ~test 420
+  and run dense to the end — but tests sampled
+  from across the failure zone pass cleanly in
+  isolation this tick (test_hooks +
+  test_issue_battery 11 passed / 0 failed;
+  test_mirrors + test_objects + test_permissions
+  15 passed / 0 failed, both foreground, read
+  back from their output), so the mass failures
+  are classified as a contention-era run
+  artifact, NOT proven code regressions — the
+  run's own failure details were never flushed
+  (pytest -q prints them only at the end, which
+  never arrived), so no individual failure from
+  that log can be cited or fixed from it. A new
+  recount was NOT launched: MemAvailable stayed
+  ~0.59–1.28 GB across the tick (1-minute load
+  ~10.4–11.4, swap 0), never near a safe
+  threshold for the ~1000-test suite on this
+  swapless box. The recount (expectation 1027
+  passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
