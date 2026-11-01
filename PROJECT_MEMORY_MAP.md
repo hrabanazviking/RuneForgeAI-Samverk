@@ -2360,6 +2360,34 @@ Volmarr's original repos onto his own machines.
   quiet machine verifies the recount from its
   log file;
   next S-151 CODEOWNERS.
+  keeper tick 2026-10-31 ~20:15 EDT: no Samverk
+  worker was live (head 23ad8d9, verified equal
+  to origin/main; worktree clean). The box had
+  just rebooted (~20:14) and briefly looked
+  quiet — MemAvailable ~3.99 GB, 1-minute load
+  ~4.6 falling — the best window all evening,
+  so this tick LAUNCHED the owed governing
+  recount at 20:18 EDT: full suite
+  `python3 -m pytest tests -q`, detached
+  (nohup), TMPDIR
+  `~/workspace/.verify-tmp/samverk-tmp`, PATH
+  prepended `~/workspace/.tools`, output to
+  `~/workspace/.verify-tmp/samverk_recount_s151_20261031_2018.log`.
+  Contention rebuilt within minutes: by ~20:27
+  MemAvailable had fallen to ~0.95 GB and the
+  recount process held only ~36 s CPU in 9 min
+  elapsed (~90 tests of ~1028 written to the
+  log), starved by other campaigns' suites. The
+  recount was left running detached; its verdict
+  is NOT yet known and nothing is claimed from
+  it. The next keeper tick reads that log file:
+  if it finished at the expectation
+  (1027 passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150), S-151 CODEOWNERS may
+  bank; if it died or failed, the recount stays
+  owed and any real failures are bugs to fix
+  under the never-leave-a-bug rule. S-151 not
+  banked this tick.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
