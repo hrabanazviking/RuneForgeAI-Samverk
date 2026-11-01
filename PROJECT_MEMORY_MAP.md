@@ -2582,6 +2582,21 @@ Volmarr's original repos onto his own machines.
   bank until a keeper run on a quiet machine
   verifies the recount from its log file;
   next S-151 CODEOWNERS.
+  amplification to the 21:35 tick entry above,
+  from the tick's second sampler read back
+  after banking (21:37:23–21:38:38):
+  MemAvailable recovered to ~2.20–2.41 GB and
+  held steady (samples 2410972 / 2346500 /
+  2521516 / 2415484 / 2304912 / 2444956 kB),
+  but 1-minute load spiked to ~13.1–16.3 and
+  5-minute load rose ~7.1–9.2 — the heaviest
+  CPU contention of the evening — with the
+  active pytest processes still verified by
+  cwd as other campaigns (yggdrasil-build,
+  ember-build, hermes-hack-build,
+  sagnaskemma-build), none to Samverk.
+  Conclusion unchanged — recount still owed,
+  S-151 not banked.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
 - **Part I research complete (2026-10-29):** studies 31 (threat
