@@ -2739,6 +2739,47 @@ Volmarr's original repos onto his own machines.
   S-151 does not bank until a keeper run on a
   quiet machine verifies the recount from its
   log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~22:35 EDT: no Samverk
+  worker was live and no new commits had landed
+  since the 22:25 tick (head 874b027, verified
+  equal to origin/main by ls-remote; worktree
+  clean — the active pytest processes on the box
+  were verified by cwd to belong to other
+  campaigns (yggdrasil-build, sagnaskemma-build,
+  hermes-hack-build, ember-build), none to
+  Samverk). The 20:15 recount log was re-read:
+  still the incomplete 106-byte file (passing
+  markers only, no summary line), so that run
+  stays NOT verified. The purplelongship offload
+  log was also re-read from disk
+  (~/workspace/.verify-tmp/offload-samverk-recount.log):
+  a completed full run at head eaf7425 — code
+  identical to HEAD (empty samverk/tests diff) —
+  read 1023 passed / 4 failed / 1 skipped, 5
+  subtests passed in 219.10 s, all 4 failures
+  PermissionError in corruption-injection tests
+  that overwrite read-only git objects (an
+  environment difference on that non-root host,
+  not shipped-code defects); it supports but
+  does not replace the governing VM recount.
+  The owed recount was checked for again and
+  still NOT paid — MemAvailable opened ~2.84 GB
+  (2973184 kB, the best reading in hours) but
+  fell to ~2.36 GB across the watch (samples
+  2844072 / 2725724 / 2858440 / 2804404 /
+  2473204 kB, 1-minute load ~5.5–7.2, 5-minute
+  load ~6.0–6.4, swap 0) as more foreign suites
+  joined, never a safe threshold for the
+  ~1000-test suite on this swapless box, so
+  launching would risk OOM and prove nothing
+  clean. The recount (expectation 1027 passed
+  / 1 skipped / 0 failed, covering S-148,
+  S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
