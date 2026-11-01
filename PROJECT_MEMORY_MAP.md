@@ -3916,7 +3916,15 @@ Volmarr's original repos onto his own machines.
   mtime 2026-11-01 01:24, unchanged; progress
   markers through ~97% then no summary line
   and no exit marker, so the tally stays NOT
-  verified. Contention was checked across
+  verified. (Correction, same tick, on the
+  full log read: the markers are clean only
+  to ~42% — from there to 97% they carry
+  hundreds of F's from that contended run,
+  exactly as the 04:55 tick recorded; a
+  contended run's failures are not a verdict
+  on shipped code, and with no summary the
+  run counts for nothing either way.)
+  Contention was checked across
   four watches: MemAvailable opened ~2.38 GB,
   briefly rose to ~4.68–5.35 GB — the best
   readings in hours — then fell back to
