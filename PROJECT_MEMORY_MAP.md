@@ -2711,6 +2711,34 @@ Volmarr's original repos onto his own machines.
   cross-check stay owed, and S-151 does not
   bank until a keeper run on a quiet machine
   verifies the recount from its log file;
+  next S-151 CODEOWNERS;
+  keeper tick 2026-10-31 ~22:25 EDT: no Samverk
+  worker was live (head 6d05a38, verified equal
+  to origin/main by ls-remote; worktree clean —
+  the active pytest processes on the box were
+  verified by cwd to belong to other campaigns
+  (yggdrasil-build, hermes-hack-build,
+  sagnaskemma-build, ember-build,
+  mythic-coder-build), none to Samverk). The
+  20:15 recount log was re-read: still the
+  incomplete 106-byte file (passing markers
+  only, no summary line), so that run stays
+  NOT verified. The owed recount was checked
+  for again and still NOT paid — MemAvailable
+  sampled ~1.35–1.49 GB (1352288 / 1401728 /
+  1488368 kB), 1-minute load rising
+  ~9.33–11.27 and 5-minute load ~5.07–5.26
+  with other campaigns' suites running
+  throughout, never near a safe threshold for
+  the ~1000-test suite on this swapless box,
+  so launching would risk OOM and prove
+  nothing clean. The recount (expectation
+  1027 passed / 1 skipped / 0 failed, covering
+  S-148, S-149 and S-150) plus S-150's combined
+  affected-suites cross-check stay owed, and
+  S-151 does not bank until a keeper run on a
+  quiet machine verifies the recount from its
+  log file;
   next S-151 CODEOWNERS.
   Campaign branch: `yrsa/samverk-part1` (local banking continues
   on the same branch until a Part II branch is struck).
