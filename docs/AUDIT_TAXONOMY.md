@@ -119,6 +119,9 @@ any name not in this document's set.*
 | `repo.pull_request.suggestion_propose` | A committable suggested change proposed on a pull request, anchored to a range of new-side lines in one file of its diff (S-150) | `{"number": ..., "suggestion_id": ..., "file": ..., "start_line": ..., "end_line": ...}` — never the replacement |
 | `repo.pull_request.suggestion_apply` | One suggested change or a batch of them applied by the pull request's author (or an allowed maintainer) as exactly one signed-off commit on the head branch (S-150) | `{"number": ..., "suggestion_ids": [...], "commit": ..., "count": ...}` |
 | `repo.pull_request.codeowners_request` | Reviewers auto-requested on a pull request from the CODEOWNERS file on its base branch (S-151) | `{"number": ..., "owner_refs": [...]}` — never file contents |
+| `repo.pull_request.review_request` | Reviewers manually requested on a pull request by its author or a base-repository writer (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
+| `repo.pull_request.review_rerequest` | A dismissed review request re-requested on a pull request, reactivating its record (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
+| `repo.pull_request.review_dismiss` | An active review request dismissed on a pull request; the record stays, stamped with who dismissed it and when (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
@@ -240,3 +243,8 @@ S-150 (2026-10-31) added
 S-151 (2026-11-02) added
 `repo.pull_request.codeowners_request` — 107 events:
 29 auth, 66 repo, 12 admin.
+S-152 (2026-11-02) added
+`repo.pull_request.review_request`,
+`repo.pull_request.review_rerequest` and
+`repo.pull_request.review_dismiss` — 110 events:
+29 auth, 69 repo, 12 admin.

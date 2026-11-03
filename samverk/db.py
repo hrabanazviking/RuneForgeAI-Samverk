@@ -1076,6 +1076,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_review_requests_pr"
         " ON pull_request_review_requests (pull_request_id, id)",
     ]),
+    # S-152: review assignment — dismissal and re-request
+    # state on the S-151 request rows (a dismissal is a
+    # recorded act, never a deletion: state, who, and
+    # when ride the row), the re-request count, and the
+    # per-act event record that keeps the whole history
+    # provable after a re-request clears the stamp.
+    (57, [
+        "ALTER TABLE pull_request_review_requests ADD COLUMN"
+        " state TEXT NOT NULL DEFAULT 'requested'",
+        "ALTER TABLE pull_request_review_requests ADD COLUMN"
+        " dismissed_by INTEGER",
+        "ALTER TABLE pull_request_review_requests ADD COLUMN"
+        " dismissed_at INTEGER",
+        "ALTER TABLE pull_request_review_requests ADD COLUMN"
+        " rerequest_count INTEGER NOT NULL DEFAULT 0",
+        "CREATE TABLE pull_request_review_request_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  review_request_id INTEGER NOT NULL,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  owner_ref TEXT NOT NULL,"
+        "  source TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_review_request_events_request"
+        " ON pull_request_review_request_events"
+        " (review_request_id, id)",
+    ]),
 ]
 
 
