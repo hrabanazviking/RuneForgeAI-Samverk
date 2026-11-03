@@ -1055,6 +1055,27 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_suggestions_pr"
         " ON pull_request_suggestions (pull_request_id, id)",
     ]),
+    # S-151: CODEOWNERS review requests — one row per
+    # (pull request, owner token, source): the token
+    # verbatim, the account it resolves to when it is a
+    # plain @username that exists (NULL otherwise), and
+    # the head oid the request was computed against.
+    # S-152's manual requests ride the same table with
+    # source='manual'.
+    (56, [
+        "CREATE TABLE pull_request_review_requests ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  owner_ref TEXT NOT NULL,"
+        "  user_id INTEGER,"
+        "  source TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (pull_request_id, owner_ref, source)"
+        ")",
+        "CREATE INDEX idx_pr_review_requests_pr"
+        " ON pull_request_review_requests (pull_request_id, id)",
+    ]),
 ]
 
 

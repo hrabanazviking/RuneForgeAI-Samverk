@@ -209,6 +209,7 @@ class ForkPullRequestStore:
         issues: IssueStore,
         audit: AuditLog | None = None,
         time_fn: Callable[[], float] = time.time,
+        codeowners_sync: Callable[..., object] | None = None,
     ):
         self._conn = conn
         self._repos = repositories
@@ -216,6 +217,13 @@ class ForkPullRequestStore:
         self._issues = issues
         self._audit = audit
         self._now = time_fn
+        # S-151: optional CODEOWNERS on-open hook, invoked
+        # after a successful create + audit with the base
+        # repository's coordinates (the PR lives there).
+        # Default None; the internal same-repo store is a
+        # read seam only and deliberately carries no hook,
+        # so a cross-fork opening syncs exactly once.
+        self._codeowners_sync = codeowners_sync
         self._same_repo = PullRequestStore(
             conn, repositories, accounts, issues, audit=audit,
             time_fn=time_fn)
@@ -465,6 +473,8 @@ class ForkPullRequestStore:
                         "head": head_name, "draft": bool(draft),
                         "same_repo": False, "head_repo": head.full_name,
                         "maintainer_can_edit": bool(maintainer_can_edit)})
+        if self._codeowners_sync is not None:
+            self._codeowners_sync(actor, base_owner, base_repo, number)
         return created
 
     # -- reads --------------------------------------------------------------

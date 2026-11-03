@@ -144,6 +144,8 @@ REPO_EVENTS = frozenset({
     # S-150 additions (append-only, per the taxonomy rules):
     "repo.pull_request.suggestion_propose",
     "repo.pull_request.suggestion_apply",
+    # S-151 addition (append-only, per the taxonomy rules):
+    "repo.pull_request.codeowners_request",
 })
 
 ADMIN_EVENTS = frozenset({

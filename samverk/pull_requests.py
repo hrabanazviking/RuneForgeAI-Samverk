@@ -128,6 +128,7 @@ class PullRequestStore:
         issues: IssueStore,
         audit: AuditLog | None = None,
         time_fn: Callable[[], float] = time.time,
+        codeowners_sync: Callable[..., object] | None = None,
     ):
         self._conn = conn
         self._repos = repositories
@@ -136,6 +137,10 @@ class PullRequestStore:
         self._audit = audit
         self._now = time_fn
         self._compare = CompareService(repositories)
+        # S-151: optional CODEOWNERS on-open hook, invoked
+        # after a successful create + audit. Default None
+        # keeps every existing battery identical.
+        self._codeowners_sync = codeowners_sync
 
     # -- internals ---------------------------------------------------
     def _require_readable(self, viewer, owner, repo):
@@ -269,6 +274,8 @@ class PullRequestStore:
                 outcome="success", source_ip=source_ip,
                 detail={"number": number, "base": base, "head": head,
                         "draft": bool(draft), "same_repo": True})
+        if self._codeowners_sync is not None:
+            self._codeowners_sync(actor, owner, repo, number)
         return created
 
     # -- reads -----------------------------------------------------------
