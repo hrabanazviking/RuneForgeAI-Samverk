@@ -316,3 +316,9 @@ S-172 (2026-11-06) added no event of its own —
 S-169 rules and S-149 freshness; judgments write
 nothing and audit nothing, and rule changes ride
 the frozen repo.protection.change, no migration.)
+S-173 (2026-11-06) added no event of its own —
+119 events stand: 29 auth, 78 repo, 12 admin.
+(Its code-owner gate is a pure read over
+S-169 rules and S-164 review state; judgments write
+nothing and audit nothing, and rule changes ride
+the frozen repo.protection.change, no migration.)
