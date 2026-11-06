@@ -88,6 +88,7 @@ GIT_SUBCOMMANDS = frozenset({
     "bundle",         # S-074 repository backup primitive (create/verify)
     "fsck",           # S-075 corruption assessment (read-only check)
     "blame",          # S-101 per-line attribution (read-only)
+    "merge-tree",     # S-155 rebase pre-flight (off-path simulation)
 })
 
 # Refused in any argument position, as a whole token or as a
