@@ -126,6 +126,7 @@ class AdvertisementTests(unittest.TestCase):
         for child in objects.iterdir():
             if child.is_dir() and child.name not in ("info", "pack"):
                 for f in child.iterdir():
+                    f.chmod(0o644)
                     f.write_bytes(b"corrupt")
         with self.assertRaises(TransportError) as caught:
             self.service.advertise(None, "volmarr", "secret")
