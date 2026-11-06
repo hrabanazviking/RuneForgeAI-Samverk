@@ -84,6 +84,18 @@ rebase is S-155, and both will ride this slice's plan).
   same record shape S-130 writes (state, reason
   'completed', version bump, an `issue_events` row),
   the merger as its actor.
+- **Permission is S-163's layer on this path.** The
+  write check below is not this slice's private rule:
+  it is `pull_request_merge_permission`'s seam over
+  S-054 — the same answer governs the merge button's
+  presence in the preview below (chrome law, S-112:
+  absent for non-writers, never disabled) and the
+  refusal a non-writer's merge attempt meets (server
+  law). The preview itself is a read: any reader the
+  S-141 seam admits may see the plan, with their own
+  standing said in words; only landing requires write.
+  A refused landing is witnessed as a denied attempt
+  under the merge event.
 - **Audited under its own event** (taxonomy append-only
   +1: `repo.pull_request.merge`, 111 events). The
   detail names the number, the merge commit, the branch
@@ -100,10 +112,12 @@ from dataclasses import dataclass
 
 from .accounts import AccountStore, User
 from .audit import AuditLog
-from .escaping import escape_html_text
+from .escaping import escape_html_attr, escape_html_text
 from .issue_conversion import PullRequest
 from .issues import IssueError, IssueStore
-from .permissions import can_write
+from .permissions import can_write, role_for
+from .pull_request_merge_permission import (
+    MergePermission, merge_permission, permission_words)
 from .proc import run_git_in, run_git_fetch_ref
 from .pull_request_conversation import PullRequestConversationStore
 from .pull_request_drafts import merge_blocker
@@ -114,7 +128,7 @@ from .repositories import Repository, RepositoryStore
 
 __all__ = [
     "MergeClosing", "MergePreview", "MergedPullRequest",
-    "PullRequestMergeStore", "default_message",
+    "PullRequestMergeStore", "MergePermission", "default_message",
     "render_merge", "render_merge_preview",
 ]
 
@@ -167,14 +181,35 @@ class MergePreview:
     conflicts: bool
     closings: tuple      # of MergeClosing
     blockers: tuple      # of str, in words
+    full_name: str = ""
+    viewer_can_merge: bool = False
+    viewer_role: str = ""
+
+    @property
+    def mergeable(self) -> bool:
+        """The pull request's own state raises no
+        objection — whoever the viewer is."""
+        return not self.blockers
 
     @property
     def can_merge(self) -> bool:
-        return not self.blockers
+        """This viewer may land this merge now: the
+        pull request is mergeable AND the viewer holds
+        write (S-163)."""
+        return self.mergeable and self.viewer_can_merge
+
+    @property
+    def show_merge_button(self) -> bool:
+        """Chrome law (S-112): the button exists only
+        for a viewer who can use it — absent, never
+        disabled, for everyone else."""
+        return self.can_merge
 
     @property
     def words(self) -> str:
         pr = self.pull_request
+        if not self.viewer_can_merge:
+            return permission_words(self.full_name)
         if self.blockers:
             return self.blockers[0]
         return (f"Ready to merge — merging will land "
@@ -221,6 +256,8 @@ class _Plan:
     merged_tree: str
     conflicts: bool
     blockers: tuple
+    viewer_can_merge: bool = False
+    viewer_role: str = ""
 
 
 class PullRequestMergeStore:
@@ -252,15 +289,27 @@ class PullRequestMergeStore:
     # -- the plan ------------------------------------------------------
 
     def _plan(self, actor: User, owner: object, repo: object,
-              number: object) -> _Plan:
+              number: object, *, require_write: bool = True
+              ) -> _Plan:
         pr = self._prs.get_pull_request(actor, owner, repo, number)
         base_repo = self._repos.get_repository(owner, repo)
         assert base_repo is not None
-        if not can_write(actor, base_repo):
+        viewer_role = role_for(actor, base_repo) or ""
+        viewer_can_merge = can_write(actor, base_repo)
+        if require_write and not viewer_can_merge:
+            if self._audit is not None:
+                self._audit.append(
+                    actor_kind="user",
+                    actor_id=actor.id if actor is not None else None,
+                    action="repo.pull_request.merge",
+                    target_kind="repo",
+                    target_id=f"{base_repo.full_name}#{pr.number}",
+                    outcome="denied", source_ip=None,
+                    detail={"number": pr.number,
+                            "reason": "permission_denied"})
             raise PullRequestError(
                 "permission_denied",
-                "Only a writer on the repository this pull "
-                "request proposes into can merge it.")
+                permission_words(base_repo.full_name))
         base_path = self._repos.path_for(base_repo.owner,
                                          base_repo.name)
         refs = RefStore(base_path)
@@ -337,7 +386,9 @@ class PullRequestMergeStore:
                 base_oid=base_oid, head_oid=head_oid,
                 merge_base_oid=base, ahead=ahead, behind=behind,
                 merged_tree=merged_tree, conflicts=conflicts,
-                blockers=tuple(blockers))
+                blockers=tuple(blockers),
+                viewer_can_merge=viewer_can_merge,
+                viewer_role=viewer_role)
         finally:
             if scratch_live:
                 run_git_in(base_path, ["update-ref", "-d",
@@ -428,7 +479,8 @@ class PullRequestMergeStore:
         """The merge box, before landing: the plan, the
         default message, and the closing list — everything
         said in words, nothing discovered by merging."""
-        plan = self._plan(actor, owner, repo, number)
+        plan = self._plan(actor, owner, repo, number,
+                          require_write=False)
         closings = self._closings_for(actor, owner, repo, plan.pr)
         return MergePreview(
             pull_request=plan.pr, base_oid=plan.base_oid,
@@ -437,7 +489,25 @@ class PullRequestMergeStore:
             ahead=plan.ahead, behind=plan.behind,
             default_message=default_message(plan.pr),
             conflicts=plan.conflicts, closings=tuple(closings),
-            blockers=plan.blockers)
+            blockers=plan.blockers,
+            full_name=plan.base_repo.full_name,
+            viewer_can_merge=plan.viewer_can_merge,
+            viewer_role=plan.viewer_role)
+
+    def merge_permission_for(self, actor: User, owner: object,
+                             repo: object, number: object
+                             ) -> MergePermission:
+        """The actor's merge standing on this pull
+        request, in one object (S-163): the S-141 seam
+        answers first — a stranger to a private
+        repository gets `pull_request_not_found` — then
+        S-054's role, resolved through the permission
+        seam. Asking is a read; it never raises
+        `permission_denied` and writes no audit row."""
+        pr = self._prs.get_pull_request(actor, owner, repo, number)
+        base_repo = self._repos.get_repository(owner, repo)
+        assert base_repo is not None
+        return merge_permission(actor, base_repo, number=pr.number)
 
     # -- the merge ---------------------------------------------------------
 
@@ -642,7 +712,10 @@ class PullRequestMergeStore:
 def render_merge_preview(preview: MergePreview) -> str:
     """The merge box in words: readiness or the blockers,
     the default message shown whole, and every closing
-    named — meaning in the text, never a colour."""
+    named — meaning in the text, never a colour. The
+    merge button is rendered only when the preview's
+    viewer may land the merge (S-163 chrome law): for
+    anyone else there is no button element at all."""
     pr = preview.pull_request
     parts = [
         f'<div class="merge-preview" data-number="{pr.number}">',
@@ -655,6 +728,13 @@ def render_merge_preview(preview: MergePreview) -> str:
             f"<li>{escape_html_text(c.notice)}</li>"
             for c in preview.closings)
         parts.append(f'<ul class="closings">{items}</ul>')
+    if preview.show_merge_button:
+        action = (f"/{preview.full_name}/pulls/{pr.number}/merge")
+        parts.append(
+            f'<form class="merge-action" method="post" '
+            f'action="{escape_html_attr(action)}">'
+            f'<button type="submit" class="merge-button">'
+            f"Merge pull request</button></form>")
     parts.append("</div>")
     return "\n".join(parts)
 
