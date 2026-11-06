@@ -1369,6 +1369,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_protection_rules_repo"
         " ON protection_rules (repo_id, id)",
     ]),
+    # S-171: required approving reviews — the last-pusher
+    # approval toggle joins the protection rule shape the
+    # S-169 model stores (the approval count itself has
+    # lived there since migration 65). Default off: a
+    # rule opts in, and S-171's gate then refuses to
+    # count an approval from the most recent pusher of
+    # the pull request's head branch.
+    (66, [
+        "ALTER TABLE protection_rules ADD COLUMN"
+        " require_last_pusher_approval INTEGER NOT NULL DEFAULT 0",
+    ]),
 ]
 
 

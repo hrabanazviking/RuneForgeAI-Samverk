@@ -20,7 +20,8 @@ place:
   is changed through `update_rule`, never by shadowing).
   A rule carries the whole Part VIII policy shape as
   stored fields — require a pull request (S-170), the
-  required approval count (S-171), dismiss stale reviews
+  required approval count and the last-pusher
+  approval toggle (S-171), dismiss stale reviews
   (S-172), require code-owner review (S-173), required
   status checks and the up-to-date toggle (S-174),
   require signed commits (S-175), require linear history
@@ -269,7 +270,8 @@ def order_rules(rules) -> tuple:
 # -- the policy shape ----------------------------------------------------
 
 _BOOL_FIELDS = (
-    "enabled", "require_pull_request", "dismiss_stale_reviews",
+    "enabled", "require_pull_request", "require_last_pusher_approval",
+    "dismiss_stale_reviews",
     "require_code_owner_review", "require_branch_up_to_date",
     "require_signed_commits", "require_linear_history",
     "block_force_pushes", "block_branch_deletion", "enforce_admins")
@@ -346,6 +348,7 @@ class ProtectionSettings:
     enabled: bool = True
     require_pull_request: bool = False
     required_approvals: int = 0
+    require_last_pusher_approval: bool = False
     dismiss_stale_reviews: bool = False
     require_code_owner_review: bool = False
     required_status_checks: tuple = ()
@@ -389,6 +392,9 @@ class ProtectionSettings:
             verb = "is" if self.required_approvals == 1 else "are"
             out.append(
                 f"{self.required_approvals} {noun} {verb} required")
+        if self.require_last_pusher_approval:
+            out.append("approval must come from someone other "
+                       "than the most recent pusher")
         if self.dismiss_stale_reviews:
             out.append("stale reviews are dismissed on new pushes")
         if self.require_code_owner_review:
@@ -542,6 +548,8 @@ def evaluate_rules(rules, branch: str, *,
             r.settings.require_pull_request for r in matching),
         required_approvals=max(
             r.settings.required_approvals for r in matching),
+        require_last_pusher_approval=any(
+            r.settings.require_last_pusher_approval for r in matching),
         dismiss_stale_reviews=any(
             r.settings.dismiss_stale_reviews for r in matching),
         require_code_owner_review=any(
@@ -573,6 +581,7 @@ def evaluate_rules(rules, branch: str, *,
 
 _SETTINGS_COLUMNS = (
     "enabled", "require_pull_request", "required_approvals",
+    "require_last_pusher_approval",
     "dismiss_stale_reviews", "require_code_owner_review",
     "required_status_checks", "require_branch_up_to_date",
     "require_signed_commits", "require_linear_history",
@@ -591,6 +600,8 @@ def _settings_from_row(row: sqlite3.Row) -> ProtectionSettings:
         enabled=bool(row["enabled"]),
         require_pull_request=bool(row["require_pull_request"]),
         required_approvals=int(row["required_approvals"]),
+        require_last_pusher_approval=bool(
+            row["require_last_pusher_approval"]),
         dismiss_stale_reviews=bool(row["dismiss_stale_reviews"]),
         require_code_owner_review=bool(row["require_code_owner_review"]),
         required_status_checks=_json_list(row["required_status_checks"]),
@@ -609,6 +620,7 @@ def _settings_values(settings: ProtectionSettings) -> tuple:
         1 if settings.enabled else 0,
         1 if settings.require_pull_request else 0,
         settings.required_approvals,
+        1 if settings.require_last_pusher_approval else 0,
         1 if settings.dismiss_stale_reviews else 0,
         1 if settings.require_code_owner_review else 0,
         json.dumps(list(settings.required_status_checks)),
@@ -800,6 +812,7 @@ class ProtectionRuleStore:
                 name: getattr(rule.settings, name)
                 for name in ("enabled", "require_pull_request",
                              "required_approvals",
+                             "require_last_pusher_approval",
                              "dismiss_stale_reviews",
                              "require_code_owner_review",
                              "required_status_checks",
@@ -911,6 +924,7 @@ class ProtectionRuleStore:
         except TypeError:
             unknown = set(fields) - {
                 "enabled", "require_pull_request", "required_approvals",
+                "require_last_pusher_approval",
                 "dismiss_stale_reviews", "require_code_owner_review",
                 "required_status_checks", "require_branch_up_to_date",
                 "require_signed_commits", "require_linear_history",
