@@ -1127,6 +1127,61 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_merges_repo"
         " ON pull_request_merges (repo_id, pull_request_id)",
     ]),
+    # S-154 (banking reconciliation, keeper): the squash
+    # record extends the merges table S-153 created.
+    # Migration 58 landed with the merge-commit shape;
+    # the squash shape also needs strategy, merged_at
+    # and message_edited, and its inserts omit repo_id
+    # and message. SQLite cannot relax a column in
+    # place, so the table is rebuilt in the unified
+    # shape and every row copied across (merge-commit
+    # rows gain strategy 'merge_commit', merged_at =
+    # created_at, message_edited 0). The closings
+    # table below is S-154's own, as designed.
+    (59, [
+        "CREATE TABLE pull_request_merges_unified ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL UNIQUE,"
+        "  repo_id INTEGER,"
+        "  strategy TEXT NOT NULL DEFAULT 'merge_commit',"
+        "  merge_commit_oid TEXT NOT NULL,"
+        "  base_branch TEXT NOT NULL,"
+        "  head_branch TEXT NOT NULL,"
+        "  base_oid TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  message TEXT,"
+        "  merged_by INTEGER NOT NULL,"
+        "  created_at INTEGER,"
+        "  merged_at INTEGER,"
+        "  message_edited INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "INSERT INTO pull_request_merges_unified"
+        " (id, pull_request_id, repo_id, strategy,"
+        " merge_commit_oid, base_branch, head_branch,"
+        " base_oid, head_oid, message, merged_by,"
+        " created_at, merged_at, message_edited)"
+        " SELECT id, pull_request_id, repo_id,"
+        " 'merge_commit', merge_commit_oid, base_branch,"
+        " head_branch, base_oid, head_oid, message,"
+        " merged_by, created_at, created_at, 0"
+        " FROM pull_request_merges",
+        "DROP TABLE pull_request_merges",
+        "ALTER TABLE pull_request_merges_unified"
+        " RENAME TO pull_request_merges",
+        "CREATE INDEX idx_pr_merges_repo"
+        " ON pull_request_merges (repo_id, pull_request_id)",
+        "CREATE TABLE IF NOT EXISTS"
+        " pull_request_merge_closings ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  target_repo_id INTEGER NOT NULL,"
+        "  target_number INTEGER NOT NULL,"
+        "  outcome TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX IF NOT EXISTS idx_pr_merge_closings_pr"
+        " ON pull_request_merge_closings (pull_request_id, id)",
+    ]),
 ]
 
 

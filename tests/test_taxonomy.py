@@ -56,12 +56,14 @@ class TaxonomyTests(unittest.TestCase):
         # S-148 added repo.pull_request.review_submit.
         # S-150 added repo.pull_request.suggestion_propose/apply.
         # S-151 added repo.pull_request.codeowners_request.
+        # S-154 added repo.pull_request.squash_merge.
         # S-152 added repo.pull_request.review_request/
         # review_rerequest/review_dismiss.
-        # S-153 added repo.pull_request.merge.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 111)
+        # S-153 added repo.pull_request.merge;
+        # S-154 added repo.pull_request.squash_merge.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 112)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 70)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 71)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):

@@ -76,6 +76,8 @@ GIT_SUBCOMMANDS = frozenset({
     "name-rev",       # human names for revisions
     "describe",       # tag-relative names
     "merge-base",     # ancestry questions
+    "merge-tree",     # S-153/S-154 off-path merged-tree computation
+    #                 (read-only; --write-tree computes in memory only)
     "status",         # worktree questions (mirror checks)
     "upload-pack",    # fetch/clone serving (Part III transport)
     "receive-pack",   # push serving (Part III transport)
@@ -88,8 +90,6 @@ GIT_SUBCOMMANDS = frozenset({
     "bundle",         # S-074 repository backup primitive (create/verify)
     "fsck",           # S-075 corruption assessment (read-only check)
     "blame",          # S-101 per-line attribution (read-only)
-    "merge-tree",     # S-153 merge conflict test (read-only,
-    #                 --write-tree computes in memory only)
 })
 
 # Refused in any argument position, as a whole token or as a
