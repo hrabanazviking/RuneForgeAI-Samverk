@@ -160,6 +160,9 @@ REPO_EVENTS = frozenset({
     "repo.pull_request.auto_merge_arm",
     "repo.pull_request.auto_merge_cancel",
     "repo.pull_request.auto_merge_fire",
+    # S-159 additions (append-only, per the taxonomy rules):
+    "repo.branch.delete_on_merge",
+    "repo.branch.restore",
 })
 
 ADMIN_EVENTS = frozenset({

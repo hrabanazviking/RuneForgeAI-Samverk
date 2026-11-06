@@ -1248,6 +1248,37 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " ON pull_request_auto_merge_events"
         " (pull_request_id, id)",
     ]),
+    # S-159: branch housekeeping — the
+    # delete-head-branch-on-merge opt-in rides the
+    # S-066 settings row (default 0: an opt-in deletes
+    # nothing until it is switched on), and the
+    # deleted-branch tombstone a restore acts on: one
+    # row per merge-born deletion naming the branch,
+    # the oid it pointed at when deleted, the pull
+    # request and merge that caused it; restoring
+    # stamps restored_at / restored_by on the row,
+    # never deletes it.
+    (62, [
+        "ALTER TABLE repo_settings ADD COLUMN"
+        " delete_branch_on_merge INTEGER NOT NULL DEFAULT 0",
+        "CREATE TABLE deleted_branches ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  branch_name TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  deleted_at INTEGER NOT NULL,"
+        "  deleted_by INTEGER NOT NULL,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  pr_number INTEGER NOT NULL,"
+        "  merge_oid TEXT NOT NULL DEFAULT '',"
+        "  restored_at INTEGER,"
+        "  restored_by INTEGER"
+        ")",
+        "CREATE INDEX idx_deleted_branches_repo"
+        " ON deleted_branches (repo_id, id)",
+        "CREATE INDEX idx_deleted_branches_pr"
+        " ON deleted_branches (pull_request_id)",
+    ]),
 ]
 
 

@@ -39,6 +39,12 @@ surface inherits:
   forbids it), and the address itself is always visible in
   a read-only field so copying by hand always works.
 
+S-159 adds the fork sync hint: a fork's home carries its
+`fork_sync` position (computed on read by
+`samverk/fork_sync.py`, stored nowhere), and the page
+renders the hint under the header only when the fork is
+behind its upstream.
+
 An empty repository still has a home: it reports
 `is_empty`, lists nothing, carries no README, and its page
 says what to do next (S-065's instructions own the detail).
@@ -52,6 +58,8 @@ from pathlib import Path
 
 from .accounts import User
 from .escaping import escape_html_attr, escape_html_text
+from .fork_sync import (
+    ForkSyncError, ForkSyncStatus, ForkSyncStore, render_fork_sync_hint)
 from .objects import ObjectReader, TreeEntry
 from .permissions import can_read
 from .refs import RefError, RefStore
@@ -193,6 +201,7 @@ class RepoHome:
     clone_options: tuple[CloneOption, ...]
     unavailable_transports: tuple[str, ...]
     is_empty: bool
+    fork_sync: ForkSyncStatus | None = None  # S-159 payload
 
 
 def render_readme_html(text: str, *,
@@ -211,8 +220,10 @@ class RepoHomeService:
     def __init__(self, repositories: RepositoryStore, *,
                  http_base: str | None = None,
                  ssh_host: str | None = None,
-                 ssh_user: str = "git"):
+                 ssh_user: str = "git",
+                 fork_sync_store: ForkSyncStore | None = None):
         self._repos = repositories
+        self._fork_sync = fork_sync_store or ForkSyncStore(repositories)
         self._http_base = self._clean_http_base(http_base)
         self._ssh_host = self._clean_ssh_host(ssh_host)
         if not ssh_user or any(c in ssh_user for c in " @/:"):
@@ -229,6 +240,7 @@ class RepoHomeService:
         branches = tuple(r.short for r in ref_store.list_branches())
         tags = tuple(r.short for r in ref_store.list_tags())
         clone_options, unavailable = self._clone_options(current)
+        sync = self._fork_sync_of(viewer, current)
         head_oid = ref_store.head_oid()
         if head_oid is None and not ref_store.list_refs():
             # Empty repo: a home with no ref to resolve yet. An
@@ -245,7 +257,8 @@ class RepoHomeService:
                 current_ref=current.default_branch, commit_oid=None,
                 branches=branches, tags=tags, entries=(), readme=None,
                 clone_options=clone_options,
-                unavailable_transports=unavailable, is_empty=True)
+                unavailable_transports=unavailable, is_empty=True,
+                fork_sync=sync)
         requested = current.default_branch if ref is None else ref
         ref_name, commit_oid = resolve_commit(path, requested)
         reader = ObjectReader(path)
@@ -259,9 +272,23 @@ class RepoHomeService:
             current_ref=ref_name, commit_oid=commit_oid,
             branches=branches, tags=tags, entries=entries,
             readme=readme, clone_options=clone_options,
-            unavailable_transports=unavailable, is_empty=False)
+            unavailable_transports=unavailable, is_empty=False,
+            fork_sync=sync)
 
     # -- pieces -----------------------------------------------------
+    def _fork_sync_of(self, viewer, current) -> ForkSyncStatus:
+        """The S-159 fork sync position for this home,
+        judged on read; a position that cannot be
+        checked is said as unknown, never guessed."""
+        try:
+            return self._fork_sync.fork_sync_status(
+                viewer, current.owner, current.name)
+        except ForkSyncError:
+            return ForkSyncStatus(
+                full_name=current.full_name, state="unknown",
+                branch=current.default_branch,
+                behind=None, ahead=None)
+
     def _readme(self, reader: ObjectReader,
                 entries: tuple[TreeEntry, ...], current,
                 commit_oid: str, repo_path: Path) -> Readme | None:
@@ -355,6 +382,10 @@ def render_repo_home_page(home: RepoHome) -> str:
     if home.description:
         parts.append(
             f'<p class="description">{escape_html_text(home.description)}</p>')
+    if home.fork_sync is not None:
+        hint = render_fork_sync_hint(home.fork_sync)
+        if hint:
+            parts.append(hint)
     # Branch/tag switcher: one link per ref, the current one
     # marked in words (never colour alone).
     parts.append('<nav class="ref-switcher" aria-label="Branch or tag">')

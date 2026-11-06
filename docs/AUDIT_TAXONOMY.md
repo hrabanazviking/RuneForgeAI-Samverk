@@ -125,6 +125,8 @@ any name not in this document's set.*
 | `repo.pull_request.merge` | A pull request landed on its base branch as a merge commit — the message the pull request's title/body by default or as edited by the merger, the two parents, and the issues its closing keywords closed on landing (S-153) | `{"number": ..., "commit": ..., "base": ..., "head": ..., "closed": [...]}` — never the message |
 | `repo.pull_request.squash_merge` | A pull request squash-merged onto its base branch as one commit, its author preserved and its closing keywords executed on landing (S-154) | `{"number": ..., "strategy": "squash", "commit": ..., "base": ..., "head": ..., "author": ..., "closed_numbers": [...]}` — never the message |
 | `repo.pull_request.rebase` | A pull request landed by rebase: its head commits replayed onto its base branch, the base ref moved to the replayed tip (S-155) | `{"number": ..., "replayed": ..., "base_before": ..., "base_after": ...}` — never bodies |
+| `repo.branch.delete_on_merge` | Head branch deleted when its pull request merged, under the repository's delete_branch_on_merge opt-in; the deletion is tombstoned for restore (S-159) | `{"number": ..., "branch": ..., "head_repo": ..., "oid": ..., "merge": ...}` — never bodies |
+| `repo.branch.restore` | A deleted branch restored from its tombstone at the recorded head oid (S-159) | `{"branch": ..., "oid": ..., "deleted_branch_id": ...}` — never bodies |
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
@@ -262,3 +264,12 @@ S-158 (2026-11-06) added
 `repo.pull_request.auto_merge_cancel` and
 `repo.pull_request.auto_merge_fire` — 116 events:
 29 auth, 75 repo, 12 admin.
+S-159 (2026-11-06) added
+`repo.branch.delete_on_merge` and
+`repo.branch.restore` — 118 events:
+29 auth, 77 repo, 12 admin. (The
+delete_branch_on_merge toggle itself rides
+the frozen `repo.settings.change` with its
+key named, per the S-149 settings pattern;
+the fork sync hint is a read and adds no
+event of its own.)
