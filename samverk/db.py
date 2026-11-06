@@ -1105,7 +1105,30 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " ON pull_request_review_request_events"
         " (review_request_id, id)",
     ]),
+    # S-153: the merge record — one row per landing: the
+    # merge commit, the branch pair, both parents as they
+    # stood when it landed, the message verbatim, and who
+    # merged. A pull request lands once (UNIQUE), in the
+    # record as in git.
+    (58, [
+        "CREATE TABLE pull_request_merges ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL UNIQUE,"
+        "  repo_id INTEGER NOT NULL,"
+        "  merge_commit_oid TEXT NOT NULL,"
+        "  base_branch TEXT NOT NULL,"
+        "  head_branch TEXT NOT NULL,"
+        "  base_oid TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  message TEXT NOT NULL,"
+        "  merged_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_merges_repo"
+        " ON pull_request_merges (repo_id, pull_request_id)",
+    ]),
 ]
+
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
