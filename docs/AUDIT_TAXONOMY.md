@@ -295,3 +295,10 @@ frozen `repo.protection.change` named above,
 with detail {"branch": <pattern>, "rule":
 "create"|"update"|"delete", "rule_id": ...},
 migration 65.)
+S-170 (2026-11-06) added no event of its own —
+119 events stand: 29 auth, 78 repo, 12 admin.
+(Its pull-request requirement is a pure read over
+S-169 rules, enforced at S-089 protection stage;
+refusals write nothing and audit nothing, and rule
+changes ride the frozen repo.protection.change,
+no migration.)
