@@ -218,6 +218,7 @@ class PullRequestStore:
                             repo: object, *, base_branch: object,
                             head_branch: object, title: object = None,
                             body: object = "", draft: bool = False,
+                            template_name: str | None = None,
                             source_ip: str | None = None) -> PullRequest:
         """Open a same-repository pull request. Every
         refusal is raised before any number is claimed."""
@@ -267,13 +268,18 @@ class PullRequestStore:
                  now, now))
         created = self.get_pull_request(actor, owner, repo, number)
         if self._audit is not None:
+            detail = {"number": number, "base": base, "head": head,
+                      "draft": bool(draft), "same_repo": True}
+            if template_name is not None:
+                # S-162: which template filled the body —
+                # its name only, never its text.
+                detail["template"] = str(template_name)
             self._audit.append(
                 actor_kind="user", actor_id=actor.id,
                 action="repo.pull_request.create", target_kind="repo",
                 target_id=f"{current.full_name}#{number}",
                 outcome="success", source_ip=source_ip,
-                detail={"number": number, "base": base, "head": head,
-                        "draft": bool(draft), "same_repo": True})
+                detail=detail)
         if self._codeowners_sync is not None:
             self._codeowners_sync(actor, owner, repo, number)
         return created
@@ -325,7 +331,29 @@ def _options(branches: tuple, chosen: str) -> str:
     return "".join(out)
 
 
-def render_creation_page(preview: CreationPreview) -> str:
+def _template_section(templates, selected_template) -> str:
+    """S-162's picker plus the description textarea,
+    prefilled from the chosen template (or the single
+    template by default). Imported lazily: the
+    templates module builds on this one."""
+    from .pull_request_templates import render_template_picker
+    body = ""
+    if selected_template is not None:
+        found = templates.find(selected_template)
+        if found is not None:
+            body = found.body
+    else:
+        body = templates.default_body
+    return (
+        render_template_picker(templates,
+                               selected=selected_template)
+        + '<label>Description <textarea name="body" rows="12">'
+        + escape_html_text(body) + "</textarea></label>")
+
+
+def render_creation_page(preview: CreationPreview, *,
+                         templates=None,
+                         selected_template: str | None = None) -> str:
     """The opening page: labelled base/head pickers, the
     compare preview in numbers and words, the blockers
     said plainly when the pair cannot be opened, and the
@@ -370,6 +398,9 @@ def render_creation_page(preview: CreationPreview) -> str:
             '<label>Title <input name="title" value="'
             f"{escape_html_text(preview.suggested_title)}"
             '"></label>')
+        if templates is not None:
+            parts.append(
+                _template_section(templates, selected_template))
         parts.append(
             '<button type="submit">Open pull request</button>')
     parts.append("</form>")
