@@ -402,6 +402,7 @@ class ForkPullRequestStore:
             base_branch: object, head_owner: object, head_repo: object,
             head_branch: object, title: object = None, body: object = "",
             maintainer_can_edit: bool = True, draft: bool = False,
+            template_name: str | None = None,
             source_ip: str | None = None) -> CrossForkPullRequest:
         """Open a pull request from a fork's branch into the
         base repository. Every refusal is raised before any
@@ -464,15 +465,20 @@ class ForkPullRequestStore:
         created = self.get_cross_fork(actor, base.owner, base.name, number)
         assert created is not None
         if self._audit is not None:
+            detail = {"number": number, "base": base_name,
+                      "head": head_name, "draft": bool(draft),
+                      "same_repo": False, "head_repo": head.full_name,
+                      "maintainer_can_edit": bool(maintainer_can_edit)}
+            if template_name is not None:
+                # S-162: which template filled the body —
+                # its name only, never its text.
+                detail["template"] = str(template_name)
             self._audit.append(
                 actor_kind="user", actor_id=actor.id,
                 action="repo.pull_request.create", target_kind="repo",
                 target_id=f"{base.full_name}#{number}",
                 outcome="success", source_ip=source_ip,
-                detail={"number": number, "base": base_name,
-                        "head": head_name, "draft": bool(draft),
-                        "same_repo": False, "head_repo": head.full_name,
-                        "maintainer_can_edit": bool(maintainer_can_edit)})
+                detail=detail)
         if self._codeowners_sync is not None:
             self._codeowners_sync(actor, base_owner, base_repo, number)
         return created
@@ -541,7 +547,9 @@ def render_cross_fork_line(record: CrossForkPullRequest) -> str:
         f"{escape_html_text(record.maintainer_words)}</p>")
 
 
-def render_cross_fork_page(preview: CrossForkPreview) -> str:
+def render_cross_fork_page(preview: CrossForkPreview, *,
+                           templates=None,
+                           selected_template: str | None = None) -> str:
     """The cross-fork opening page: the relationship said
     first and plainly, labelled pickers for both
     repositories' real branches, the true compare numbers,
@@ -609,6 +617,10 @@ def render_cross_fork_page(preview: CrossForkPreview) -> str:
             '<label>Title <input name="title" value="'
             f"{escape_html_text(preview.suggested_title)}"
             '"></label>')
+        if templates is not None:
+            from .pull_requests import _template_section
+            parts.append(
+                _template_section(templates, selected_template))
         parts.append(
             '<button type="submit">Open pull request</button>')
     parts.append("</form>")
