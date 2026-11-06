@@ -248,3 +248,8 @@ S-152 (2026-11-02) added
 `repo.pull_request.review_rerequest` and
 `repo.pull_request.review_dismiss` — 110 events:
 29 auth, 69 repo, 12 admin.
+S-158 (2026-11-06) added
+`repo.pull_request.auto_merge_arm`,
+`repo.pull_request.auto_merge_cancel` and
+`repo.pull_request.auto_merge_fire` — 113 events:
+29 auth, 72 repo, 12 admin.

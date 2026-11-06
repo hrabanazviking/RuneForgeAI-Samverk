@@ -1105,6 +1105,48 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " ON pull_request_review_request_events"
         " (review_request_id, id)",
     ]),
+    # S-158: the auto-merge record — the queue of one per
+    # pull request (UNIQUE): its state, the strategy the
+    # landing will use, the check contexts that must
+    # pass, who armed it against which head, and the
+    # stamps of every later act; plus its events table,
+    # one row per act, so the whole history stays
+    # provable after any later cycle re-arms the row.
+    (60, [
+        "CREATE TABLE pull_request_auto_merges ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL UNIQUE,"
+        "  repo_id INTEGER NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'armed',"
+        "  strategy TEXT NOT NULL DEFAULT 'merge',"
+        "  required_checks TEXT NOT NULL DEFAULT '[]',"
+        "  armed_by INTEGER NOT NULL,"
+        "  armed_at INTEGER NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  cancelled_by INTEGER,"
+        "  cancelled_at INTEGER,"
+        "  fired_at INTEGER,"
+        "  merge_commit_oid TEXT NOT NULL DEFAULT '',"
+        "  last_evaluated_at INTEGER,"
+        "  last_blockers TEXT NOT NULL DEFAULT '[]',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_auto_merges_repo"
+        " ON pull_request_auto_merges (repo_id, pull_request_id)",
+        "CREATE TABLE pull_request_auto_merge_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  auto_merge_id INTEGER NOT NULL,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  actor_id INTEGER,"
+        "  detail TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_auto_merge_events_pr"
+        " ON pull_request_auto_merge_events"
+        " (pull_request_id, id)",
+    ]),
 ]
 
 
