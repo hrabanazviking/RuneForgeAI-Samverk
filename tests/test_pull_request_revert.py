@@ -255,13 +255,23 @@ class PullRequestRevertTests(unittest.TestCase):
         git(path, "update-ref", "refs/heads/main", squash)
         self._close(pr)
         with self.conn:
+            # On the team branch the merges table did not
+            # exist yet, so the battery created its shape;
+            # at banking (S-160 heal) the real table from
+            # migrations 58/59 is already there — create
+            # only if missing, and insert with the columns
+            # the seam reads, filling the unified table's
+            # other NOT NULL columns explicitly.
             self.conn.execute(
-                "CREATE TABLE pull_request_merges ("
+                "CREATE TABLE IF NOT EXISTS pull_request_merges ("
                 " pull_request_id INTEGER,"
                 " merge_commit_oid TEXT, base_oid TEXT)")
             self.conn.execute(
-                "INSERT INTO pull_request_merges VALUES (?, ?, ?)",
-                (pr.id, squash, base_oid))
+                "INSERT INTO pull_request_merges"
+                " (pull_request_id, merge_commit_oid, base_oid,"
+                " base_branch, head_branch, head_oid, merged_by)"
+                " VALUES (?, ?, ?, 'main', 'feature', ?, ?)",
+                (pr.id, squash, base_oid, head_oid, self.owner.id))
         result = self.revert.revert_pull_request(
             self.owner, "volmarr", "pub", pr.number)
         self.assertEqual(result.merged_oid, squash)

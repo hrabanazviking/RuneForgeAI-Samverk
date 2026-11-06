@@ -612,9 +612,9 @@ class BranchHousekeepingTests(unittest.TestCase):
         self.assertEqual(self._audit_count("repo.branch.restore"), 0)
 
     # -- 6. migration + taxonomy ---------------------------------------------------
-    def test_migration_62_fresh_v57_upgrade_and_taxonomy_118(self):
-        self.assertEqual(db.schema_version(self.conn), 62)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 118)
+    def test_migration_62_fresh_v57_upgrade_and_taxonomy_119(self):
+        self.assertEqual(db.schema_version(self.conn), 63)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 119)
         self.assertIn("repo.branch.delete_on_merge",
                       taxonomy.AUDIT_EVENTS)
         self.assertIn("repo.branch.restore", taxonomy.AUDIT_EVENTS)
@@ -628,7 +628,7 @@ class BranchHousekeepingTests(unittest.TestCase):
                     "pr_number", "merge_oid", "restored_at",
                     "restored_by"):
             self.assertIn(col, tcols)
-        # Upgrade path: a v57 database migrates to 62 and
+        # Upgrade path: a v57 database migrates to 63 and
         # its existing settings row reads OFF (the DEFAULT
         # 0 backfill IS the migration's backfill).
         with tempfile.TemporaryDirectory() as td:
@@ -650,7 +650,7 @@ class BranchHousekeepingTests(unittest.TestCase):
                     " (repo_id, website, topics) VALUES (1, '', '[]')")
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 62)
+            self.assertEqual(db.schema_version(conn), 63)
             row = conn.execute(
                 "SELECT delete_branch_on_merge FROM repo_settings"
                 " WHERE repo_id = 1").fetchone()
