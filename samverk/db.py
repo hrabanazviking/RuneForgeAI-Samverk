@@ -1105,6 +1105,44 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " ON pull_request_review_request_events"
         " (review_request_id, id)",
     ]),
+    # S-154: pull request merges — the record S-153's
+    # design reserves migration 58 to create (one row per
+    # merged pull request; presence of the row IS the
+    # merged fact, the migration-49 forks pattern). S-153
+    # is not in this slice's base, so this migration
+    # creates the same tables IF NOT EXISTS: when S-153
+    # banks first in roadmap order, migration 58 creates
+    # them and this one is a no-op; standing alone it
+    # creates them and the squash record is complete.
+    # strategy is stored, not implied, so merge_commit
+    # (S-153), squash (S-154) and rebase (S-155) rows all
+    # live in the one record. The message itself lives
+    # in the landed commit, never duplicated here.
+    (59, [
+        "CREATE TABLE IF NOT EXISTS pull_request_merges ("
+        "  pull_request_id INTEGER PRIMARY KEY,"
+        "  strategy TEXT NOT NULL,"
+        "  merge_commit_oid TEXT NOT NULL,"
+        "  base_branch TEXT NOT NULL,"
+        "  head_branch TEXT NOT NULL,"
+        "  base_oid TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  merged_by INTEGER NOT NULL,"
+        "  merged_at INTEGER NOT NULL,"
+        "  message_edited INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE TABLE IF NOT EXISTS"
+        " pull_request_merge_closings ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL,"
+        "  target_repo_id INTEGER NOT NULL,"
+        "  target_number INTEGER NOT NULL,"
+        "  outcome TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX IF NOT EXISTS idx_pr_merge_closings_pr"
+        " ON pull_request_merge_closings (pull_request_id, id)",
+    ]),
 ]
 
 

@@ -76,6 +76,7 @@ GIT_SUBCOMMANDS = frozenset({
     "name-rev",       # human names for revisions
     "describe",       # tag-relative names
     "merge-base",     # ancestry questions
+    "merge-tree",     # S-153/S-154 off-path merged-tree computation
     "status",         # worktree questions (mirror checks)
     "upload-pack",    # fetch/clone serving (Part III transport)
     "receive-pack",   # push serving (Part III transport)
