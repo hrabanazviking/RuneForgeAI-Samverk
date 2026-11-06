@@ -1105,6 +1105,30 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " ON pull_request_review_request_events"
         " (review_request_id, id)",
     ]),
+    # S-157: checks panel — one row per external check
+    # result reported against a commit: the repository
+    # it was recorded against, the check's name verbatim,
+    # its state in the roadmap's three words, the
+    # external details link and a one-line description,
+    # with the stamps of first landing and last change.
+    # Unique per (repository, commit, context): a
+    # re-report updates the row, never duplicates it.
+    (58, [
+        "CREATE TABLE commit_checks ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  context TEXT NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'pending',"
+        "  target_url TEXT NOT NULL DEFAULT '',"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, head_oid, context)"
+        ")",
+        "CREATE INDEX idx_commit_checks_repo_head"
+        " ON commit_checks (repo_id, head_oid, id)",
+    ]),
 ]
 
 
