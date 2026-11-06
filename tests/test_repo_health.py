@@ -40,6 +40,7 @@ def corrupt_loose_object(repo: Path, oid: str) -> None:
     # no longer inflate to what its name promises.
     for i in range(2, min(len(data), 12)):
         data[i] ^= 0xFF
+    obj.chmod(0o644)
     obj.write_bytes(bytes(data))
 
 class RepoHealthTests(unittest.TestCase):
@@ -81,6 +82,7 @@ class RepoHealthTests(unittest.TestCase):
     def test_a_truncated_object_reads_damaged(self):
         repo, blob = make_repo(self.base)
         obj = repo / "objects" / blob[0:2] / blob[2:]
+        obj.chmod(0o644)
         obj.write_bytes(obj.read_bytes()[:4])
         self.assertEqual(assess_repository(repo).status, "damaged")
 
