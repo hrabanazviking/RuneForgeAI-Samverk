@@ -288,3 +288,10 @@ acts — S-148's `repo.pull_request.review_submit`
 and S-151/S-152's request family — on the
 S-139 pattern, each notification carrying its
 S-223 reason on its own row, migration 64.)
+S-169 (2026-11-06) added no event of its own —
+119 events stand: 29 auth, 78 repo, 12 admin.
+(Its protection rule model writes under the
+frozen `repo.protection.change` named above,
+with detail {"branch": <pattern>, "rule":
+"create"|"update"|"delete", "rule_id": ...},
+migration 65.)
