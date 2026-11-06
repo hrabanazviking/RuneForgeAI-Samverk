@@ -62,9 +62,11 @@ class TaxonomyTests(unittest.TestCase):
         # review_rerequest/review_dismiss.
         # S-153 added repo.pull_request.merge;
         # S-154 added repo.pull_request.squash_merge.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 113)
+        # S-158 added repo.pull_request.auto_merge_arm/
+        # auto_merge_cancel/auto_merge_fire.
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 116)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 72)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 75)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 
     def test_names_are_well_formed(self):

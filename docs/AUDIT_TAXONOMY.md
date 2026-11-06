@@ -257,3 +257,8 @@ added `repo.pull_request.squash_merge` and
 S-155 (2026-11-06) added
 `repo.pull_request.rebase` — 113 events:
 29 auth, 72 repo, 12 admin.
+S-158 (2026-11-06) added
+`repo.pull_request.auto_merge_arm`,
+`repo.pull_request.auto_merge_cancel` and
+`repo.pull_request.auto_merge_fire` — 116 events:
+29 auth, 75 repo, 12 admin.
