@@ -122,6 +122,7 @@ any name not in this document's set.*
 | `repo.pull_request.review_request` | Reviewers manually requested on a pull request by its author or a base-repository writer (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
 | `repo.pull_request.review_rerequest` | A dismissed review request re-requested on a pull request, reactivating its record (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
 | `repo.pull_request.review_dismiss` | An active review request dismissed on a pull request; the record stays, stamped with who dismissed it and when (S-152) | `{"number": ..., "owner_refs": [...]}` — never bodies |
+| `repo.pull_request.merge` | A pull request landed on its base branch as a merge commit — the message the pull request's title/body by default or as edited by the merger, the two parents, and the issues its closing keywords closed on landing (S-153) | `{"number": ..., "commit": ..., "base": ..., "head": ..., "closed": [...]}` — never the message |
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
@@ -248,3 +249,6 @@ S-152 (2026-11-02) added
 `repo.pull_request.review_rerequest` and
 `repo.pull_request.review_dismiss` — 110 events:
 29 auth, 69 repo, 12 admin.
+S-153 (2026-11-06) added
+`repo.pull_request.merge` — 111 events:
+29 auth, 70 repo, 12 admin.
