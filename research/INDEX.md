@@ -16,6 +16,12 @@ When a study is complete, its file records: the feature's observable
 behaviour, the design questions it raises for Samverk, the decision taken,
 and the roadmap slices it feeds (see `docs/SAMVERK_MASSIVE_ROADMAP.md`).
 
+## Research shelf progress — 2026-11-06
+
+All **46 numbered research files now contain written technical studies**. Seven already held studies before this expansion; the remaining 39 were populated on 2026-11-06 with clean-room technical guidance, references, proposed architecture, failure cases, and acceptance tests. This updates the founding-era note above that files initially started empty: that sentence records their original scaffold state, not their current state.
+
+For step-by-step coding-agent implementation, integration, testing and release guidance, see the [18-document Development Research and Implementation Playbooks](../docs/development-research/INDEX.md). These studies are research deliverables, **not claims that their roadmap features are implemented or production-proven**.
+
 ## The shelf
 
 ### Transports and the git core
