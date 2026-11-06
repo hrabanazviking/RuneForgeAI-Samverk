@@ -13,6 +13,17 @@ S-050's metadata row rather than beside it:
   and topics are a closed shape (lowercase letters, digits,
   hyphens; at most 20 topics of at most 50 characters,
   duplicates folded).
+- **Delete head branch on merge (S-159)** is this
+  repository's branch-housekeeping opt-in, carried on
+  this same settings row (migration 58 adds the
+  `delete_branch_on_merge` column, default off — an
+  opt-in deletes nothing until it is switched on):
+  owner-only like every write here, a non-boolean
+  value is refused `delete_branch_on_merge_invalid`
+  whole and stores nothing, and a real change audits
+  under the frozen `repo.settings.change` with the
+  key named — a same-value retry is a quiet no-op
+  (the S-149 settings pattern).
 - **Default-branch rename** is more than a settings change:
   the branch ref itself moves (S-053's atomic rename), the
   S-050 default follows, HEAD follows the default, and the
@@ -63,6 +74,7 @@ class RepoSettings:
     default_branch: str
     website: str = ""
     topics: tuple[str, ...] = ()
+    delete_branch_on_merge: bool = False  # S-159 opt-in
 
 
 @dataclass(frozen=True)
@@ -147,20 +159,23 @@ class RepoSettingsService:
 
     def _settings_of(self, current: Repository) -> RepoSettings:
         row = self._conn.execute(
-            "SELECT website, topics FROM repo_settings WHERE repo_id = ?",
+            "SELECT website, topics, delete_branch_on_merge"
+            " FROM repo_settings WHERE repo_id = ?",
             (current.id,)).fetchone()
-        website, topics = "", ()
+        website, topics, delete_on_merge = "", (), False
         if row is not None:
             website = row["website"]
             try:
                 topics = tuple(json.loads(row["topics"]))
             except (ValueError, TypeError):
                 topics = ()
+            delete_on_merge = bool(row["delete_branch_on_merge"])
         return RepoSettings(
             full_name=current.full_name, description=current.description,
             visibility=current.visibility,
             default_branch=current.default_branch,
-            website=website, topics=topics)
+            website=website, topics=topics,
+            delete_branch_on_merge=delete_on_merge)
 
     # -- writing ---------------------------------------------------------
     def update_settings(self, actor_user_id: int, owner: object,
@@ -168,6 +183,7 @@ class RepoSettingsService:
                         visibility: object = None,
                         website: object = None,
                         topics: object = None,
+                        delete_branch_on_merge: object = None,
                         source_ip: str | None = None) -> RepoSettings:
         actor, current = self._require_owner(actor_user_id, owner, repo)
         # Description/visibility keep their one S-050 writer.
@@ -198,6 +214,38 @@ class RepoSettingsService:
                     detail={"key": "website_topics",
                             "website": new_website,
                             "topics": list(new_topics)})
+        if delete_branch_on_merge is not None:
+            if not isinstance(delete_branch_on_merge, bool):
+                raise SettingsError(
+                    "delete_branch_on_merge_invalid",
+                    "Delete the head branch on merge is on or off.")
+            before = self._settings_of(
+                self._repos.get_by_id(current.id)).delete_branch_on_merge
+            if before != delete_branch_on_merge:
+                existing = self._settings_of(
+                    self._repos.get_by_id(current.id))
+                with self._conn:
+                    self._conn.execute(
+                        "INSERT INTO repo_settings"
+                        " (repo_id, website, topics,"
+                        " delete_branch_on_merge)"
+                        " VALUES (?, ?, ?, ?)"
+                        " ON CONFLICT(repo_id) DO UPDATE SET"
+                        " delete_branch_on_merge"
+                        " = excluded.delete_branch_on_merge",
+                        (current.id, existing.website,
+                         json.dumps(list(existing.topics)),
+                         1 if delete_branch_on_merge else 0))
+                if self._audit is not None:
+                    self._audit.append(
+                        actor_kind="user", actor_id=actor.id,
+                        action="repo.settings.change",
+                        target_kind="repo",
+                        target_id=current.full_name,
+                        outcome="success", source_ip=source_ip,
+                        detail={"key": "delete_branch_on_merge",
+                                "from": before,
+                                "to": delete_branch_on_merge})
         return self._settings_of(self._repos.get_by_id(current.id))
 
     # -- default-branch rename -------------------------------------------

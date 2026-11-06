@@ -150,6 +150,9 @@ REPO_EVENTS = frozenset({
     "repo.pull_request.review_request",
     "repo.pull_request.review_rerequest",
     "repo.pull_request.review_dismiss",
+    # S-159 additions (append-only, per the taxonomy rules):
+    "repo.branch.delete_on_merge",
+    "repo.branch.restore",
 })
 
 ADMIN_EVENTS = frozenset({
