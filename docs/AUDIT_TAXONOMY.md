@@ -280,3 +280,11 @@ S-160 (2026-11-06) added
 111 on the team branch; renumbered at
 banking, and its migration went 60 → 63
 for the same reason.)
+S-165 (2026-11-06) added no event of its own —
+119 events stand: 29 auth, 78 repo, 12 admin.
+(Its review notifications are derived data
+materialised from the already-audited review
+acts — S-148's `repo.pull_request.review_submit`
+and S-151/S-152's request family — on the
+S-139 pattern, each notification carrying its
+S-223 reason on its own row, migration 64.)
