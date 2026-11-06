@@ -1304,6 +1304,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_reverts_original"
         " ON pull_request_reverts (original_pull_request_id, id)",
     ]),
+    # S-165: review notifications — one addressed row per
+    # (audited review act, recipient): the Part XI
+    # notification S-151/S-152's review requests and
+    # S-148's submissions emit, keyed by its audit seq
+    # and recipient under a UNIQUE pair (materialising
+    # is exactly-once per recipient). The S-223 reason
+    # is stored on the row; the audit detail rides along
+    # unchanged. The audit log remains the witness this
+    # store derives from.
+    (64, [
+        "CREATE TABLE pull_request_review_notifications ("
+        "  id INTEGER PRIMARY KEY,"
+        "  audit_seq INTEGER NOT NULL,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  pull_request_id INTEGER,"
+        "  number INTEGER,"
+        "  actor_id INTEGER,"
+        "  verb TEXT NOT NULL,"
+        "  reason TEXT NOT NULL,"
+        "  detail_json TEXT NOT NULL DEFAULT '{}',"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (audit_seq, recipient_id)"
+        ")",
+        "CREATE INDEX idx_pr_review_notifications_recipient"
+        " ON pull_request_review_notifications (recipient_id, id)",
+        "CREATE INDEX idx_pr_review_notifications_pr"
+        " ON pull_request_review_notifications (pull_request_id, id)",
+    ]),
 ]
 
 
