@@ -1333,6 +1333,42 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_pr_review_notifications_pr"
         " ON pull_request_review_notifications (pull_request_id, id)",
     ]),
+    # S-169: protection rules — one row per (repository,
+    # branch-name pattern): the pattern the rule attaches
+    # to and the whole Part VIII policy shape it carries
+    # (S-170..S-180 each wire one field to its refusal
+    # point; the model, the matching, and the documented
+    # deterministic evaluation order live in
+    # samverk/protection_rules.py). UNIQUE (repo_id,
+    # pattern): a pattern names at most one rule per
+    # repository, so rules are updated, never shadowed.
+    (65, [
+        "CREATE TABLE protection_rules ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  pattern TEXT NOT NULL,"
+        "  enabled INTEGER NOT NULL DEFAULT 1,"
+        "  require_pull_request INTEGER NOT NULL DEFAULT 0,"
+        "  required_approvals INTEGER NOT NULL DEFAULT 0,"
+        "  dismiss_stale_reviews INTEGER NOT NULL DEFAULT 0,"
+        "  require_code_owner_review INTEGER NOT NULL DEFAULT 0,"
+        "  required_status_checks TEXT NOT NULL DEFAULT '[]',"
+        "  require_branch_up_to_date INTEGER NOT NULL DEFAULT 0,"
+        "  require_signed_commits INTEGER NOT NULL DEFAULT 0,"
+        "  require_linear_history INTEGER NOT NULL DEFAULT 0,"
+        "  block_force_pushes INTEGER NOT NULL DEFAULT 1,"
+        "  block_branch_deletion INTEGER NOT NULL DEFAULT 1,"
+        "  enforce_admins INTEGER NOT NULL DEFAULT 1,"
+        "  allowed_push_actors TEXT NOT NULL DEFAULT '[]',"
+        "  bypass_actors TEXT NOT NULL DEFAULT '[]',"
+        "  created_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, pattern)"
+        ")",
+        "CREATE INDEX idx_protection_rules_repo"
+        " ON protection_rules (repo_id, id)",
+    ]),
 ]
 
 
