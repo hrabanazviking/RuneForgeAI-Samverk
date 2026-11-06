@@ -127,6 +127,7 @@ any name not in this document's set.*
 | `repo.pull_request.rebase` | A pull request landed by rebase: its head commits replayed onto its base branch, the base ref moved to the replayed tip (S-155) | `{"number": ..., "replayed": ..., "base_before": ..., "base_after": ...}` — never bodies |
 | `repo.branch.delete_on_merge` | Head branch deleted when its pull request merged, under the repository's delete_branch_on_merge opt-in; the deletion is tombstoned for restore (S-159) | `{"number": ..., "branch": ..., "head_repo": ..., "oid": ..., "merge": ...}` — never bodies |
 | `repo.branch.restore` | A deleted branch restored from its tombstone at the recorded head oid (S-159) | `{"branch": ..., "oid": ..., "deleted_branch_id": ...}` — never bodies |
+| `repo.pull_request.revert` | A merged pull request reverted by opening a revert pull request linked both ways to it (S-160) | `{"number": ..., "revert_number": ..., "commit": ..., "branch": ..., "merged_commit": ...}` — never the title or body |
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
@@ -273,3 +274,9 @@ the frozen `repo.settings.change` with its
 key named, per the S-149 settings pattern;
 the fork sync hint is a read and adds no
 event of its own.)
+S-160 (2026-11-06) added
+`repo.pull_request.revert` — 119 events:
+29 auth, 78 repo, 12 admin. (Claimed as
+111 on the team branch; renumbered at
+banking, and its migration went 60 → 63
+for the same reason.)

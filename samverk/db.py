@@ -1279,6 +1279,31 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_deleted_branches_pr"
         " ON deleted_branches (pull_request_id)",
     ]),
+    # S-160: pull request reverts — one row per revert PR
+    # linking it both ways to the merged PR it reverts: the
+    # revert PR's own row id, the original's row id, the
+    # landing pair the revert undid (merged_oid /
+    # pre_merge_oid, as resolved by the PR layer), the
+    # revert commit and branch, and who made it. Presence
+    # of a row IS the link; one link per revert PR
+    # (UNIQUE on pull_request_id).
+    (63, [
+        "CREATE TABLE pull_request_reverts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pull_request_id INTEGER NOT NULL UNIQUE,"
+        "  original_pull_request_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  merged_oid TEXT NOT NULL DEFAULT '',"
+        "  pre_merge_oid TEXT NOT NULL DEFAULT '',"
+        "  revert_commit_oid TEXT NOT NULL DEFAULT '',"
+        "  revert_branch TEXT NOT NULL DEFAULT '',"
+        "  base_branch TEXT NOT NULL DEFAULT '',"
+        "  created_by INTEGER,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_pr_reverts_original"
+        " ON pull_request_reverts (original_pull_request_id, id)",
+    ]),
 ]
 
 
