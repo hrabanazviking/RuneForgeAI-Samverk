@@ -74,7 +74,7 @@ class Clock:
 
 
 CHECKS_DDL = (
-    "CREATE TABLE commit_checks ("
+    "CREATE TABLE IF NOT EXISTS commit_checks ("
     "  id INTEGER PRIMARY KEY,"
     "  repo_id INTEGER NOT NULL,"
     "  head_oid TEXT NOT NULL,"
