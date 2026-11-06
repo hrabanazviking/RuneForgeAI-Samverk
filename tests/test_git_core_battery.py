@@ -109,6 +109,7 @@ class GitCoreBatteryTests(unittest.TestCase):
         data = bytearray(obj.read_bytes())
         for i in range(2, min(len(data), 12)):
             data[i] ^= 0xFF
+        obj.chmod(0o644)
         obj.write_bytes(bytes(data))
         self.assertEqual(assess_repository(self.path).status, "damaged")
         with self.assertRaises(Exception):
