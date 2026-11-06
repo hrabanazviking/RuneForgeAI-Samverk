@@ -66,6 +66,159 @@ acceptance shape passes in a counted run — not when its code merely
 exists. Parts close with a gate slice; the roadmap closes with the
 Proof Spine (Part XXI).
 
+## Execution priority overlay — 2026-11-06: make the forge usable end-to-end
+
+**Purpose and evidence.** The 2026-11-06 README review found that
+the `main` tree has substantial, focused-test-backed service modules
+through **S-152**, but `samverk/server.py` currently exposes only
+`/` and `/healthz`, not the complete account, repository, issue and
+pull-request services already implemented elsewhere in `samverk/`.
+This is a **delivery and integration gap**, not a reason to discard,
+renumber or redo the existing work.
+
+**Status:** this is a *planning addition*, not evidence that the
+work below is completed. The original **S-001–S-416 / 22-part
+roadmap remains authoritative and unchanged**. Do not count
+these checkpoints as new numbered slices. Existing slice numbers
+below are cross-references, and gates remain NOT PROVEN until
+their actual end-to-end acceptance evidence exists. No
+architecture change may bypass the clean-room, security,
+no-Docker, standalone-first or portability laws.
+
+### Immediate priority A: finish review/merge logic already scheduled
+
+- **Proceed from S-152 to S-153**, then **S-154** and **S-155**:
+  merge-commit, squash and rebase strategies, with atomic branch
+  updates, truthful commit/author identities, audited outcomes and
+  closing-keyword semantics. Keep tests for permission refusal,
+  stale heads, conflicts, same-repo and cross-fork paths; do not
+  claim the three merge modes until those tests pass.
+- Keep **S-156–S-168** on the existing critical path: conflict
+  surfacing before merge, external checks, auto-merge conditions,
+  branch housekeeping, revert, search, templates, merge rights,
+  required reviews, notifications, large-PR behaviour, compare-to-PR
+  creation and the Part VII full-lifecycle gate. **S-168 is not
+  complete merely because its backend stores can be invoked in unit
+  tests.**
+- **Part VII checkpoint:** demonstrate a real ordinary-user PR
+  opened, reviewed, approved, and merged for each supported merge
+  strategy; verify visible permissions and refusal reasons. Preserve
+  the counted focused batteries separately from the full
+  integrated/browser battery, recording all skips.
+
+### Immediate priority B: join the existing services to the HTTP application
+
+This work is **missing as an explicit intermediate integration gate**:
+S-345 defines the ultimate web/API/transport run model and S-382
+defines the future shared navigation shell, but neither by itself
+ensures that today's feature modules are actually reachable through
+the running server. Build this *incrementally alongside the
+remaining Part VII work*, without treating the final visual polish
+of Part XX as a blocker for basic usability.
+
+1. **Route inventory and seam contract.** Inventory each
+   `samverk/` service, its current tests, handlers, rendering helpers,
+   authentication and authorization requirements, expected inputs,
+   state-changing operations and error mapping. Compare that
+   inventory against `samverk/server.py` routes and maintain a
+   traceable matrix: **module exists / routed / exercised through
+   HTTP / browser verified / production gate**. No green checkbox
+   from a module's existence alone.
+2. **One secure composition root.** Wire request-scoped database
+   access, signed-in principal/session resolution, CSRF on cookie
+   mutations, token/transport-specific authentication, permission
+   checks, content-type and request-size limits, HTML escaping/CSP,
+   consistent safe error responses, audit/outbox emissions and
+   rate limiting into explicit controllers. Reuse the established
+   core services instead of cloning business logic into routes.
+   Preserve public/private repository indistinguishability.
+   Route Git smart-HTTP and LFS endpoints without accidentally
+   treating their protocol POSTs like browser form posts.
+3. **First vertical browser walk.** On a fresh local native
+   instance, start the real server, create/sign in as an account,
+   create a repository, browse a pushed README/file, create an
+   issue and open a same-repo PR. Then review and merge that PR
+   when S-153–S-168 provide the required logic. Every step must
+   use **actual HTTP requests and browser navigation**, not
+   direct store calls or mocked route handlers.
+4. **Progressive surface wiring.** Expand coverage to private
+   repositories, permission refusal, token mint/revoke, SSH and
+   smart-HTTP clone/push/pull, LFS, forks, cross-fork PRs, review
+   threads, suggested changes, and administrative navigation.
+   The UI must explain errors in plain language and link users
+   to the next action. Reuse Part V/VI/VII renderers only after
+   verifying their safety under the live server.
+5. **No false finish line.** Report separately whether a feature
+   is implemented in a store/service, is reachable over the
+   product's public HTTP surface, and is proven by a complete
+   user journey. Keep the Cyber-Viking visual language and
+   accessibility requirements of **S-381–S-392** on the final
+   UI acceptance path rather than substituting a raw JSON endpoint
+   for a finished screen.
+
+**HTTP integration checkpoint (new acceptance criterion, no new
+slice number):** an automated local test boots `samverk serve`,
+walks sign-in → repository creation → issue → PR → review → merge
+using the actual HTTP service and a real Git client where transport
+is involved, then observes the correct persisted state and audit
+events. The test must also exercise an unauthorized actor, a
+private repository and an invalid CSRF form. If merge work is not
+yet present, report only the narrower completed steps and keep
+the full checkpoint **NOT PROVEN**.
+
+### Supporting priority C: continuous verification and release evidence
+
+- **Project CI for Samverk itself** is distinct from Part XVI's
+  future *built-in CI/Actions product*. Introduce a repository
+  automation workflow or equivalent repeatable native test
+  runner for Python 3.11+, the stdlib `unittest` batteries,
+  Git plumbing interoperability, schema migrations, route
+  integration and security regression. Publish a clear machine-
+  readable summary, failure logs, elapsed time, exact revision,
+  environment and every skip. No Docker requirement is admitted.
+  This supports, but does not replace, **S-393–S-394**.
+- Run the **S-095 real-`sshd` test cell** on a host with a real
+  SSH daemon; it is explicitly skipped in the latest recorded
+  full suite. Distinguish forced-command simulations from
+  daemon-level interoperability. Include real HTTP/S and SSH
+  clone/fetch/push/pull against the assembled server and verify
+  public/private and credential scopes before promoting claim
+  **C-09** to PROVEN.
+- Maintain an *honest* platform matrix: Linux x86-64 testing
+  does not certify Raspberry Pi ARM64, Windows, or macOS.
+  Execute **S-405–S-416** on their named machines, and the
+  cross-browser/device checks of **S-414**. Publish tested
+  combinations and NOT PROVEN gaps explicitly.
+- Preserve **S-331–S-344** as the real continuous-mirroring and
+  restore program: an isolated, tested export/mirror helper
+  is not yet scheduled backups, recovery drill evidence or a
+  proven repository census.
+- At each milestone, reconcile **README**, the claims register
+  and **PROJECT_MEMORY_MAP.md** against the actual `main` tree,
+  commits and test logs. In particular, the memory map's
+  detailed milestone narrative still stops at S-150 while
+  S-151 and S-152 are already committed; do not erase or
+  reinterpret earlier keeper reports when catching it up.
+  The seven populated research studies versus 39 open/empty
+  study files must remain visible, as required by **S-398**.
+
+### Dependency-aware checkpoints and ownership
+
+| When | Deliverable | Related existing slices | Must be demonstrated |
+|---|---|---|---|
+| **Now, alongside S-153 onward** | Route coverage inventory; minimal secure web composition; full regression baseline | S-009, S-016, S-019, S-054, Part V, Part VI, S-345 | One running server reaches real services with logged auth/refusal outcomes |
+| **As merge strategies land** | Three merge algorithms and browser-facing PR workflows | S-153–S-168 | Each strategy passes unit, integration and live-user-path tests; Part VII gate remains open until then |
+| **Before treating the forge as usable for regular work** | Sign-in, token, repo, issue and PR navigation under a consistent UI; stock-Git HTTP and SSH smoke runs | S-095, S-168, S-349–S-350, S-382 | Fresh-instance user journey plus successful and denied credential/permission paths |
+| **Before promising reliable self-hosting** | Native install/upgrade, restore drill, mirror scheduling, operational status and reproducible CI | S-331–S-344, S-345–S-360, S-393–S-394 | Documented clean installation, automated tests, recoverability and transparent incident surfaces |
+| **Before v1.0 and broad platform claims** | Final visual/accessibility gate, claim audit, release proof and platform matrix | S-381–S-416 | Founder usability walk, accessibility results, counted battery, real-host portability cells and signed release |
+
+**Priority rule:** prioritize closure of the end-to-end usability
+gap **without abandoning the scheduled merge slices**. Never
+declare an entire roadmap part delivered solely from file counts,
+a green isolated unit suite, or a plausible-looking rendered page.
+The success criterion is an installable, secure, recoverable,
+standalone forge that ordinary users can actually operate.
+
 ---
 
 ## Part I — Security Spine & Threat Model First
