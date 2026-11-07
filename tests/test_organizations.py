@@ -239,7 +239,8 @@ class OrganizationTests(unittest.TestCase):
         self.assertIn("Not yet built", html)
         self.assertIn("/orgs/crew/settings/team_permissions", html)
         self.assertIn("/orgs/crew/settings/repositories", html)
-        self.assertIn("S-198", html)
+        self.assertIn("/orgs/crew/settings/audit_log", html)
+        self.assertIn("S-199", html)
         self.assertIn("/orgs/crew/settings/teams", html)
 
     # pins
