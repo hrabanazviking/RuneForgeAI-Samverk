@@ -564,3 +564,26 @@ existing membership doors. No migration — schema
 stays 75. The preview raises only org_not_found
 and no_such_user; a non-member and the last owner
 are reported in the preview, never raised.)
+
+S-195 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its team mentions — `@org/team` in issue and
+pull request bodies and comments, and standing
+`@org/team` review requests in the S-151/S-152
+record — are materialised as addressed
+notifications in samverk/team_mentions.py:
+TeamMentionStore syncs each source whole, so the
+record follows the text; a token notifies only
+when the organization and team provably exist,
+a secret team named in prose resolves only for
+an author who may see it, and the recipients are
+the team's S-188 effective members minus the
+author and minus anyone who cannot read the
+repository. Prose mentions store reason `mention`;
+team review requests store `review-requested` —
+the expansion S-165 expressly left to this slice,
+its own store untouched. Storage is migration 76
+in team_mention_notifications — schema moves 75
+to 76. Syncs write no audit row; unknown
+repositories and items raise the uniform
+repo_not_found / issue_not_found.)
