@@ -759,3 +759,21 @@ only when a rebuild completes. The admin-facing,
 audited rebuild door is S-215's, not this slice's.
 Storage is migration 80's index_jobs, index_state
 and index_documents -- schema moves 79 to 80.)
+
+S-206 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its issue/PR search backend is a read over an
+index derived from acts already on the record --
+searching mutates nothing, and indexing writes
+only derived data (the FTS rows and S-205's
+document registry), rebuildable from the owning
+tables at any time, in samverk/issue_pr_search.py:
+the unified qualifier language of S-135/S-161
+plus research 19's repo:, no:, created:/updated:,
+sort: and negation, executed over SQLite FTS5
+text plus structured fields, with unknown
+qualifiers refused query_invalid. Permission
+rides S-054's can_read resolved before any index
+row is read; S-209 owns the leakage hardening.
+Storage is migration 81's issue_pr_fts -- schema
+moves 80 to 81.)
