@@ -631,3 +631,22 @@ no_such_user, and an unknown category filter
 is category_invalid. No migration — schema
 stays 77. Reading writes nothing and audits
 nothing.)
+
+S-199 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its org deletion acts ride the existing
+`auth.organization.update` event with detail
+{"fields": "danger", "action": "request_deletion" /
+"cancel_deletion" / "execute_deletion"}, targeted
+at the organization; the deletion -- owner-only,
+under the sudo gate, with a typed confirmation,
+an inventory shown first, and a seven-day grace
+as S-043 -- is stored by migration 78 in
+org_deletions -- schema moves 77 to 78. While
+the organization still owns repositories a
+request is refused repos_remaining: repositories
+must be transferred or deleted explicitly first,
+and a repository arriving during grace blocks
+execution. Refused requests write nothing and
+audit nothing, and the model is enforced in
+samverk/org_deletion.py.)

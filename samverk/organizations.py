@@ -92,7 +92,8 @@ SETTINGS_AREAS = (
     ("danger", "Delete organization", "Deleting the organization, with its inventory and grace period.", "S-199"),
 )
 BUILT_AREAS = frozenset({"profile", "avatar", "members", "teams",
-                         "team_permissions", "repositories", "audit_log"})
+                         "team_permissions", "repositories", "audit_log",
+                         "danger"})
 
 
 class OrganizationError(ValueError):

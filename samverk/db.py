@@ -1634,6 +1634,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-199: org deletion requests — the grace-period
+    # record. One pending request per organization;
+    # execution after scheduled_at is the irreversible
+    # step. Judged in samverk/org_deletion.py.
+    (78, [
+        "CREATE TABLE org_deletions ("
+        "  org_id INTEGER PRIMARY KEY,"
+        "  requested_by INTEGER NOT NULL,"
+        "  requested_at INTEGER NOT NULL,"
+        "  scheduled_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
