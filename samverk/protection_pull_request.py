@@ -70,10 +70,12 @@ question the receive-pack gate asks:
 - **Everyone pushing directly is refused.** Bypass
   lists (S-179), push-actor restrictions (S-178),
   and the enforce-for-admins toggle (S-180) are
-  later slices' wiring over the same effective
-  policy; until they land, no stored list opens this
-  door — a bypass name in a rule does not exempt a
-  direct push from S-170's refusal, and an admin
+  other slices' wiring over the same effective
+  policy; no stored list opens this door silently —
+  a bypass name in a rule does not exempt a direct
+  push from S-170's refusal (S-179's bypass happens
+  only on its own audited road, in
+  samverk/protection_bypass.py), and an admin
   pushing directly is refused like anyone else.
   Branch creation and deletion by direct push are
   pushes to the branch and are refused on the same

@@ -451,7 +451,7 @@ class PullRequestAutoMergeTests(unittest.TestCase):
 
     def test_schema_and_taxonomy_counts(self):
         self.assertEqual(db.schema_version(self.conn), 66)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 119)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
         for name in ("repo.pull_request.auto_merge_arm",
                      "repo.pull_request.auto_merge_cancel",
                      "repo.pull_request.auto_merge_fire"):

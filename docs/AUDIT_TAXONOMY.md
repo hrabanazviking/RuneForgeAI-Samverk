@@ -355,3 +355,16 @@ S-178 (2026-11-06) added no event of its own —
 S-169 rules; judgments write nothing and audit
 nothing, and rule changes ride the frozen
 repo.protection.change, no migration.)
+S-179 (2026-11-06) added
+`repo.protection.bypass` — 120 events:
+29 auth, 79 repo, 12 admin. (Its bypass gate is
+the one audited road over S-169 rules: a named
+bypasser's *use* of a bypass appends this event
+with detail {"branch": ..., "patterns": [...],
+"rule_ids": [...], "bypass_entry": ...,
+"gate": ..., "actor": ...} before the bypass is
+answered yes; the check itself is a pure read,
+no other door exempts a bypass name, and a store
+without an audit log refuses every use. No
+migration — schema stays 66; the bypass list
+already lives in migration 65.)

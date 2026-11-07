@@ -100,9 +100,10 @@ gate asks:
   whose binding on admins is optional, and this
   slice's restriction is not one of them. A rule's
   bypass list (S-179) does not exempt a pusher from
-  this restriction until that slice wires bypass
-  with its audit; until it lands, a bypass name in
-  a rule does not open this door.
+  this restriction at this gate: S-179 wires bypass
+  with its audit on its own road (samverk/
+  protection_bypass.py), and a bypass name in a
+  rule never opens this door silently.
 - **Reads ride S-169's guards, and mutate nothing.**
   Every check reads the evaluation through S-169's
   store, so a stranger to a private repository gets
