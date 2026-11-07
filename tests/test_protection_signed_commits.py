@@ -337,7 +337,7 @@ class ProtectionSignedCommitsTests(unittest.TestCase):
         self.assertIn("carries no signature", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 73)
+        self.assertEqual(schema_version(self.conn), 74)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
 
 

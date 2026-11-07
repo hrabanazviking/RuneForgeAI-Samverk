@@ -241,8 +241,8 @@ class OrganizationTests(unittest.TestCase):
 
     # pins
     def test_migration_69_and_taxonomy_122(self):
-        self.assertEqual(schema_version(self.conn), 73)
-        self.assertEqual(db.MIGRATIONS[-1][0], 73)
+        self.assertEqual(schema_version(self.conn), 74)
+        self.assertEqual(db.MIGRATIONS[-1][0], 74)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
@@ -264,7 +264,7 @@ class OrganizationTests(unittest.TestCase):
                     conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', ?)", (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 73)
+            self.assertEqual(db.schema_version(conn), 74)
             names = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organizations'").fetchall()]
             self.assertEqual(names, ["organizations"])
             member_tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organization_members'").fetchall()]

@@ -70,14 +70,20 @@ never through a second place where the law could differ.
   ``None``, which surfaces must render as *not
   found*, not *forbidden* — a private repository's
   existence is itself private (S-054's law).
-- **Organization membership alone grants nothing
-  yet.** Being a plain member of the owning
-  organization contributes no role in this slice;
-  the org-wide default repository permission is
-  S-192, and until it lands a member's role comes
-  only from the sources above. Internal visibility
-  is S-197: it will add its contribution here, in
-  this one function, when it lands.
+- **Organization membership grants the org
+  default (S-192).** A plain member of the owning
+  organization is contributed the organization's
+  stored default repository permission
+  (``samverk/default_permissions.py``, migration
+  74) — one ladder rung, or nothing when the
+  default is unset or ``none``, which is the
+  answer this engine gave before S-192 landed.
+  The default is a floor for members only: it
+  never reaches a non-member, never applies to a
+  personally owned repository, and never lowers a
+  higher grant. Internal visibility is S-197: it
+  will add its contribution here, in this one
+  function, when it lands.
 - **S-054's answers are preserved.** For every case
   S-054 decided — personal ownership, site admin,
   a collaborator grant (its read / write / admin
@@ -94,8 +100,10 @@ never through a second place where the law could differ.
   (S-049/S-050), organizations (S-185), memberships
   (S-186), teams and links (S-187), the parent tree
   (S-188), the ladder on the link (S-189), and
-  outside collaborator grants (S-191, migration 73
-  — schema 73) are only read here.
+  outside collaborator grants (S-191, migration
+  73) and the organization default permission
+  (S-192, migration 74 — schema 74) are only read
+  here.
 """
 from __future__ import annotations
 
@@ -136,6 +144,7 @@ SOURCE_PRIORITY = {
     "org_owner": 40,
     "team": 30,
     "collaborator": 20,
+    "org_default": 15,
     "visibility": 10,
     "none": 0,
 }
@@ -146,6 +155,7 @@ _SOURCE_WORDS = {
     "org_owner": "Organization owner",
     "team": "Team grant",
     "collaborator": "Collaborator grant",
+    "org_default": "Organization default",
     "visibility": "Public repository",
     "none": "No access",
 }
@@ -189,6 +199,7 @@ def build_contributions(
     org_role: str | None = None,
     team_grants: tuple[tuple[str, str, str], ...] = (),
     collaborator_role: str | None = None,
+    org_default_role: str | None = None,
     visibility: str = "private",
 ) -> list[Contribution]:
     """Every contribution the stated facts make, in
@@ -196,7 +207,10 @@ def build_contributions(
     collaborator or team role outside the ladder is
     refused ``role_invalid`` by the shared validator.
     ``team_grants`` entries are (team the person acts
-    through, team whose grant decided it, role)."""
+    through, team whose grant decided it, role).
+    ``org_default_role`` is S-192's stored default
+    for the owning organization (``none`` or None
+    contributes nothing)."""
     found: list[Contribution] = []
     if is_owner:
         found.append(Contribution(
@@ -229,6 +243,13 @@ def build_contributions(
             source="collaborator",
             detail="a collaborator grant on this "
                    "repository"))
+    if org_default_role is not None and org_default_role != "none":
+        found.append(Contribution(
+            role=validate_role(org_default_role),
+            source="org_default",
+            detail="the organization's default "
+                   "repository permission grants "
+                   "it to every member"))
     if visibility == "public":
         found.append(Contribution(
             role="read", source="visibility",
@@ -402,6 +423,21 @@ class PermissionEngine:
             return None
         return row["role"] if row else None
 
+    def _stored_default_role(
+            self, org_id: int) -> str:
+        """The stored S-192 default for this
+        organization ('none' when unset), read from
+        migration 74's table; a database that
+        predates it simply holds no default."""
+        try:
+            row = self._conn.execute(
+                "SELECT role FROM org_default_permissions"
+                " WHERE org_id = ?",
+                (org_id,)).fetchone()
+        except sqlite3.OperationalError:
+            return "none"
+        return row["role"] if row else "none"
+
     # -- the one function --------------------------------
     def resolve(
         self, viewer: User | None, repo: Repository,
@@ -417,6 +453,7 @@ class PermissionEngine:
         is_site_admin = False
         org_role: str | None = None
         team_grants: tuple[tuple[str, str, str], ...] = ()
+        org_default_role: str | None = None
         if viewer is not None:
             is_owner = (viewer.username_lower
                         == repo.owner_lower)
@@ -428,6 +465,9 @@ class PermissionEngine:
                 if not is_site_admin and org_role != "owner":
                     team_grants = self._team_grants(
                         viewer, org.id, repo.id)
+                if org_role == "member":
+                    org_default_role = (
+                        self._stored_default_role(org.id))
         effective_collaborator = collaborator_role
         if effective_collaborator is None and viewer is not None:
             effective_collaborator = (
@@ -437,6 +477,7 @@ class PermissionEngine:
             org_role=org_role, team_grants=team_grants,
             collaborator_role=effective_collaborator
             if viewer is not None else None,
+            org_default_role=org_default_role,
             visibility=repo.visibility))
         detail = decision.detail
         if decision.role is None and repo.visibility != "public":
@@ -553,10 +594,11 @@ def render_resolution_page(resolution: Resolution) -> str:
         "administration, organization ownership, team grants "
         "with nesting, collaborator grants and visibility in "
         "one function, and reports the highest role with the "
-        "source that granted it. Organization membership "
-        "alone grants nothing until the default repository "
-        "permission (S-192) lands; collaborator grants are "
-        "stored per repository from S-191.</p>",
+        "source that granted it. The organization's "
+        "default repository permission (S-192) grants every "
+        "member its rung in the organization's repositories; "
+        "collaborator grants are stored per repository from "
+        "S-191.</p>",
         f"<p>Viewer: {escape_html_text(who)}.</p>",
         "</body></html>",
     ]

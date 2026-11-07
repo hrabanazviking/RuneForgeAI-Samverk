@@ -1549,6 +1549,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_outside_collaborators_user"
         " ON outside_collaborators (user_id)",
     ]),
+    # S-192: default repository permission — the
+    # org-wide base ladder role for members, one
+    # row per organization that has set one; no
+    # row means none. Judged in
+    # samverk/default_permissions.py.
+    (74, [
+        "CREATE TABLE org_default_permissions ("
+        "  org_id INTEGER NOT NULL PRIMARY KEY,"
+        "  role TEXT NOT NULL,"
+        "  set_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 

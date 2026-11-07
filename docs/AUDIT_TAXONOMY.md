@@ -500,3 +500,22 @@ no-op that audits nothing, and the model is
 enforced in samverk/outside_collaborators.py.
 S-190's permission engine reads the store when
 no explicit collaborator role is passed.)
+
+S-192 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its default-permission changes ride the existing
+`auth.organization.update` event with detail
+{"fields": "default_permission", "action":
+"set_default", "from": ..., "to": ...}, targeted
+at the organization; the default — one org-wide
+base ladder role, or none, for members, settable
+by an organization owner or a site admin, shown
+in effect on S-190's matrix page with the source
+Organization default — is stored by migration 74
+in org_default_permissions — schema moves 73 to
+74. Refused sets write nothing and audit nothing,
+a same-value set is a no-op that audits nothing,
+and the model is enforced in
+samverk/default_permissions.py. S-190's permission
+engine reads the stored default for plain members
+of the owning organization.)
