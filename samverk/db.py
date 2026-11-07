@@ -1691,6 +1691,60 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_instance_group_repos_repo"
         " ON instance_group_repositories (repo_id)",
     ]),
+    # S-205: search index architecture — the background
+    # index queue (one row per pending/running/finished
+    # unit of indexing work, coalesced by dedupe_key),
+    # the per-(repository, kind) index state (status,
+    # generation, high-water mark), and the document
+    # registry later Part X slices write their indexed
+    # documents into (keyed by generation, so a rebuild
+    # never serves stale-generation rows). Judged in
+    # samverk/index_architecture.py.
+    (80, [
+        "CREATE TABLE index_jobs ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  trigger_kind TEXT NOT NULL,"
+        "  target TEXT NOT NULL DEFAULT '',"
+        "  dedupe_key TEXT NOT NULL UNIQUE,"
+        "  status TEXT NOT NULL DEFAULT 'pending',"
+        "  attempts INTEGER NOT NULL DEFAULT 0,"
+        "  generation INTEGER NOT NULL DEFAULT 0,"
+        "  enqueued_at INTEGER NOT NULL,"
+        "  started_at INTEGER,"
+        "  finished_at INTEGER,"
+        "  last_error TEXT NOT NULL DEFAULT ''"
+        ")",
+        "CREATE INDEX idx_index_jobs_pending"
+        " ON index_jobs (status, id)",
+        "CREATE INDEX idx_index_jobs_repo"
+        " ON index_jobs (repo_id, kind, id)",
+        "CREATE TABLE index_state ("
+        "  repo_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  status TEXT NOT NULL DEFAULT 'never',"
+        "  generation INTEGER NOT NULL DEFAULT 0,"
+        "  high_water TEXT NOT NULL DEFAULT '',"
+        "  updated_at INTEGER NOT NULL DEFAULT 0,"
+        "  last_error TEXT NOT NULL DEFAULT '',"
+        "  PRIMARY KEY (repo_id, kind)"
+        ")",
+        "CREATE TABLE index_documents ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  doc_key TEXT NOT NULL,"
+        "  commit_oid TEXT NOT NULL DEFAULT '',"
+        "  path TEXT NOT NULL DEFAULT '',"
+        "  digest TEXT NOT NULL DEFAULT '',"
+        "  generation INTEGER NOT NULL DEFAULT 0,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, kind, doc_key)"
+        ")",
+        "CREATE INDEX idx_index_documents_repo"
+        " ON index_documents (repo_id, kind, generation)",
+    ]),
 ]
 
 

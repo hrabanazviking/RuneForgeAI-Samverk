@@ -736,3 +736,26 @@ instance_group_members and
 instance_group_repositories -- schema moves 78
 to 79, and the model is enforced in
 samverk/instance_groups.py.)
+
+S-205 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its index architecture is derived bookkeeping
+over acts already on the record -- the accepted
+push's S-090 event and each mutation's own audit
+-- so enqueueing, claiming, completing, failing
+and rebuilding write no audit row, in
+samverk/index_architecture.py: the closed catalog
+of what is indexed (issues, pull requests,
+commits, code), the pure trigger law (commits and
+code on push, issues and pull requests on
+mutation), the coverage law for code (size budget,
+binary / oversized / submodule / ignored / empty
+skipped for named reasons, LFS pointers indexed
+as pointers), the coalescing background queue
+with retry-to-dead, the per-(repository, kind)
+state with its high-water mark, and rebuilds by
+generation, where the served generation flips
+only when a rebuild completes. The admin-facing,
+audited rebuild door is S-215's, not this slice's.
+Storage is migration 80's index_jobs, index_state
+and index_documents -- schema moves 79 to 80.)
