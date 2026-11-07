@@ -1646,6 +1646,51 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  scheduled_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-203: instance-wide groups — site-level groups
+    # shaped exactly like S-187's teams, minus the
+    # organization: one row per group (slug unique
+    # across the whole instance), its members (any
+    # account on the instance), its linked
+    # repositories (any repository, carrying S-189's
+    # ladder permission), and one parent group for
+    # S-188-shaped nesting. Judged in
+    # samverk/instance_groups.py.
+    (79, [
+        "CREATE TABLE instance_groups ("
+        "  id INTEGER PRIMARY KEY,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL UNIQUE,"
+        "  description TEXT,"
+        "  privacy TEXT NOT NULL DEFAULT 'visible',"
+        "  parent_group_id INTEGER,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE TABLE instance_group_members ("
+        "  group_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  added_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (group_id, user_id)"
+        ")",
+        "CREATE INDEX idx_instance_group_members_group"
+        " ON instance_group_members (group_id)",
+        "CREATE INDEX idx_instance_group_members_user"
+        " ON instance_group_members (user_id)",
+        "CREATE TABLE instance_group_repositories ("
+        "  group_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  permission TEXT NOT NULL DEFAULT 'read',"
+        "  added_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (group_id, repo_id)"
+        ")",
+        "CREATE INDEX idx_instance_group_repos_group"
+        " ON instance_group_repositories (group_id)",
+        "CREATE INDEX idx_instance_group_repos_repo"
+        " ON instance_group_repositories (repo_id)",
+    ]),
 ]
 
 
