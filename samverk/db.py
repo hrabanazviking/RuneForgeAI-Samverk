@@ -1619,6 +1619,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_team_mentions_team"
         " ON team_mention_notifications (team_id, id)",
     ]),
+    # S-196: org repository creation policies — who
+    # may create and which visibilities are allowed,
+    # one row per organization that has set a policy;
+    # no row means the default (owners; public and
+    # private). Judged in samverk/org_repositories.py.
+    (77, [
+        "CREATE TABLE org_repo_policies ("
+        "  org_id INTEGER NOT NULL PRIMARY KEY,"
+        "  who_may_create TEXT NOT NULL,"
+        "  allowed_visibilities TEXT NOT NULL,"
+        "  set_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 
