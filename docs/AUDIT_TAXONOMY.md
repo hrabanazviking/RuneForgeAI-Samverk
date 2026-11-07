@@ -709,3 +709,30 @@ billing would put a billing concept in this
 vocabulary to say there is none. The why also
 lives in docs/BILLING.md. No migration was
 needed -- schema stays 78.)
+
+S-203 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its instance-wide group acts ride the existing
+`admin.settings.change` event -- the instance-
+settings door the two-factor policy already uses:
+creating, updating, adding and removing members,
+linking and unlinking repositories, setting a
+linked repository's ladder permission and setting
+or clearing a parent each write one event targeted
+at the instance with the group's slug as target and
+detail {"fields": "instance_groups", "action": ...}
+plus the act's own names (target username, repo
+full name, role, parent slug); a permission set to
+the rung already held is a no-op that audits
+nothing, and refusals write nothing and audit
+nothing. The groups -- site-level groups sharing
+the team machinery of S-187/S-188/S-189, managed
+by site admins alone, their membership and grants
+asked by Part XVIII's admin policy through the
+seam's three answers (is_effective_member,
+effective_groups_for_user, group_role_for_user) --
+are stored by migration 79 in instance_groups,
+instance_group_members and
+instance_group_repositories -- schema moves 78
+to 79, and the model is enforced in
+samverk/instance_groups.py.)
