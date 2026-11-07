@@ -424,3 +424,16 @@ to 69. Refused membership changes write nothing
 and audit nothing, and the last-owner invariant
 — the last owner cannot leave or be removed —
 is enforced in samverk/organization_members.py.)
+S-187 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its team changes ride the existing
+`auth.organization.update` event with
+detail {"fields": "teams", "action": "create" /
+"update" / "add_member" / "remove_member" /
+"link_repo" / "unlink_repo", "team": ...};
+teams are stored by migration 70 in teams,
+team_members and team_repositories — schema
+moves 69 to 70. Refused team changes write
+nothing and audit nothing, secret teams answer
+the uniform team_not_found to non-members, and
+the model is enforced in samverk/teams.py.)

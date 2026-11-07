@@ -1469,6 +1469,49 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_organization_members_org"
         " ON organization_members (org_id)",
     ]),
+    # S-187: teams — one row per team inside an
+    # organization (name unique inside the org via
+    # (org_id, name_lower) slug), its members (org
+    # members only, judged in samverk/teams.py), and
+    # its linked repositories (what a team may do in
+    # a linked repo — the permission ladder — is
+    # S-189; this table only stores the linkage).
+    (70, [
+        "CREATE TABLE teams ("
+        "  id INTEGER PRIMARY KEY,"
+        "  org_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  description TEXT,"
+        "  privacy TEXT NOT NULL DEFAULT 'visible',"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (org_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_teams_org"
+        " ON teams (org_id, id)",
+        "CREATE TABLE team_members ("
+        "  team_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  added_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (team_id, user_id)"
+        ")",
+        "CREATE INDEX idx_team_members_team"
+        " ON team_members (team_id)",
+        "CREATE TABLE team_repositories ("
+        "  team_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  added_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (team_id, repo_id)"
+        ")",
+        "CREATE INDEX idx_team_repositories_team"
+        " ON team_repositories (team_id)",
+        "CREATE INDEX idx_team_repositories_repo"
+        " ON team_repositories (repo_id)",
+    ]),
 ]
 
 
