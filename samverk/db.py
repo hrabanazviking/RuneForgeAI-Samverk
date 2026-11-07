@@ -1380,6 +1380,49 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE protection_rules ADD COLUMN"
         " require_last_pusher_approval INTEGER NOT NULL DEFAULT 0",
     ]),
+    # S-181: rulesets — one row per ruleset: its name
+    # (unique across the instance, case-insensitively,
+    # via name_lower), its target (branch / tag / all),
+    # the repository / branch / tag name patterns it
+    # aims at (JSON lists, judged by S-169's glob), and
+    # the whole Part VIII policy shape it carries — the
+    # same columns migration 65 gave protection_rules,
+    # because a ruleset generalises a rule and layers
+    # over per-repository rules with S-169's own
+    # most-restrictive-wins fold (the model, targeting,
+    # ordering, and layered evaluation live in
+    # samverk/protection_rulesets.py).
+    (67, [
+        "CREATE TABLE protection_rulesets ("
+        "  id INTEGER PRIMARY KEY,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL UNIQUE,"
+        "  target TEXT NOT NULL DEFAULT 'branch',"
+        "  repo_patterns TEXT NOT NULL DEFAULT '[]',"
+        "  branch_patterns TEXT NOT NULL DEFAULT '[]',"
+        "  tag_patterns TEXT NOT NULL DEFAULT '[]',"
+        "  enabled INTEGER NOT NULL DEFAULT 1,"
+        "  require_pull_request INTEGER NOT NULL DEFAULT 0,"
+        "  required_approvals INTEGER NOT NULL DEFAULT 0,"
+        "  require_last_pusher_approval INTEGER NOT NULL DEFAULT 0,"
+        "  dismiss_stale_reviews INTEGER NOT NULL DEFAULT 0,"
+        "  require_code_owner_review INTEGER NOT NULL DEFAULT 0,"
+        "  required_status_checks TEXT NOT NULL DEFAULT '[]',"
+        "  require_branch_up_to_date INTEGER NOT NULL DEFAULT 0,"
+        "  require_signed_commits INTEGER NOT NULL DEFAULT 0,"
+        "  require_linear_history INTEGER NOT NULL DEFAULT 0,"
+        "  block_force_pushes INTEGER NOT NULL DEFAULT 1,"
+        "  block_branch_deletion INTEGER NOT NULL DEFAULT 1,"
+        "  enforce_admins INTEGER NOT NULL DEFAULT 1,"
+        "  allowed_push_actors TEXT NOT NULL DEFAULT '[]',"
+        "  bypass_actors TEXT NOT NULL DEFAULT '[]',"
+        "  created_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_protection_rulesets_name"
+        " ON protection_rulesets (name_lower, id)",
+    ]),
 ]
 
 

@@ -125,7 +125,8 @@ from .repositories import Repository, RepositoryError, RepositoryStore
 __all__ = [
     "PATTERN_MAX", "EffectiveProtection", "ProtectionEvaluation",
     "ProtectionRule", "ProtectionRuleError", "ProtectionRuleStore",
-    "ProtectionSettings", "evaluate_rules", "matches_pattern",
+    "ProtectionSettings", "evaluate_rules", "fold_settings",
+    "matches_pattern",
     "order_rules", "pattern_specificity", "render_protection_evaluation",
     "render_protection_rule", "validate_pattern",
 ]
@@ -509,6 +510,71 @@ class ProtectionEvaluation:
                 f"rule requires: {body}.")
 
 
+def fold_settings(shapes) -> ProtectionSettings | None:
+    """The most-restrictive-wins fold itself, over any
+    iterable of `ProtectionSettings` in judgment order:
+    every boolean requirement holds when ANY shape
+    requires it; the required approval count is the
+    maximum; required status checks are the union, in
+    order; and the actor lists combine by intersection
+    — a pusher must be allowed by every shape that
+    restricts pushing, and a bypasser bypasses only
+    when every shape names them (a shape whose bypass
+    list is empty names nobody, so it closes the door
+    for the whole fold). No shapes fold to None (no
+    policy). This is the ONE fold: `evaluate_rules`
+    folds S-169 rules with it, and S-181's rulesets
+    layer over rules with it — there is no second
+    algebra."""
+    shapes = list(shapes)
+    if not shapes:
+        return None
+    allowed: tuple | None = None
+    checks: list[str] = []
+    for s in shapes:
+        for name in s.required_status_checks:
+            if name not in checks:
+                checks.append(name)
+        if s.allowed_push_actors:
+            allowed = s.allowed_push_actors if allowed is None else tuple(
+                name for name in allowed if name in s.allowed_push_actors)
+    # Bypass intersects over EVERY shape: a shape whose
+    # bypass list is empty names nobody, so it closes
+    # the door for the fold as a whole.
+    bypass = shapes[0].bypass_actors
+    for other in shapes[1:]:
+        bypass = tuple(
+            name for name in bypass
+            if name in other.bypass_actors)
+    return ProtectionSettings(
+        enabled=True,
+        require_pull_request=any(
+            s.require_pull_request for s in shapes),
+        required_approvals=max(
+            s.required_approvals for s in shapes),
+        require_last_pusher_approval=any(
+            s.require_last_pusher_approval for s in shapes),
+        dismiss_stale_reviews=any(
+            s.dismiss_stale_reviews for s in shapes),
+        require_code_owner_review=any(
+            s.require_code_owner_review for s in shapes),
+        required_status_checks=tuple(checks),
+        require_branch_up_to_date=any(
+            s.require_branch_up_to_date for s in shapes),
+        require_signed_commits=any(
+            s.require_signed_commits for s in shapes),
+        require_linear_history=any(
+            s.require_linear_history for s in shapes),
+        block_force_pushes=any(
+            s.block_force_pushes for s in shapes),
+        block_branch_deletion=any(
+            s.block_branch_deletion for s in shapes),
+        enforce_admins=any(
+            s.enforce_admins for s in shapes),
+        allowed_push_actors=() if allowed is None else allowed,
+        bypass_actors=bypass)
+
+
 def evaluate_rules(rules, branch: str, *,
                      full_name: str = "") -> ProtectionEvaluation:
     """The pure half of evaluation: from any iterable
@@ -524,51 +590,9 @@ def evaluate_rules(rules, branch: str, *,
         return ProtectionEvaluation(
             full_name=full_name, branch=branch,
             matching=(), effective=None)
-    allowed: tuple | None = None
-    checks: list[str] = []
-    for rule in matching:
-        s = rule.settings
-        for name in s.required_status_checks:
-            if name not in checks:
-                checks.append(name)
-        if s.allowed_push_actors:
-            allowed = s.allowed_push_actors if allowed is None else tuple(
-                name for name in allowed if name in s.allowed_push_actors)
-    # Bypass intersects over EVERY matching rule: a rule
-    # whose bypass list is empty names nobody, so it
-    # closes the door for the branch as a whole.
-    bypass = matching[0].settings.bypass_actors
-    for other in matching[1:]:
-        bypass = tuple(
-            name for name in bypass
-            if name in other.settings.bypass_actors)
-    effective_settings = ProtectionSettings(
-        enabled=True,
-        require_pull_request=any(
-            r.settings.require_pull_request for r in matching),
-        required_approvals=max(
-            r.settings.required_approvals for r in matching),
-        require_last_pusher_approval=any(
-            r.settings.require_last_pusher_approval for r in matching),
-        dismiss_stale_reviews=any(
-            r.settings.dismiss_stale_reviews for r in matching),
-        require_code_owner_review=any(
-            r.settings.require_code_owner_review for r in matching),
-        required_status_checks=tuple(checks),
-        require_branch_up_to_date=any(
-            r.settings.require_branch_up_to_date for r in matching),
-        require_signed_commits=any(
-            r.settings.require_signed_commits for r in matching),
-        require_linear_history=any(
-            r.settings.require_linear_history for r in matching),
-        block_force_pushes=any(
-            r.settings.block_force_pushes for r in matching),
-        block_branch_deletion=any(
-            r.settings.block_branch_deletion for r in matching),
-        enforce_admins=any(
-            r.settings.enforce_admins for r in matching),
-        allowed_push_actors=() if allowed is None else allowed,
-        bypass_actors=bypass)
+    effective_settings = fold_settings(
+        [rule.settings for rule in matching])
+    assert effective_settings is not None
     return ProtectionEvaluation(
         full_name=full_name, branch=branch, matching=matching,
         effective=EffectiveProtection(

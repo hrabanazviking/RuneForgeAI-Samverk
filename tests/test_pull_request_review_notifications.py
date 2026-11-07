@@ -393,7 +393,7 @@ class ReviewNotificationTests(unittest.TestCase):
 
     # -- the record itself ------------------------------------------------------
     def test_migration_64_shape_and_pins(self):
-        self.assertEqual(schema_version(self.conn), 66)
+        self.assertEqual(schema_version(self.conn), 67)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
         cols = {r["name"] for r in self.conn.execute(
             "PRAGMA table_info(pull_request_review_notifications)"
