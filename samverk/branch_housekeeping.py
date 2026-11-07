@@ -56,11 +56,10 @@ hint is a companion surface, not built here.
   not the base branch it landed on; (5) the head
   branch is not the head repository's HEAD target;
   (6) the head branch is not protected —
-  `_branch_is_protected` is a named seam returning
-  no-rules today because branch protection (Part
-  VIII, S-169/S-177) does not exist yet; S-177 wires
-  the real rule evaluation into THIS predicate, and
-  no caller inlines a weaker copy; (7) the ref still
+  `_branch_is_protected` is a named seam that S-177
+  wired to the real S-169 rule evaluation: the hook
+  passes its protection rule store into THIS
+  predicate, and no caller inlines a weaker copy; (7) the ref still
   resolves. Only branch refs are ever touched —
   never tags, never `refs/remotes/*`.
 - **Deletion is exact, in an exact order.** Resolve
@@ -151,6 +150,7 @@ from .accounts import AccountStore, User
 from .audit import AuditLog
 from .escaping import escape_html_text
 from .permissions import can_read, can_write
+from .protection_rules import ProtectionRuleStore
 from .refs import RefError, RefStore, branch_ref
 from .repositories import Repository, RepositoryError, RepositoryStore
 
@@ -268,24 +268,34 @@ def _is_merged_state(state: object) -> bool:
 
 # -- the one deletability predicate --------------------------------
 
-def _branch_is_protected(repo: Repository, branch: str) -> bool:
+def _branch_is_protected(repo: Repository, branch: str, *,
+                         rules: ProtectionRuleStore | None = None,
+                         viewer: User | None = None) -> bool:
     """The protection seam (design S-159 §2.4 guard 6).
 
-    Branch protection does not exist yet (Part VIII:
-    the rule model lands in S-169, deletion blocking
-    in S-177), so at S-159 no protection rule matches
-    and this returns False. S-177 wires the real rule
-    evaluation into this one function; every caller
+    S-177 wires the real rule evaluation into this one
+    function: when the caller supplies the S-169 rule
+    store, a branch any enabled protection rule
+    attaches to is protected, read through
+    `ProtectionRuleStore.is_protected` — matching and
+    the fold are S-169's, never re-derived here. A
+    caller that supplies no store gets the no-rules
+    answer (False): the only production caller, the
+    merge hook below, always supplies its store, with
+    the merging actor as the viewer, so the hook's
+    guard 6 is the real evaluation. Every caller
     routes through `is_deletable_branch`, never an
-    inlined copy, so a branch matching a protection
-    pattern becomes undeletable on the merge path
-    with no change to the merge path itself."""
-    return False
+    inlined copy."""
+    if rules is None:
+        return False
+    return rules.is_protected(viewer, repo.owner, repo.name, branch)
 
 
 def deletable_guard_reason(repo: Repository, branch: str, *,
                            base_branch: str | None = None,
-                           head_target: str | None = None) -> str:
+                           head_target: str | None = None,
+                           rules: ProtectionRuleStore | None = None,
+                           viewer: User | None = None) -> str:
     """Why `branch` in `repo` may not be deleted, in
     words — empty when it may. Guards 3–6 of the
     design, in order: default branch, base branch
@@ -299,21 +309,24 @@ def deletable_guard_reason(repo: Repository, branch: str, *,
     if head_target is not None and head_target == branch_ref(branch):
         return (f"{branch} is the branch HEAD points at in "
                 f"{repo.full_name}.")
-    if _branch_is_protected(repo, branch):
+    if _branch_is_protected(repo, branch, rules=rules,
+                            viewer=viewer):
         return f"{branch} is a protected branch."
     return ""
 
 
 def is_deletable_branch(repo: Repository, branch: str, *,
                         base_branch: str | None = None,
-                        head_target: str | None = None) -> bool:
+                        head_target: str | None = None,
+                        rules: ProtectionRuleStore | None = None,
+                        viewer: User | None = None) -> bool:
     """The one predicate every deletion decision routes
     through (guards 3–6; the opt-in, merged-state and
     still-resolves guards are the hook's, in
     `BranchHousekeepingService.on_pull_request_merged`)."""
     return not deletable_guard_reason(
         repo, branch, base_branch=base_branch,
-        head_target=head_target)
+        head_target=head_target, rules=rules, viewer=viewer)
 
 
 class BranchHousekeepingService:
@@ -536,7 +549,11 @@ class BranchHousekeepingService:
         reason = deletable_guard_reason(
             head_repo, branch,
             base_branch=pr["base_branch"] if same_repo else None,
-            head_target=refs.head_ref())
+            head_target=refs.head_ref(),
+            rules=ProtectionRuleStore(
+                self._conn, self._repos, self._accounts,
+                audit=self._audit, time_fn=self._now),
+            viewer=actor)
         if reason:
             return outcome("not_deletable", reason)
         # Cross-fork rider: no rights in the fork, no
