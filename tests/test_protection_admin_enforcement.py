@@ -291,7 +291,7 @@ class StoreAdminEnforcementTests(unittest.TestCase):
 
     # -- claims ---------------------------------------------------------
     def test_claims_no_migration_no_new_event(self):
-        self.assertEqual(schema_version(self.conn), 74)
+        self.assertEqual(schema_version(self.conn), 75)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
 
 
