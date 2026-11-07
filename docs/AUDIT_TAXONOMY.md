@@ -478,3 +478,25 @@ It writes nothing and audits nothing, and
 claims no migration — schema stays 72.
 Organization membership alone grants no role
 until S-192's default repository permission.)
+
+S-191 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its outside collaborator changes ride the
+long-standing `repo.collaborator.add`,
+`repo.collaborator.remove` and
+`repo.collaborator.role_change` events with the
+detail shapes this document has always promised
+for them ({"user": ..., "role": ...} on add,
+{"user": ...} on remove, {"user": ..., "from":
+..., "to": ...} on role change), targeted at the
+repository; the grants — per-repo ladder roles
+for non-members, listed in one auditable place
+per repository and per owner, revocable in one
+call — are stored by migration 73 in
+outside_collaborators — schema moves 72 to 73.
+Refused grants, changes and revocations write
+nothing and audit nothing, a same-role set is a
+no-op that audits nothing, and the model is
+enforced in samverk/outside_collaborators.py.
+S-190's permission engine reads the store when
+no explicit collaborator role is passed.)
