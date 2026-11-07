@@ -1589,6 +1589,36 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_org_invitations_email"
         " ON org_invitations (invitee_email_lower)",
     ]),
+    # S-195: team mentions — one addressed notification
+    # row per (source, team, recipient): a prose mention
+    # in an issue/PR body or comment, or a standing team
+    # review request, expanded to the team's S-188
+    # effective members. Judged in samverk/team_mentions.py.
+    (76, [
+        "CREATE TABLE team_mention_notifications ("
+        "  id INTEGER PRIMARY KEY,"
+        "  org_id INTEGER NOT NULL,"
+        "  team_id INTEGER NOT NULL,"
+        "  mention TEXT NOT NULL,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  actor_id INTEGER,"
+        "  source_kind TEXT NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  number INTEGER NOT NULL,"
+        "  comment_id INTEGER NOT NULL DEFAULT 0,"
+        "  pull_request_id INTEGER NOT NULL DEFAULT 0,"
+        "  reason TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (source_kind, repo_id, number, comment_id,"
+        "          pull_request_id, team_id, recipient_id)"
+        ")",
+        "CREATE INDEX idx_team_mentions_recipient"
+        " ON team_mention_notifications (recipient_id, id)",
+        "CREATE INDEX idx_team_mentions_item"
+        " ON team_mention_notifications (repo_id, number, id)",
+        "CREATE INDEX idx_team_mentions_team"
+        " ON team_mention_notifications (team_id, id)",
+    ]),
 ]
 
 
