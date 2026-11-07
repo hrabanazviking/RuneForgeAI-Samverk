@@ -52,15 +52,22 @@ and repos.
   is S-189's slice; until it lands the page says so
   plainly and an unlinked team shows an honest empty
   section, never a pretend permission.
-- **Nested teams are S-188's slice** and are not
-  built here: teams today are flat inside their
-  organization.
+- **Nested teams are S-188's ground**: a team may
+  name one parent team in the same organization
+  (``parent_team_id``, migration 71); the tree, the
+  cycle law, inheritance and the before-saving
+  preview live in ``samverk/team_nesting.py``.
+  Creating a team may name its parent at birth here;
+  the parent must exist (``parent_not_found``) and
+  live in the same organization
+  (``parent_not_in_org``).
 - **Audit:** successful changes ride the existing
   ``auth.organization.update`` event (no new
   taxonomy event — 122 events stand) with detail
   ``{"fields": "teams", "action": ...}``; refusals
   write nothing and audit nothing.
-- **Storage** is migration 70's ``teams``,
+- **Storage** is migration 70's ``teams`` (plus
+  migration 71's ``parent_team_id`` for S-188),
   ``team_members`` and ``team_repositories`` tables
   (schema 69 to 70).
 """
@@ -191,6 +198,7 @@ class Team:
     created_by: int
     created_at: int
     updated_at: int
+    parent_team_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -219,7 +227,8 @@ def _row_to_team(row: sqlite3.Row) -> Team:
         name_lower=row["name_lower"],
         description=row["description"], privacy=row["privacy"],
         created_by=row["created_by"], created_at=row["created_at"],
-        updated_at=row["updated_at"])
+        updated_at=row["updated_at"],
+        parent_team_id=row["parent_team_id"])
 
 
 _MEMBER_SELECT = (
@@ -321,6 +330,7 @@ class TeamStore:
     def create_team(
         self, actor_id: int, org_id: int, name: object, *,
         description: object = None, privacy: object = "visible",
+        parent_team_id: int | None = None,
         source_ip: str | None = None,
     ) -> Team:
         org_row = self._require_org_row(org_id)
@@ -328,6 +338,18 @@ class TeamStore:
         display, slug = validate_team_name(name)
         clean_privacy = validate_privacy(privacy)
         clean_desc = _clean_description(description)
+        if parent_team_id is not None:
+            prow = self._conn.execute(
+                "SELECT org_id FROM teams WHERE id = ?",
+                (parent_team_id,)).fetchone()
+            if prow is None:
+                raise OrganizationError(
+                    "parent_not_found", "No such parent team.")
+            if prow["org_id"] != org_id:
+                raise OrganizationError(
+                    "parent_not_in_org",
+                    "A team's parent must be a team in the "
+                    "same organization.")
         clash = self._conn.execute(
             "SELECT id FROM teams WHERE org_id = ? AND name_lower = ?",
             (org_id, slug)).fetchone()
@@ -340,9 +362,10 @@ class TeamStore:
             cur = self._conn.execute(
                 "INSERT INTO teams (org_id, name, name_lower,"
                 " description, privacy, created_by, created_at,"
-                " updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                " updated_at, parent_team_id)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (org_id, display, slug, clean_desc, clean_privacy,
-                 actor.id, now, now))
+                 actor.id, now, now, parent_team_id))
             team_id = int(cur.lastrowid)
             self._conn.execute(
                 "INSERT INTO team_members (team_id, user_id,"

@@ -1512,6 +1512,14 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_team_repositories_repo"
         " ON team_repositories (repo_id)",
     ]),
+    # S-188: nested teams — a team may name one parent
+    # team in the same organization (NULL = a root).
+    # Inheritance is judged in samverk/team_nesting.py.
+    (71, [
+        "ALTER TABLE teams ADD COLUMN parent_team_id INTEGER",
+        "CREATE INDEX idx_teams_parent"
+        " ON teams (parent_team_id)",
+    ]),
 ]
 
 

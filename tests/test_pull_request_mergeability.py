@@ -411,7 +411,7 @@ class MergeabilityTests(unittest.TestCase):
         # no migration and no audit event, so both counts
         # stand where S-152 left them, and asking the
         # question moves neither.
-        self.assertEqual(db.schema_version(self.conn), 70)
+        self.assertEqual(db.schema_version(self.conn), 71)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
 
 
