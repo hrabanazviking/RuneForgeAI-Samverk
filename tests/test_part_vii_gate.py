@@ -778,12 +778,12 @@ class PartVIIGateTests(unittest.TestCase):
         # The gate builds nothing of its own: no migration,
         # no taxonomy event — the assembled system stands
         # exactly where S-167 left it.
-        self.assertEqual(schema_version(self.conn), 68)
+        self.assertEqual(schema_version(self.conn), 69)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         pr, path, base_oid, head_oid = self._open_same("pub")
         self.merge.merge_pull_request(
             self.owner, "volmarr", "pub", pr.number)
-        self.assertEqual(schema_version(self.conn), 68)
+        self.assertEqual(schema_version(self.conn), 69)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         ok, bad, _ = verify_chain(self.conn)
         self.assertTrue(ok, bad)

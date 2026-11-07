@@ -223,7 +223,7 @@ class OrganizationTests(unittest.TestCase):
         by_key = {a["key"]: a for a in areas}
         self.assertTrue(by_key["profile"]["available"])
         self.assertTrue(by_key["avatar"]["available"])
-        self.assertFalse(by_key["members"]["available"])
+        self.assertTrue(by_key["members"]["available"])
         self.assertEqual(by_key["members"]["slice"], "S-186")
         self.assertEqual(by_key["danger"]["slice"], "S-199")
 
@@ -232,15 +232,15 @@ class OrganizationTests(unittest.TestCase):
         html = render_settings_home(org)
         self.assertIn("/orgs/crew/settings/profile", html)
         self.assertIn("/orgs/crew/settings/avatar", html)
+        self.assertIn("/orgs/crew/settings/members", html)
         self.assertIn("Members", html)
         self.assertIn("Not yet built", html)
-        self.assertIn("S-186", html)
-        self.assertNotIn("/orgs/crew/settings/members\"", html)
+        self.assertIn("S-187", html)
 
     # pins
-    def test_migration_68_and_taxonomy_122(self):
-        self.assertEqual(schema_version(self.conn), 68)
-        self.assertEqual(db.MIGRATIONS[-1][0], 68)
+    def test_migration_69_and_taxonomy_122(self):
+        self.assertEqual(schema_version(self.conn), 69)
+        self.assertEqual(db.MIGRATIONS[-1][0], 69)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
@@ -254,7 +254,7 @@ class OrganizationTests(unittest.TestCase):
             path = Path(td) / "old.db"
             conn = db.connect(path)
             for version, statements in db.MIGRATIONS:
-                if version > 67:
+                if version > 68:
                     continue
                 with conn:
                     for stmt in statements:
@@ -262,9 +262,11 @@ class OrganizationTests(unittest.TestCase):
                     conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', ?)", (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 68)
+            self.assertEqual(db.schema_version(conn), 69)
             names = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organizations'").fetchall()]
             self.assertEqual(names, ["organizations"])
+            member_tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organization_members'").fetchall()]
+            self.assertEqual(member_tables, ["organization_members"])
             conn.close()
 
 

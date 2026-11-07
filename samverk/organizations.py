@@ -91,7 +91,7 @@ SETTINGS_AREAS = (
     ("audit_log", "Audit log", "Membership, permission and repository events.", "S-198"),
     ("danger", "Delete organization", "Deleting the organization, with its inventory and grace period.", "S-199"),
 )
-BUILT_AREAS = frozenset({"profile", "avatar"})
+BUILT_AREAS = frozenset({"profile", "avatar", "members"})
 
 
 class OrganizationError(ValueError):
