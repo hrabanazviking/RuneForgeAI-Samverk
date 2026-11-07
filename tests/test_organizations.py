@@ -219,7 +219,7 @@ class OrganizationTests(unittest.TestCase):
     def test_settings_areas_complete_map(self):
         areas = settings_areas()
         keys = [a["key"] for a in areas]
-        self.assertEqual(keys, ["profile", "avatar", "members", "teams", "team_permissions", "repositories", "audit_log", "danger"])
+        self.assertEqual(keys, ["profile", "avatar", "members", "teams", "team_permissions", "repositories", "audit_log", "billing", "danger"])
         by_key = {a["key"]: a for a in areas}
         self.assertTrue(by_key["profile"]["available"])
         self.assertTrue(by_key["avatar"]["available"])
