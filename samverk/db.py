@@ -1423,6 +1423,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_protection_rulesets_name"
         " ON protection_rulesets (name_lower, id)",
     ]),
+    # S-185: organizations — one row per organization:
+    # its name (unique case-insensitively via
+    # name_lower, in the same owner namespace as user
+    # accounts), its profile (display name, bio,
+    # website, and the S-012 avatar facts plus the
+    # mandatory alt text), and its recorded creator —
+    # the steward until S-186's membership lands (the
+    # model lives in samverk/organizations.py).
+    (68, [
+        "CREATE TABLE organizations ("
+        "  id INTEGER PRIMARY KEY,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL UNIQUE,"
+        "  display_name TEXT,"
+        "  bio TEXT,"
+        "  website TEXT,"
+        "  avatar_sha256 TEXT,"
+        "  avatar_content_type TEXT,"
+        "  avatar_alt TEXT,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_organizations_name"
+        " ON organizations (name_lower, id)",
+    ]),
 ]
 
 

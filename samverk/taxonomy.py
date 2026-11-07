@@ -56,6 +56,9 @@ AUTH_EVENTS = frozenset({
     # S-045 additions (append-only, per the taxonomy rules):
     "auth.identity.link",
     "auth.identity.unlink",
+    # S-185 additions (append-only, per the taxonomy rules):
+    "auth.organization.create",
+    "auth.organization.update",
 })
 
 REPO_EVENTS = frozenset({

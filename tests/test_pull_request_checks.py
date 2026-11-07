@@ -316,10 +316,10 @@ class PullRequestChecksTests(unittest.TestCase):
     # -- counts and render ---------------------------------------------
 
     def test_schema_version_and_taxonomy_counts(self):
-        self.assertEqual(db.schema_version(self.conn), 67)
+        self.assertEqual(db.schema_version(self.conn), 68)
         # S-157 adds no audit event: the poster's scoped
         # identity and its audit-logging are S-246's law.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         self.assertIn("repo.pull_request.review_request",
                       taxonomy.AUDIT_EVENTS)
 

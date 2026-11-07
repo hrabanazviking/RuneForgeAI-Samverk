@@ -402,3 +402,13 @@ outcome is denied or failure, explained in
 plain words from the recorded action, reason
 and detail; reads write nothing and audit
 nothing, no migration — schema stays 67.)
+S-185 (2026-11-07) added
+`auth.organization.create` and
+`auth.organization.update` — 122 events:
+31 auth, 79 repo, 12 admin. (Creation of an
+organization appends the create event with detail
+{"org": ...}; profile and avatar changes append
+the update event with detail {"fields": "text"}
+or {"fields": "avatar"}. Organizations are stored
+by migration 68 in organizations — schema moves
+67 to 68.)
