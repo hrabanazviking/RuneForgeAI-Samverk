@@ -608,3 +608,26 @@ not even as a count. Storage is migration 77
 in org_repo_policies — schema moves 76 to 77.
 Refusals and no-op policy sets write nothing
 and audit nothing.)
+
+S-198 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its org audit log is a pure read in
+samverk/org_audit_log.py: OrgAuditLogStore
+reads S-007's audit_log and returns, in
+sequence order, the rows that belong to one
+organization — rows targeted at the organization
+itself, and rows targeted at a repository under
+the organization's own first path segment, so
+org `crew` never claims `crew2/repo`. Each row
+is sorted purely by classify_event into
+membership, permission, repository or
+organization, and carried with a plain-words
+summary from event_summary. Only an
+organization owner or a site admin may read;
+a plain member or a stranger is refused
+not_org_owner, an unknown organization is
+org_not_found, an unknown viewer is
+no_such_user, and an unknown category filter
+is category_invalid. No migration — schema
+stays 77. Reading writes nothing and audits
+nothing.)
