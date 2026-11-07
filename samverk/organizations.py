@@ -89,11 +89,12 @@ SETTINGS_AREAS = (
     ("team_permissions", "Team repository permissions", "What each team may do in each repository.", "S-189"),
     ("repositories", "Repositories", "Creation policies and the repository list.", "S-196"),
     ("audit_log", "Audit log", "Membership, permission and repository events.", "S-198"),
+    ("billing", "Billing", "There is no billing: Samverk is free software on your own machines.", "S-202"),
     ("danger", "Delete organization", "Deleting the organization, with its inventory and grace period.", "S-199"),
 )
 BUILT_AREAS = frozenset({"profile", "avatar", "members", "teams",
                          "team_permissions", "repositories", "audit_log",
-                         "danger"})
+                         "billing", "danger"})
 
 
 class OrganizationError(ValueError):

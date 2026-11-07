@@ -689,3 +689,23 @@ preview writes nothing, grants nothing and
 audits nothing -- an audit entry in the target's
 name would be impersonation leakage. No
 migration was needed -- schema stays 78.)
+
+S-202 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its billing-shaped hole is honestly empty, in
+samverk/billing_hole.py: Samverk is free
+software (AGPL-3.0) on your own machines, so no
+seat/billing concepts exist -- no seats, no
+plans, no invoices, no charges -- and the
+billing surface that organizations find in
+their settings says exactly that, in plain
+words, with the emptiness proven by an audit of
+the live schema and of this taxonomy against
+the forbidden billing terms. Every billing
+act is refused `no_billing` before anything is
+touched, and refusals write nothing and audit
+nothing: an entry recording that there is no
+billing would put a billing concept in this
+vocabulary to say there is none. The why also
+lives in docs/BILLING.md. No migration was
+needed -- schema stays 78.)
