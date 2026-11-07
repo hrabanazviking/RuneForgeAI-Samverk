@@ -67,6 +67,12 @@ auditable place, revocable in one click.
   so S-190's answers for caller-supplied grants do
   not change, and stored grants answer exactly as
   caller-supplied ones did.
+- **S-200 guardrail:** demoting or revoking an
+  admin grant is judged by
+  ``samverk/role_change_guardrails.py`` before it
+  writes: a change that would leave the repository
+  with no grant-admin at all is refused
+  ``last_admin`` (see that module for who counts).
 - **Audit:** successful changes ride the existing
   ``repo.collaborator.add`` /
   ``repo.collaborator.remove`` /
@@ -402,6 +408,15 @@ class OutsideCollaboratorStore:
         current = existing["role"]
         if current == clean_role:
             return _row_to_grant(existing)
+        if current == "admin" and clean_role != "admin":
+            # S-200 guardrail (local import for
+            # symmetry with the team door).
+            from .role_change_guardrails import (
+                RoleChangeGuardStore)
+            RoleChangeGuardStore(
+                self._conn, self._accounts,
+                time_fn=self._now).check_collaborator_role_change(
+                    repo_id, grantee.id, current, clean_role)
         now = int(self._now())
         with self._conn:
             self._conn.execute(
@@ -448,6 +463,15 @@ class OutsideCollaboratorStore:
                 "Only the repository owner, an owner of "
                 "the owning organization, or a site admin "
                 "can revoke another person's grant.")
+        if existing["role"] == "admin":
+            # S-200 guardrail: revoking the last
+            # admin grant is refused like demoting it.
+            from .role_change_guardrails import (
+                RoleChangeGuardStore)
+            RoleChangeGuardStore(
+                self._conn, self._accounts,
+                time_fn=self._now).check_collaborator_role_change(
+                    repo_id, grantee.id, "admin", None)
         removed = _row_to_grant(existing)
         with self._conn:
             self._conn.execute(

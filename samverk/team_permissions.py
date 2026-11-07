@@ -52,6 +52,12 @@ The role ladder applied per repo per team.
   sit in (with nesting), collaborator grants and
   visibility in one function — is S-190's engine.
   This slice judges teams only, and says so.
+- **S-200 guardrail:** demoting a team's admin
+  grant is judged by
+  ``samverk/role_change_guardrails.py`` before it
+  writes: a demotion that would leave the
+  repository with no grant-admin at all is refused
+  ``last_admin`` (see that module for who counts).
 - **Audit:** successful changes ride the existing
   ``auth.organization.update`` event (no new
   taxonomy event — 122 events stand) with detail
@@ -333,6 +339,15 @@ class TeamPermissionStore:
         current = row["permission"] or DEFAULT_PERMISSION
         if current == clean_role:
             return self._to_permission(row)
+        if current == "admin" and clean_role != "admin":
+            # S-200 guardrail (local import: the guard
+            # module reads this slice's ladder).
+            from .role_change_guardrails import (
+                RoleChangeGuardStore)
+            RoleChangeGuardStore(
+                self._conn, self._accounts,
+                time_fn=self._now).check_team_permission_change(
+                    repo_id, team.id, current, clean_role)
         with self._conn:
             self._conn.execute(
                 "UPDATE team_repositories SET permission = ?"
