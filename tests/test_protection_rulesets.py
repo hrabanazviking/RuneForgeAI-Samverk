@@ -575,10 +575,10 @@ class RulesetTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------------------------------
     def test_migration_67_and_taxonomy_120(self):
-        self.assertEqual(schema_version(self.conn), 67)
-        self.assertEqual(db.MIGRATIONS[-1][0], 67)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
+        self.assertEqual(schema_version(self.conn), 68)
+        self.assertEqual(db.MIGRATIONS[-1][0], 68)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
         cols = [r["name"] for r in self.conn.execute(
@@ -609,7 +609,7 @@ class RulesetTests(unittest.TestCase):
                         (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 67)
+            self.assertEqual(db.schema_version(conn), 68)
             names = [r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master"
                 " WHERE type = 'table'"

@@ -63,11 +63,12 @@ class TaxonomyTests(unittest.TestCase):
         # S-153 added repo.pull_request.merge;
         # S-154 added repo.pull_request.squash_merge.
         # S-159 added repo.branch.delete_on_merge/restore.
+        # S-185 added auth.organization.create/update.
         # S-179 added repo.protection.bypass.
         # S-158 added repo.pull_request.auto_merge_arm/
         # auto_merge_cancel/auto_merge_fire.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 29)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
 

@@ -212,8 +212,8 @@ class RuleInsightsTests(unittest.TestCase):
         self.assertEqual(REFUSAL_OUTCOMES, frozenset({"denied", "failure"}))
 
     def test_no_migration_no_taxonomy(self):
-        self.assertEqual(schema_version(self.conn), 67)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
+        self.assertEqual(schema_version(self.conn), 68)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
 
 
 if __name__ == "__main__":
