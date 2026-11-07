@@ -1745,6 +1745,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_index_documents_repo"
         " ON index_documents (repo_id, kind, generation)",
     ]),
+    # S-206: issue/PR search backend — the FTS5 index
+    # the unified qualifier language executes over.
+    # One row per numbered item (rowid is the shared
+    # issues row id): title and body are the indexed
+    # text; every other column is a structured field
+    # denormalised at index time (repository, number,
+    # kind, state, author, labels, assignees,
+    # milestone, draft and branch pair for pull
+    # requests, the latest review position, and the
+    # created/updated/comment facts the date and
+    # sort qualifiers judge). Judged in
+    # samverk/issue_pr_search.py.
+    (81, [
+        "CREATE VIRTUAL TABLE issue_pr_fts USING fts5("
+        "  title, body,"
+        "  repo_id UNINDEXED, number UNINDEXED,"
+        "  kind UNINDEXED, state UNINDEXED,"
+        "  author_lower UNINDEXED, labels_lower UNINDEXED,"
+        "  assignees_lower UNINDEXED,"
+        "  milestone_lower UNINDEXED, is_draft UNINDEXED,"
+        "  base_branch UNINDEXED, head_branch UNINDEXED,"
+        "  reviews_latest UNINDEXED,"
+        "  reviews_total UNINDEXED,"
+        "  review_requested UNINDEXED,"
+        "  created_at UNINDEXED, updated_at UNINDEXED,"
+        "  comment_count UNINDEXED"
+        ")",
+    ]),
 ]
 
 
