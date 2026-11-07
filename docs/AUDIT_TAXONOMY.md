@@ -519,3 +519,25 @@ and the model is enforced in
 samverk/default_permissions.py. S-190's permission
 engine reads the stored default for plain members
 of the owning organization.)
+
+S-193 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its invitation acts ride the existing
+`auth.organization.update` event: inviting and
+rescinding write one event targeted at the
+organization with detail {"fields": "invitations",
+"action": "invite" / "rescind", "target": ...},
+and acceptance writes two — one targeted at the
+organization with detail {"fields": "invitations",
+"action": "accept", "target": <invitee>} and one
+targeted at the user with detail {"fields":
+"invitations", "action": "accept", "org": <org>},
+both acted by the accepting user; the invitations
+— by username or email, expiring after seven
+days, rescindable by an organization owner or a
+site admin, their acceptance creating the
+membership with the invited role — are stored by
+migration 75 in org_invitations — schema moves 74
+to 75. Refused invitations, rescinds and
+acceptances write nothing and audit nothing, and
+the model is enforced in samverk/invitations.py.)

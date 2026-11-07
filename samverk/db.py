@@ -1563,6 +1563,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-193: organization invitations — invite by
+    # username or email, expiring, rescindable; one
+    # row per invitation with its target, role,
+    # inviter, status and times. Judged in
+    # samverk/invitations.py.
+    (75, [
+        "CREATE TABLE org_invitations ("
+        "  id INTEGER PRIMARY KEY,"
+        "  org_id INTEGER NOT NULL,"
+        "  invitee_user_id INTEGER,"
+        "  invitee_email TEXT,"
+        "  invitee_email_lower TEXT,"
+        "  role TEXT NOT NULL,"
+        "  invited_by INTEGER NOT NULL,"
+        "  status TEXT NOT NULL DEFAULT 'pending',"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  resolved_at INTEGER"
+        ")",
+        "CREATE INDEX idx_org_invitations_org"
+        " ON org_invitations (org_id)",
+        "CREATE INDEX idx_org_invitations_user"
+        " ON org_invitations (invitee_user_id)",
+        "CREATE INDEX idx_org_invitations_email"
+        " ON org_invitations (invitee_email_lower)",
+    ]),
 ]
 
 
