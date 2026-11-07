@@ -386,3 +386,11 @@ frozen repo.protection.change with detail
 "target": ...}; layered evaluation is a pure
 read over S-169 rules and the rulesets, writes
 nothing, and audits nothing.)
+S-182 (2026-11-06) added no event of its own —
+120 events stand: 29 auth, 79 repo, 12 admin.
+(Its tag-protection judgment is a pure read
+over S-181 rulesets targeting tags plus the
+release-tag strongest default; judgments write
+nothing and audit nothing, and ruleset changes
+ride the frozen repo.protection.change, no
+migration — schema stays 67.)
