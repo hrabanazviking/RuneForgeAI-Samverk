@@ -245,11 +245,11 @@ class OrgAuditLogTests(unittest.TestCase):
         by_key = {a["key"]: a for a in settings_areas()}
         self.assertTrue(by_key["audit_log"]["available"])
         self.assertEqual(by_key["audit_log"]["slice"], "S-198")
-        self.assertFalse(by_key["danger"]["available"])
+        self.assertTrue(by_key["danger"]["available"])
 
-    def test_pins_schema_77_taxonomy_122(self):
-        self.assertEqual(schema_version(self.conn), 77)
-        self.assertEqual(db.MIGRATIONS[-1][0], 77)
+    def test_pins_schema_78_taxonomy_122(self):
+        self.assertEqual(schema_version(self.conn), 78)
+        self.assertEqual(db.MIGRATIONS[-1][0], 78)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
