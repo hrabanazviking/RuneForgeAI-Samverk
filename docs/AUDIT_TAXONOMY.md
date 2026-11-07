@@ -437,3 +437,30 @@ moves 69 to 70. Refused team changes write
 nothing and audit nothing, secret teams answer
 the uniform team_not_found to non-members, and
 the model is enforced in samverk/teams.py.)
+
+S-188 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its nested-team changes ride the existing
+`auth.organization.update` event with
+detail {"fields": "teams", "action": "set_parent" /
+"clear_parent", "team": ..., "parent": ...};
+the parent is stored by migration 71 in
+teams.parent_team_id — schema moves 70 to 71.
+Refused parent changes and previews write nothing
+and audit nothing, and the model is enforced in
+samverk/team_nesting.py. This note was appended
+by S-189's banking, which found it missing.)
+
+S-189 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its team permission changes ride the existing
+`auth.organization.update` event with
+detail {"fields": "teams", "action":
+"set_permission", "team": ..., "repo": ...,
+"permission": ...}; the ladder — read / triage /
+write / maintain / admin, applied per repo per
+team — is stored by migration 72 in
+team_repositories.permission — schema moves 71
+to 72. Refused changes and same-role no-op sets
+write nothing and audit nothing, and the ladder
+is enforced in samverk/team_permissions.py.)

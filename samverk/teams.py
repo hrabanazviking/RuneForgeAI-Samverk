@@ -41,17 +41,19 @@ and repos.
   smuggles an outsider into an organization.
   Membership itself (owners, the last-owner law) is
   S-186's ground and is only read here.
-- **Repositories are linked, not yet permissioned.**
+- **Repositories are linked, and graded by S-189.**
   A team page lists the repositories linked to the
   team (``link_repo`` / ``unlink_repo`` over the
-  ``team_repositories`` table). A repository may
+  ``team_repositories`` table), each with the
+  permission the link carries. A repository may
   only be linked when it belongs to the team's
   organization (``repo_not_in_org`` otherwise).
   What a team may *do* in a linked repository — the
-  read / triage / write / maintain / admin ladder —
-  is S-189's slice; until it lands the page says so
-  plainly and an unlinked team shows an honest empty
-  section, never a pretend permission.
+  read / triage / write / maintain / admin ladder,
+  applied per repo per team — is S-189's ground in
+  ``samverk/team_permissions.py``; a fresh link
+  starts at ``read`` and the ladder is only ever
+  moved there, never guessed here.
 - **Nested teams are S-188's ground**: a team may
   name one parent team in the same organization
   (``parent_team_id``, migration 71); the tree, the
@@ -98,6 +100,9 @@ DESCRIPTION_MAX = 500
 PRIVACIES = frozenset({"visible", "secret"})
 
 _PRIVACY_WORDS = {"visible": "Visible", "secret": "Secret"}
+_PERMISSION_WORDS = {"read": "Read", "triage": "Triage",
+                     "write": "Write", "maintain": "Maintain",
+                     "admin": "Admin"}  # S-189 ladder words
 _SLUG_RUN = re.compile(r"[^a-z0-9]+")
 
 
@@ -219,6 +224,7 @@ class TeamRepository:
     name: str
     description: str
     visibility: str
+    permission: str = "read"  # the S-189 ladder role on this link
 
 
 def _row_to_team(row: sqlite3.Row) -> Team:
@@ -241,7 +247,8 @@ _MEMBER_SELECT = (
 _REPO_SELECT = (
     "SELECT l.team_id AS team_id, r.id AS repo_id,"
     " r.owner AS owner, r.name AS name,"
-    " r.description AS description, r.visibility AS visibility"
+    " r.description AS description, r.visibility AS visibility,"
+    " l.permission AS permission"
     " FROM team_repositories l"
     " JOIN repositories r ON r.id = l.repo_id")
 
@@ -611,7 +618,8 @@ class TeamStore:
             team_id=row["team_id"], repo_id=row["repo_id"],
             owner=row["owner"], name=row["name"],
             description=row["description"],
-            visibility=row["visibility"])
+            visibility=row["visibility"],
+            permission=row["permission"] or "read")
 
     def list_repos(self, org_id: int,
                    team_id: int) -> list[TeamRepository]:
@@ -624,7 +632,8 @@ class TeamStore:
                 team_id=r["team_id"], repo_id=r["repo_id"],
                 owner=r["owner"], name=r["name"],
                 description=r["description"],
-                visibility=r["visibility"])
+                visibility=r["visibility"],
+                permission=r["permission"] or "read")
             for r in rows]
 
 
@@ -633,9 +642,8 @@ def render_team_page(org: Organization, team: Team,
                      repos: list[TeamRepository]) -> str:
     """The team page: name, description and privacy in
     words, then the members and the linked
-    repositories — every value escaped through S-010,
-    and the not-yet-built permission ladder (S-189)
-    stated plainly instead of implied."""
+    repositories, each with its S-189 permission —
+    every value escaped through S-010."""
     parts = [
         "<!DOCTYPE html>",
         '<html lang="en"><head><meta charset="utf-8">',
@@ -671,17 +679,20 @@ def render_team_page(org: Organization, team: Team,
         parts.append("<ul>")
         for repo in repos:
             label = escape_html_text(f"{repo.owner}/{repo.name}")
-            parts.append(f"<li>{label}</li>")
+            word = _PERMISSION_WORDS.get(repo.permission,
+                                         repo.permission)
+            parts.append(
+                f"<li>{label} — {escape_html_text(word)}</li>")
         parts.append("</ul>")
     else:
         parts.append(
-            "<p>No repositories are linked to this team yet. "
-            "What a team may do in a repository — the "
-            "permission ladder — lands with S-189.</p>")
+            "<p>No repositories are linked to this team "
+            "yet.</p>")
     parts.append(
-        "<p>Repository permissions for teams land with "
-        "S-189; this page lists the linked repositories "
-        "until then.</p>")
+        "<p>Repository permissions follow the S-189 ladder "
+        "— read / triage / write / maintain / admin — "
+        "applied per repository per team; a fresh link "
+        "starts at Read.</p>")
     parts.append("</body></html>")
     return "\n".join(parts)
 
