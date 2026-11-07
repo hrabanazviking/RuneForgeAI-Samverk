@@ -587,3 +587,24 @@ in team_mention_notifications — schema moves 75
 to 76. Syncs write no audit row; unknown
 repositories and items raise the uniform
 repo_not_found / issue_not_found.)
+
+S-196 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its org repository creation policies — who may
+create (owners / members / none; owners by
+default) and the allowed visibilities (a
+non-empty subset of public / private; both by
+default), judged purely by decide_creation in
+samverk/org_repositories.py — are set under the
+existing auth.organization.update event with
+detail fields=repositories, and repositories
+created through the policy door audit the
+existing repo.create event. The org repo list
+filters by visibility and by a name/description
+query, and the viewer list keeps only
+repositories S-190's engine lets the viewer
+read, so a private repository never appears,
+not even as a count. Storage is migration 77
+in org_repo_policies — schema moves 76 to 77.
+Refusals and no-op policy sets write nothing
+and audit nothing.)
