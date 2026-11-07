@@ -541,3 +541,26 @@ migration 75 in org_invitations — schema moves 74
 to 75. Refused invitations, rescinds and
 acceptances write nothing and audit nothing, and
 the model is enforced in samverk/invitations.py.)
+
+S-194 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its member removal cascade is a pure preview in
+samverk/member_removal_cascade.py:
+CascadeStore.preview_removal computes — before
+confirming, and writing and auditing nothing —
+the whole effect of removing one member from one
+organization: their role and the last-owner
+refusal judged by S-186's decide_removal,
+direct and S-188-inherited team memberships and
+their teams' repository links, S-126 assignments,
+S-151/S-152 review requests, S-148 submitted and
+pending reviews, S-191 outside-collaborator
+grants held in organization repositories, the
+S-192 default permission floor, pending S-193
+invitations they sent, the organization's and
+their own repositories, and open authored work.
+Removal itself stays S-186's act through the
+existing membership doors. No migration — schema
+stays 75. The preview raises only org_not_found
+and no_such_user; a non-member and the last owner
+are reported in the preview, never raised.)
