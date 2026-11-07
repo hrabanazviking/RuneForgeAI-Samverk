@@ -1529,6 +1529,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE team_repositories"
         " ADD COLUMN permission TEXT NOT NULL DEFAULT 'read'",
     ]),
+    # S-191: outside collaborators — per-repo grants
+    # to non-members, one row per (repository, person)
+    # pair with its S-189 ladder role, its granter and
+    # its times. Judged in
+    # samverk/outside_collaborators.py.
+    (73, [
+        "CREATE TABLE outside_collaborators ("
+        "  repo_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  granted_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (repo_id, user_id)"
+        ")",
+        "CREATE INDEX idx_outside_collaborators_repo"
+        " ON outside_collaborators (repo_id)",
+        "CREATE INDEX idx_outside_collaborators_user"
+        " ON outside_collaborators (user_id)",
+    ]),
 ]
 
 

@@ -46,17 +46,22 @@ never through a second place where the law could differ.
   never lifts a parent team's members beyond what
   that parent team itself effectively holds, and
   inheritance never flows up.
-- **Collaborator grants are caller-supplied until
-  S-191.** No collaborator store exists yet (S-191
-  builds it), so — exactly as S-054's ``role_for`` —
-  the caller who holds a grant passes its role in.
-  A valid grant contributes on any visibility,
-  including private repositories; an invalid one is
-  refused ``role_invalid``. A grant belongs to a
-  person: an anonymous visitor holds none, exactly
-  as S-054 judged. When S-191 lands its
-  store, the grant will be read there instead and
-  the answers for stored grants will not change.
+- **Collaborator grants are read from S-191's
+  store.** Outside collaborators
+  (``samverk/outside_collaborators.py``, migration
+  73) store one ladder role per person per
+  repository, and ``resolve`` reads the stored grant
+  when the caller passes no explicit role — the
+  answers for stored grants are exactly the answers
+  caller-supplied grants gave before S-191. A caller
+  may still pass ``collaborator_role`` explicitly
+  (S-054's seam), and an explicit role wins over the
+  stored one for that call. A valid grant
+  contributes on any visibility, including private
+  repositories; an invalid one is refused
+  ``role_invalid``. A grant belongs to a person: an
+  anonymous visitor holds none, exactly as S-054
+  judged.
 - **Visibility is a floor, never a grant of more.**
   A public repository contributes ``read`` to
   everyone, including anonymous visitors (source
@@ -83,13 +88,14 @@ never through a second place where the law could differ.
   module stays the seam its existing callers use;
   this engine is the generalisation it promised.
 - **Resolution is a pure read.** It writes nothing
-  and audits nothing, claims no migration (schema
-  stays 72) and no taxonomy event (122 stand).
-  Storage stays where the earlier slices put it:
-  repositories (S-049/S-050), organizations
-  (S-185), memberships (S-186), teams and links
-  (S-187), the parent tree (S-188), and the ladder
-  on the link (S-189) are only read here.
+  and audits nothing, claims no migration of its own
+  and no taxonomy event (122 stand). Storage stays
+  where the earlier slices put it: repositories
+  (S-049/S-050), organizations (S-185), memberships
+  (S-186), teams and links (S-187), the parent tree
+  (S-188), the ladder on the link (S-189), and
+  outside collaborator grants (S-191, migration 73
+  — schema 73) are only read here.
 """
 from __future__ import annotations
 
@@ -381,15 +387,32 @@ class PermissionEngine:
                                eff.permission))
         return tuple(grants)
 
+    def _stored_collaborator_role(
+            self, user_id: int, repo_id: int) -> str | None:
+        """The stored S-191 grant for this person in
+        this repository, or None. A plain read of
+        migration 73's table; a database that predates
+        it simply holds no stored grants."""
+        try:
+            row = self._conn.execute(
+                "SELECT role FROM outside_collaborators"
+                " WHERE repo_id = ? AND user_id = ?",
+                (repo_id, user_id)).fetchone()
+        except sqlite3.OperationalError:
+            return None
+        return row["role"] if row else None
+
     # -- the one function --------------------------------
     def resolve(
         self, viewer: User | None, repo: Repository,
         *, collaborator_role: str | None = None,
     ) -> Resolution:
         """The viewer's role in *repo*, with its source
-        and reason. ``collaborator_role`` is the grant
-        the caller holds for this repository until
-        S-191's store lands; it is validated loudly."""
+        and reason. The collaborator contribution is
+        the stored S-191 grant, unless the caller
+        passes ``collaborator_role`` explicitly, which
+        wins for this call; either way it is validated
+        loudly."""
         is_owner = False
         is_site_admin = False
         org_role: str | None = None
@@ -405,10 +428,14 @@ class PermissionEngine:
                 if not is_site_admin and org_role != "owner":
                     team_grants = self._team_grants(
                         viewer, org.id, repo.id)
+        effective_collaborator = collaborator_role
+        if effective_collaborator is None and viewer is not None:
+            effective_collaborator = (
+                self._stored_collaborator_role(viewer.id, repo.id))
         decision = decide_permission(build_contributions(
             is_owner=is_owner, is_site_admin=is_site_admin,
             org_role=org_role, team_grants=team_grants,
-            collaborator_role=collaborator_role
+            collaborator_role=effective_collaborator
             if viewer is not None else None,
             visibility=repo.visibility))
         detail = decision.detail
