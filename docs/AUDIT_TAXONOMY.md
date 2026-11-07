@@ -672,3 +672,20 @@ it. Refusals write nothing and audit nothing,
 successful changes keep riding their doors'
 existing events, and no migration was needed --
 schema stays 78.)
+
+S-201 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its permission preview is a pure read with no
+event at all, deliberately: a site admin views
+the instance exactly as a chosen member sees it
+by resolving that member in every repository
+through S-190's engine, in
+samverk/permission_preview.py. Only a site admin
+may preview (not_site_admin otherwise; an org
+owner is not enough), an unknown actor or target
+is no_such_user, repositories the target holds
+no role in are counted and never named, and the
+preview writes nothing, grants nothing and
+audits nothing -- an audit entry in the target's
+name would be impersonation leakage. No
+migration was needed -- schema stays 78.)
