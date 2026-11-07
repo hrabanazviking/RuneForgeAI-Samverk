@@ -1520,6 +1520,15 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_teams_parent"
         " ON teams (parent_team_id)",
     ]),
+    # S-189: team repository permissions — the ladder
+    # role a team holds in a linked repository, stored
+    # on S-187's link itself. Existing links start at
+    # the ladder's foot, read. The ladder is judged in
+    # samverk/team_permissions.py.
+    (72, [
+        "ALTER TABLE team_repositories"
+        " ADD COLUMN permission TEXT NOT NULL DEFAULT 'read'",
+    ]),
 ]
 
 
