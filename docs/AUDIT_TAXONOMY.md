@@ -650,3 +650,25 @@ and a repository arriving during grace blocks
 execution. Refused requests write nothing and
 audit nothing, and the model is enforced in
 samverk/org_deletion.py.)
+
+S-200 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its role change guardrails refuse before any
+event could be written: demoting or revoking the
+last grant-admin of a repository -- the last
+person holding admin through a collaborator
+grant (S-191), a team grant (S-189 over S-188),
+or the org default at admin (S-192) -- is refused
+`last_admin` in samverk/role_change_guardrails.py,
+judged by the pure decide_last_admin over the
+holder sets before and after the change as it
+would land, and wired into
+OutsideCollaboratorStore.set_role / revoke and
+TeamPermissionStore.set_permission. Intrinsic
+admin -- the personal owner, org owners (already
+guarded by S-186's last_owner), site admins -- is
+not counted, because no role change can demote
+it. Refusals write nothing and audit nothing,
+successful changes keep riding their doors'
+existing events, and no migration was needed --
+schema stays 78.)
