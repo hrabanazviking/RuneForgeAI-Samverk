@@ -131,7 +131,8 @@ class OrgRepoTests(unittest.TestCase):
         self.assertEqual(self._reason(validate_allowed_visibilities, []), "visibilities_invalid")
         self.assertEqual(self._reason(validate_allowed_visibilities, ""), "visibilities_invalid")
         self.assertEqual(self._reason(validate_allowed_visibilities, None), "visibilities_invalid")
-        self.assertEqual(self._reason(validate_allowed_visibilities, ["internal"]), "visibility_invalid")
+        self.assertEqual(validate_allowed_visibilities(["internal"]), ("internal",))
+        self.assertEqual(self._reason(validate_allowed_visibilities, ["everywhere"]), "visibility_invalid")
         self.assertEqual(self._reason(validate_allowed_visibilities, ["public", 3]), "visibility_invalid")
 
     def test_decide_creation_matrix(self):
@@ -215,7 +216,7 @@ class OrgRepoTests(unittest.TestCase):
         repo = self.store.create_repository(self.yrsa.id, self.org.id, "hammer", visibility="public")
         self.assertEqual(repo.owner_lower, "crew")
         self.assertEqual(self._reason(self.store.create_repository, self.yrsa.id, self.org.id, "secret", visibility="private"), "visibility_not_allowed")
-        self.assertEqual(self._repo_reason(self.store.create_repository, self.yrsa.id, self.org.id, "bad", visibility="internal"), "visibility_invalid")
+        self.assertEqual(self._reason(self.store.create_repository, self.yrsa.id, self.org.id, "bad", visibility="internal"), "visibility_not_allowed")
 
     def test_create_disabled_and_admin_visibility_bound(self):
         self.store.set_policy(self.creator.id, self.org.id, who_may_create="none", allowed_visibilities=["public"])
@@ -250,7 +251,7 @@ class OrgRepoTests(unittest.TestCase):
         self.assertEqual([r.name for r in self.store.list_repositories(self.org.id, visibility="private")], ["bellows", "crucible"])
         self.assertEqual([r.name for r in self.store.list_repositories(self.org.id, query="heavy")], ["anvil", "crucible"])
         self.assertEqual([r.name for r in self.store.list_repositories(self.org.id, visibility="private", query="heavy")], ["crucible"])
-        self.assertEqual(self._repo_reason(self.store.list_repositories, self.org.id, visibility="internal"), "visibility_invalid")
+        self.assertEqual(self.store.list_repositories(self.org.id, visibility="internal"), [])
         self.assertEqual(self._reason(self.store.list_repositories, 99999), "org_not_found")
 
     def test_list_visible_never_leaks_private(self):

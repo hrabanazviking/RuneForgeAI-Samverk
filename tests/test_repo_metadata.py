@@ -57,7 +57,7 @@ class MetadataTests(unittest.TestCase):
                 self.other.id, "volmarr", "samverk", description="hijack")
         with self.assertRaises(RepositoryError):
             self.store.update_metadata(
-                self.owner.id, "volmarr", "samverk", visibility="internal")
+                self.owner.id, "volmarr", "samverk", visibility="everywhere")
         with self.assertRaises(RepositoryError):
             self.store.update_metadata(
                 self.owner.id, "volmarr", "samverk",

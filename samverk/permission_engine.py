@@ -81,9 +81,13 @@ never through a second place where the law could differ.
   The default is a floor for members only: it
   never reaches a non-member, never applies to a
   personally owned repository, and never lowers a
-  higher grant. Internal visibility is S-197: it
-  will add its contribution here, in this one
-  function, when it lands.
+  higher grant. Internal visibility (S-197) adds its
+  contribution here, in this one function: an
+  internal repository contributes ``read``
+  (source ``internal``) to every member of the
+  owning organization — or, for a personally
+  owned repository, to every signed-in member
+  of the instance — and to no one else.
 - **S-054's answers are preserved.** For every case
   S-054 decided — personal ownership, site admin,
   a collaborator grant (its read / write / admin
@@ -145,6 +149,7 @@ SOURCE_PRIORITY = {
     "team": 30,
     "collaborator": 20,
     "org_default": 15,
+    "internal": 12,
     "visibility": 10,
     "none": 0,
 }
@@ -156,6 +161,7 @@ _SOURCE_WORDS = {
     "team": "Team grant",
     "collaborator": "Collaborator grant",
     "org_default": "Organization default",
+    "internal": "Internal visibility",
     "visibility": "Public repository",
     "none": "No access",
 }
@@ -201,6 +207,8 @@ def build_contributions(
     collaborator_role: str | None = None,
     org_default_role: str | None = None,
     visibility: str = "private",
+    internal_member: bool = False,
+    internal_scope: str = "organization",
 ) -> list[Contribution]:
     """Every contribution the stated facts make, in
     plain order. Pure: no storage is read here, and a
@@ -250,6 +258,22 @@ def build_contributions(
             detail="the organization's default "
                    "repository permission grants "
                    "it to every member"))
+    if visibility == "internal" and internal_member:
+        if internal_scope == "instance":
+            internal_detail = (
+                "the repository is internal, and "
+                "internal repositories are readable "
+                "by every signed-in member of the "
+                "instance")
+        else:
+            internal_detail = (
+                "the repository is internal, and "
+                "internal repositories are readable "
+                "by every member of the "
+                "organization that owns it")
+        found.append(Contribution(
+            role="read", source="internal",
+            detail=internal_detail))
     if visibility == "public":
         found.append(Contribution(
             role="read", source="visibility",
@@ -327,6 +351,11 @@ def explanation(resolution: Resolution) -> str:
     if resolution.role is None:
         if resolution.visibility == "public":
             why = "no grant applies to them"
+        elif resolution.visibility == "internal":
+            why = ("the repository is internal and no "
+                   "grant applies to them, so its "
+                   "existence stays private: surfaces "
+                   "answer not found, not forbidden")
         else:
             why = ("the repository is private and no "
                    "grant applies to them, so its "
@@ -454,17 +483,24 @@ class PermissionEngine:
         org_role: str | None = None
         team_grants: tuple[tuple[str, str, str], ...] = ()
         org_default_role: str | None = None
+        internal_member = False
+        internal_scope = "organization"
         if viewer is not None:
             is_owner = (viewer.username_lower
                         == repo.owner_lower)
             is_site_admin = bool(viewer.is_admin)
             org = self._orgs.get_by_name(repo.owner)
+            if org is None:
+                internal_member = True
+                internal_scope = "instance"
             if org is not None and not is_owner:
                 org_role = self._org_members.role_for(
                     viewer.id, org.id)
                 if not is_site_admin and org_role != "owner":
                     team_grants = self._team_grants(
                         viewer, org.id, repo.id)
+                if org_role is not None:
+                    internal_member = True
                 if org_role == "member":
                     org_default_role = (
                         self._stored_default_role(org.id))
@@ -478,9 +514,14 @@ class PermissionEngine:
             collaborator_role=effective_collaborator
             if viewer is not None else None,
             org_default_role=org_default_role,
-            visibility=repo.visibility))
+            visibility=repo.visibility,
+            internal_member=internal_member,
+            internal_scope=internal_scope))
         detail = decision.detail
-        if decision.role is None and repo.visibility != "public":
+        if decision.role is None and repo.visibility == "internal":
+            detail = ("the repository is internal and no "
+                      "grant applies")
+        elif decision.role is None and repo.visibility != "public":
             detail = ("the repository is private and no "
                       "grant applies")
         return Resolution(

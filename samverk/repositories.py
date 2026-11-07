@@ -16,7 +16,7 @@ SQLite (study 42: the record is ours, the bytes are git's).
   path that already exists on disk is refused, never adopted
   silently (that is drift, and S-071's checker owns naming it).
 - **Metadata (S-050).** Description, visibility (`public` /
-  `private`, default `private` — security is the spine), and
+  `internal` (S-197) / `private`, default `private` — security is the spine), and
   default branch live on the row. `update_metadata` is
   owner-only; a visibility change audits `repo.visibility.change`,
   other setting changes audit `repo.settings.change`. Setting
@@ -46,7 +46,7 @@ from .platform_seam import ensure_dir
 from .proc import run_git, run_git_in
 from .repo_paths import RepoPathError, repo_path, validate_owner_name, validate_repo_name
 
-VISIBILITIES = frozenset({"public", "private"})
+VISIBILITIES = frozenset({"public", "internal", "private"})
 DEFAULT_VISIBILITY = "private"
 DEFAULT_BRANCH = "main"
 DESCRIPTION_MAX = 350
@@ -367,5 +367,5 @@ def _validate_visibility(visibility: object) -> str:
     if visibility not in VISIBILITIES:
         raise RepositoryError(
             "visibility_invalid",
-            "Visibility is 'public' or 'private'.")
+            "Visibility is 'public', 'internal', or 'private'.")
     return str(visibility)

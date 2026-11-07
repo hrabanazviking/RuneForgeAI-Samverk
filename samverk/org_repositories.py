@@ -115,15 +115,16 @@ __all__ = [
 
 WHO_MAY_CREATE = ("owners", "members", "none")
 DEFAULT_WHO_MAY_CREATE = "owners"
-ALLOWED_ORDER = ("public", "private")
-DEFAULT_ALLOWED_VISIBILITIES = ALLOWED_ORDER
+ALLOWED_ORDER = ("public", "internal", "private")
+DEFAULT_ALLOWED_VISIBILITIES = ("public", "private")
 
 _WHO_WORDS = {
     "owners": "Organization owners only",
     "members": "Any organization member",
     "none": "No one (creation is closed)",
 }
-_VISIBILITY_WORDS = {"public": "Public", "private": "Private"}
+_VISIBILITY_WORDS = {"public": "Public",
+                     "internal": "Internal", "private": "Private"}
 
 
 def who_word(who: str) -> str:
