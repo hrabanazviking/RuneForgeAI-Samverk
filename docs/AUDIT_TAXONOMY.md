@@ -329,3 +329,10 @@ S-169 rules, S-157 check rows, and the counted
 branch position; judgments write nothing and audit
 nothing, and rule changes ride the frozen
 repo.protection.change, no migration.)
+S-175 (2026-11-06) added no event of its own —
+119 events stand: 29 auth, 78 repo, 12 admin.
+(Its signed-commits gate is a pure read over
+S-169 rules and the signature headers of the
+commits a push or merge carries; judgments write
+nothing and audit nothing, and rule changes ride
+the frozen repo.protection.change, no migration.)
