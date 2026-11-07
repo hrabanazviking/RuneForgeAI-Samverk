@@ -63,19 +63,19 @@ class InstanceGroupTests(unittest.TestCase):
         return int(cur.lastrowid)
 
     # schema pin
-    def test_pins_schema_79_taxonomy_122(self):
-        self.assertEqual(schema_version(self.conn), 79)
-        self.assertEqual(db.MIGRATIONS[-1][0], 79)
+    def test_pins_schema_80_taxonomy_122(self):
+        self.assertEqual(schema_version(self.conn), 80)
+        self.assertEqual(db.MIGRATIONS[-1][0], 80)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         tables = {r["name"] for r in self.conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
         self.assertIn("instance_groups", tables)
         self.assertIn("instance_group_members", tables)
         self.assertIn("instance_group_repositories", tables)
 
-    def test_fresh_database_migrates_to_79(self):
+    def test_fresh_database_migrates_to_80(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 79)
+            self.assertEqual(db.schema_version(conn), 80)
             conn.close()
 
     # creation

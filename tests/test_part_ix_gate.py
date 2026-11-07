@@ -60,7 +60,7 @@ on and names the gap here rather than pretending to walk
 machinery that has not landed in this tree.
 
 The gate claimed no migration and no taxonomy event: the
-assembled system stands at schema 79 with 122 audit
+assembled system stands at schema 80 with 122 audit
 events, and the battery proves both pins. The full-suite
 counted recount at this gate is recorded in
 PROJECT_MEMORY_MAP.md (the gate entry), read back from
@@ -921,8 +921,8 @@ class PartIXGateTests(unittest.TestCase):
     # -- invariants -------------------------------------------------------
 
     def test_schema_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 79)
-        self.assertEqual(db.MIGRATIONS[-1][0], 79)
+        self.assertEqual(schema_version(self.conn), 80)
+        self.assertEqual(db.MIGRATIONS[-1][0], 80)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
 
 
