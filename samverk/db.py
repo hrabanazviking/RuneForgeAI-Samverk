@@ -1449,6 +1449,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_organizations_name"
         " ON organizations (name_lower, id)",
     ]),
+    # S-186: organization membership — one row per
+    # (organization, user) pair: the member's role
+    # (owner or member), who added them, and the
+    # row's timestamps. The last-owner invariant
+    # itself lives in
+    # samverk/organization_members.py; this table
+    # only stores the facts it judges.
+    (69, [
+        "CREATE TABLE organization_members ("
+        "  org_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  added_by INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (org_id, user_id)"
+        ")",
+        "CREATE INDEX idx_organization_members_org"
+        " ON organization_members (org_id)",
+    ]),
 ]
 
 

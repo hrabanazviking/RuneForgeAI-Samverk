@@ -412,3 +412,15 @@ the update event with detail {"fields": "text"}
 or {"fields": "avatar"}. Organizations are stored
 by migration 68 in organizations — schema moves
 67 to 68.)
+S-186 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its organization membership changes ride the
+existing `auth.organization.update` event with
+detail {"fields": "members", "action": "add" /
+"remove" / "leave" / "role_change", "target": ...,
+"role": ...}; membership is stored by migration
+69 in organization_members — schema moves 68
+to 69. Refused membership changes write nothing
+and audit nothing, and the last-owner invariant
+— the last owner cannot leave or be removed —
+is enforced in samverk/organization_members.py.)
