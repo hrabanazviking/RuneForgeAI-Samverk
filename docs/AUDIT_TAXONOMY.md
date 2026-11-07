@@ -464,3 +464,17 @@ team_repositories.permission — schema moves 71
 to 72. Refused changes and same-role no-op sets
 write nothing and audit nothing, and the ladder
 is enforced in samverk/team_permissions.py.)
+
+S-190 (2026-11-07) added no event of its own —
+122 events stand: 31 auth, 79 repo, 12 admin.
+(The permission resolution engine is a pure
+read: it resolves one person's role in one
+repository from ownership, site administration,
+organization ownership, team grants with nesting
+(S-187/S-188/S-189), caller-supplied collaborator
+grants (stored grants land in S-191) and
+visibility, in samverk/permission_engine.py.
+It writes nothing and audits nothing, and
+claims no migration — schema stays 72.
+Organization membership alone grants no role
+until S-192's default repository permission.)
