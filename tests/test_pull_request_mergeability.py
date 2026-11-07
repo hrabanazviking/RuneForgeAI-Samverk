@@ -412,7 +412,7 @@ class MergeabilityTests(unittest.TestCase):
         # stand where S-152 left them, and asking the
         # question moves neither.
         self.assertEqual(db.schema_version(self.conn), 66)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 119)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
 
 
 if __name__ == "__main__":

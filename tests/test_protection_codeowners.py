@@ -444,7 +444,7 @@ class ProtectionCodeownersTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins(self):
         self.assertEqual(schema_version(self.conn), 66)
         self.assertEqual(db.MIGRATIONS[-1][0], 66)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 119)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
 
 
 if __name__ == "__main__":

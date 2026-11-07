@@ -65,6 +65,8 @@ REPO_EVENTS = frozenset({
     "repo.transfer",
     "repo.push",
     "repo.protection.change",
+    # S-179 addition (append-only, per the taxonomy rules):
+    "repo.protection.bypass",
     "repo.collaborator.add",
     "repo.collaborator.remove",
     "repo.collaborator.role_change",

@@ -34,10 +34,12 @@ housekeeping guard.
 - **Everyone is bound.** The judgment never consults
   the pusher's role: owner, admin, writer — a blocked
   shape is refused for all of them alike. The two
-  named softenings land later and are not smuggled in
-  here: S-179's bypass list (named bypassers, every
-  bypass audit-logged) and S-180's enforce-for-admins
-  toggle. Until they land, there is no silent door.
+  named softenings are not smuggled in here:
+  S-179's bypass list (named bypassers, every bypass
+  audit-logged — on S-179's own audited road, in
+  samverk/protection_bypass.py; this gate's plain
+  check never exempts) and S-180's enforce-for-admins
+  toggle. There is no silent door.
 - **An unproven move never passes a force block.**
   When ancestry cannot be read at all (an oid that
   does not resolve, an unreadable object), a move on a
