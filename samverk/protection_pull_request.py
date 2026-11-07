@@ -76,7 +76,14 @@ question the receive-pack gate asks:
   push from S-170's refusal (S-179's bypass happens
   only on its own audited road, in
   samverk/protection_bypass.py), and an admin
-  pushing directly is refused like anyone else.
+  pushing directly is refused like anyone else
+  while the effective rule is enforced for admins —
+  S-180's toggle, judged by the one check in
+  samverk/protection_admin_enforcement.py: only
+  when every matching rule leaves enforcement for
+  admins off is an admin's direct push allowed,
+  said in words as an admin exemption. Every other
+  actor remains bound whatever the toggle says.
   Branch creation and deletion by direct push are
   pushes to the branch and are refused on the same
   words (deletion carries S-177's own additional
@@ -113,6 +120,7 @@ from dataclasses import dataclass
 from .accounts import AccountStore, User
 from .audit import AuditLog
 from .escaping import escape_html_text
+from .permissions import role_for
 from .protection_rules import (
     ProtectionEvaluation, ProtectionRuleStore)
 from .receive_gate import GateVeto
@@ -191,6 +199,7 @@ class DirectPushDecision:
     branch: str
     via_pull_request: bool
     evaluation: ProtectionEvaluation
+    actor_is_admin: bool = False
 
     @property
     def requires_pull_request(self) -> bool:
@@ -202,12 +211,27 @@ class DirectPushDecision:
             and effective.settings.require_pull_request)
 
     @property
+    def admin_exempt(self) -> bool:
+        """Whether this pusher is an admin the
+        effective rule does not enforce for (S-180):
+        an admin actor, and enforcement for admins
+        off in every matching rule."""
+        effective = self.evaluation.effective
+        return bool(
+            self.actor_is_admin
+            and effective is not None
+            and not effective.settings.enforce_admins)
+
+    @property
     def allowed(self) -> bool:
         """Whether a push on this road may move this
         branch: a pull-request landing always may; a
         direct push may unless the effective rule
-        requires a pull request."""
-        return self.via_pull_request or not self.requires_pull_request
+        requires a pull request — and an admin the
+        rule does not enforce for (S-180) may."""
+        return (self.via_pull_request
+                or not self.requires_pull_request
+                or self.admin_exempt)
 
     @property
     def reason(self) -> str:
@@ -225,6 +249,15 @@ class DirectPushDecision:
                 f"the merge road is not a direct push, so "
                 f"the pull-request requirement does not "
                 f"refuse it.")
+        if self.admin_exempt and self.requires_pull_request:
+            return (
+                f"Direct push to branch '{self.branch}' in "
+                f"{self.full_name} by an admin is allowed: "
+                f"no protection rule matching this branch "
+                f"enforces for admins (S-180), so this admin "
+                f"is exempt from the pull-request "
+                f"requirement. Every other actor remains "
+                f"bound.")
         if not self.requires_pull_request:
             return (
                 f"Direct push to branch '{self.branch}' in "
@@ -236,7 +269,8 @@ class DirectPushDecision:
 
 def decide_direct_push(
         evaluation: ProtectionEvaluation, *,
-        via_pull_request: bool = False) -> DirectPushDecision:
+        via_pull_request: bool = False,
+        actor_is_admin: bool = False) -> DirectPushDecision:
     """The pure half of the check: one branch's
     direct-push decision from its already-resolved
     S-169 evaluation. No database is touched here, so
@@ -247,11 +281,17 @@ def decide_direct_push(
             "push_check_invalid",
             "Whether a push arrives by pull request is "
             "yes or no (a boolean).")
+    if not isinstance(actor_is_admin, bool):
+        raise PullRequestRequiredError(
+            "push_check_invalid",
+            "Whether the pusher is an admin is "
+            "yes or no (a boolean).")
     return DirectPushDecision(
         full_name=evaluation.full_name,
         branch=evaluation.branch,
         via_pull_request=via_pull_request,
-        evaluation=evaluation)
+        evaluation=evaluation,
+        actor_is_admin=actor_is_admin)
 
 
 class PullRequestProtectionStore:
@@ -294,8 +334,13 @@ class PullRequestProtectionStore:
         position is named."""
         evaluation = self._rules.evaluate_branch(
             viewer, owner, repo, branch)
+        current = self._repos.get_repository(owner, repo)
+        actor_is_admin = bool(
+            current is not None
+            and role_for(viewer, current) == "admin")
         return decide_direct_push(
-            evaluation, via_pull_request=via_pull_request)
+            evaluation, via_pull_request=via_pull_request,
+            actor_is_admin=actor_is_admin)
 
     def enforce_branch(self, viewer: User | None, owner: object,
                        repo: object, branch: object, *,
