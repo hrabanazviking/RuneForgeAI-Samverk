@@ -376,3 +376,13 @@ S-170's direct-push check in this slice;
 judgments write nothing and audit nothing, and
 rule changes ride the frozen
 repo.protection.change, no migration.)
+S-181 (2026-11-06) added no event of its own —
+120 events stand: 29 auth, 79 repo, 12 admin.
+(Its rulesets are instance policy stored by
+migration 67 in protection_rulesets — schema
+moves 66 to 67 — and ruleset changes ride the
+frozen repo.protection.change with detail
+{"ruleset": ..., "ruleset_id": ..., "name": ...,
+"target": ...}; layered evaluation is a pure
+read over S-169 rules and the rulesets, writes
+nothing, and audits nothing.)

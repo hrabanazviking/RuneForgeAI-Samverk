@@ -402,10 +402,10 @@ class ProtectionRuleTests(unittest.TestCase):
         self.assertIn("'main'", html2)
 
     # -- invariants -------------------------------------------------------------
-    def test_migration_66_and_taxonomy_120(self):
-        self.assertEqual(schema_version(self.conn), 66)
+    def test_migration_67_and_taxonomy_120(self):
+        self.assertEqual(schema_version(self.conn), 67)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
-        self.assertEqual(db.MIGRATIONS[-1][0], 66)
+        self.assertEqual(db.MIGRATIONS[-1][0], 67)
         row = self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
             " AND name='protection_rules'").fetchone()

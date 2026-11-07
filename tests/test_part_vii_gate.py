@@ -35,7 +35,7 @@ four things the gate names:
   required-review seam until the reviewer approves again.
 
 The gate claimed no migration and no taxonomy event: the
-assembled system stands at schema 66 with 120 audit
+assembled system stands at schema 67 with 120 audit
 events, and the audit chain verifies over the gate's own
 landings. The full-suite counted recount at this gate is
 recorded in PROJECT_MEMORY_MAP.md (the gate entry), read
@@ -778,12 +778,12 @@ class PartVIIGateTests(unittest.TestCase):
         # The gate builds nothing of its own: no migration,
         # no taxonomy event — the assembled system stands
         # exactly where S-167 left it.
-        self.assertEqual(schema_version(self.conn), 66)
+        self.assertEqual(schema_version(self.conn), 67)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
         pr, path, base_oid, head_oid = self._open_same("pub")
         self.merge.merge_pull_request(
             self.owner, "volmarr", "pub", pr.number)
-        self.assertEqual(schema_version(self.conn), 66)
+        self.assertEqual(schema_version(self.conn), 67)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 120)
         ok, bad, _ = verify_chain(self.conn)
         self.assertTrue(ok, bad)
