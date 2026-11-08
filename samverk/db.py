@@ -2011,6 +2011,22 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_email_optouts_user"
         " ON email_optouts (user_id, id)",
     ]),
+    # S-228: notification preferences -- one row per
+    # account carrying the digest cadence the person
+    # chose (immediate / daily / weekly); no row is
+    # the immediate default. Email on/off lives in
+    # S-227's email_optouts and watches in S-222's
+    # repo_watches -- this slice adds no second
+    # record of either. Judged in
+    # samverk/notification_preferences.py
+    # (NotificationPreferencesStore).
+    (92, [
+        "CREATE TABLE notification_preferences ("
+        "  user_id INTEGER PRIMARY KEY,"
+        "  digest_cadence TEXT NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 

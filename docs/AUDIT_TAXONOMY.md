@@ -1222,3 +1222,43 @@ S-225's overrides, so neither is a witnessed act
 and the audit log does not move. One migration
 -- schema 90 to 91, the email_deliveries and
 email_optouts tables.)
+
+S-228 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its notification preferences, in
+samverk/notification_preferences.py, are Part
+XI's one findable page: email on or off for
+each of S-223's seven reasons, the digest
+cadence, and every watched repository managed
+in one list, the three sections named in order
+by PREFERENCE_SECTIONS and rendered from one
+aggregated view. The page writes no second
+record of anything: email on/off is migration
+91's email_optouts itself -- the record S-227's
+signed unsubscribe links write and its delivery
+law consults -- with S-227's `all` scope carried
+as the master choice above the seven per-reason
+choices, the pure decide_email_enabled composing
+the two honestly (a reason held off by the
+master switch says so, and flipping one reason
+never lifts the master); watched repositories
+are migration 86's repo_watches, listed live in
+name order with every stored mode, `ignore`
+included as a managed choice, filtered through
+S-054's can_read so an unreadable repository is
+never named, and changed only through S-222's
+own store, so its repo.watch / repo.unwatch
+verbs remain the only witness. The one new
+record is the digest cadence -- immediate,
+daily, or weekly, judged at the door, no row
+meaning the immediate default -- in migration
+92's notification_preferences, composed with
+the email standing by the pure decide_user_email
+into the per-person delivery law (skip, send
+now, or queue for the named digest); S-227's
+store keeps its instance law. A preference is
+a personal notification state like S-224's
+triage, S-225's overrides and S-227's opt-outs,
+so it is not a witnessed act and the audit log
+does not move for it. One migration -- schema
+91 to 92, the notification_preferences table.)

@@ -315,8 +315,8 @@ class ProtectionDismissalTests(unittest.TestCase):
         self.assertIn("approval was dismissed", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 91)
-        self.assertEqual(db.MIGRATIONS[-1][0], 91)
+        self.assertEqual(schema_version(self.conn), 92)
+        self.assertEqual(db.MIGRATIONS[-1][0], 92)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
 
 
