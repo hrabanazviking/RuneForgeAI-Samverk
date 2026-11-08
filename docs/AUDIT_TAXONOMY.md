@@ -845,3 +845,31 @@ no name, no description, no topic, and no
 count. The instance directory page is the same
 law with an empty query. No migration --
 schema stays 82.)
+
+S-211 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its user and org search is a read over the
+account, profile, and organization rows, in
+samverk/user_org_search.py: free-text terms
+matched case-insensitively as substrings
+against the handle (username or organization
+name), the display name, and the bio, composed
+by AND, with type: kind qualifiers, -negation
+of one type qualifier, and sort: orderings;
+unknown qualifiers are refused query_invalid,
+naming the qualifier. An email is never a
+search field and never appears on a card.
+Visibility is filtered before any profile fact
+is read, the S-209 law applied to people:
+organizations are public directory facts,
+while a person contributes a card and a count
+only while their account is active -- pending
+and suspended accounts are visible in search
+solely to the account holder and to site
+admins, and the counted faces tally their
+totals from the filtered subjects only, before
+any result cap. Team rows are never read, so
+secret teams cannot leak through a profile
+card. The people directory page is the same
+law with an empty query. No migration --
+schema stays 82.)
