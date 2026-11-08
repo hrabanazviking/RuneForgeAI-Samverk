@@ -284,9 +284,13 @@ def matches_language(language: str, language_filter: str) -> bool:
     """Whether an indexed *language* passes the filter:
     S-218's shared filter law over the one census - an
     empty filter passes all; a filter naming a known
-    language (canonical name or alias, any case) matches
-    exactly its canonical recorded name; a filter naming
-    no known language matches nothing (fail closed)."""
+    language by its canonical name (any case) matches
+    exactly its canonical recorded name; an alias such
+    as py does NOT match (aliases resolve only through
+    canonical_language, never inside a filter), and a
+    filter naming no known language matches nothing
+    (fail closed). Wording corrected by S-219, whose
+    honest-limits audit grounds on the executed law."""
     return _shared_language_matches(language, language_filter)
 
 

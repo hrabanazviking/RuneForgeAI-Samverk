@@ -945,3 +945,23 @@ stays NOT PROVEN until S-395 re-measures it there
 and S-413 restates it. Measuring a read is a read
 and audits nothing. No migration -- schema
 stays 84.)
+
+S-219 (2026-11-08) added no event of its own --
+123 events stand: 31 auth, 79 repo, 13 admin.
+(Its honest limits document, in
+samverk/search_limits.py and docs/SEARCH_LIMITS.md,
+states what Samverk search does NOT do: no meaning
+search, no relevance ranking, regex cost caps that
+are caps on size and never on time (no timeout
+exists in S-208's executor), the pattern / result /
+snippet caps, the index coverage and freshness
+edges, the language census limits, the global and
+API caps, S-212's 5000-commit scan cap, and the
+per-hardware-class budgets with Pi-class NOT
+PROVEN. The limits are data, rendered on a page
+the global search page links to, and an audit
+compares the documented caps with the live
+engines' own constants and hit shapes on every
+run. A document about reads is a read: it writes
+nothing and audits nothing. No migration -- schema
+stays 84.)
