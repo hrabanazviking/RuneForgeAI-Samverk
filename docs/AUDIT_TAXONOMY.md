@@ -873,3 +873,18 @@ secret teams cannot leak through a profile
 card. The people directory page is the same
 law with an empty query. No migration --
 schema stays 82.)
+
+S-213 (2026-11-08) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its global search UI, in samverk/global_search.py,
+is a fan-out over the banked group executors --
+S-210 repositories, S-211 people, S-212 commits,
+S-208 code, S-206 issues and pull requests -- each
+of which filters through S-209's one resolution
+before reading anything private, and each group
+keeps its own counted total; no combined count is
+ever formed across groups. The one write is the
+searcher's own recent searches (migration 83,
+schema 82 to 83): a personal reading preference
+in the S-136 pattern, which mutates no shared
+record and so is not a witnessed act.)

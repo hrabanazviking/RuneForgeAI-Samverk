@@ -1791,6 +1791,25 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  lfs_size UNINDEXED, blob_size UNINDEXED"
         ")",
     ]),
+    # S-213: global search UI -- per-user recent
+    # searches for the one box. One row per (user,
+    # query): the query as typed for display, its
+    # trimmed lowercased dedup key, and when it was
+    # last searched. Judged in
+    # samverk/global_search.py (RecentSearchStore).
+    (83, [
+        "CREATE TABLE recent_searches ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  query TEXT NOT NULL,"
+        "  query_lower TEXT NOT NULL,"
+        "  searched_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_recent_searches_user_query"
+        " ON recent_searches (user_id, query_lower)",
+        "CREATE INDEX idx_recent_searches_user_recent"
+        " ON recent_searches (user_id, searched_at DESC, id DESC)",
+    ]),
 ]
 
 
