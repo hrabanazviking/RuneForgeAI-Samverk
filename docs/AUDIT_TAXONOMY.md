@@ -131,6 +131,10 @@ any name not in this document's set.*
 | `repo.issue.comment_hide` | A comment hidden by a moderator, with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
 | `repo.issue.comment_unhide` | A hidden comment restored by a moderator (S-138) | `{"number": ..., "comment_id": ...}` |
 | `repo.issue.comment_remove` | A comment removed by a moderator (the S-123 tombstone, struck as a moderation act distinct from an author's own delete), with its reason (S-138) | `{"number": ..., "comment_id": ..., "reason": ...}` — never the body |
+| `repo.watch` | A watch set or its mode changed -- only a real change is recorded (S-222) | `{"mode": ..., "previous": ...}` -- the new mode (`all` / `releases_only` / `ignore`) and the mode it replaced, or null |
+| `repo.unwatch` | A watch removed entirely, any mode (S-222) | `{"previous": ...}` -- the mode the removed row held |
+| `repo.star` | A repository starred -- only a real change is recorded (S-222) | -- |
+| `repo.unstar` | A star taken back by its own giver (S-222) | -- |
 
 ## admin — instance administration
 
@@ -1001,3 +1005,29 @@ directory facts), and the public feed carries
 only public repositories. Materialising is a read
 of the witness and audits nothing. One migration
 -- schema 84 to 85, the `events` table.)
+
+S-222 (2026-11-08) added `repo.watch`,
+`repo.unwatch`, `repo.star` and `repo.unstar` --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its watch and star, in samverk/watch_star.py,
+wires S-119: a watch is a stored row with a mode
+-- `all`, `releases_only`, or `ignore`, the last
+an explicit opt-out that is stored but never
+counted as watching -- and a star is a stored
+row, a bookmark and a public signal in one. The
+counts the repository header shows are counted
+live from those rows at read time, never cached
+and never faked, and the store's counters feed
+the header's seam unchanged. Only real changes
+are witnessed: re-setting the held mode,
+re-starring, un-starring what was never starred
+and clearing no watch are quiet no-ops, so
+S-221's canonical store sees exactly the real
+mutations. Watching and starring are reader
+acts under S-054: a stranger to a private
+repository gets the uniform repo_not_found for
+reads and writes alike, a refusal stores nothing
+and emits nothing, and mutations need a
+signed-in account. One migration -- schema 85
+to 86, the `repo_watches` and `repo_stars`
+tables.)

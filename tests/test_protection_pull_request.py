@@ -346,8 +346,8 @@ class PullRequestProtectionTests(unittest.TestCase):
         self.assertIn("is allowed", html_ok)
 
     def test_no_migration_no_new_taxonomy_event(self):
-        self.assertEqual(schema_version(self.conn), 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
+        self.assertEqual(schema_version(self.conn), 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertNotIn("repo.push.pull_request_required",
                          taxonomy.AUDIT_EVENTS)
 

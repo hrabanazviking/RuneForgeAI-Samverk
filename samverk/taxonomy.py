@@ -170,6 +170,11 @@ REPO_EVENTS = frozenset({
     "repo.branch.restore",
     # S-160 addition (append-only, per the taxonomy rules):
     "repo.pull_request.revert",
+    # S-222 additions (append-only, per the taxonomy rules):
+    "repo.watch",
+    "repo.unwatch",
+    "repo.star",
+    "repo.unstar",
 })
 
 ADMIN_EVENTS = frozenset({

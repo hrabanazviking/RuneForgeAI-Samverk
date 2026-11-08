@@ -1861,6 +1861,37 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_events_verb"
         " ON events (verb, id)",
     ]),
+    # S-222: watch and star -- one watch row per
+    # (repository, account) carrying its mode (all /
+    # releases_only / ignore), and one star row per
+    # (repository, account). Removing the act deletes
+    # the row; counts are counted live from these rows,
+    # never cached. Judged in samverk/watch_star.py
+    # (WatchStarStore).
+    (86, [
+        "CREATE TABLE repo_watches ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  mode TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, user_id)"
+        ")",
+        "CREATE INDEX idx_repo_watches_repo"
+        " ON repo_watches (repo_id, mode)",
+        "CREATE TABLE repo_stars ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, user_id)"
+        ")",
+        "CREATE INDEX idx_repo_stars_repo"
+        " ON repo_stars (repo_id, id)",
+        "CREATE INDEX idx_repo_stars_user"
+        " ON repo_stars (user_id, id)",
+    ]),
 ]
 
 

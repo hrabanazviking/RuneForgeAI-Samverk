@@ -51,9 +51,9 @@ class SearchLimitsTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 85)
-        self.assertEqual(db.MIGRATIONS[-1][0], 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
+        self.assertEqual(schema_version(self.conn), 86)
+        self.assertEqual(db.MIGRATIONS[-1][0], 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
 
     def test_limits_path_is_the_search_child(self):
         self.assertEqual(LIMITS_PATH, "/search/limits")
