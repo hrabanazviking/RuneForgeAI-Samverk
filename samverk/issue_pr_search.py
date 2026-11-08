@@ -81,20 +81,22 @@ issues and pull requests together.
   second differing `sort:`, unterminated quotes,
   and over-long or non-text queries are the same
   refusal.
-- **Permission today is S-054's gate; S-209 owns
-  the hardening.** A per-repository search answers
-  a stranger to a private repository with the
-  uniform `repo_not_found`, and a global search
-  resolves its visible repositories through
-  `can_read` *before* any FTS row is read, so a
+- **Permission is S-209's filtered law.** A
+  per-repository search answers a stranger to a
+  private repository with the uniform
+  `repo_not_found`, and a global search resolves
+  its visible repositories through S-209's one
+  resolution (`visible_repositories` in
+  samverk/search_permissions.py, over S-054's
+  `can_read`) *before* any FTS row is read, so a
   hit can only ever name a repository its viewer
-  may read. That is the seam S-209 builds on: it
-  owns the leakage battery and the count/snippet
-  guarantees (this backend returns no snippets at
-  all), and it can tighten the visible-repository
-  resolution in this one place without touching
-  the grammar or the index. Nothing here designs
-  S-209 away.
+  may read. S-209 discharged the tightening in
+  that one place: the counted face
+  (`search_counted`) tallies its total from the
+  filtered hits only, so an unreadable repository
+  contributes no title and no count (this backend
+  returns no snippets at all); the leakage
+  battery proves the equivalence.
 - **No audit event of its own, and the registry
   is the only write.** Searching mutates nothing.
   Indexing writes the FTS table and S-205's
@@ -117,12 +119,13 @@ from .escaping import escape_html_attr, escape_html_text
 from .index_architecture import SearchIndexStore
 from .issue_search import SearchError, _tokenise
 from .permissions import can_read
+from .search_permissions import visible_repositories
 from .repositories import Repository, RepositoryStore
 
 __all__ = [
     "QUALIFIER_HELP", "QUALIFIER_NAMES", "IndexRow",
     "ParsedSearchQuery", "SearchBackendError", "SearchHit",
-    "IssuePRSearch", "date_bounds", "decide_status",
+    "IssuePRSearch", "IssuePRSearchResults", "date_bounds", "decide_status",
     "fts_match_query", "matches_query", "parse_search_query",
     "render_backend_search_page", "review_holds",
 ]
@@ -654,6 +657,17 @@ class SearchHit:
         return self.state
 
 
+@dataclass(frozen=True)
+class IssuePRSearchResults:
+    """One permission-filtered backend search,
+    counted (S-209): the hits and their total,
+    tallied from the filtered hits only — an
+    unreadable repository contributes no title
+    and no count."""
+    hits: tuple[SearchHit, ...]
+    total: int
+
+
 def _sort_key(sort: str):
     if sort == "created-asc":
         return lambda h: (h.created_at, h.full_name.lower(),
@@ -910,13 +924,7 @@ class IssuePRSearch:
                 raise SearchBackendError(
                     "repo_not_found", "No such repository.")
             return [scoped]
-        visible: list[Repository] = []
-        for found in self._conn.execute(
-                "SELECT id FROM repositories ORDER BY id").fetchall():
-            current = self._repos.get_by_id(int(found["id"]))
-            if current is not None and can_read(viewer, current):
-                visible.append(current)
-        return visible
+        return visible_repositories(self._conn, self._repos, viewer)
 
     def _row_from(self, found: sqlite3.Row) -> IndexRow:
         labels = found["labels_lower"]
@@ -1017,6 +1025,26 @@ class IssuePRSearch:
         """One repository's unified search — the
         per-repository face of `search`."""
         return self.search(viewer, query, owner=owner, repo=repo)
+
+    def search_counted(self, viewer: User | None,
+                       query: object,
+                       owner: object = None, repo: object = None
+                       ) -> IssuePRSearchResults:
+        """One backend search with its S-209 count:
+        the hits plus a total tallied from those
+        filtered hits only, so the count a page or
+        an API shows can never include an item from
+        a repository the searcher cannot read."""
+        hits = self.search(viewer, query, owner=owner, repo=repo)
+        return IssuePRSearchResults(hits=tuple(hits), total=len(hits))
+
+    def count(self, viewer: User | None, query: object,
+              owner: object = None, repo: object = None) -> int:
+        """Only the S-209 count of one backend search
+        — the number on its own, computed from the
+        filtered hits, never from the index."""
+        return self.search_counted(
+            viewer, query, owner=owner, repo=repo).total
 
 
 def render_backend_search_page(query: object,

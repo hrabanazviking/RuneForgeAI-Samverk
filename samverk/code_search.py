@@ -74,16 +74,22 @@ audits nothing, and grants no permission of its own.
   above. S-217 measures the latency budget and
   S-219 writes the honest limits where users find
   them; this slice states its own caps here.
-- **Permission today is S-054's gate; S-209 owns
-  the hardening.** Visible repositories are
-  resolved through `can_read` before any index
-  row is read — the S-206 seam — so a hit can
-  only ever name a repository its viewer may
-  read, and a scoped search for an unreadable
-  (or missing) repository answers the uniform
-  `repo_not_found`. S-209 owns the leakage
-  battery and the count/snippet guarantees and
-  can tighten the resolution in this one place.
+- **Permission is S-209's filtered law.**
+  Visible repositories are resolved through
+  S-209's one resolution (`visible_repositories`
+  in samverk/search_permissions.py, over S-054's
+  `can_read`) before any index row is read — the
+  S-206 seam, tightened in the one place S-209
+  named — so a hit can only ever name a
+  repository its viewer may read, and a scoped
+  search for an unreadable (or missing)
+  repository answers the uniform
+  `repo_not_found`. The counted face
+  (`search_counted`) tallies its totals from the
+  filtered hits only, before the result cap: an
+  unreadable repository contributes no title, no
+  snippet, and no count (the S-209 leakage
+  battery proves the equivalence).
 - **No audit event of its own.** Searching is a
   read. 122 events stand: 31 auth / 79 repo /
   12 admin. No migration: schema stays 82.
@@ -100,11 +106,12 @@ from .accounts import User
 from .escaping import escape_html_attr, escape_html_text
 from .permissions import can_read
 from .repo_search import SearchBoxError, extract_repo_scope
+from .search_permissions import tally_code_hits, visible_repositories
 from .repositories import Repository, RepositoryStore
 
 __all__ = [
     "MODES", "PATTERN_MAX", "CodeSearch", "CodeSearchError",
-    "CodeSearchHit", "CodeSearchQuery", "Snippet", "SnippetLine",
+    "CodeSearchHit", "CodeSearchQuery", "CodeSearchResults", "Snippet", "SnippetLine",
     "find_line_matches", "matches_language", "matches_path",
     "parse_code_query", "render_code_search_page",
 ]
@@ -418,6 +425,20 @@ class CodeSearchHit:
         return self.disposition == "index_pointer"
 
 
+@dataclass(frozen=True)
+class CodeSearchResults:
+    """One permission-filtered code search, counted
+    (S-209): the hits a page shows (capped by the
+    search's limit) and the totals tallied over the
+    full filtered result before the cap — files,
+    matches, and matched lines, counting only
+    repositories the searcher may read."""
+    hits: tuple[CodeSearchHit, ...]
+    total_files: int
+    total_matches: int
+    total_matched_lines: int
+
+
 class CodeSearch:
     """The S-208 executor. It resolves the viewer's
     visible repositories through S-054's `can_read`
@@ -445,15 +466,9 @@ class CodeSearch:
                 raise CodeSearchError(
                     "repo_not_found", "No such repository.")
             return [scoped]
-        visible: list[Repository] = []
-        for found in self._conn.execute(
-                "SELECT id FROM repositories ORDER BY id").fetchall():
-            current = self._repos.get_by_id(int(found["id"]))
-            if current is not None and can_read(viewer, current):
-                visible.append(current)
-        return visible
+        return visible_repositories(self._conn, self._repos, viewer)
 
-    def search(self, viewer: User | None, query: object = "", *,
+    def _search_all(self, viewer: User | None, query: object = "", *,
                pattern: object = None, mode: object = None,
                path: object = None, language: object = None,
                owner: object = None, repo: object = None,
@@ -471,8 +486,8 @@ class CodeSearch:
         pattern is refused `query_invalid` — a code
         search with nothing to hunt is a listing, and
         listings are not this slice. Results are
-        ordered by repository, then path, capped at
-        *limit* files."""
+        ordered by repository, then path, whole (the
+        public faces apply the *limit* cap)."""
         parsed = parse_code_query(query)
         final_pattern = parsed.pattern if pattern is None \
             else _check_pattern(pattern)
@@ -534,7 +549,40 @@ class CodeSearch:
                 match_count=total, matched_lines=matched_lines,
                 snippets=snippets))
         hits.sort(key=lambda h: (h.full_name.lower(), h.path))
+        return hits
+
+    def search(self, viewer: User | None, query: object = "", *,
+               pattern: object = None, mode: object = None,
+               path: object = None, language: object = None,
+               owner: object = None, repo: object = None,
+               context: int = 1,
+               limit: int = DEFAULT_LIMIT,
+               ) -> list[CodeSearchHit]:
+        """Execute one code search (see `_search_all`
+        for the grammar and the law), capped at
+        *limit* files."""
+        hits = self._search_all(
+            viewer, query, pattern=pattern, mode=mode, path=path,
+            language=language, owner=owner, repo=repo,
+            context=context, limit=limit)
         return hits[:limit]
+
+    def search_counted(self, viewer: User | None,
+                       query: object = "", **kwargs,
+                       ) -> CodeSearchResults:
+        """One code search with its S-209 counts: the
+        capped hits plus totals tallied over the full
+        filtered result before the cap, through
+        S-209's `tally_code_hits` — an unreadable
+        repository contributes no file, no match, and
+        no matched line to any of the three totals."""
+        limit = kwargs.get("limit", DEFAULT_LIMIT)
+        hits = self._search_all(viewer, query, **kwargs)
+        tally = tally_code_hits(hits)
+        return CodeSearchResults(
+            hits=tuple(hits[:limit]), total_files=tally.files,
+            total_matches=tally.matches,
+            total_matched_lines=tally.matched_lines)
 
     def search_repository(self, viewer: User | None,
                           owner: object, repo: object,

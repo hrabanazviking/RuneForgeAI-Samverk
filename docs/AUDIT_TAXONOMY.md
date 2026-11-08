@@ -800,3 +800,24 @@ converges with no stale rows. Querying the index
 is S-208's slice; permission filtering is
 S-209's. Storage is migration 82's code_fts --
 schema moves 81 to 82.)
+
+S-209 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its permission-filtered results are a read over
+reads, in samverk/search_permissions.py: the one
+global resolution, visible_repositories over
+S-054's can_read, resolved before any index row
+is read, to which the S-206 backend and S-208
+code search now both delegate. Counts are tallied
+from the filtered hits only -- the counted faces
+search_counted on both executors, totals computed
+before any result cap -- so an unreadable
+repository contributes no title, no snippet, and
+no count; a search scoped to it answers the
+uniform repo_not_found, worded identically to a
+repository that does not exist. The leakage
+battery proves the equivalence: a stranger's hits
+and counts over a world containing a planted
+private repository equal the same search over a
+world where it was never created. No migration
+-- schema stays 82.)
