@@ -479,7 +479,7 @@ class RequiredReviewTests(unittest.TestCase):
             self.conn.execute(
                 "SELECT COUNT(*) AS c FROM pull_request_reviews"
             ).fetchone()["c"], reviews_before)
-        self.assertEqual(schema_version(self.conn), 89)
+        self.assertEqual(schema_version(self.conn), 90)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
 
 

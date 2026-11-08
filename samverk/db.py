@@ -1951,6 +1951,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_thread_overrides_repo"
         " ON thread_overrides (repo_id, thread_kind, thread_number)",
     ]),
+    # S-226: mention deliveries -- the exactly-once
+    # ledger: one row per (source, recipient) for a
+    # routed @user / @org/team mention, pointing at
+    # the S-223 notification it delivered (reason
+    # `mention`). Judged in
+    # samverk/mention_routing.py (MentionRoutingStore).
+    (90, [
+        "CREATE TABLE mention_deliveries ("
+        "  id INTEGER PRIMARY KEY,"
+        "  notification_id INTEGER NOT NULL UNIQUE,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  actor_id INTEGER,"
+        "  source_kind TEXT NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  number INTEGER NOT NULL,"
+        "  comment_id INTEGER NOT NULL DEFAULT 0,"
+        "  via_json TEXT NOT NULL DEFAULT '[]',"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (source_kind, repo_id, number, comment_id,"
+        "          recipient_id)"
+        ")",
+        "CREATE INDEX idx_mention_deliveries_recipient"
+        " ON mention_deliveries (recipient_id, id)",
+        "CREATE INDEX idx_mention_deliveries_item"
+        " ON mention_deliveries (repo_id, number, id)",
+    ]),
 ]
 
 
