@@ -1262,3 +1262,35 @@ triage, S-225's overrides and S-227's opt-outs,
 so it is not a witnessed act and the audit log
 does not move for it. One migration -- schema
 91 to 92, the notification_preferences table.)
+
+S-229 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its activity feeds, in
+samverk/activity_feeds.py, are Part XI's three
+read faces over S-221's canonical event store:
+a person's feed (their own actions), a
+repository's feed, and the instance's
+public-activity feed. Every read syncs through
+S-221's EventStore first, so a feed is never
+stale, and every repository event is filtered
+through S-190's PermissionEngine -- the one
+function that also speaks S-197's internal
+visibility, team grants, and collaborator
+grants -- so S-209's law holds by construction:
+a feed never reveals an action on a repository
+the reader cannot read, in rows, targets, or
+counts, and an unreadable repository's feed
+answers the uniform repo_not_found. The public
+feed is judged by visibility alone: it carries
+an event exactly when its repository is public,
+so private and internal actions never appear
+there -- not even for site administrators, who
+receive the same public-only feed as an
+anonymous visitor -- and its page says so in
+plain words. Non-repository events follow
+S-221's standing law (organisation events are
+public directory facts; the rest are their
+actor's and site administrators'). No
+migration -- schema 92 stands; a feed is a
+read model over the witness, not a witnessed
+act, so the audit log does not move for it.)
