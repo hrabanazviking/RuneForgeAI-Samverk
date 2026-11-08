@@ -1180,3 +1180,45 @@ and S-223's stores judged theirs -- so it is not
 a witnessed act and audits nothing. One
 migration -- schema 89 to 90, the
 `mention_deliveries` table.)
+
+S-227 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its email notifications, in
+samverk/email_notifications.py, are Part XI's
+second door: S-223 notifications also leave the
+instance as email via the instance SMTP when it
+is configured -- per-event or queued and sent as
+one digest per recipient on flush -- and never
+at all when SMTP is absent, the delivery decision
+recorded honestly as skipped while the in-app
+inbox works exactly as before. The SMTP is named
+whole by an SmtpConfig judged by the pure
+smtp_config_from: absent settings mean no SMTP,
+a half-named SMTP is refused fail-closed, and the
+transport is a mailer seam in S-026's shape with
+smtp_mailer building the real smtplib transport.
+The pure decide_email is the whole law -- SMTP
+absent, no address on the account, or an
+unsubscribe covering the reason each skip with
+their ground stored on the row -- and migration
+91's email_deliveries is UNIQUE on the
+notification, so a notification is emailed
+exactly once and a transport failure is recorded
+as failed, never raised into the mutation that
+created the in-app notification. Every letter
+carries signed unsubscribe links: HMAC-SHA256
+tokens over user and scope (`all`, or one of
+S-223's seven reasons) under the instance signing
+key, redeemed generically -- one refusal for
+forged, tampered and shapeless tokens alike --
+into migration 91's email_optouts, consulted at
+decision time and again at digest-flush time, so
+an unsubscribe recorded after queueing still
+stops that mail. Delivering a notification is
+the delivery of a mutation already witnessed
+under its own verb, and an opt-out is a personal
+notification state like S-224's triage and
+S-225's overrides, so neither is a witnessed act
+and the audit log does not move. One migration
+-- schema 90 to 91, the email_deliveries and
+email_optouts tables.)

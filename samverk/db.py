@@ -1977,6 +1977,40 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_mention_deliveries_item"
         " ON mention_deliveries (repo_id, number, id)",
     ]),
+    # S-227: email notifications -- one delivery row
+    # per S-223 notification (UNIQUE, the exactly-once
+    # enforcement) carrying the decision that was made
+    # for it, and the opt-out rows signed unsubscribe
+    # links write (one per account + scope, scope being
+    # a reason or `all`). Judged in
+    # samverk/email_notifications.py
+    # (EmailNotificationStore).
+    (91, [
+        "CREATE TABLE email_deliveries ("
+        "  id INTEGER PRIMARY KEY,"
+        "  notification_id INTEGER NOT NULL UNIQUE,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  email_address TEXT NOT NULL DEFAULT '',"
+        "  mode TEXT NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  why TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  sent_at INTEGER"
+        ")",
+        "CREATE INDEX idx_email_deliveries_recipient"
+        " ON email_deliveries (recipient_id, id)",
+        "CREATE INDEX idx_email_deliveries_status"
+        " ON email_deliveries (status, id)",
+        "CREATE TABLE email_optouts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  scope TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (user_id, scope)"
+        ")",
+        "CREATE INDEX idx_email_optouts_user"
+        " ON email_optouts (user_id, id)",
+    ]),
 ]
 
 
