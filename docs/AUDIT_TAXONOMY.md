@@ -1062,3 +1062,34 @@ like S-165's store and S-221's store -- it
 records no verb of its own and audits nothing.
 One migration -- schema 86 to 87, the
 `notifications` table.)
+
+S-224 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its inbox, in samverk/inbox.py, is Part XI's
+working surface over S-223's store: the
+recipient's own list, newest first, filtered by
+one reason -- judged through S-223's
+`validate_reason`, an unknown reason refused
+`reason_invalid` -- and by one repository, the
+`owner/name` derived purely from the stored
+target (`detail["repo"]` when the delivery
+recorded one, else the target id's first two
+segments), a filter naming anything else refused
+`repo_invalid`. Done and saved are distinct
+states on one `inbox_triage` row per
+notification: done is the only exit and moves
+S-223's `read_at` with it, reopening restores
+the row unread as it was, and saved is an
+orthogonal flag that never touches read or
+done. Keyboard triage is a frozen registry in
+S-111's shape whose transitions are the pure
+`apply_triage`, and the empty state teaches the
+whole model in one screen -- the seven reasons,
+the two filters, done versus saved, and the
+triage keys -- rendered from the lessons, the
+vocabulary, and the registry themselves. Triage
+is a personal reading state, like S-214's saved
+searches: it mutates no shared record, so it is
+not a witnessed act and audits nothing. One
+migration -- schema 87 to 88, the `inbox_triage`
+table.)

@@ -83,8 +83,8 @@ class OutsideCollaboratorTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 87)
-        self.assertEqual(db.MIGRATIONS[-1][0], 87)
+        self.assertEqual(schema_version(self.conn), 88)
+        self.assertEqual(db.MIGRATIONS[-1][0], 88)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertIn("repo.collaborator.add", taxonomy.AUDIT_EVENTS)
         self.assertIn("repo.collaborator.remove", taxonomy.AUDIT_EVENTS)
@@ -106,7 +106,7 @@ class OutsideCollaboratorTests(unittest.TestCase):
             self.assertEqual(db.schema_version(conn), 72)
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 87)
+            self.assertEqual(db.schema_version(conn), 88)
             tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()]
             self.assertIn("outside_collaborators", tables)
             conn.close()
