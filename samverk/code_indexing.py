@@ -99,7 +99,7 @@ import fnmatch
 import sqlite3
 from dataclasses import dataclass
 
-from .blob_view import detect_language
+from .language_detection import detect_language
 from .escaping import escape_html_text
 from .hooks import RefUpdate
 from .index_architecture import (
