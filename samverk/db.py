@@ -1914,6 +1914,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_notifications_reason"
         " ON notifications (recipient_id, reason, id)",
     ]),
+    # S-224: inbox triage -- one row per notification
+    # carrying its done and saved flags, kept distinct
+    # from each other and from S-223's read_at; the
+    # notification row itself is S-223's, untouched
+    # except that done/reopen move read_at with them.
+    (88, [
+        "CREATE TABLE inbox_triage ("
+        "  notification_id INTEGER PRIMARY KEY,"
+        "  done_at INTEGER,"
+        "  saved_at INTEGER"
+        ")",
+        "CREATE INDEX idx_inbox_triage_saved"
+        " ON inbox_triage (saved_at)",
+    ]),
 ]
 
 
