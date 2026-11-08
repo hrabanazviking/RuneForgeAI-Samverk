@@ -71,8 +71,8 @@ class IndexArchitectureTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_80_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 89)
-        self.assertEqual(db.MIGRATIONS[-1][0], 89)
+        self.assertEqual(schema_version(self.conn), 90)
+        self.assertEqual(db.MIGRATIONS[-1][0], 90)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
@@ -85,7 +85,7 @@ class IndexArchitectureTests(unittest.TestCase):
     def test_fresh_database_migrates_to_80(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 89)
+            self.assertEqual(db.schema_version(conn), 90)
             conn.close()
 
     # -- the catalog -------------------------------------------

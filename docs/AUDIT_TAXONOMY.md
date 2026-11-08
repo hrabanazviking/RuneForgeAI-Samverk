@@ -1139,3 +1139,44 @@ it mutates no shared record, so it is not a
 witnessed act and audits nothing. One
 migration -- schema 88 to 89, the
 `thread_overrides` table.)
+
+S-226 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its mention routing, in
+samverk/mention_routing.py, is Part XI's router:
+`@user` and `@org/team` mentions in primary prose
+-- an issue or pull request body, or one live
+comment -- create S-223 notifications under the
+reason `mention`, exactly once per (source,
+recipient). However many paths in one source
+reach the same person -- named directly, reached
+through one mentioned team, reached through two
+-- they receive one notification, its delivery
+ledger row recording every path in its `via`;
+re-syncing a source keeps standing deliveries
+and their read state, an edit that removes a
+mention withdraws its delivery whole, and a
+tombstoned comment's mentions die with its body.
+Cross-reference echoes never notify: only
+primary prose is a source, S-127's
+cross-reference record and the back-references
+derived from it are never read by the router, so
+an echo can neither create nor duplicate a
+delivery, and routing the target thread of a
+mentioning text creates nothing there. Only
+proven mentions route -- the account must exist,
+the team must resolve through S-195's own
+resolution (secret-team visibility included),
+the recipient must be able to read the
+repository under S-054, the author is never
+notified of their own act, code spans and fences
+never parse, and a recipient who muted the
+thread under S-225 receives no delivery until
+the mute is cleared and the source re-syncs.
+Routing is the delivery of acts already
+witnessed under their own verbs -- the prose's
+creation and edits, judged exactly as S-195's
+and S-223's stores judged theirs -- so it is not
+a witnessed act and audits nothing. One
+migration -- schema 89 to 90, the
+`mention_deliveries` table.)
