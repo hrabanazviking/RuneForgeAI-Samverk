@@ -1314,3 +1314,34 @@ page says so in plain words. No migration --
 schema 92 stands; a profile is a read model over
 the witness, not a witnessed act, so the audit
 log does not move for it.)
+
+S-231 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its events API, in
+samverk/events_api.py, is the feed as a Part XII
+resource: S-229's three feeds and S-221's single
+event answered as JSON-safe data, in the shape
+S-216 set for API faces. The API owns no
+visibility law of its own -- it builds S-229's
+feed store and judges every event through that
+store's own per-event filter (S-190's engine over
+S-209's law), so permission filtering is
+identical by construction: an unreadable
+repository contributes no row, no target, and no
+count, the repository face answers the uniform
+repo_not_found, and the public face is public
+repositories only for every reader, site
+administrators included. Each feed payload
+carries the filtered total tallied before the
+cap, the returned count, and a complete flag --
+there is deliberately no paging cursor, which is
+S-239's work -- and refusals carry the stores'
+own reasons verbatim (no_such_user,
+repo_not_found, event_not_found) beside the
+contract's limit_invalid and filter_invalid,
+rendered by error_to_dict in this contract's
+shape, not S-240's future unified problem
+format. No migration -- schema 92 stands; an API
+read is a read model over the witness, not a
+witnessed act, so the audit log does not move
+for it.)
