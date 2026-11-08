@@ -821,3 +821,27 @@ and counts over a world containing a planted
 private repository equal the same search over a
 world where it was never created. No migration
 -- schema stays 82.)
+
+S-210 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its repository search is a read over the
+repository rows and S-066's topics, in
+samverk/repository_search.py: free-text terms
+matched case-insensitively as substrings
+against name, description, topics, and owner,
+composed by AND, with owner:, topic:, and
+visibility: qualifiers (is: as the visibility
+alias), -negation of one qualifier, and sort:
+orderings; unknown qualifiers are refused
+query_invalid, naming the qualifier. Permission
+rides S-209's one resolution --
+visible_repositories over S-054's can_read,
+resolved before any topic is read, and topics
+are loaded only for repositories that survive
+it -- and the counted faces tally their totals
+from the filtered hits only, before any result
+cap, so an unreadable repository contributes
+no name, no description, no topic, and no
+count. The instance directory page is the same
+law with an empty query. No migration --
+schema stays 82.)
