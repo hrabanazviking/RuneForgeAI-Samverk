@@ -928,3 +928,20 @@ without an audit log refuses audit_required before
 anything is enqueued -- an unaudited rebuild must
 not happen. Health reads audit nothing. No
 migration -- schema stays 84.)
+
+S-217 (2026-11-08) added no event of its own --
+123 events stand: 31 auth, 79 repo, 13 admin.
+(Its performance budget, in samverk/search_budgets.py,
+measures S-208's permission-filtered code search
+over a reference corpus defined in code -- six
+mirror-shaped repositories, 300 files, 9,000 lines,
+with a common needle in every file and a rare
+needle in exactly one. Budgets are stated per
+hardware class (S-073's classes) as p95 latencies
+and judged by the pure judge law over real timed
+samples; a report marks every class it did not
+measure as unmeasured, and the Pi-class budget
+stays NOT PROVEN until S-395 re-measures it there
+and S-413 restates it. Measuring a read is a read
+and audits nothing. No migration -- schema
+stays 84.)
