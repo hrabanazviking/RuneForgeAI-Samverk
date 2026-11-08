@@ -403,9 +403,9 @@ class ProtectionRuleTests(unittest.TestCase):
 
     # -- invariants -------------------------------------------------------------
     def test_migration_67_and_taxonomy_120(self):
-        self.assertEqual(schema_version(self.conn), 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
-        self.assertEqual(db.MIGRATIONS[-1][0], 85)
+        self.assertEqual(schema_version(self.conn), 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
+        self.assertEqual(db.MIGRATIONS[-1][0], 86)
         row = self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
             " AND name='protection_rules'").fetchone()

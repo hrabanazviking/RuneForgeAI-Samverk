@@ -358,12 +358,12 @@ class EventStoreTests(unittest.TestCase):
         self.assertIn("No activity yet.", empty)
         self.assertIn("0 event(s).", empty)
 
-    def test_pins_schema_85_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 85)
-        self.assertEqual(db.MIGRATIONS[-1][0], 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
+    def test_pins_schema_86_taxonomy_127(self):
+        self.assertEqual(schema_version(self.conn), 86)
+        self.assertEqual(db.MIGRATIONS[-1][0], 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()}

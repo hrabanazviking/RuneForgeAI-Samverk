@@ -248,11 +248,11 @@ class OrgAuditLogTests(unittest.TestCase):
         self.assertTrue(by_key["danger"]["available"])
 
     def test_pins_schema_80_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 85)
-        self.assertEqual(db.MIGRATIONS[-1][0], 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
+        self.assertEqual(schema_version(self.conn), 86)
+        self.assertEqual(db.MIGRATIONS[-1][0], 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
 

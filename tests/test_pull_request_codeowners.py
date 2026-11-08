@@ -210,8 +210,8 @@ class CodeownersStoreTests(unittest.TestCase):
 
     # -- the store ---------------------------------------------------------
     def test_no_codeowners_file_means_no_requests(self):
-        self.assertEqual(db.schema_version(self.conn), 85)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
+        self.assertEqual(db.schema_version(self.conn), 86)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         pr, _path, _base, _head = self._open(
             {"a.txt": "alpha\n"}, {"a.txt": "alpha\nbeta\n"})
         report = self.codeowners.sync_requests(
