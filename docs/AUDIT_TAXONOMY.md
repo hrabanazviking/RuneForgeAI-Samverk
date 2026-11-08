@@ -888,3 +888,18 @@ searcher's own recent searches (migration 83,
 schema 82 to 83): a personal reading preference
 in the S-136 pattern, which mutates no shared
 record and so is not a witnessed act.)
+
+S-214 (2026-11-08) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its saved searches, in samverk/saved_searches.py,
+persist a user's own named global queries
+(migration 84, schema 83 to 84) beyond S-136's
+per-repo filters: any S-213 query saved under a
+name and re-runnable. Saving is a personal reading
+preference in the S-136 pattern, which mutates no
+shared record and so is not a witnessed act; only
+the query text is stored, never results, and
+re-running executes live through S-213's
+GlobalSearch, whose groups filter through S-209
+before reading anything private, so a saved search
+grants no access.)
