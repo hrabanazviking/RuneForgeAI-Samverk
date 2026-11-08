@@ -205,9 +205,9 @@ class PeopleSearchTests(unittest.TestCase):
         self.addCleanup(self.a.conn.close)
         self.addCleanup(self.b.conn.close)
 
-    def test_pins_schema_91_taxonomy_127(self):
-        self.assertEqual(schema_version(self.a.conn), 91)
-        self.assertEqual(db.MIGRATIONS[-1][0], 91)
+    def test_pins_schema_92_taxonomy_127(self):
+        self.assertEqual(schema_version(self.a.conn), 92)
+        self.assertEqual(db.MIGRATIONS[-1][0], 92)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
