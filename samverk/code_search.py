@@ -104,6 +104,7 @@ from dataclasses import dataclass
 
 from .accounts import User
 from .escaping import escape_html_attr, escape_html_text
+from .language_detection import language_matches as _shared_language_matches
 from .permissions import can_read
 from .repo_search import SearchBoxError, extract_repo_scope
 from .search_permissions import tally_code_hits, visible_repositories
@@ -280,12 +281,13 @@ def matches_path(path: str, path_filter: str) -> bool:
 
 
 def matches_language(language: str, language_filter: str) -> bool:
-    """Whether an indexed *language* passes the
-    filter: an exact match, case-insensitively; an
-    empty filter passes all."""
-    if not language_filter:
-        return True
-    return language.lower() == language_filter.lower()
+    """Whether an indexed *language* passes the filter:
+    S-218's shared filter law over the one census - an
+    empty filter passes all; a filter naming a known
+    language (canonical name or alias, any case) matches
+    exactly its canonical recorded name; a filter naming
+    no known language matches nothing (fail closed)."""
+    return _shared_language_matches(language, language_filter)
 
 
 def _compile(pattern: str, mode: str):

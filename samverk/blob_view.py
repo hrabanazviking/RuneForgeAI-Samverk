@@ -46,17 +46,14 @@ from .repositories import RepositoryStore
 
 VIEW_MAX_BYTES = 1_000_000
 
-# extension -> language name (the seed of S-218's shared table)
-LANGUAGE_BY_EXTENSION = {
-    ".py": "python", ".js": "javascript", ".mjs": "javascript",
-    ".ts": "typescript", ".tsx": "typescript", ".jsx": "javascript",
-    ".go": "go", ".rs": "rust", ".java": "java", ".c": "c",
-    ".h": "c", ".cpp": "cpp", ".cc": "cpp", ".cs": "csharp",
-    ".rb": "ruby", ".sh": "shell", ".bash": "shell", ".zsh": "shell",
-    ".sql": "sql", ".html": "html", ".css": "css", ".json": "json",
-    ".toml": "toml", ".yaml": "yaml", ".yml": "yaml", ".md": "markdown",
-    ".lua": "lua", ".pl": "perl", ".php": "php",
-}
+# The shared language census lives in S-218's
+# language_detection module - the single source of
+# truth for highlighting here, for S-207's indexer
+# and for S-208's code filters. Re-exported under
+# S-099's names so existing imports keep working;
+# these are the SAME objects, never copies.
+from .language_detection import (  # noqa: E402
+    LANGUAGE_BY_EXTENSION, detect_language)
 
 _KEYWORDS = {
     "python": "and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield True False None print len range str int",
@@ -76,28 +73,6 @@ _KEYWORDS["csharp"] = _KEYWORDS["java"] + " namespace using bool string var asyn
 _HASH_COMMENT = frozenset({"python", "shell", "ruby", "perl", "yaml", "toml"})
 _SLASH_COMMENT = frozenset({"javascript", "typescript", "go", "rust",
                             "java", "c", "cpp", "csharp", "php"})
-
-
-def detect_language(filename: str, data: bytes) -> str:
-    name = filename.rsplit("/", 1)[-1].lower()
-    if name in ("makefile", "dockerfile"):
-        return "make"
-    dot = name.rfind(".")
-    if dot > 0 and name[dot:] in LANGUAGE_BY_EXTENSION:
-        return LANGUAGE_BY_EXTENSION[name[dot:]]
-    first = data.split(b"\n", 1)[0].decode("utf-8", "replace")
-    if first.startswith("#!"):
-        if "python" in first:
-            return "python"
-        if "node" in first:
-            return "javascript"
-        if "sh" in first:
-            return "shell"
-        if "ruby" in first:
-            return "ruby"
-        if "perl" in first:
-            return "perl"
-    return "text"
 
 
 _WORD_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
