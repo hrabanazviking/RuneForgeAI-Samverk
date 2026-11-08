@@ -1773,6 +1773,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  comment_count UNINDEXED"
         ")",
     ]),
+    # S-207: code indexing — the FTS5 index the push-time
+    # extractor fills. One row per indexed file of the
+    # default branch's tip snapshot: path and text are
+    # the indexed text; repository, snapshot commit,
+    # content digest (the blob oid), language,
+    # disposition, and the LFS pointer facts (target oid
+    # and size, recorded as claims about the LFS store —
+    # never the pointee's bytes) ride as structured
+    # fields. Judged in samverk/code_indexing.py.
+    (82, [
+        "CREATE VIRTUAL TABLE code_fts USING fts5("
+        "  path, text,"
+        "  repo_id UNINDEXED, commit_oid UNINDEXED,"
+        "  digest UNINDEXED, language UNINDEXED,"
+        "  disposition UNINDEXED, lfs_oid UNINDEXED,"
+        "  lfs_size UNINDEXED, blob_size UNINDEXED"
+        ")",
+    ]),
 ]
 
 

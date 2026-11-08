@@ -777,3 +777,26 @@ rides S-054's can_read resolved before any index
 row is read; S-209 owns the leakage hardening.
 Storage is migration 81's issue_pr_fts -- schema
 moves 80 to 81.)
+
+S-207 (2026-11-07) added no event of its own --
+122 events stand: 31 auth, 79 repo, 12 admin.
+(Its code indexing is derived data over the
+push's own S-090 record -- indexing writes only
+the FTS rows and S-205's document registry,
+rebuildable from the bare repository at any
+time, in samverk/code_indexing.py: on push, the
+default branch's tip snapshot is diffed against
+the previously indexed snapshot and exactly the
+changed blobs are extracted, judged by S-205's
+decide_code_disposition within the 1 MiB budget
+(binary / oversized / submodule / ignored / empty
+skipped for named reasons), and LFS pointers are
+indexed as pointers -- their own text, target oid
+and size recorded as what they are, the pointee's
+bytes never fetched or indexed in their place.
+Deletions leave the index in the same run, and a
+rebuild replaces a repository's rows whole so it
+converges with no stale rows. Querying the index
+is S-208's slice; permission filtering is
+S-209's. Storage is migration 82's code_fts --
+schema moves 81 to 82.)
