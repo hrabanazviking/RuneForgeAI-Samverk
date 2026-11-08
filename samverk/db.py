@@ -1892,6 +1892,28 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_repo_stars_user"
         " ON repo_stars (user_id, id)",
     ]),
+    # S-223: notification reasons -- one notification
+    # row per delivery, carrying its reason (one of
+    # the seven in samverk/notification_reasons.py)
+    # stored at creation and shown with the row.
+    (87, [
+        "CREATE TABLE notifications ("
+        "  id INTEGER PRIMARY KEY,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  actor_id INTEGER,"
+        "  reason TEXT NOT NULL,"
+        "  verb TEXT NOT NULL DEFAULT '',"
+        "  target_kind TEXT NOT NULL DEFAULT '',"
+        "  target_id TEXT NOT NULL DEFAULT '',"
+        "  detail_json TEXT NOT NULL DEFAULT '{}',"
+        "  created_at INTEGER NOT NULL,"
+        "  read_at INTEGER"
+        ")",
+        "CREATE INDEX idx_notifications_recipient"
+        " ON notifications (recipient_id, id)",
+        "CREATE INDEX idx_notifications_reason"
+        " ON notifications (recipient_id, reason, id)",
+    ]),
 ]
 
 

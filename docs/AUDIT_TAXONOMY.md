@@ -1031,3 +1031,34 @@ and emits nothing, and mutations need a
 signed-in account. One migration -- schema 85
 to 86, the `repo_watches` and `repo_stars`
 tables.)
+
+S-223 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its notification reasons, in
+samverk/notification_reasons.py, are Part XI's
+canonical reason vocabulary: exactly seven
+reasons -- `mention`, `assign`,
+`review-requested`, `author`, `comment`,
+`state-change`, `subscribed` -- each stored on
+its notification row at creation and shown, in
+plain words, with every notification wherever it
+is rendered. `validate_reason` is the only door:
+anything outside the seven (S-165's
+family-internal `review-dismissed` included) is
+refused with `reason_invalid` naming the honest
+set, and a refusal stores nothing. The store is
+the general notification record the family
+stores feed: S-165's review store already stores
+`review-requested` and `author` on its own rows
+in this slice's words, and S-224's inbox and
+S-228's per-reason preferences read this
+vocabulary. An inbox belongs to its recipient --
+listing, counting and marking read take the
+recipient themself, and marking read is
+owner-scoped in the query itself. Creating a
+notification is the delivery of a mutation
+already witnessed under its own verb, so --
+like S-165's store and S-221's store -- it
+records no verb of its own and audits nothing.
+One migration -- schema 86 to 87, the
+`notifications` table.)
