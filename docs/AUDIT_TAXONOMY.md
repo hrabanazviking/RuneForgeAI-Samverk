@@ -965,3 +965,39 @@ engines' own constants and hit shapes on every
 run. A document about reads is a read: it writes
 nothing and audits nothing. No migration -- schema
 stays 84.)
+
+S-221 (2026-11-08) added no event of its own --
+123 events stand: 31 auth, 79 repo, 13 admin.
+(Its event store completion, in
+samverk/event_store.py, is Part XI's canonical
+store: one record per witnessed mutation -- actor
+(kind, id, and the account's name resolved at read
+time), verb (the audit action itself), target
+(kind and id, carried unchanged), refs (derived
+purely: `repo:<owner>/<name>`, `number:<n>`, and a
+push's moved refs by name), the safe detail and
+outcome carried unchanged, and the witness's own
+timestamp. Every mutation in Parts III-X already
+writes exactly one row in S-007's log, so the
+store materialises those rows -- one canonical
+event per audit seq under a UNIQUE constraint,
+inserted with OR IGNORE -- which makes syncing
+exactly-once, keeps refused and rolled-back
+mutations (never witnessed) out entirely, and
+turns any unaudited mutation into a visible gap
+between the two records. S-090's push store and
+S-139's issue outbox remain the family stores;
+this is the one canonical store over all of them.
+Reads sync first, so an answer is never stale,
+and respect permission by construction: a
+repository's events ride S-054's read gate (a
+stranger to a private repository gets the uniform
+repo_not_found, and its events are invisible in
+the actor and public faces too), an actor feed
+filters event by event, non-repository events are
+visible only to the actor themself and site
+admins (organization events excepted, as public
+directory facts), and the public feed carries
+only public repositories. Materialising is a read
+of the witness and audits nothing. One migration
+-- schema 84 to 85, the `events` table.)

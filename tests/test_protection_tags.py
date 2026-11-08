@@ -210,7 +210,7 @@ class TagProtectionTests(unittest.TestCase):
         self.assertIn("not satisfied", html)
 
     def test_no_migration_no_taxonomy(self):
-        self.assertEqual(schema_version(self.conn), 84)
+        self.assertEqual(schema_version(self.conn), 85)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
 
 if __name__ == "__main__":

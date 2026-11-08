@@ -1833,6 +1833,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_saved_searches_user"
         " ON saved_searches (user_id, name_lower)",
     ]),
+    # S-221: the canonical event store -- one row per
+    # witnessed mutation (keyed by its audit seq,
+    # UNIQUE, so materialising is exactly-once): the
+    # actor, the verb, the target, the derived refs
+    # and the safe detail as JSON, the outcome, and
+    # the witness's own timestamp. Part XI's feeds,
+    # notifications and events API read here; the
+    # audit log remains the witness it derives from.
+    # Judged in samverk/event_store.py (EventStore).
+    (85, [
+        "CREATE TABLE events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  audit_seq INTEGER NOT NULL UNIQUE,"
+        "  actor_kind TEXT NOT NULL,"
+        "  actor_id INTEGER,"
+        "  verb TEXT NOT NULL,"
+        "  target_kind TEXT NOT NULL,"
+        "  target_id TEXT,"
+        "  refs_json TEXT NOT NULL DEFAULT '[]',"
+        "  detail_json TEXT NOT NULL DEFAULT '{}',"
+        "  outcome TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_events_actor"
+        " ON events (actor_id, id)",
+        "CREATE INDEX idx_events_verb"
+        " ON events (verb, id)",
+    ]),
 ]
 
 
