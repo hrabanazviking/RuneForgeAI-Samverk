@@ -1928,6 +1928,29 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_inbox_triage_saved"
         " ON inbox_triage (saved_at)",
     ]),
+    # S-225: thread subscriptions -- one override row
+    # per (account, repository, thread kind, thread
+    # number) carrying its state (subscribed / muted);
+    # no row is inherit. Judged in
+    # samverk/thread_subscriptions.py
+    # (ThreadSubscriptionStore).
+    (89, [
+        "CREATE TABLE thread_overrides ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  thread_kind TEXT NOT NULL,"
+        "  thread_number INTEGER NOT NULL,"
+        "  state TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (user_id, repo_id, thread_kind, thread_number)"
+        ")",
+        "CREATE INDEX idx_thread_overrides_user"
+        " ON thread_overrides (user_id, id)",
+        "CREATE INDEX idx_thread_overrides_repo"
+        " ON thread_overrides (repo_id, thread_kind, thread_number)",
+    ]),
 ]
 
 
