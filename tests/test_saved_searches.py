@@ -179,13 +179,13 @@ class PinsTests(unittest.TestCase):
         self.conn = db.init_db(Path(self._td.name) / "samverk.db")
         self.addCleanup(self.conn.close)
 
-    def test_pins_schema_84_taxonomy_122(self):
+    def test_pins_schema_84_taxonomy_123(self):
         self.assertEqual(schema_version(self.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'")}
         self.assertIn("saved_searches", tables)

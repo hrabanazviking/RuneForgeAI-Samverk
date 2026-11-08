@@ -319,7 +319,7 @@ class PullRequestChecksTests(unittest.TestCase):
         self.assertEqual(db.schema_version(self.conn), 84)
         # S-157 adds no audit event: the poster's scoped
         # identity and its audit-logging are S-246's law.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertIn("repo.pull_request.review_request",
                       taxonomy.AUDIT_EVENTS)
 

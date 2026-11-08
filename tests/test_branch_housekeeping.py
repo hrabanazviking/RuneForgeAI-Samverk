@@ -614,7 +614,7 @@ class BranchHousekeepingTests(unittest.TestCase):
     # -- 6. migration + taxonomy ---------------------------------------------------
     def test_migration_62_fresh_v57_upgrade_and_taxonomy_120(self):
         self.assertEqual(db.schema_version(self.conn), 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertIn("repo.branch.delete_on_merge",
                       taxonomy.AUDIT_EVENTS)
         self.assertIn("repo.branch.restore", taxonomy.AUDIT_EVENTS)

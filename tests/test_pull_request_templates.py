@@ -126,7 +126,7 @@ class TemplateStoreTests(unittest.TestCase):
     # -- discovery ---------------------------------------------------------
     def test_no_templates_means_blank_start_and_no_new_state(self):
         self.assertEqual(db.schema_version(self.conn), 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self._seed({"a.txt": "alpha\n"}, {"a.txt": "alpha\nbeta\n"})
         choice = self.templates.list_templates(
             self.owner, "volmarr", "pub", base_branch="main")

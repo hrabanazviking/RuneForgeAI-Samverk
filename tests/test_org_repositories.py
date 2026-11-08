@@ -86,7 +86,7 @@ class OrgRepoTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins(self):
         self.assertEqual(schema_version(self.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertIn("auth.organization.update", taxonomy.AUDIT_EVENTS)
         self.assertIn("repo.create", taxonomy.AUDIT_EVENTS)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(org_repo_policies)").fetchall()]

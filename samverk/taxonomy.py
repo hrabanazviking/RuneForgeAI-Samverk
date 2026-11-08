@@ -187,6 +187,8 @@ ADMIN_EVENTS = frozenset({
     # S-044 additions (append-only, per the taxonomy rules):
     "admin.user.suspend",
     "admin.user.unsuspend",
+    # S-215 addition (append-only, per the taxonomy rules):
+    "admin.index.rebuild",
 })
 
 AUDIT_EVENTS = AUTH_EVENTS | REPO_EVENTS | ADMIN_EVENTS

@@ -99,7 +99,7 @@ pretends to be one of them.
   record (the push's S-090 event, the mutation's
   own audit); a rebuild request here is an internal
   seam whose admin-facing, audited door is S-215's.
-  122 events stand: 31 auth / 79 repo / 12 admin.
+  123 events stand: 31 auth / 79 repo / 13 admin.
   Storage is migration 80 (schema 79 to 80).
 """
 from __future__ import annotations
