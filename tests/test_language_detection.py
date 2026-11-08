@@ -14,7 +14,7 @@ finds. Around it: precedence (filename, extension,
 shebang, honest unknown), parsed shebangs, canonical
 names with aliases kept OUT of filters (S-208's pin),
 the census re-derived from the tables, and the schema
-(84) / taxonomy (123) pins.
+(85) / taxonomy (123) pins.
 
 Counted with: python3 -m unittest discover -s tests -v
 """
@@ -197,7 +197,7 @@ class PinsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             conn = db.init_db(Path(tmp) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 84)
+                self.assertEqual(schema_version(conn), 85)
             finally:
                 conn.close()
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)

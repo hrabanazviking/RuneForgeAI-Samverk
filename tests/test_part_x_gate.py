@@ -52,7 +52,7 @@ seams, at the three things the gate names:
   audits honestly against the live engines.
 
 The gate claimed no migration and no taxonomy event:
-the assembled system stands at schema 84 with 123
+the assembled system stands at schema 85 with 123
 audit events (31 auth / 79 repo / 13 admin), and the
 battery proves both pins. The full-suite counted
 recount at this gate is recorded in
@@ -336,9 +336,9 @@ class PartXGateTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
 
-    def test_pins_schema_84_taxonomy_123(self):
-        self.assertEqual(schema_version(self.a.conn), 84)
-        self.assertEqual(db.MIGRATIONS[-1][0], 84)
+    def test_pins_schema_85_taxonomy_123(self):
+        self.assertEqual(schema_version(self.a.conn), 85)
+        self.assertEqual(db.MIGRATIONS[-1][0], 85)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
