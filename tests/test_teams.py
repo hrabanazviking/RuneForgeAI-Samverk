@@ -309,7 +309,7 @@ class TeamTests(unittest.TestCase):
     def test_migration_70_pin(self):
         self.assertEqual(schema_version(self.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         for table, cols in (
             ("teams", ("id", "org_id", "name", "name_lower", "description", "privacy", "created_by", "created_at", "updated_at")),
             ("team_members", ("team_id", "user_id", "added_by", "created_at")),

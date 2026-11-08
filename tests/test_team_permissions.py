@@ -108,7 +108,7 @@ class TeamPermissionTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins(self):
         self.assertEqual(schema_version(self.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(team_repositories)").fetchall()]
         self.assertIn("permission", cols)
 

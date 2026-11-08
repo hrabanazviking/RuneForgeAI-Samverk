@@ -148,6 +148,7 @@ any name not in this document's set.*
 | `admin.user.approve` | Operator approved a pending account (S-026, the no-SMTP road) | `{"from_status": ...}` |
 | `admin.user.suspend` | Admin suspended an account, with reason (S-044) | `{"reason": ...}` |
 | `admin.user.unsuspend` | Admin lifted a suspension (S-044) | `{"reason": ...}` on the record, if given |
+| `admin.index.rebuild` | Admin triggered a search-index rebuild for a repository (S-215) | `{"kinds": [...], "generations": [...], "jobs": [...]}` |
 
 ## Version note
 
@@ -903,3 +904,27 @@ re-running executes live through S-213's
 GlobalSearch, whose groups filter through S-209
 before reading anything private, so a saved search
 grants no access.)
+
+S-215 (2026-11-08) added `admin.index.rebuild` --
+123 events stand: 31 auth, 79 repo, 13 admin.
+(Its index health, in samverk/index_health.py, is
+Part X's operations door over S-205's architecture:
+site admins only, every face checked before any
+index row is read. A repository's health is S-205's
+own four states and the queue snapshot, computed at
+read time and stored nowhere; lag is the age of the
+oldest waiting job -- per repository and for the
+instance -- rendered on every page, including when
+it is 0, and a kind that never ran says never, never
+current. Each repository folds to its worst status
+(failed, then stale, indexing, queued, never,
+current), and the instance counts the fully current
+and the behind by name. The rebuild trigger is
+S-205's own request_rebuild behind the admin gate,
+witnessed by the one new event (target the
+repository; detail naming the kinds, the generation
+each rebuild carries, and its jobs), and a store
+without an audit log refuses audit_required before
+anything is enqueued -- an unaudited rebuild must
+not happen. Health reads audit nothing. No
+migration -- schema stays 84.)

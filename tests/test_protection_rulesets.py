@@ -577,10 +577,10 @@ class RulesetTests(unittest.TestCase):
     def test_migration_67_and_taxonomy_120(self):
         self.assertEqual(schema_version(self.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         cols = [r["name"] for r in self.conn.execute(
             "PRAGMA table_info(protection_rulesets)").fetchall()]
         for col in ("id", "name", "name_lower", "target",

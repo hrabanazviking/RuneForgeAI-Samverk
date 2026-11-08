@@ -212,7 +212,7 @@ class PullRequestFromCompareTests(unittest.TestCase):
 
     def test_no_migration_no_taxonomy_and_offer_writes_nothing(self):
         self.assertEqual(db.schema_version(self.conn), 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         before = self.conn.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0]
         offer = self.from_compare.offer(self.owner, "volmarr", "pub", "main", "feature")
         render_compare_offer(offer)

@@ -253,13 +253,13 @@ class CommitSearchTests(unittest.TestCase):
         self.addCleanup(self.a.conn.close)
 
     # -- pins ---------------------------------------------------
-    def test_pins_schema_84_taxonomy_122(self):
+    def test_pins_schema_84_taxonomy_123(self):
         self.assertEqual(schema_version(self.a.conn), 84)
         self.assertEqual(db.MIGRATIONS[-1][0], 84)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 12)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     # -- message and author --------------------------------------
     def test_search_by_message_subject_and_body(self):
