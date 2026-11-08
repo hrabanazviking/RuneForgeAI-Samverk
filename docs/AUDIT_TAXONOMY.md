@@ -1093,3 +1093,49 @@ searches: it mutates no shared record, so it is
 not a witnessed act and audits nothing. One
 migration -- schema 87 to 88, the `inbox_triage`
 table.)
+S-225 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its thread subscriptions, in
+samverk/thread_subscriptions.py, are Part XI's
+per-thread layer over S-222's repository watch:
+one stored override per (account, repository,
+thread kind, thread number) -- `subscribed` or
+`muted` -- with the absence of a row as the
+third standing, inherit. A thread is named
+whole: the repository as `owner/name`, a kind
+from S-121's shared numbering (`issue` or
+`pull_request`, judged at the door with
+`thread_kind_invalid`), and a positive number
+(`thread_number_invalid`); existence is read
+through S-121's `IssueStore.resolve_number`, so
+a number naming no thread, or a thread of the
+other kind, answers the uniform
+`thread_not_found` -- the same answer a missing
+repository and a repository the caller cannot
+read under S-054 give, and a refusal stores
+nothing. The pure `decide_notify` is the whole
+override law: muted beats repository watch
+`all`; subscribed beats `ignore`,
+`releases_only`, and no watch at all, and
+notifies under S-223's reason `subscribed`;
+with no override the repository watch decides
+as S-222 left it, and only `all` notifies
+thread activity. The override is honest and
+visible: every view carries the stored
+override, the repository watch underneath it,
+the effective decision, and the explanation
+said in plain words by the pure
+`explain_effective` -- an override that agrees
+with the watch is said to confirm it, never to
+override it -- and the renderers say the
+explanation outright through S-010. A
+subscription belongs to its holder: every face
+is owner-scoped in the query itself, and an
+anonymous caller is refused
+`authentication_required`, S-223/S-224's name.
+A thread subscription is a personal
+notification state, like S-224's inbox triage:
+it mutates no shared record, so it is not a
+witnessed act and audits nothing. One
+migration -- schema 88 to 89, the
+`thread_overrides` table.)

@@ -164,9 +164,9 @@ class RepositorySearchTests(unittest.TestCase):
         self.addCleanup(self.b.conn.close)
 
     # -- pins -------------------------------------------------
-    def test_pins_schema_88_taxonomy_127(self):
-        self.assertEqual(schema_version(self.a.conn), 88)
-        self.assertEqual(db.MIGRATIONS[-1][0], 88)
+    def test_pins_schema_89_taxonomy_127(self):
+        self.assertEqual(schema_version(self.a.conn), 89)
+        self.assertEqual(db.MIGRATIONS[-1][0], 89)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
