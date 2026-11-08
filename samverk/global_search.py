@@ -842,7 +842,12 @@ def render_global_search_page(
     groups = results.kinds if results is not None else GROUP_ORDER
     parts = ["<h1>Search</h1>",
              render_global_search_box(query_text),
-             _keyboard_section(groups)]
+             _keyboard_section(groups),
+             '<p class="search-limits"><a href="/search/limits">'
+             "What search does not do</a> -- the honest "
+             "limits of Samverk search (S-219): no meaning "
+             "search, no relevance ranking, regex cost "
+             "caps, and what the index never holds.</p>"]
     if recents is not None:
         parts.append(render_recent_searches(recents))
     if results is None:
