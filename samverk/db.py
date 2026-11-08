@@ -1810,6 +1810,29 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_recent_searches_user_recent"
         " ON recent_searches (user_id, searched_at DESC, id DESC)",
     ]),
+    # S-214: saved searches -- a user's own named global
+    # searches (any S-213 query), beyond S-136's per-repo
+    # issue filters. One row per (user, name): the name
+    # as typed, its lowercased uniqueness key, and the
+    # query text as typed. Only the query text is stored
+    # -- results are never cached; S-213's parser is the
+    # validation seam at save time and GlobalSearch
+    # executes the query again at run time. Judged in
+    # samverk/saved_searches.py (SavedSearchStore).
+    (84, [
+        "CREATE TABLE saved_searches ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  query TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (user_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_saved_searches_user"
+        " ON saved_searches (user_id, name_lower)",
+    ]),
 ]
 
 

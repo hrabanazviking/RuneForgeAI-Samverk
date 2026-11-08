@@ -160,9 +160,9 @@ class CodeSearchTests(unittest.TestCase):
         return [h.path for h in hits]
 
     # -- pins -------------------------------------------------
-    def test_pins_schema_83_taxonomy_122(self):
-        self.assertEqual(schema_version(self.conn), 83)
-        self.assertEqual(db.MIGRATIONS[-1][0], 83)
+    def test_pins_schema_84_taxonomy_122(self):
+        self.assertEqual(schema_version(self.conn), 84)
+        self.assertEqual(db.MIGRATIONS[-1][0], 84)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 122)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 79)
