@@ -1294,3 +1294,23 @@ actor's and site administrators'). No
 migration -- schema 92 stands; a feed is a
 read model over the witness, not a witnessed
 act, so the audit log does not move for it.)
+
+S-230 (2026-11-08) added no event of its own --
+127 events stand: 31 auth, 83 repo, 13 admin.
+(Its profile activity, in
+samverk/profile_activity.py, is the profile face
+of S-229's feeds: a read model over S-221's
+canonical event store, gathered through S-229's
+own store. A profile is a public surface, so
+visibility is judged by the resource, never by
+who is asking: an action appears exactly when it
+is genuinely public -- it names a public
+repository (S-229's in_public_feed judgement), or
+it is an organisation event, a public directory
+fact. Actions in private and internal
+repositories never appear, not even for the
+subject themself or a site administrator, and the
+page says so in plain words. No migration --
+schema 92 stands; a profile is a read model over
+the witness, not a witnessed act, so the audit
+log does not move for it.)
