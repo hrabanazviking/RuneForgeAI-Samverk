@@ -229,11 +229,11 @@ class ProfileActivityTests(unittest.TestCase):
         self.assertNotIn("volmarr/priv", page)
 
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.conn), 92)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
+        self.assertEqual(schema_version(self.conn), 93)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
 
 
 if __name__ == "__main__":

@@ -68,8 +68,8 @@ class TaxonomyTests(unittest.TestCase):
         # S-158 added repo.pull_request.auto_merge_arm/
         # auto_merge_cancel/auto_merge_fire.
         # S-215 added admin.index.rebuild.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 

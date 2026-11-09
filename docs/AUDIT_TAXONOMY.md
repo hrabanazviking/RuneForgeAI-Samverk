@@ -1345,3 +1345,30 @@ format. No migration -- schema 92 stands; an API
 read is a read model over the witness, not a
 witnessed act, so the audit log does not move
 for it.)
+
+S-232 (2026-11-08) added two events of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(`auth.follow` and `auth.unfollow`, append-only in
+the AUTH family beside the other account acts.)
+(Its following, in samverk/following.py, is
+Part XI's people layer over S-222's stored-act
+law: a follow is one stored row per (follower,
+followed) pair (migration 93's user_follows;
+schema 92 to 93), counts are counted live from
+those rows, and only real changes are witnessed
+-- re-following a held follow and unfollowing a
+non-follow are quiet no-ops, exactly as
+watch/star judge their retries. Follower and
+following lists are public profile facts in the
+order the follows began. The following feed is
+a read model over S-221's canonical event
+store, gathered through S-229's feed store and
+judged event by event through S-230's
+is_profile_public -- reused, never re-derived --
+so it carries a followed person's actions
+exactly when they are genuinely public:
+actions in private and internal repositories
+never appear, for anyone. Its order is the
+witness's own, newest first: there is no
+algorithmic ranking, no score, and nothing
+reorders chronological truth.)

@@ -450,8 +450,8 @@ class PullRequestAutoMergeTests(unittest.TestCase):
         self.assertIn("was cancelled", render_auto_merge(cancelled))
 
     def test_schema_and_taxonomy_counts(self):
-        self.assertEqual(db.schema_version(self.conn), 92)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
+        self.assertEqual(db.schema_version(self.conn), 93)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
         for name in ("repo.pull_request.auto_merge_arm",
                      "repo.pull_request.auto_merge_cancel",
                      "repo.pull_request.auto_merge_fire"):

@@ -2027,6 +2027,24 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-232: following -- one follow row per
+    # (follower, followed) account pair; removing
+    # the act deletes the row; counts are counted
+    # live from these rows, never cached. Judged in
+    # samverk/following.py (FollowingStore).
+    (93, [
+        "CREATE TABLE user_follows ("
+        "  id INTEGER PRIMARY KEY,"
+        "  follower_id INTEGER NOT NULL,"
+        "  followed_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (follower_id, followed_id)"
+        ")",
+        "CREATE INDEX idx_user_follows_followed"
+        " ON user_follows (followed_id, id)",
+        "CREATE INDEX idx_user_follows_follower"
+        " ON user_follows (follower_id, id)",
+    ]),
 ]
 
 
