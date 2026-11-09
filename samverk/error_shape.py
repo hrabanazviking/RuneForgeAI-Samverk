@@ -255,6 +255,69 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         400, "That issue has all the assignees it may carry"),
     "object_unreadable": (
         500, "Something went wrong on our side"),
+    # S-244 -- users, orgs, teams API (its own reasons,
+    # plus the web stores' reasons it carries
+    # verbatim)
+    "org_not_found": (404, "No such organization"),
+    "team_not_found": (404, "No such team"),
+    "parent_not_found": (404, "No such parent team"),
+    "not_a_member": (404, "No such organization member"),
+    "not_team_member": (404, "No such team member"),
+    "not_collaborator": (
+        404, "No such outside collaborator"),
+    "not_linked": (
+        404, "That repository is not linked to this team"),
+    "org_invalid": (
+        400, "That organization name is not valid"),
+    "org_reserved": (
+        400, "That organization name is reserved"),
+    "org_name_is_user": (
+        409, "That name belongs to a user account"),
+    "org_taken": (
+        409, "That organization name is already taken"),
+    "display_name_invalid": (
+        400, "That display name is not valid"),
+    "display_name_too_long": (
+        400, "That display name is too long"),
+    "bio_invalid": (400, "That bio is not valid"),
+    "bio_too_long": (400, "That bio is too long"),
+    "website_invalid": (400, "That website is not valid"),
+    "not_org_steward": (
+        403, "Only the organization's steward or a "
+        "site admin can do that"),
+    "not_org_owner": (
+        403, "Only an organization owner or a site "
+        "admin can do that"),
+    "not_repo_admin": (
+        403, "Only a repository administrator can do that"),
+    "last_owner": (
+        409, "An organization must keep at least one owner"),
+    "last_admin": (
+        409, "That would leave the repository with "
+        "no administrator"),
+    "already_member": (
+        409, "That person is already a member"),
+    "already_team_member": (
+        409, "That person is already in this team"),
+    "already_linked": (
+        409, "That repository is already linked to this team"),
+    "already_collaborator": (
+        409, "That person already holds a grant here"),
+    "already_owner": (
+        409, "That person already owns this repository"),
+    "team_invalid": (400, "That team name is not valid"),
+    "team_too_long": (400, "That team name is too long"),
+    "team_taken": (409, "That team name is already taken"),
+    "privacy_invalid": (
+        400, "That team privacy is not valid"),
+    "parent_not_in_org": (
+        400, "That parent team is in another organization"),
+    "repo_not_in_org": (
+        400, "That repository is in another organization"),
+    "not_org_member": (
+        400, "That person is not a member of the organization"),
+    "description_too_long": (
+        400, "That description is too long"),
 }
 
 # The canonical detail sentence of each S-019

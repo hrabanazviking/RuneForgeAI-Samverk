@@ -41,8 +41,14 @@ EXPECTED_RESOURCE_IDS = (
     "repository-branches", "repository-contents",
     "repository-forks", "issues", "issue",
     "issue-comments", "pulls", "pull", "pull-merge",
-    "pull-reviews", "user", "organization",
-    "organization-members", "organization-teams",
+    "pull-reviews", "user", "organizations",
+    "organization", "organization-members",
+    "organization-member", "organization-teams",
+    "team", "team-members", "team-member",
+    "team-repositories", "team-repository",
+    "organization-default-permission",
+    "repository-collaborators",
+    "repository-collaborator",
     "search", "events", "user-events",
     "repository-events", "event", "statuses",
     "check-runs", "repository-hooks",
@@ -57,7 +63,15 @@ LANDED_IDS = (
     "repository-branches", "repository-contents",
     "repository-forks", "issues", "issue",
     "issue-comments", "pulls", "pull", "pull-merge",
-    "pull-reviews", "search", "events", "user-events",
+    "pull-reviews", "user", "organizations",
+    "organization", "organization-members",
+    "organization-member", "organization-teams",
+    "team", "team-members", "team-member",
+    "team-repositories", "team-repository",
+    "organization-default-permission",
+    "repository-collaborators",
+    "repository-collaborator",
+    "search", "events", "user-events",
     "repository-events", "event")
 
 
@@ -152,6 +166,16 @@ class ApiContractTests(unittest.TestCase):
                     "pulls", "pull", "pull-merge",
                     "pull-reviews"):
             self.assertEqual(get_resource(rid).slice, "S-243")
+        for rid in ("user", "organizations",
+                    "organization", "organization-members",
+                    "organization-member",
+                    "organization-teams", "team",
+                    "team-members", "team-member",
+                    "team-repositories", "team-repository",
+                    "organization-default-permission",
+                    "repository-collaborators",
+                    "repository-collaborator"):
+            self.assertEqual(get_resource(rid).slice, "S-244")
 
     def test_contracted_resources_name_part_xii_builders(self):
         for resource in API_RESOURCES:
@@ -210,7 +234,7 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(
             audit.resources_checked, len(EXPECTED_RESOURCE_IDS))
         self.assertEqual(audit.route_problems, ())
-        self.assertEqual(audit.landed_shapes_checked, 9)
+        self.assertEqual(audit.landed_shapes_checked, 17)
         self.assertEqual(audit.landed_shape_mismatches, ())
         self.assertTrue(audit.error_shape_ok)
         self.assertTrue(audit.permission_engine_present)
