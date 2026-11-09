@@ -69,7 +69,7 @@ FACE_REASONS = {
     "limit_invalid", "filter_invalid", "repo_not_found",
     "event_not_found", "no_such_user",
     "query_invalid", "auth_required", "recent_not_found",
-    "rule_unknown",
+    "rule_unknown", "rate_settings_invalid",
 }
 
 EXPECTED_STATUS = {
@@ -86,6 +86,7 @@ EXPECTED_STATUS = {
     "event_not_found": 404, "no_such_user": 404,
     "query_invalid": 400, "auth_required": 401,
     "recent_not_found": 404, "rule_unknown": 404,
+    "rate_settings_invalid": 400,
 }
 
 

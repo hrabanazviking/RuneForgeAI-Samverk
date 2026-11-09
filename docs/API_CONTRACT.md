@@ -72,10 +72,19 @@ contracted endpoint exists.
   place (samverk/error_shape.py), and the web UI's
   refusals match it (landed in S-240; before it,
   the faces refused with `error` and `detail`).
-- **rate-limits** — S-241 contracts per-token
-  buckets, limit headers on every response, an
-  honest `Retry-After`, and instance-configurable
-  limits. Payload size caps and expensive-endpoint
+- **rate-limits** — Per-token buckets judged at
+  the API door over S-238's resolved callers (a
+  password call is judged by its account, an
+  anonymous call by the one tighter anonymous
+  bucket), the limit headers
+  (`X-RateLimit-Limit`, `X-RateLimit-Remaining`,
+  `X-RateLimit-Reset`) on every judgement, an
+  honest `Retry-After` computed from the bucket's
+  own state on the `rate_limited` refusal (429,
+  in the one problem format), and limits an
+  instance configures in its settings table
+  (landed in S-241, samverk/api_rate_limit.py).
+  Payload size caps and expensive-endpoint
   accounting are S-255's abuse defences.
 - **no-back-doors** — Every resource is the
   programmatic face of a capability the web already
