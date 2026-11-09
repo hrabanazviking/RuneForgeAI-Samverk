@@ -44,12 +44,18 @@ own shapes as they go.
   samverk/api_search.py: S-216's face answered
   through S-238's door, with each group's hits
   paged by S-239's cursor engine over the five
-  banked group executors). Everything else
-  in the table is a promise with a named builder:
-  S-238 auth, S-239 pagination and conditional
-  requests, S-240 the one problem format, S-241
-  rate limits, S-244 the remaining
-  resource family, S-246 statuses and checks, S-248
+  banked group executors), and the status and
+  checks face (S-246, samverk/api_checks.py:
+  commit statuses posted through S-157's one
+  record and check runs kept in their own
+  vocabulary and folded onto it, the poster
+  scoped through S-238/S-190 and audit-logged on
+  repo.status.post / repo.check_run.post).
+  Everything else in the table is a promise
+  with a named builder: S-238 auth, S-239
+  pagination and conditional requests, S-240
+  the one problem format, S-241 rate limits,
+  S-244 the remaining resource family, S-248
   webhooks. The contract never
   claims a contracted endpoint exists.
 - **No API-only back doors.** Every resource is
@@ -785,7 +791,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "id", "oid", "state", "context",
             "description", "target_url", "poster",
             "created_at"),
-        standing="contracted", slice="S-246"),
+        standing="landed", slice="S-246"),
     ApiResource(
         id="check-runs",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -801,7 +807,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "id", "oid", "name", "status",
             "conclusion", "poster", "created_at",
             "updated_at"),
-        standing="contracted", slice="S-246"),
+        standing="landed", slice="S-246"),
     ApiResource(
         id="repository-hooks",
         path="/api/v1/repos/{owner}/{repo}/hooks",
@@ -1001,6 +1007,16 @@ def audit_api_contract() -> ApiContractAudit:
             "api_orgs", _DEFAULT_PERMISSION_FIELDS),
         "collaborator_to_dict": (
             "api_orgs", _COLLABORATOR_FIELDS),
+        "status_to_dict": (
+            "api_checks", (
+                "id", "oid", "state", "context",
+                "description", "target_url", "poster",
+                "created_at")),
+        "check_run_to_dict": (
+            "api_checks", (
+                "id", "oid", "name", "status",
+                "conclusion", "poster", "created_at",
+                "updated_at")),
     }
     for function_name, (module_name, documented) in (
             landed.items()):
@@ -1008,8 +1024,8 @@ def audit_api_contract() -> ApiContractAudit:
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
     from . import (
-        api_auth, api_issues_pulls, api_orgs,
-        api_pagination, api_rate_limit,
+        api_auth, api_checks, api_issues_pulls,
+        api_orgs, api_pagination, api_rate_limit,
         api_repositories, api_search, events_api,
         search_api)
     error_ok = True
@@ -1025,7 +1041,9 @@ def audit_api_contract() -> ApiContractAudit:
             (api_issues_pulls,
              api_issues_pulls.IssuesPullsAPIError),
             (api_orgs,
-             api_orgs.UsersOrgsTeamsAPIError)):
+             api_orgs.UsersOrgsTeamsAPIError),
+            (api_checks,
+             api_checks.StatusChecksAPIError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
         if tuple(rendered.keys()) != CURRENT_ERROR_FIELDS:

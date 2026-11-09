@@ -41,7 +41,7 @@ its public seams, at the two things the gate names:
   keep the same law on their own surfaces.
 
 The gate claimed no migration and no taxonomy event:
-the assembled system stands at schema 94 with 129
+the assembled system stands at schema 95 with 131
 audit events (33 auth / 83 repo / 13 admin), and the
 battery proves both pins. The full-suite counted
 recount at this gate is recorded in
@@ -242,12 +242,12 @@ class PartXIGateTests(unittest.TestCase):
             detail={"repo": "volmarr/pub"})
 
     # -- pins ------------------------------------------------
-    def test_pins_schema_94_taxonomy_129(self):
-        self.assertEqual(schema_version(self.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+    def test_pins_schema_95_taxonomy_131(self):
+        self.assertEqual(schema_version(self.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}
@@ -258,11 +258,11 @@ class PartXIGateTests(unittest.TestCase):
                       "notification_preferences", "weekly_digests"):
             self.assertIn(table, tables)
 
-    def test_fresh_database_migrates_to_94(self):
+    def test_fresh_database_migrates_to_95(self):
         conn = db.connect(self.root / "fresh.db")
         self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 94)
-        self.assertEqual(db.schema_version(conn), 94)
+        self.assertEqual(db.migrate(conn), 95)
+        self.assertEqual(db.schema_version(conn), 95)
 
     # -- the vocabularies --------------------------------------
     def test_vocabularies_are_exact(self):

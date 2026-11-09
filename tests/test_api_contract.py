@@ -72,7 +72,8 @@ LANDED_IDS = (
     "repository-collaborators",
     "repository-collaborator",
     "search", "events", "user-events",
-    "repository-events", "event")
+    "repository-events", "event", "statuses",
+    "check-runs")
 
 
 class ApiContractTests(unittest.TestCase):
@@ -84,15 +85,15 @@ class ApiContractTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(schema_version(self.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 83, "admin": 13})
+            families, {"auth": 33, "repo": 85, "admin": 13})
 
     def test_base_and_contract_path(self):
         self.assertEqual(API_BASE, "/api/v1")
@@ -234,7 +235,7 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(
             audit.resources_checked, len(EXPECTED_RESOURCE_IDS))
         self.assertEqual(audit.route_problems, ())
-        self.assertEqual(audit.landed_shapes_checked, 18)
+        self.assertEqual(audit.landed_shapes_checked, 20)
         self.assertEqual(audit.landed_shape_mismatches, ())
         self.assertTrue(audit.error_shape_ok)
         self.assertTrue(audit.permission_engine_present)

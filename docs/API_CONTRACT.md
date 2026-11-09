@@ -17,8 +17,9 @@ The search face (S-216) and the events face
 (S-231) were built in this shape before it was
 ratified; the repositories (S-242), issues and
 pulls (S-243), and users, orgs and teams (S-244)
-families then landed against it, and S-245
-ratified the search face as the public contract.
+families then landed against it, S-245
+ratified the search face as the public contract,
+and S-246 landed the status and checks face.
 What remains below as **contracted** — defined
 here, not yet built — names the slice that builds
 it. This document never claims a contracted
@@ -242,18 +243,28 @@ endpoint exists.
   — move one outside grant up or down the ladder,
   or revoke it; DELETE answers with the grant that
   was removed (S-244).
+- `GET, POST /api/v1/repos/{owner}/{repo}/statuses/{oid}`
+  — commit statuses: external CI posts a status
+  for a commit through S-157's one record; readers
+  list them as S-157's checks panel does. A status
+  carries `id`, `oid`, `state`, `context`,
+  `description`, `target_url`, `poster`,
+  `created_at`. The poster's identity is scoped
+  (S-238's door, S-190 at the write rung, the
+  token scope as a ceiling) and audit-logged on
+  repo.status.post (S-246).
+- `GET, POST /api/v1/repos/{owner}/{repo}/check-runs`
+  — check runs against a commit, kept in the run
+  vocabulary and folded onto S-157's record under
+  their name, consumed by S-157's panel. A run
+  carries `id`, `oid`, `name`, `status`,
+  `conclusion`, `poster`, `created_at`,
+  `updated_at`. The poster is scoped and
+  audit-logged on repo.check_run.post exactly as
+  for statuses (S-246).
 
 ### Contracted
 
-- `GET, POST /api/v1/repos/{owner}/{repo}/statuses/{oid}`
-  — commit statuses: external CI posts a status for
-  a commit; readers list them as S-157's checks
-  panel does. The poster's identity is scoped and
-  audit-logged (S-246).
-- `GET, POST /api/v1/repos/{owner}/{repo}/check-runs`
-  — check runs against a commit, consumed by
-  S-157's panel; the poster is scoped and
-  audit-logged exactly as for statuses (S-246).
 - `GET, POST /api/v1/repos/{owner}/{repo}/hooks` —
   webhook subscriptions on one repository: event
   filters, active or inactive, and a secret set at

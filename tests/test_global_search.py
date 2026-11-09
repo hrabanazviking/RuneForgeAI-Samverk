@@ -241,12 +241,12 @@ class GlobalSearchTests(unittest.TestCase):
         self.a = make_world(Path(self._td.name), with_secret=True)
         self.addCleanup(self.a.conn.close)
 
-    def test_pins_schema_93_taxonomy_129(self):
-        self.assertEqual(schema_version(self.a.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+    def test_pins_schema_95_taxonomy_131(self):
+        self.assertEqual(schema_version(self.a.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_one_query_searches_every_group_in_order(self):

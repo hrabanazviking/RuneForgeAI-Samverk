@@ -111,11 +111,11 @@ class ApiSearchTests(unittest.TestCase):
         self.fail(f"no {kind} group in payload")
 
     # -- pins ------------------------------------------------
-    def test_pins_schema_94_taxonomy_129(self):
-        self.assertEqual(schema_version(self.w.conn), 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+    def test_pins_schema_95_taxonomy_131(self):
+        self.assertEqual(schema_version(self.w.conn), 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_contract_ratifies_search_under_s245(self):
@@ -125,7 +125,7 @@ class ApiSearchTests(unittest.TestCase):
         self.assertEqual(resource.fields, SEARCH_RESULT_FIELDS)
         audit = audit_api_contract()
         self.assertTrue(audit.ratified, audit)
-        self.assertEqual(audit.landed_shapes_checked, 18)
+        self.assertEqual(audit.landed_shapes_checked, 20)
 
     def test_path_and_group_limit_are_the_stated_ones(self):
         self.assertEqual(SEARCH_API_PATH, "/api/search")

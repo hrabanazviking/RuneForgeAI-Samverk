@@ -197,13 +197,13 @@ class PinsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             conn = db.init_db(Path(tmp) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 94)
+                self.assertEqual(schema_version(conn), 95)
             finally:
                 conn.close()
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
 
 
 if __name__ == "__main__":
