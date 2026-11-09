@@ -13,13 +13,16 @@ against the live code on every test run: if a
 landed payload below stops being true of the code,
 the battery fails.
 
-Two faces already stand behind this contract: the
-search face (S-216) and the events face (S-231),
-built in this shape before it was ratified.
-Everything else below is **contracted** — defined
-here, not yet built — and each resource names the
-slice that builds it. This document never claims a
-contracted endpoint exists.
+The search face (S-216) and the events face
+(S-231) were built in this shape before it was
+ratified; the repositories (S-242), issues and
+pulls (S-243), and users, orgs and teams (S-244)
+families then landed against it, and S-245
+ratified the search face as the public contract.
+What remains below as **contracted** — defined
+here, not yet built — names the slice that builds
+it. This document never claims a contracted
+endpoint exists.
 
 ## The law every endpoint obeys
 
@@ -63,9 +66,11 @@ contracted endpoint exists.
   walking first / prev / next / last, and a
   strong ETag whose `If-None-Match` match
   answers 304 with no body. The events face
-  crawls through it today; the search groups
-  keep the envelope's `complete` flag until
-  S-245 gives their hits paging keys.
+  crawls through it today; since S-245 the
+  search groups carry paging keys too — one
+  group at a time, re-filtered on every page,
+  its `complete` flag true only at the group's
+  true total.
 - **error-shape** -- Every endpoint refuses with
   the one problem format -- `type`, `title`,
   `status`, `detail`, `error_id` -- shaped in one
@@ -102,6 +107,14 @@ contracted endpoint exists.
   carries `type`, `total`, `returned`, `complete`,
   `results`, and the code group additionally
   carries `total_matches` and `total_matched_lines`.
+  S-245 (samverk/api_search.py) answers the face
+  through the API door (S-238) and pages one
+  group at a time by cursor (S-239): a page
+  carries `query`, `type`, `total`, `returned`,
+  `complete`, `per_page`, `has_next`,
+  `has_previous`, `next_cursor`,
+  `previous_cursor`, `results` (the code group
+  additionally its match totals).
 - `GET /api/v1/events` — the instance's public
   activity feed as data (S-231), in the feed
   envelope: `kind`, `subject`, `scope`, `total`,

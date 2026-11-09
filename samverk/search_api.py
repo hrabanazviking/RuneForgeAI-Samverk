@@ -2,9 +2,10 @@
 
 The same engine behind Part XII endpoints with
 identical permission filtering — Part X's programmatic
-face over S-213's global search. S-245 will ratify
+face over S-213's global search. S-245 has ratified
 this shape as the public `/api/v1` search contract in
-Part XII; this slice lands the contract itself: one
+Part XII (samverk/api_search.py); this slice lands
+the contract itself: one
 call, the global grammar, typed groups, and counts a
 script can trust, with no second engine anywhere.
 
@@ -45,18 +46,16 @@ script can trust, with no second engine anywhere.
   across groups — a combined number would mix
   counts kept behind different permission
   boundaries (the S-213 law). The code group
-  additionally carries its match totals. There is
-  still no paging cursor here: S-239's engine
-  (samverk/api_pagination.py) has landed and
-  the events face crawls by cursor through it,
-  but this face's groups keep their cap and
-  `complete` flag until S-245 ratifies search
-  as the public contract and gives each
-  group's hits their paging keys — a caller
-  who needs more than the cap (default 10, at
-  most 100, the engine's own limits) is told
-  so by `complete`, never silently
-  short-changed.
+  additionally carries its match totals. S-245 has since
+  given each group's hits their paging keys
+  (samverk/api_search.py, through S-239's
+  cursor engine over the five group
+  executors); this face keeps its cap and
+  `complete` flag -- a caller who needs more
+  than the cap (default 10, at most 100, the
+  engine's own limits) crawls the group
+  there, and is told so by `complete` here,
+  never silently short-changed.
 - **Stateless, like an API should be.** The engine
   is built without a recent-search store, so an API
   search records nothing — a script's queries never

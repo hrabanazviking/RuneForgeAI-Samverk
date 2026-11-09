@@ -154,7 +154,7 @@ class ApiContractTests(unittest.TestCase):
         landed = tuple(
             r.id for r in API_RESOURCES if r.standing == "landed")
         self.assertEqual(landed, LANDED_IDS)
-        self.assertEqual(get_resource("search").slice, "S-216")
+        self.assertEqual(get_resource("search").slice, "S-245")
         for rid in ("events", "user-events",
                     "repository-events", "event"):
             self.assertEqual(get_resource(rid).slice, "S-231")
@@ -234,7 +234,7 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(
             audit.resources_checked, len(EXPECTED_RESOURCE_IDS))
         self.assertEqual(audit.route_problems, ())
-        self.assertEqual(audit.landed_shapes_checked, 17)
+        self.assertEqual(audit.landed_shapes_checked, 18)
         self.assertEqual(audit.landed_shape_mismatches, ())
         self.assertTrue(audit.error_shape_ok)
         self.assertTrue(audit.permission_engine_present)
