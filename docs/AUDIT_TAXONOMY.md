@@ -1455,3 +1455,20 @@ role, never a widening of it. Refusals carry
 S-237's current two fields through
 `error_to_dict`. No migration -- schema 94
 stands.)
+
+S-239 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its pagination and conditional requests, in
+samverk/api_pagination.py, land the paging law
+S-237 contracted: keyset cursors over each
+face's permission-filtered list -- a cursor is
+a position in one list, never a credential,
+and contexts never cross -- page size bounded
+(default 30, at most 100), Link headers
+walking first / prev / next / last, and strong
+ETags over canonical JSON whose If-None-Match
+match answers 304 with no body. S-231's events
+face crawls through it; paging and
+conditioning are reads that witness nothing,
+so the audit log does not move for them. No
+migration -- schema 94 stands.)

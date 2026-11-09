@@ -46,12 +46,17 @@ script can trust, with no second engine anywhere.
   counts kept behind different permission
   boundaries (the S-213 law). The code group
   additionally carries its match totals. There is
-  deliberately no paging cursor here: cursor
-  pagination is S-239's Part XII work, and this
-  shape does not pretend to it — a caller who needs
-  more than the cap (default 10, at most 100, the
-  engine's own limits) is told so by `complete`,
-  never silently short-changed.
+  still no paging cursor here: S-239's engine
+  (samverk/api_pagination.py) has landed and
+  the events face crawls by cursor through it,
+  but this face's groups keep their cap and
+  `complete` flag until S-245 ratifies search
+  as the public contract and gives each
+  group's hits their paging keys — a caller
+  who needs more than the cap (default 10, at
+  most 100, the engine's own limits) is told
+  so by `complete`, never silently
+  short-changed.
 - **Stateless, like an API should be.** The engine
   is built without a recent-search store, so an API
   search records nothing — a script's queries never
