@@ -1557,3 +1557,27 @@ on repo.pull_request.merge. Reads (both
 collections, one issue, one pull, comments,
 reviews) write no row and audit nothing. No
 migration -- schema 94 stands.)
+
+S-244 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its users, orgs and teams API, in
+samverk/api_orgs.py, is the programmatic face of
+capabilities the web already has, and every act
+it performs is witnessed by the web's own stores
+on their existing events, exactly as the same
+act on the web is witnessed: organization
+creation and profile changes on
+auth.organization.create and
+auth.organization.update; membership, team,
+team-permission and default-permission changes
+on auth.organization.update, with the changed
+field named in the detail; and outside
+collaborator grants, role changes and
+revocations on repo.collaborator.add,
+repo.collaborator.role_change and
+repo.collaborator.remove. Reads (one user, the
+organizations and their members, teams and
+their members, team permissions, the default
+permission, collaborator lists) write no row
+and audit nothing. No migration -- schema 94
+stands.)

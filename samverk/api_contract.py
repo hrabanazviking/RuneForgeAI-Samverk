@@ -31,7 +31,16 @@ own shapes as they go.
   samverk/api_issues_pulls.py: issues with their
   comments, labels, assignees and milestones,
   and pull requests with their conversation,
-  reviews and merge). Everything else
+  reviews and merge), and the users, organizations
+  and teams family (S-244,
+  samverk/api_orgs.py: one user, the organizations
+  collection and one organization, its members and
+  one member, its teams and one team with its
+  members and repository permissions, the org
+  default permission, and a repository's outside
+  collaborators -- membership and permission
+  administration automatable end-to-end).
+  Everything else
   in the table is a promise with a named builder:
   S-238 auth, S-239 pagination and conditional
   requests, S-240 the one problem format, S-241
@@ -348,6 +357,17 @@ _PULL_FIELDS = (
     "id", "repository", "number", "title", "body",
     "state", "author", "head", "base", "merged",
     "created_at", "updated_at")
+_USER_FIELDS = (
+    "username", "display_name", "bio", "created_at")
+_ORG_FIELDS = (
+    "id", "name", "display_name", "description",
+    "created_at")
+_MEMBER_FIELDS = ("username", "role", "since")
+_TEAM_FIELDS = ("id", "slug", "name", "privacy")
+_TEAM_MEMBER_FIELDS = ("username", "since")
+_TEAM_PERMISSION_FIELDS = ("repository", "permission")
+_DEFAULT_PERMISSION_FIELDS = ("role", "is_set")
+_COLLABORATOR_FIELDS = ("username", "role", "repository")
 
 API_RESOURCES: tuple[ApiResource, ...] = (
     ApiResource(
@@ -508,10 +528,18 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "exactly the facts the profile page "
             "shows a reader with this caller's "
             "standing, and no more."),
-        fields=(
-            "username", "display_name", "bio",
-            "created_at"),
-        standing="contracted", slice="S-244"),
+        fields=_USER_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="organizations", path="/api/v1/orgs",
+        methods=("GET", "POST"),
+        summary=(
+            "The instance's organizations in the "
+            "list envelope; POST creates one under "
+            "S-185's own creation law, in the shared "
+            "user/organization namespace."),
+        fields=_ORG_FIELDS,
+        standing="landed", slice="S-244"),
     ApiResource(
         id="organization",
         path="/api/v1/orgs/{org}",
@@ -522,20 +550,31 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "settings do, so membership and "
             "permission administration is "
             "automatable end-to-end (S-244)."),
-        fields=(
-            "id", "name", "display_name",
-            "description", "created_at"),
-        standing="contracted", slice="S-244"),
+        fields=_ORG_FIELDS,
+        standing="landed", slice="S-244"),
     ApiResource(
         id="organization-members",
         path="/api/v1/orgs/{org}/members",
-        methods=("GET",),
+        methods=("GET", "POST"),
         summary=(
             "The organization's members in the "
             "list envelope, each with the role "
-            "the web records for them."),
-        fields=("username", "role", "since"),
-        standing="contracted", slice="S-244"),
+            "the web records for them; POST adds "
+            "one member through S-186's own door."),
+        fields=_MEMBER_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="organization-member",
+        path="/api/v1/orgs/{org}/members/{username}",
+        methods=("GET", "PATCH", "DELETE"),
+        summary=(
+            "One membership: read it, set its "
+            "role (owner or member), or remove "
+            "the member -- each through S-186's "
+            "own store, its last-owner invariant "
+            "included."),
+        fields=_MEMBER_FIELDS,
+        standing="landed", slice="S-244"),
     ApiResource(
         id="organization-teams",
         path="/api/v1/orgs/{org}/teams",
@@ -544,8 +583,116 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "The organization's teams in the list "
             "envelope; POST creates one under the "
             "team machinery the web uses."),
-        fields=("id", "slug", "name", "privacy"),
-        standing="contracted", slice="S-244"),
+        fields=_TEAM_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="team",
+        path="/api/v1/orgs/{org}/teams/{team}",
+        methods=("GET", "PATCH"),
+        summary=(
+            "One team: read it under S-187's "
+            "viewer law (a secret team the caller "
+            "may not see answers as a missing "
+            "one), or change its description and "
+            "privacy as the web's team settings "
+            "do. The web has no team deletion "
+            "and no rename, so neither does the "
+            "API."),
+        fields=_TEAM_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="team-members",
+        path=("/api/v1/orgs/{org}/teams/{team}"
+              "/members"),
+        methods=("GET", "POST"),
+        summary=(
+            "One team's members in the list "
+            "envelope; POST adds one -- the "
+            "target must already belong to the "
+            "organization, as on the web."),
+        fields=_TEAM_MEMBER_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="team-member",
+        path=("/api/v1/orgs/{org}/teams/{team}"
+              "/members/{username}"),
+        methods=("DELETE",),
+        summary=(
+            "Remove one member from one team, "
+            "through S-187's own removal."),
+        fields=_TEAM_MEMBER_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="team-repositories",
+        path=("/api/v1/orgs/{org}/teams/{team}"
+              "/repos"),
+        methods=("GET", "POST"),
+        summary=(
+            "One team's direct repository "
+            "permissions in the list envelope "
+            "(administration data: org owners "
+            "and site admins); POST links one of "
+            "the organization's repositories to "
+            "the team, and grades it in the same "
+            "call when a permission rides along."),
+        fields=_TEAM_PERMISSION_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="team-repository",
+        path=("/api/v1/orgs/{org}/teams/{team}"
+              "/repos/{repo}"),
+        methods=("PATCH", "DELETE"),
+        summary=(
+            "One linked repository of one team: "
+            "PATCH sets its S-189 ladder role "
+            "through S-189's own setter (S-200's "
+            "guardrails riding inside it); "
+            "DELETE unlinks it through S-187's "
+            "own unlink."),
+        fields=_TEAM_PERMISSION_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="organization-default-permission",
+        path="/api/v1/orgs/{org}/default-permission",
+        methods=("GET", "PATCH"),
+        summary=(
+            "The organization's default "
+            "repository permission (S-192): the "
+            "role every member holds at least, "
+            "and whether an owner ever set it. "
+            "PATCH sets it, or clears it with "
+            "role none."),
+        fields=_DEFAULT_PERMISSION_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="repository-collaborators",
+        path=("/api/v1/repos/{owner}/{repo}"
+              "/collaborators"),
+        methods=("GET", "POST"),
+        summary=(
+            "One repository's outside "
+            "collaborators in the list envelope "
+            "(S-191); POST grants one a ladder "
+            "role. Judged through S-190 at the "
+            "admin rung, as the web's "
+            "collaborator settings are."),
+        fields=_COLLABORATOR_FIELDS,
+        standing="landed", slice="S-244"),
+    ApiResource(
+        id="repository-collaborator",
+        path=("/api/v1/repos/{owner}/{repo}"
+              "/collaborators/{username}"),
+        methods=("PATCH", "DELETE"),
+        summary=(
+            "One outside grant on one "
+            "repository: PATCH moves it up or "
+            "down the ladder (S-200's "
+            "guardrails riding inside S-191's "
+            "own role change); DELETE revokes "
+            "it and answers with the grant that "
+            "was removed."),
+        fields=_COLLABORATOR_FIELDS,
+        standing="landed", slice="S-244"),
     ApiResource(
         id="search", path="/api/v1/search",
         methods=("GET",),
@@ -819,6 +966,18 @@ def audit_api_contract() -> ApiContractAudit:
             "api_issues_pulls", (
                 "id", "pull", "author", "state", "body",
                 "created_at")),
+        "user_to_dict": ("api_orgs", _USER_FIELDS),
+        "organization_to_dict": ("api_orgs", _ORG_FIELDS),
+        "member_to_dict": ("api_orgs", _MEMBER_FIELDS),
+        "team_to_dict": ("api_orgs", _TEAM_FIELDS),
+        "team_member_to_dict": (
+            "api_orgs", _TEAM_MEMBER_FIELDS),
+        "team_permission_to_dict": (
+            "api_orgs", _TEAM_PERMISSION_FIELDS),
+        "default_permission_to_dict": (
+            "api_orgs", _DEFAULT_PERMISSION_FIELDS),
+        "collaborator_to_dict": (
+            "api_orgs", _COLLABORATOR_FIELDS),
     }
     for function_name, (module_name, documented) in (
             landed.items()):
@@ -826,9 +985,9 @@ def audit_api_contract() -> ApiContractAudit:
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
     from . import (
-        api_auth, api_issues_pulls, api_pagination,
-        api_rate_limit, api_repositories, events_api,
-        search_api)
+        api_auth, api_issues_pulls, api_orgs,
+        api_pagination, api_rate_limit,
+        api_repositories, events_api, search_api)
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
@@ -839,7 +998,9 @@ def audit_api_contract() -> ApiContractAudit:
             (api_repositories,
              api_repositories.RepositoriesAPIError),
             (api_issues_pulls,
-             api_issues_pulls.IssuesPullsAPIError)):
+             api_issues_pulls.IssuesPullsAPIError),
+            (api_orgs,
+             api_orgs.UsersOrgsTeamsAPIError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
         if tuple(rendered.keys()) != CURRENT_ERROR_FIELDS:

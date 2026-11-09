@@ -168,21 +168,70 @@ contracted endpoint exists.
   — a pull request's reviews; POST submits one with
   the review law the web enforces (S-243).
 
-### Contracted
-
 - `GET /api/v1/users/{username}` — one person's
   public profile as data: exactly the facts the
-  profile page shows a reader with this caller's
-  standing, and no more (S-244).
+  profile page shows (S-244). A user carries
+  `username`, `display_name`, `bio`, `created_at`.
+- `GET, POST /api/v1/orgs` — the instance's
+  organizations in the list envelope; POST creates
+  one under S-185's own creation law (S-244). An
+  organization carries `id`, `name`,
+  `display_name`, `description`, `created_at`.
 - `GET, PATCH /api/v1/orgs/{org}` — one
-  organization: read it, or administer it as the
-  web's org settings do (S-244).
-- `GET /api/v1/orgs/{org}/members` — the
-  organization's members in the list envelope, each
-  with the role the web records for them (S-244).
+  organization: read it, or administer its profile
+  as the web's org settings do (S-244).
+- `GET, POST /api/v1/orgs/{org}/members` — the
+  organization's members in the list envelope,
+  each with the role the web records for them;
+  POST adds one (S-244). A member carries
+  `username`, `role`, `since`.
+- `GET, PATCH, DELETE /api/v1/orgs/{org}/members/{username}`
+  — one membership: read it, set its role, or
+  remove the member, through S-186's own store
+  with its last-owner invariant (S-244).
 - `GET, POST /api/v1/orgs/{org}/teams` — the
-  organization's teams; POST creates one under the
-  team machinery the web uses (S-244).
+  organization's teams, filtered by S-187's
+  viewer law; POST creates one under the team
+  machinery the web uses (S-244). A team carries
+  `id`, `slug`, `name`, `privacy`.
+- `GET, PATCH /api/v1/orgs/{org}/teams/{team}` —
+  one team: read it under the viewer law, or
+  change its description and privacy. The web has
+  no team deletion and no rename, so neither does
+  the API (S-244).
+- `GET, POST /api/v1/orgs/{org}/teams/{team}/members`
+  — one team's members in the list envelope;
+  POST adds one who already belongs to the
+  organization (S-244).
+- `DELETE /api/v1/orgs/{org}/teams/{team}/members/{username}`
+  — remove one member from one team (S-244).
+- `GET, POST /api/v1/orgs/{org}/teams/{team}/repos`
+  — one team's direct repository permissions in
+  the list envelope (org owners and site admins);
+  POST links one of the organization's
+  repositories and may grade it in the same call
+  (S-244). A team permission carries `repository`,
+  `permission`.
+- `PATCH, DELETE /api/v1/orgs/{org}/teams/{team}/repos/{repo}`
+  — set one linked repository's S-189 ladder role,
+  or unlink it (S-244).
+- `GET, PATCH /api/v1/orgs/{org}/default-permission`
+  — the organization's default repository
+  permission (S-192): the role every member holds
+  at least, and whether an owner ever set it
+  (S-244). It carries `role`, `is_set`.
+- `GET, POST /api/v1/repos/{owner}/{repo}/collaborators`
+  — one repository's outside collaborators in the
+  list envelope; POST grants one a ladder role,
+  judged through S-190 at the admin rung (S-244).
+  A grant carries `username`, `role`, `repository`.
+- `PATCH, DELETE /api/v1/repos/{owner}/{repo}/collaborators/{username}`
+  — move one outside grant up or down the ladder,
+  or revoke it; DELETE answers with the grant that
+  was removed (S-244).
+
+### Contracted
+
 - `GET, POST /api/v1/repos/{owner}/{repo}/statuses/{oid}`
   — commit statuses: external CI posts a status for
   a commit; readers list them as S-157's checks
