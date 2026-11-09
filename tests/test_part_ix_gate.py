@@ -921,9 +921,9 @@ class PartIXGateTests(unittest.TestCase):
     # -- invariants -------------------------------------------------------
 
     def test_schema_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 92)
-        self.assertEqual(db.MIGRATIONS[-1][0], 92)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
+        self.assertEqual(schema_version(self.conn), 93)
+        self.assertEqual(db.MIGRATIONS[-1][0], 93)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
 
 
 if __name__ == "__main__":

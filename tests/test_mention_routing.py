@@ -109,11 +109,11 @@ class MentionRoutingTests(unittest.TestCase):
         return self.inbox.list_for_recipient(user)
 
     # -- pins -------------------------------------------------------
-    def test_pins_schema_92_taxonomy_127(self):
-        self.assertEqual(schema_version(self.conn), 92)
-        self.assertEqual(db.MIGRATIONS[-1][0], 92)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 127)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 31)
+    def test_pins_schema_93_taxonomy_129(self):
+        self.assertEqual(schema_version(self.conn), 93)
+        self.assertEqual(db.MIGRATIONS[-1][0], 93)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
@@ -121,11 +121,11 @@ class MentionRoutingTests(unittest.TestCase):
         self.assertIn("mention_deliveries", tables)
         self.assertIn("notifications", tables)
 
-    def test_fresh_database_migrates_to_92(self):
+    def test_fresh_database_migrates_to_93(self):
         path = self.root / "fresh.db"
         conn = db.connect(path); self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 92)
-        self.assertEqual(db.schema_version(conn), 92)
+        self.assertEqual(db.migrate(conn), 93)
+        self.assertEqual(db.schema_version(conn), 93)
 
     # -- pure law -----------------------------------------------------
     def test_parse_tokens_order_dedup_and_kinds(self):
