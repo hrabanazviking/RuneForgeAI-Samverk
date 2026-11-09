@@ -2045,6 +2045,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_user_follows_follower"
         " ON user_follows (follower_id, id)",
     ]),
+    # S-235: weekly digests -- one composed digest
+    # per account per week (UNIQUE, the job's
+    # exactly-once law), carrying the letter as
+    # composed from S-221's event store at compose
+    # time: its window, its standing (composed /
+    # empty / sent), the event ids it gathered,
+    # the event payloads, and the subject and body
+    # word for word. Judged in
+    # samverk/digest_job.py (DigestJobStore).
+    (94, [
+        "CREATE TABLE weekly_digests ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  week_start INTEGER NOT NULL,"
+        "  week_end INTEGER NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  event_ids_json TEXT NOT NULL DEFAULT '[]',"
+        "  events_json TEXT NOT NULL DEFAULT '[]',"
+        "  subject TEXT NOT NULL DEFAULT '',"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  sent_at INTEGER,"
+        "  UNIQUE (user_id, week_start)"
+        ")",
+        "CREATE INDEX idx_weekly_digests_user"
+        " ON weekly_digests (user_id, week_start)",
+        "CREATE INDEX idx_weekly_digests_status"
+        " ON weekly_digests (status, id)",
+    ]),
 ]
 
 

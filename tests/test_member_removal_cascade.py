@@ -121,8 +121,8 @@ class RemovalCascadeTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 93)
-        self.assertEqual(db.MIGRATIONS[-1][0], 93)
+        self.assertEqual(schema_version(self.conn), 94)
+        self.assertEqual(db.MIGRATIONS[-1][0], 94)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
 
     # pure law
