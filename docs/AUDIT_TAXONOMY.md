@@ -1372,3 +1372,23 @@ never appear, for anyone. Its order is the
 witness's own, newest first: there is no
 algorithmic ranking, no score, and nothing
 reorders chronological truth.)
+
+S-233 (2026-11-08) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its star lists, in samverk/star_lists.py, are
+a read model over S-222's repo_stars rows and
+S-050's repository record: browsing a list is
+not a witnessed act, so the audit log does not
+move for it -- the star itself was witnessed
+by `repo.star` when it was made, and its
+removal by `repo.unstar`. No migration --
+schema 93 stands. Each entry is judged
+through S-054's can_read before any fact
+about it is read, so a star on a private
+repository is as invisible as the repository
+itself: filtered rows contribute no entry, no
+name, and no count, and the list's total is
+the visible total, never the stored one.
+Every page and every entry labels the star a
+public signal in plain words: anyone who can
+read a repository can see who starred it.)
