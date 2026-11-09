@@ -196,6 +196,65 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
     "content_too_large": (413, "That content is too large to return"),
     "object_not_found": (404, "No such object"),
     "wrong_type": (400, "That object is not the kind asked for"),
+    # S-243 -- issues and PRs API (its own reasons,
+    # plus the web stores' reasons it carries
+    # verbatim)
+    "issue_not_found": (404, "No such issue"),
+    "pull_request_not_found": (
+        404, "No such pull request"),
+    "comment_not_found": (404, "No such comment"),
+    "label_not_found": (404, "No such label"),
+    "milestone_not_found": (404, "No such milestone"),
+    "base_not_found": (404, "No such base branch"),
+    "head_not_found": (404, "No such head branch"),
+    "head_repo_not_found": (
+        404, "No such head repository"),
+    "file_not_found": (404, "No such file"),
+    "title_required": (400, "An issue needs a title"),
+    "title_invalid": (400, "That title is not valid"),
+    "body_invalid": (400, "That body is not valid"),
+    "state_invalid": (400, "That state is not valid"),
+    "reason_invalid": (400, "That reason is not valid"),
+    "permission_denied": (
+        403, "That action is not allowed"),
+    "edit_conflict": (
+        409, "That edit conflicts with a newer change"),
+    "blank_issue_not_allowed": (
+        400, "Blank issues are turned off here"),
+    "conversation_locked": (
+        403, "That conversation is locked"),
+    "comment_required": (
+        400, "A comment needs some text"),
+    "comment_invalid": (400, "That comment is not valid"),
+    "same_branch": (
+        400, "The base and head branches are the same"),
+    "no_commits": (400, "There is nothing to propose"),
+    "already_exists": (409, "That already exists"),
+    "verdict_invalid": (
+        400, "That review verdict is not valid"),
+    "summary_invalid": (
+        400, "That review summary is not valid"),
+    "summary_required": (
+        400, "Requesting changes needs a summary"),
+    "self_review": (
+        403, "You cannot review your own pull request"),
+    "pull_request_closed": (
+        409, "That pull request is closed"),
+    "pull_request_draft": (
+        409, "That pull request is a draft"),
+    "already_merged": (409, "That is already merged"),
+    "unrelated_history": (
+        400, "Those branches share no history"),
+    "merge_conflict": (409, "That merge conflicts"),
+    "message_invalid": (
+        400, "That merge message is not valid"),
+    "merge_failed": (500, "Something went wrong on our side"),
+    "assignee_cannot_read": (
+        400, "That account cannot see this repository"),
+    "assignee_limit": (
+        400, "That issue has all the assignees it may carry"),
+    "object_unreadable": (
+        500, "Something went wrong on our side"),
 }
 
 # The canonical detail sentence of each S-019
