@@ -1392,3 +1392,26 @@ the visible total, never the stored one.
 Every page and every entry labels the star a
 public signal in plain words: anyone who can
 read a repository can see who starred it.)
+
+S-234 (2026-11-08) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its push feed for owners, in
+samverk/push_feed.py, is a read model over
+S-090's push_events rows, gathered by repository
+ownership at read time: a push surfaces in a
+person's feed exactly when it landed on a
+repository that person owns, whoever pushed it,
+and pushes to other people's repositories are
+never gathered, in rows or in counts. Reading
+the feed is not a witnessed act, so the audit
+log does not move for it -- the push itself was
+witnessed by `repo.push` when it landed. No
+migration -- schema 93 stands. Each moved ref is
+summarised live from the repository itself: its
+kind, the true commit count of its range, and
+up to five commit subjects with the remainder
+counted; a range whose commits cannot be read
+surfaces with its summary marked unavailable in
+words, never with an invented count. The feed is
+personal and signed-in only, because it gathers
+pushes to private repositories too.)
