@@ -79,11 +79,11 @@ is that law, in one place, for every face.
 - **Refusals are S-237's shape.** Every refusal
   is an `ApiPaginationError` with a
   machine-branchable reason, rendered by
-  `error_to_dict` as exactly `error` and
-  `detail` -- the contract's current refusal
-  fields, pinned against `CURRENT_ERROR_FIELDS`;
-  S-240's problem format is future work and is
-  not claimed.
+  `error_to_dict` in S-240's one problem
+  format (type, title, status, detail,
+  error id) through samverk/error_shape.py
+  -- the shape every endpoint and the web
+  UI's refusals now use.
 - **A read that witnesses nothing.** Paging and
   conditioning write no row and audit nothing:
   they are arithmetic over answers the faces
@@ -102,6 +102,7 @@ from dataclasses import dataclass
 from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 
 from .api_contract import CURRENT_ERROR_FIELDS
+from .error_shape import problem_from_error, problem_to_dict
 from .escaping import escape_html_text
 
 __all__ = [
@@ -134,9 +135,10 @@ class ApiPaginationError(ValueError):
 
 
 def error_to_dict(exc: ApiPaginationError) -> dict:
-    """One refusal as data, in S-237's current
-    shape: the reason and the detail, nothing else."""
-    return {"error": exc.reason, "detail": str(exc)}
+    """One refusal as data, in S-240's one problem
+    format (samverk/error_shape.py): type, title,
+    status, detail, error_id -- nothing else."""
+    return problem_to_dict(problem_from_error(exc))
 
 
 # ------------------------------------------------------------------

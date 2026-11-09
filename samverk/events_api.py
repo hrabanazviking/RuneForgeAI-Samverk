@@ -64,11 +64,11 @@ itself, in the shape S-216 set for API faces.
   for a limit that is not an integer inside the
   feeds' bounds, and `filter_invalid` for a verb
   filter that is not a non-empty string.
-  `error_to_dict` renders any refusal as
-  `{"error": reason, "detail": message}` -- this
-  contract's refusal shape; S-240's unified problem
-  format is future Part XII work and this shape
-  does not claim to be it.
+  `error_to_dict` renders any refusal in
+  S-240's one problem format (type, title,
+  status, detail, error id) through
+  samverk/error_shape.py -- the shape every
+  endpoint and the web UI's refusals now use.
 - **Stateless, like an API should be.** An API
   read records nothing and audits nothing: the
   only write a read can cause is S-221's own
@@ -101,6 +101,7 @@ from .event_store import (
 from .api_pagination import (
     DEFAULT_PAGE_SIZE, ApiPaginationError,
     conditional_response, paginate)
+from .error_shape import problem_from_error, problem_to_dict
 from .repositories import RepositoryStore
 
 __all__ = [
@@ -127,9 +128,10 @@ class EventsAPIError(ValueError):
 
 
 def error_to_dict(exc: EventsAPIError) -> dict:
-    """One refusal as data: the machine-branchable
-    reason and the human detail, nothing else."""
-    return {"error": exc.reason, "detail": str(exc)}
+    """One refusal as data, in S-240's one problem
+    format (samverk/error_shape.py): type, title,
+    status, detail, error_id -- nothing else."""
+    return problem_to_dict(problem_from_error(exc))
 
 
 # ------------------------------------------------------------------

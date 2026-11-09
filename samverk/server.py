@@ -77,8 +77,10 @@ class _Handler(BaseHTTPRequestHandler):
     def _send_error(self, status: int, code: str,
                     error_id: str | None = None) -> None:
         """The only way an error leaves this server: a registered
-        code + an opaque id (errors.py), nothing else."""
-        self._send_json(status, public_error_body(code, error_id))
+        code shaped as S-240's one problem format under an
+        opaque id (errors.py + error_shape.py), nothing else."""
+        self._send_json(
+            status, public_error_body(code, error_id, status=status))
 
     def _guarded(self, handler) -> None:
         """Run *handler* under the error law. A PublicError is

@@ -5,7 +5,9 @@ What a client may learn from a failed request is a *code* and an
 exception message, or a secret. The id is the whole bridge
 between the two worlds:
 
-- The client sees ``{"error": <code>, "error_id": <id>}``.
+- The client sees S-240's one problem format
+  (type, title, status, detail, error_id), shaped
+  in samverk/error_shape.py under the same id.
 - The server log carries the full detail (traceback included),
   redacted by S-018, **under the same id** — so an operator
   holding a user's error id can find the exact failure, and a
@@ -67,12 +69,24 @@ def new_error_id() -> str:
     return secrets.token_hex(8)
 
 
-def public_error_body(code: str, error_id: str | None = None) -> dict:
-    """The exact body a client receives for *code*: two keys,
-    nothing else."""
+def public_error_body(code: str, error_id: str | None = None,
+                      *, status: int | None = None) -> dict:
+    """The exact body a client receives for *code*:
+    S-240's one problem format (type, title, status,
+    detail, error_id), shaped by samverk/error_shape.py
+    -- the same format the API faces emit. *status* is
+    the handler's own when it judged one (the server
+    passes its wire status); otherwise the canonical
+    status of the code."""
     if code not in ERROR_CODES:
         raise ValueError(f"unregistered error code {code!r} (S-019)")
-    return {"error": code, "error_id": error_id or new_error_id()}
+    from .error_shape import (
+        canonical_public_words, problem_for_public_code,
+        problem_to_dict)
+    resolved = status if status is not None else (
+        canonical_public_words(code)[0])
+    return problem_to_dict(problem_for_public_code(
+        code, resolved, error_id=error_id or new_error_id()))
 
 
 def log_internal_error(error_id: str, exc: BaseException) -> None:

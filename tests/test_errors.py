@@ -34,9 +34,15 @@ from samverk.server import _Handler, make_server
 
 class ShapeTests(unittest.TestCase):
     def test_error_body_is_exactly_code_and_id(self):
+        # S-240: the body is the one problem format;
+        # the code rides in the type address.
         body = public_error_body("not_found")
-        self.assertEqual(set(body), {"error", "error_id"})
-        self.assertEqual(body["error"], "not_found")
+        self.assertEqual(
+            set(body),
+            {"type", "title", "status", "detail", "error_id"})
+        self.assertEqual(body["type"], "/api/v1/problems/not_found")
+        self.assertEqual(body["status"], 404)
+        self.assertTrue(body["title"] and body["detail"])
         self.assertEqual(len(body["error_id"]), 16)
         int(body["error_id"], 16)  # opaque hex, decodes as nothing else
 
@@ -107,19 +113,26 @@ class ServerShapeTests(unittest.TestCase):
         port = self._serve()
         status, body = self._request(port, "GET", "/missing")
         self.assertEqual(status, 404)
-        self.assertEqual(set(body), {"error", "error_id"})
-        self.assertEqual(body["error"], "not_found")
+        self.assertEqual(
+            set(body),
+            {"type", "title", "status", "detail", "error_id"})
+        self.assertEqual(body["type"], "/api/v1/problems/not_found")
+        self.assertEqual(body["status"], 404)
         status, body = self._request(port, "POST", "/healthz")
         self.assertEqual(status, 403)
-        self.assertEqual(set(body), {"error", "error_id"})
-        self.assertEqual(body["error"], "csrf_failed")
+        self.assertEqual(body["type"], "/api/v1/problems/csrf_failed")
+        self.assertEqual(body["status"], 403)
 
     def test_unknown_method_gets_the_json_shape_not_html(self):
         port = self._serve()
         status, body = self._request(port, "BREW", "/healthz")
         self.assertEqual(status, 501)
-        self.assertEqual(body["error"], "method_not_allowed")
-        self.assertEqual(set(body), {"error", "error_id"})
+        self.assertEqual(
+            body["type"], "/api/v1/problems/method_not_allowed")
+        self.assertEqual(
+            set(body),
+            {"type", "title", "status", "detail", "error_id"})
+        self.assertEqual(body["status"], 501)
 
     def test_unexpected_failure_is_an_opaque_500(self):
         """A handler that blows up leaks nothing: the body is the
@@ -135,8 +148,11 @@ class ServerShapeTests(unittest.TestCase):
         self.addCleanup(setattr, _Handler, "_route_get", original)
         status, body = self._request(port, "GET", "/healthz")
         self.assertEqual(status, 500)
-        self.assertEqual(set(body), {"error", "error_id"})
-        self.assertEqual(body["error"], "internal")
+        self.assertEqual(
+            set(body),
+            {"type", "title", "status", "detail", "error_id"})
+        self.assertEqual(body["type"], "/api/v1/problems/internal")
+        self.assertEqual(body["status"], 500)
         rendered = json.dumps(body)
         for leaked in ("hunter2", "/srv", "RuntimeError", "Traceback"):
             self.assertNotIn(leaked, rendered)

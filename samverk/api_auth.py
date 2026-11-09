@@ -79,11 +79,11 @@ judges the caller against a repository.
   repository their own token was aimed at.
 - **Refusals are S-237's shape.** Every refusal
   is an `ApiAuthError` with a machine-branchable
-  reason, rendered by `error_to_dict` as exactly
-  `error` and `detail` -- the contract's current
-  refusal fields, pinned against
-  `CURRENT_ERROR_FIELDS`; S-240's problem
-  format is future work and is not claimed.
+  reason, rendered by `error_to_dict` in
+  S-240's one problem format (type, title,
+  status, detail, error id) through
+  samverk/error_shape.py -- the shape every
+  endpoint and the web UI's refusals now use.
 - **A read that witnesses nothing.**
   Authentication and authorisation write no row
   and audit nothing of their own: the only write
@@ -108,6 +108,7 @@ from .escaping import escape_html_text
 from .fine_grained_tokens import (
     TOKEN_PREFIX as FINE_PREFIX,
     FineTokenStore)
+from .error_shape import problem_from_error, problem_to_dict
 from .git_auth import (
     TOKEN_USERNAME, GitAuthenticator, parse_basic_credentials)
 from .permission_engine import PermissionEngine, Resolution
@@ -139,9 +140,10 @@ class ApiAuthError(ValueError):
 
 
 def error_to_dict(exc: ApiAuthError) -> dict:
-    """One refusal as data, in S-237's current
-    shape: the reason and the detail, nothing else."""
-    return {"error": exc.reason, "detail": str(exc)}
+    """One refusal as data, in S-240's one problem
+    format (samverk/error_shape.py): type, title,
+    status, detail, error_id -- nothing else."""
+    return problem_to_dict(problem_from_error(exc))
 
 
 def parse_bearer_token(header: object) -> str | None:

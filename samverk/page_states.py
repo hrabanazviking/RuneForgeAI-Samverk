@@ -41,6 +41,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .errors import ERROR_CODES
+from .error_shape import canonical_public_words
 from .escaping import escape_html_attr, escape_html_text
 
 
@@ -155,48 +156,30 @@ def empty_state(surface: object, *, base: str = "") -> PageState:
         action_href=f"{root}{suffix}" or "/")
 
 
-# S-019 public code -> (title, message, next step)
-_ERROR_TABLE = {
+# S-019 public code -> next step. The title and
+# message of an error state are S-240's canonical
+# problem words for the code (canonical_public_words
+# in samverk/error_shape.py), so the page a person
+# reads and the problem a script receives say the
+# same thing; only the next step is the page's own.
+_ERROR_NEXT_STEPS = {
     "bad_request": (
-        "That request could not be understood",
-        "Something about the request was malformed, so nothing "
-        "was changed.",
         "Go back and try again; if it keeps happening, note "
         "the error id below and ask for help."),
     "csrf_failed": (
-        "That form could not be accepted",
-        "The form's safety token did not check out, so nothing "
-        "was changed. This can happen if the page sat open a "
-        "long while.",
         "Reload the page and submit the form again."),
     "internal": (
-        "Something went wrong on our side",
-        "The server hit an unexpected problem and could not "
-        "finish. Your data was not changed by this failure.",
         "Try again in a moment; if it keeps happening, note "
         "the error id below and ask for help."),
     "method_not_allowed": (
-        "That action is not available here",
-        "The address is real, but it does not accept the kind "
-        "of request that was sent to it.",
         "Go back and use the links and buttons the page "
         "offers."),
     "not_found": (
-        "That page could not be found",
-        "It may not exist, or it may belong to a repository "
-        "you do not have permission to see — the answer is the "
-        "same either way.",
         "Check the address for typos, or go back to the home "
         "page and navigate from there."),
     "rate_limited": (
-        "Too many requests just now",
-        "This instance limits how fast requests may arrive, "
-        "and that limit was reached. Nothing was changed.",
         "Wait a little while, then try again."),
     "unauthorized": (
-        "Sign-in needed",
-        "This page or action needs a signed-in account, or "
-        "the sign-in has expired.",
         "Sign in, then return to what you were doing."),
 }
 
@@ -206,12 +189,13 @@ def error_state(code: object, *, error_id: str | None = None) -> PageState:
     Only the code and the opaque error id are accepted —
     no caller-supplied message exists to leak through."""
     key = code if isinstance(code, str) else None
-    if key not in ERROR_CODES or key not in _ERROR_TABLE:
+    if key not in ERROR_CODES or key not in _ERROR_NEXT_STEPS:
         raise PageStateError(
             "error_code_unknown",
             f"No error state is designed for code {code!r} "
             "(S-019's registry governs).")
-    title, message, next_step = _ERROR_TABLE[key]
+    _status, title, message = canonical_public_words(key)
+    next_step = _ERROR_NEXT_STEPS[key]
     label, href = ("Sign in", "/login") if key == "unauthorized" \
         else ("Back to the home page", "/")
     return PageState(

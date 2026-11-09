@@ -119,19 +119,17 @@ SEARCH_RESULT_FIELDS = ("query", "groups")
 SEARCH_GROUP_FIELDS = (
     "type", "total", "returned", "complete", "results")
 
-# The refusal shape the landed faces emit today:
-# error_to_dict in both S-216 and S-231 renders
-# exactly these two keys.
-CURRENT_ERROR_FIELDS = ("error", "detail")
-
-# The one problem format S-240 will land across
+# The one problem format S-240 landed across
 # all endpoints (its roadmap line names the five
-# fields); S-240's slice migrates the landed
-# faces' refusals onto it, and this contract
-# records the target so that migration is a
-# fulfilment, not a redesign.
+# fields): every face's error_to_dict renders
+# exactly these keys, in this order, through
+# samverk/error_shape.py -- and the web UI's
+# refusals match it. CURRENT_ERROR_FIELDS is
+# the name S-238/S-239 pinned for the refusal
+# shape of their day; it now names these fields.
 PROBLEM_FIELDS = (
     "type", "title", "status", "detail", "error_id")
+CURRENT_ERROR_FIELDS = PROBLEM_FIELDS
 
 
 class ApiContractError(ValueError):
@@ -247,18 +245,26 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "what a caller may see.")),
     ContractRule(
         id="error-shape",
-        title="One problem format, coming in S-240; today's refusals are two fields",
+        title="One problem format across all endpoints (landed in S-240)",
         statement=(
-            "Today both landed faces refuse with "
-            "error and detail -- a machine-branchable "
-            "reason and a human sentence -- and the "
-            "audit below pins exactly that. S-240 "
-            "lands the one problem format across all "
-            "endpoints (type, title, status, detail, "
-            "error id), and the web UI's refusals "
-            "will match it. Until then this contract "
-            "records the target fields and claims "
-            "nothing more.")),
+            "Every endpoint refuses with the one "
+            "problem format (type, title, status, "
+            "detail, error id), shaped in one place "
+            "(samverk/error_shape.py): the type is "
+            "the reason's stable address under "
+            "/api/v1/problems/, the title its "
+            "plain-words summary, the status the "
+            "registry's mapping, the detail the "
+            "occurrence's own sentence, and the "
+            "error id S-019's opaque bridge to the "
+            "server log. The audit below pins "
+            "exactly that on every API face, and "
+            "the web UI's refusals match it: the "
+            "server's S-019 body and S-113's error "
+            "pages speak the same titles and "
+            "details. S-240 landed this format; "
+            "before it, the faces refused with two "
+            "fields, and the contract said so.")),
     ContractRule(
         id="rate-limits",
         title="Rate limits are per-token, headed, and honest (S-241)",
@@ -739,8 +745,9 @@ def audit_api_contract() -> ApiContractAudit:
     from their own serialisers (S-231's feed and
     event dicts, S-216's search result and group
     dicts) against the fields documented here;
-    both landed faces' refusals against
-    CURRENT_ERROR_FIELDS; and S-190's
+    every API face's refusals (S-216, S-231,
+    S-238, S-239) against CURRENT_ERROR_FIELDS;
+    and S-190's
     PermissionEngine standing importable. Pure
     read: imports and introspection only."""
     problems: list[str] = []
@@ -781,11 +788,13 @@ def audit_api_contract() -> ApiContractAudit:
         live = _returned_dict_keys(module_name, function_name)
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
-    from . import events_api, search_api
+    from . import api_auth, api_pagination, events_api, search_api
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
-            (search_api, search_api.SearchAPIError)):
+            (search_api, search_api.SearchAPIError),
+            (api_auth, api_auth.ApiAuthError),
+            (api_pagination, api_pagination.ApiPaginationError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
         if tuple(rendered.keys()) != CURRENT_ERROR_FIELDS:
@@ -856,8 +865,8 @@ def render_api_contract_page(
                 "are sound, "
                 f"{audit.landed_shapes_checked} landed "
                 "shapes match the fields written here, "
-                "both landed faces refuse with the "
-                "documented two fields, and S-190's "
+                "every API face refuses with the one "
+                "problem format, and S-190's "
                 "permission engine stands where the "
                 "contract says it stands.</p>")
         else:

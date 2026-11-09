@@ -122,7 +122,10 @@ class ApiAuthenticationTests(unittest.TestCase):
         exc = self._reason(self.w.api.authenticate, None)
         rendered = error_to_dict(exc)
         self.assertEqual(tuple(rendered.keys()), CURRENT_ERROR_FIELDS)
-        self.assertEqual(rendered["error"], "authentication_required")
+        self.assertEqual(
+            rendered["type"],
+            "/api/v1/problems/authentication_required")
+        self.assertEqual(rendered["status"], 401)
         self.assertTrue(rendered["detail"])
         self.assertEqual(json.loads(json.dumps(rendered)), rendered)
 
@@ -183,13 +186,27 @@ class ApiAuthenticationTests(unittest.TestCase):
         unknown = self._reason(
             self.w.api.authenticate, "Bearer svk_neverexisted")
         self.assertEqual(revoked.reason, "credentials_invalid")
-        self.assertEqual(error_to_dict(revoked), error_to_dict(unknown))
+        # S-240: equal in every field but the
+        # per-refusal error id each problem mints.
+        left, right = (error_to_dict(revoked),
+                       error_to_dict(unknown))
+        self.assertEqual(
+            {k: v for k, v in left.items() if k != "error_id"},
+            {k: v for k, v in right.items() if k != "error_id"})
+        self.assertNotEqual(left["error_id"], right["error_id"])
         _, short = self.w.classic.create_token(
             self.w.owner.id, "short", {"repo:read"}, self.w.clock.now + 50)
         self.w.clock.now += 100
         expired = self._reason(self.w.api.authenticate, "Bearer " + short)
         self.assertEqual(expired.reason, "credentials_invalid")
-        self.assertEqual(error_to_dict(expired), error_to_dict(unknown))
+        # S-240: equal in every field but the
+        # per-refusal error id each problem mints.
+        left, right = (error_to_dict(expired),
+                       error_to_dict(unknown))
+        self.assertEqual(
+            {k: v for k, v in left.items() if k != "error_id"},
+            {k: v for k, v in right.items() if k != "error_id"})
+        self.assertNotEqual(left["error_id"], right["error_id"])
 
     def test_deactivated_owner_token_authenticates_to_nothing(self):
         ghost = self.w.accounts.register("ghost", PW)
@@ -221,7 +238,14 @@ class ApiAuthenticationTests(unittest.TestCase):
         unknown = self._reason(
             self.w.api.authenticate, basic("nosuchuser", PW))
         self.assertEqual(wrong.reason, "credentials_invalid")
-        self.assertEqual(error_to_dict(wrong), error_to_dict(unknown))
+        # S-240: equal in every field but the
+        # per-refusal error id each problem mints.
+        left, right = (error_to_dict(wrong),
+                       error_to_dict(unknown))
+        self.assertEqual(
+            {k: v for k, v in left.items() if k != "error_id"},
+            {k: v for k, v in right.items() if k != "error_id"})
+        self.assertNotEqual(left["error_id"], right["error_id"])
         malformed = self._reason(self.w.api.authenticate, "Basic !!!")
         self.assertEqual(malformed.reason, "credentials_invalid")
 
@@ -307,7 +331,14 @@ class ApiAuthenticationTests(unittest.TestCase):
         unreadable = self._reason(
             self.w.api.authorize, basic("yrsa", PW), "volmarr", "priv")
         self.assertEqual(missing.reason, "repo_not_found")
-        self.assertEqual(error_to_dict(missing), error_to_dict(unreadable))
+        # S-240: equal in every field but the
+        # per-refusal error id each problem mints.
+        left, right = (error_to_dict(missing),
+                       error_to_dict(unreadable))
+        self.assertEqual(
+            {k: v for k, v in left.items() if k != "error_id"},
+            {k: v for k, v in right.items() if k != "error_id"})
+        self.assertNotEqual(left["error_id"], right["error_id"])
 
     def test_authorize_owner_token_carries_s190_resolution(self):
         granted = self.w.api.authorize(

@@ -114,7 +114,9 @@ class PurePaginationTests(unittest.TestCase):
         exc = ApiPaginationError("cursor_invalid", "nope")
         rendered = error_to_dict(exc)
         self.assertEqual(tuple(rendered.keys()), CURRENT_ERROR_FIELDS)
-        self.assertEqual(rendered["error"], "cursor_invalid")
+        self.assertEqual(
+            rendered["type"], "/api/v1/problems/cursor_invalid")
+        self.assertEqual(rendered["status"], 400)
         self.assertEqual(json.loads(json.dumps(rendered)), rendered)
 
     def test_contract_rule_now_records_s239_landed(self):
