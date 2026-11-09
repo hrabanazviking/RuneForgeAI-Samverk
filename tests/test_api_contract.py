@@ -55,7 +55,9 @@ EXPECTED_RULE_IDS = (
 LANDED_IDS = (
     "root", "repositories", "repository",
     "repository-branches", "repository-contents",
-    "repository-forks", "search", "events", "user-events",
+    "repository-forks", "issues", "issue",
+    "issue-comments", "pulls", "pull", "pull-merge",
+    "pull-reviews", "search", "events", "user-events",
     "repository-events", "event")
 
 
@@ -146,6 +148,10 @@ class ApiContractTests(unittest.TestCase):
                     "repository-branches", "repository-contents",
                     "repository-forks"):
             self.assertEqual(get_resource(rid).slice, "S-242")
+        for rid in ("issues", "issue", "issue-comments",
+                    "pulls", "pull", "pull-merge",
+                    "pull-reviews"):
+            self.assertEqual(get_resource(rid).slice, "S-243")
 
     def test_contracted_resources_name_part_xii_builders(self):
         for resource in API_RESOURCES:
@@ -204,7 +210,7 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(
             audit.resources_checked, len(EXPECTED_RESOURCE_IDS))
         self.assertEqual(audit.route_problems, ())
-        self.assertEqual(audit.landed_shapes_checked, 5)
+        self.assertEqual(audit.landed_shapes_checked, 9)
         self.assertEqual(audit.landed_shape_mismatches, ())
         self.assertTrue(audit.error_shape_ok)
         self.assertTrue(audit.permission_engine_present)

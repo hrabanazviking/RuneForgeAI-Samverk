@@ -1531,3 +1531,29 @@ when its grace expires, by the web's own process
 collection, one repository, branches, contents,
 forks) write no row and audit nothing. No
 migration -- schema 94 stands.)
+
+S-243 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its issues and PRs API, in
+samverk/api_issues_pulls.py, is the programmatic
+face of capabilities the web already has, and
+every act it performs is witnessed by the web's
+own stores on their existing events, exactly as
+the same act on the web is witnessed: issue
+creation, edit, close and reopen on
+repo.issue.create, repo.issue.update,
+repo.issue.close and repo.issue.reopen; comments
+on repo.issue.comment and
+repo.pull_request.comment; labels, assignees and
+milestone on repo.issue.label_add,
+repo.issue.label_remove, repo.issue.assign,
+repo.issue.unassign and repo.issue.milestone;
+pull creation and draft conversions on
+repo.pull_request.create,
+repo.pull_request.mark_ready and
+repo.pull_request.convert_to_draft; reviews on
+repo.pull_request.review_submit; and the merge
+on repo.pull_request.merge. Reads (both
+collections, one issue, one pull, comments,
+reviews) write no row and audit nothing. No
+migration -- schema 94 stands.)

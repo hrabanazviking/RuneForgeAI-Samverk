@@ -141,8 +141,6 @@ contracted endpoint exists.
   the repository's forks; POST forks it under the
   caller's name with S-055's own law (S-242).
 
-### Contracted
-
 - `GET, POST /api/v1/repos/{owner}/{repo}/issues`
   — the repository's issues in the list envelope;
   POST opens one (S-243). An issue carries `id`,
@@ -169,6 +167,9 @@ contracted endpoint exists.
 - `GET, POST /api/v1/repos/{owner}/{repo}/pulls/{number}/reviews`
   — a pull request's reviews; POST submits one with
   the review law the web enforces (S-243).
+
+### Contracted
+
 - `GET /api/v1/users/{username}` — one person's
   public profile as data: exactly the facts the
   profile page shows a reader with this caller's

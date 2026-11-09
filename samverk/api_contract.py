@@ -26,12 +26,17 @@ own shapes as they go.
   as Part XII work, and the repositories family
   (S-242, samverk/api_repositories.py: the root,
   the collection, one repository, its branches,
-  its contents, and its forks). Everything else
+  its contents, and its forks), and the issues
+  and pulls families (S-243,
+  samverk/api_issues_pulls.py: issues with their
+  comments, labels, assignees and milestones,
+  and pull requests with their conversation,
+  reviews and merge). Everything else
   in the table is a promise with a named builder:
   S-238 auth, S-239 pagination and conditional
   requests, S-240 the one problem format, S-241
-  rate limits, S-243..S-244 the remaining
-  resource families, S-245 the search
+  rate limits, S-244 the remaining
+  resource family, S-245 the search
   ratification, S-246 statuses and checks, S-248
   webhooks. The contract never
   claims a contracted endpoint exists.
@@ -421,7 +426,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "reopen ride the issue resource and "
             "its children."),
         fields=_ISSUE_FIELDS,
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="issue",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -432,7 +437,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "change the fields the web lets its "
             "people change, witnessed identically."),
         fields=_ISSUE_FIELDS,
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="issue-comments",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -446,7 +451,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
         fields=(
             "id", "issue", "author", "body",
             "created_at", "updated_at"),
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="pulls",
         path="/api/v1/repos/{owner}/{repo}/pulls",
@@ -458,7 +463,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "entire PR from open to merge through "
             "this family."),
         fields=_PULL_FIELDS,
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="pull",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -469,7 +474,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "it, or change what the web lets its "
             "people change."),
         fields=_PULL_FIELDS,
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="pull-merge",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -481,7 +486,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "approvals and permission included, "
             "never an API shortcut around them."),
         fields=("merged", "oid", "message"),
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="pull-reviews",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -494,7 +499,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
         fields=(
             "id", "pull", "author", "state", "body",
             "created_at"),
-        standing="contracted", slice="S-243"),
+        standing="landed", slice="S-243"),
     ApiResource(
         id="user", path="/api/v1/users/{username}",
         methods=("GET",),
@@ -802,6 +807,18 @@ def audit_api_contract() -> ApiContractAudit:
             "search_api", SEARCH_GROUP_FIELDS),
         "repository_to_dict": (
             "api_repositories", _REPO_FIELDS),
+        "issue_to_dict": (
+            "api_issues_pulls", _ISSUE_FIELDS),
+        "pull_to_dict": (
+            "api_issues_pulls", _PULL_FIELDS),
+        "comment_to_dict": (
+            "api_issues_pulls", (
+                "id", "issue", "author", "body",
+                "created_at", "updated_at")),
+        "review_to_dict": (
+            "api_issues_pulls", (
+                "id", "pull", "author", "state", "body",
+                "created_at")),
     }
     for function_name, (module_name, documented) in (
             landed.items()):
@@ -809,8 +826,9 @@ def audit_api_contract() -> ApiContractAudit:
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
     from . import (
-        api_auth, api_pagination, api_rate_limit,
-        api_repositories, events_api, search_api)
+        api_auth, api_issues_pulls, api_pagination,
+        api_rate_limit, api_repositories, events_api,
+        search_api)
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
@@ -819,7 +837,9 @@ def audit_api_contract() -> ApiContractAudit:
             (api_rate_limit, api_rate_limit.ApiRateLimitError),
             (api_pagination, api_pagination.ApiPaginationError),
             (api_repositories,
-             api_repositories.RepositoriesAPIError)):
+             api_repositories.RepositoriesAPIError),
+            (api_issues_pulls,
+             api_issues_pulls.IssuesPullsAPIError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
         if tuple(rendered.keys()) != CURRENT_ERROR_FIELDS:
