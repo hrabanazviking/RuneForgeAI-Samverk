@@ -1581,3 +1581,17 @@ their members, team permissions, the default
 permission, collaborator lists) write no row
 and audit nothing. No migration -- schema 94
 stands.)
+
+S-245 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its search API, in samverk/api_search.py, is
+S-216's search face ratified as the public
+contract: the whole search delegates to S-216's
+face over S-213's engine and the paged group
+calls delegate to the five banked group
+executors, every call resolved through S-238's
+door and permission-filtered per S-209 exactly
+as the web search is. Searching is a read: it
+records no recent searches, writes no row and
+audits nothing. No migration -- schema 94
+stands.)

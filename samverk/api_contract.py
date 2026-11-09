@@ -39,14 +39,17 @@ own shapes as they go.
   members and repository permissions, the org
   default permission, and a repository's outside
   collaborators -- membership and permission
-  administration automatable end-to-end).
-  Everything else
+  administration automatable end-to-end), and
+  the search ratification (S-245,
+  samverk/api_search.py: S-216's face answered
+  through S-238's door, with each group's hits
+  paged by S-239's cursor engine over the five
+  banked group executors). Everything else
   in the table is a promise with a named builder:
   S-238 auth, S-239 pagination and conditional
   requests, S-240 the one problem format, S-241
   rate limits, S-244 the remaining
-  resource family, S-245 the search
-  ratification, S-246 statuses and checks, S-248
+  resource family, S-246 statuses and checks, S-248
   webhooks. The contract never
   claims a contracted endpoint exists.
 - **No API-only back doors.** Every resource is
@@ -97,7 +100,8 @@ __all__ = [
     "CONTRACT_RULES", "CURRENT_ERROR_FIELDS",
     "EVENT_FIELDS", "FEED_ENVELOPE_FIELDS",
     "HTTP_METHODS", "PROBLEM_FIELDS",
-    "SEARCH_GROUP_FIELDS", "SEARCH_RESULT_FIELDS",
+    "SEARCH_GROUP_FIELDS", "SEARCH_PAGE_FIELDS",
+    "SEARCH_RESULT_FIELDS",
     "ApiContractAudit", "ApiContractError",
     "ApiResource", "ContractRule",
     "audit_api_contract", "get_resource",
@@ -136,6 +140,18 @@ EVENT_FIELDS = (
 SEARCH_RESULT_FIELDS = ("query", "groups")
 SEARCH_GROUP_FIELDS = (
     "type", "total", "returned", "complete", "results")
+
+# One paged group as S-245's group_page_to_dict
+# emits it (samverk/api_search.py): the whole
+# search's own facts joined by S-239's page size,
+# walking facts and cursors. The code group
+# additionally carries total_matches and
+# total_matched_lines, after these fields,
+# exactly as the capped group shape carries them.
+SEARCH_PAGE_FIELDS = (
+    "query", "type", "total", "returned", "complete",
+    "per_page", "has_next", "has_previous",
+    "next_cursor", "previous_cursor", "results")
 
 # The one problem format S-240 landed across
 # all endpoints (its roadmap line names the five
@@ -255,9 +271,11 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "and a strong ETag whose If-None-Match "
             "match answers 304 with no body. The "
             "events face crawls through it today; "
-            "the search groups keep the envelope's "
-            "complete flag until S-245 gives their "
-            "hits paging keys. Permission filtering "
+            "since S-245 the search groups carry "
+            "paging keys too -- one group at a "
+            "time, re-filtered on every page, its "
+            "complete flag true only at the "
+            "group's true total. Permission filtering "
             "still runs before paging on every "
             "request, so a cursor never widens "
             "what a caller may see.")),
@@ -702,10 +720,12 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "S-245): the query as typed, then one "
             "group per kind searched, each with "
             "its own filtered total, returned "
-            "count and complete flag; totals are "
-            "never summed across groups."),
+            "count and complete flag; one group "
+            "at a time also pages by cursor "
+            "through S-239. Totals are never "
+            "summed across groups."),
         fields=SEARCH_RESULT_FIELDS,
-        standing="landed", slice="S-216"),
+        standing="landed", slice="S-245"),
     ApiResource(
         id="events", path="/api/v1/events",
         methods=("GET",),
@@ -914,7 +934,8 @@ def audit_api_contract() -> ApiContractAudit:
     XII builder); the landed faces' shapes read
     from their own serialisers (S-231's feed and
     event dicts, S-216's search result and group
-    dicts) against the fields documented here;
+    dicts, S-245's search group page dict)
+    against the fields documented here;
     every API face's refusals (S-216, S-231,
     S-238, S-239) against CURRENT_ERROR_FIELDS;
     and S-190's
@@ -952,6 +973,8 @@ def audit_api_contract() -> ApiContractAudit:
             "search_api", SEARCH_RESULT_FIELDS),
         "group_to_dict": (
             "search_api", SEARCH_GROUP_FIELDS),
+        "group_page_to_dict": (
+            "api_search", SEARCH_PAGE_FIELDS),
         "repository_to_dict": (
             "api_repositories", _REPO_FIELDS),
         "issue_to_dict": (
@@ -987,11 +1010,13 @@ def audit_api_contract() -> ApiContractAudit:
     from . import (
         api_auth, api_issues_pulls, api_orgs,
         api_pagination, api_rate_limit,
-        api_repositories, events_api, search_api)
+        api_repositories, api_search, events_api,
+        search_api)
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
             (search_api, search_api.SearchAPIError),
+            (api_search, api_search.PublicSearchAPIError),
             (api_auth, api_auth.ApiAuthError),
             (api_rate_limit, api_rate_limit.ApiRateLimitError),
             (api_pagination, api_pagination.ApiPaginationError),
