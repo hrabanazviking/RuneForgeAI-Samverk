@@ -1490,3 +1490,26 @@ error id each refusal mints, and successful
 responses are untouched. Shaping a refusal is
 not a witnessed act, so the audit log does not
 move for it. No migration -- schema 94 stands.)
+
+S-241 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its API rate limiting, in
+samverk/api_rate_limit.py, judges every API
+call at S-238's door against a per-token bucket
+-- a token's own bucket, an account's bucket
+for a password call, and the one tighter
+anonymous bucket for a caller with no
+credential -- answering every judgement with
+the limit headers (X-RateLimit-Limit,
+X-RateLimit-Remaining, X-RateLimit-Reset) and
+refusing in S-240's one problem format as
+rate_limited (429) with an honest Retry-After
+computed from the bucket's own state; a
+refusal charges nothing. The limits are
+instance-configurable in the settings table
+under api_rate_limit.* keys, and changing them
+is audited admin.settings.change with the keys
+named -- the existing event, as S-038 rides it
+-- while judging a call writes no row and
+audits nothing. No migration -- schema 94
+stands.)

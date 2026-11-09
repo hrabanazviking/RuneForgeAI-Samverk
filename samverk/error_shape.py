@@ -164,6 +164,10 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
     "recent_not_found": (404, "No such recent search"),
     # S-237 -- the contract's own refusals
     "rule_unknown": (404, "No such API contract rule"),
+    # S-241 -- API rate limiting (its refusal rides the
+    # S-019 rate_limited registration above, at 429)
+    "rate_settings_invalid": (
+        400, "That rate-limit setting is not allowed"),
 }
 
 # The canonical detail sentence of each S-019

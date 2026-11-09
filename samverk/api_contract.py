@@ -267,16 +267,30 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "fields, and the contract said so.")),
     ContractRule(
         id="rate-limits",
-        title="Rate limits are per-token, headed, and honest (S-241)",
+        title=(
+            "Rate limits are per-token, headed, and honest "
+            "(landed in S-241)"),
         statement=(
-            "S-241 contracts the limiting itself: "
-            "per-token buckets, limit headers on "
-            "every response, an honest Retry-After, "
-            "and limits an instance can configure. "
-            "No endpoint in this contract is "
-            "unbounded by design; payload size caps "
-            "and expensive-endpoint accounting are "
-            "S-255's abuse defences.")),
+            "S-241 landed the limiting itself, in "
+            "samverk/api_rate_limit.py: per-token "
+            "buckets judged at the API door over "
+            "S-238's resolved callers (a password "
+            "call is judged by its account, an "
+            "anonymous call by the one tighter "
+            "anonymous bucket), the limit headers "
+            "(X-RateLimit-Limit, "
+            "X-RateLimit-Remaining, "
+            "X-RateLimit-Reset) on every judgement, "
+            "an honest Retry-After computed from "
+            "the bucket's own state on the "
+            "rate_limited refusal (429, in the one "
+            "problem format), and limits an "
+            "instance configures in its settings "
+            "table. No endpoint in this contract "
+            "is unbounded by design; payload size "
+            "caps and expensive-endpoint "
+            "accounting are S-255's abuse "
+            "defences.")),
     ContractRule(
         id="no-back-doors",
         title="No API-only back doors",
@@ -788,12 +802,15 @@ def audit_api_contract() -> ApiContractAudit:
         live = _returned_dict_keys(module_name, function_name)
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
-    from . import api_auth, api_pagination, events_api, search_api
+    from . import (
+        api_auth, api_pagination, api_rate_limit, events_api,
+        search_api)
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
             (search_api, search_api.SearchAPIError),
             (api_auth, api_auth.ApiAuthError),
+            (api_rate_limit, api_rate_limit.ApiRateLimitError),
             (api_pagination, api_pagination.ApiPaginationError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
