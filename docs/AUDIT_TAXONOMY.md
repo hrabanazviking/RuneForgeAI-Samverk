@@ -1415,3 +1415,18 @@ surfaces with its summary marked unavailable in
 words, never with an invented count. The feed is
 personal and signed-in only, because it gathers
 pushes to private repositories too.)
+
+S-237 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its API contract document, in
+samverk/api_contract.py and docs/API_CONTRACT.md,
+ratifies Samverk's own /api/v1 before the code:
+26 resources and 42 routes held as data, nine
+cross-cutting rules, the two landed faces
+(S-216 search, S-231 events) checked mechanically
+against their own serialisers and refusals, and
+every other resource a named promise for its
+Part XII builder (S-242..S-248). The contract is
+a document, not an act: reading it changes
+nothing, so the audit log does not move for it.
+No migration -- schema 94 stands.)
