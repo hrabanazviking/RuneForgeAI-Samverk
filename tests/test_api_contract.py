@@ -177,7 +177,9 @@ class ApiContractTests(unittest.TestCase):
         self.assertIn("event_not_found", joined)
 
     def test_error_shapes_pinned(self):
-        self.assertEqual(CURRENT_ERROR_FIELDS, ("error", "detail"))
+        # S-240: the current refusal shape IS the
+        # one problem format.
+        self.assertEqual(CURRENT_ERROR_FIELDS, PROBLEM_FIELDS)
         self.assertEqual(
             PROBLEM_FIELDS,
             ("type", "title", "status", "detail", "error_id"))

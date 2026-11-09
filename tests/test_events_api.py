@@ -314,7 +314,8 @@ class EventsAPITests(unittest.TestCase):
             shape = error_to_dict(exc)
         else:
             self.fail("expected a refusal")
-        self.assertEqual(shape["error"], "no_such_user")
+        self.assertEqual(shape["type"], "/api/v1/problems/no_such_user")
+        self.assertEqual(shape["status"], 404)
         self.assertTrue(shape["detail"])
 
     # -- the single event ------------------------------------------

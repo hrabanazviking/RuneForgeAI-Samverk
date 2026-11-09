@@ -342,7 +342,8 @@ class SearchAPITests(unittest.TestCase):
             shape = error_to_dict(exc)
         else:
             self.fail("expected a refusal")
-        self.assertEqual(shape["error"], "query_invalid")
+        self.assertEqual(shape["type"], "/api/v1/problems/query_invalid")
+        self.assertEqual(shape["status"], 400)
         self.assertTrue(shape["detail"])
 
     def test_empty_query_is_the_landing_said_as_data(self):

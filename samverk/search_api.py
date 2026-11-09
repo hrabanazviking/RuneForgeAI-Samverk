@@ -73,9 +73,11 @@ script can trust, with no second engine anywhere.
   words-less or group-less selection, or a bad
   per-group limit), and `error_to_dict` renders any
   refusal as `{"error": reason, "detail": message}`.
-  That is this contract's refusal shape; S-240's
-  unified problem format is future Part XII work
-  and this shape does not claim to be it.
+  S-240's one problem format (type, title,
+  status, detail, error id), rendered through
+  samverk/error_shape.py, is the shape this
+  face now emits -- the same shape every
+  endpoint and the web UI's refusals use.
 - **Anonymous callers search as the web's
   anonymous.** A missing viewer is the engine's own
   anonymous: public facts only, through the same
@@ -91,6 +93,7 @@ from .accounts import User
 from .global_search import (
     DEFAULT_GROUP_LIMIT, GlobalSearch, GlobalSearchError,
     GlobalSearchResults, GroupResults)
+from .error_shape import problem_from_error, problem_to_dict
 from .organizations import OrganizationStore
 from .repositories import RepositoryStore
 
@@ -111,9 +114,10 @@ class SearchAPIError(ValueError):
 
 
 def error_to_dict(exc: SearchAPIError) -> dict:
-    """One refusal as data: the machine-branchable
-    reason and the human detail, nothing else."""
-    return {"error": exc.reason, "detail": str(exc)}
+    """One refusal as data, in S-240's one problem
+    format (samverk/error_shape.py): type, title,
+    status, detail, error_id -- nothing else."""
+    return problem_to_dict(problem_from_error(exc))
 
 
 # ------------------------------------------------------------------

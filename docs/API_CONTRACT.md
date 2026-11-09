@@ -66,12 +66,12 @@ contracted endpoint exists.
   crawls through it today; the search groups
   keep the envelope's `complete` flag until
   S-245 gives their hits paging keys.
-- **error-shape** — Today both landed faces refuse
-  with `error` and `detail` — a machine-branchable
-  reason and a human sentence. S-240 lands the one
-  problem format across all endpoints — `type`,
-  `title`, `status`, `detail`, `error_id` — and
-  the web UI's refusals will match it.
+- **error-shape** -- Every endpoint refuses with
+  the one problem format -- `type`, `title`,
+  `status`, `detail`, `error_id` -- shaped in one
+  place (samverk/error_shape.py), and the web UI's
+  refusals match it (landed in S-240; before it,
+  the faces refused with `error` and `detail`).
 - **rate-limits** — S-241 contracts per-token
   buckets, limit headers on every response, an
   honest `Retry-After`, and instance-configurable

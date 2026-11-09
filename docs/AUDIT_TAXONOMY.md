@@ -1472,3 +1472,21 @@ face crawls through it; paging and
 conditioning are reads that witness nothing,
 so the audit log does not move for them. No
 migration -- schema 94 stands.)
+
+S-240 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its error shape, in samverk/error_shape.py,
+lands the one problem format S-237 contracted:
+type, title, status, detail, error id, shaped
+in one registry every refusal surface derives
+from -- the four API faces' error_to_dict
+(S-216, S-231, S-238, S-239), the server's
+S-019 body, and S-113's web error states, whose
+titles and messages are now the format's
+canonical public words. A missing repository
+and an unreadable one remain the one
+repo_not_found problem in every field but the
+error id each refusal mints, and successful
+responses are untouched. Shaping a refusal is
+not a witnessed act, so the audit log does not
+move for it. No migration -- schema 94 stands.)

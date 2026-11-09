@@ -115,8 +115,14 @@ class ServerTests(unittest.TestCase):
         # S-019 extended this shape: a registered code + an opaque
         # error id, nothing else. (S-002's intent — a clean JSON
         # 404 with no internals — is preserved.)
-        self.assertEqual(payload["error"], "not_found")
-        self.assertEqual(set(payload), {"error", "error_id"})
+        # S-240: the 404 is the one problem format;
+        # the code rides in the type address.
+        self.assertEqual(
+            payload["type"], "/api/v1/problems/not_found")
+        self.assertEqual(
+            set(payload),
+            {"type", "title", "status", "detail", "error_id"})
+        self.assertEqual(payload["status"], 404)
         self.assertEqual(len(payload["error_id"]), 16)
 
 
