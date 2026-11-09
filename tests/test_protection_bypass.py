@@ -317,7 +317,7 @@ class BypassProtectionTests(unittest.TestCase):
                 self.owner, "volmarr", "pub", "main", gate=" ")
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 93)
+        self.assertEqual(schema_version(self.conn), 94)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
         self.assertIn(BYPASS_EVENT, taxonomy.AUDIT_EVENTS)
         self.assertTrue(taxonomy.is_known_event(BYPASS_EVENT))

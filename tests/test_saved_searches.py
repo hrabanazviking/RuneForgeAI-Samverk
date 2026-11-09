@@ -180,8 +180,8 @@ class PinsTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_pins_schema_93_taxonomy_129(self):
-        self.assertEqual(schema_version(self.conn), 93)
-        self.assertEqual(db.MIGRATIONS[-1][0], 93)
+        self.assertEqual(schema_version(self.conn), 94)
+        self.assertEqual(db.MIGRATIONS[-1][0], 94)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
@@ -195,7 +195,7 @@ class PinsTests(unittest.TestCase):
     def test_fresh_database_migrates_to_93(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 93)
+            self.assertEqual(db.schema_version(conn), 94)
             conn.close()
 
     def test_upgrade_from_83_creates_saved_searches(self):
@@ -213,7 +213,7 @@ class PinsTests(unittest.TestCase):
                         " (key, value) VALUES ('version', ?)",
                         (str(target),))
             self.assertEqual(db.schema_version(conn), 83)
-            self.assertEqual(db.migrate(conn), 93)
+            self.assertEqual(db.migrate(conn), 94)
             names = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type = 'table'")}
             self.assertIn("saved_searches", names)
