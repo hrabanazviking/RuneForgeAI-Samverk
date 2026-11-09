@@ -117,9 +117,7 @@ contracted endpoint exists.
   `target_kind`, `repository`, `number`, `refs`,
   `detail`, `outcome`, `occurred_at`.
 
-### Contracted
-
-- `GET /api/v1` — the root (built by S-242): the
+- `GET /api/v1` — the root (S-242): the
   base, the version, and the resource families the
   contract holds, so a script can discover the
   table from its front door.
@@ -142,6 +140,9 @@ contracted endpoint exists.
 - `GET, POST /api/v1/repos/{owner}/{repo}/forks` —
   the repository's forks; POST forks it under the
   caller's name with S-055's own law (S-242).
+
+### Contracted
+
 - `GET, POST /api/v1/repos/{owner}/{repo}/issues`
   — the repository's issues in the list envelope;
   POST opens one (S-243). An issue carries `id`,

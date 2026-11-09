@@ -19,17 +19,21 @@ own shapes as they go.
   the same words for a reader who never opens
   the page.
 - **Landed means landed; contracted means
-  contracted.** Two faces already stand behind
-  this contract: the search face (S-216) and the
+  contracted.** Three faces stand behind this
+  contract: the search face (S-216) and the
   events face (S-231), built in this shape before
   it was ratified and named by their own slices
-  as Part XII work. Everything else in the table
-  is a promise with a named builder: S-238 auth,
-  S-239 pagination and conditional requests,
-  S-240 the one problem format, S-241 rate
-  limits, S-242..S-244 the resource families,
-  S-245 the search ratification, S-246 statuses
-  and checks, S-248 webhooks. The contract never
+  as Part XII work, and the repositories family
+  (S-242, samverk/api_repositories.py: the root,
+  the collection, one repository, its branches,
+  its contents, and its forks). Everything else
+  in the table is a promise with a named builder:
+  S-238 auth, S-239 pagination and conditional
+  requests, S-240 the one problem format, S-241
+  rate limits, S-243..S-244 the remaining
+  resource families, S-245 the search
+  ratification, S-246 statuses and checks, S-248
+  webhooks. The contract never
   claims a contracted endpoint exists.
 - **No API-only back doors.** Every resource is
   the programmatic face of a capability the web
@@ -350,7 +354,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "so a script can discover the table "
             "from the table's front door."),
         fields=("base", "version", "resources"),
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="repositories", path="/api/v1/repos",
         methods=("GET", "POST"),
@@ -360,7 +364,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "under the caller's own name with the "
             "web's own creation law."),
         fields=_REPO_FIELDS,
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="repository",
         path="/api/v1/repos/{owner}/{repo}",
@@ -372,7 +376,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "judges the same act on the same "
             "repository."),
         fields=_REPO_FIELDS,
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="repository-branches",
         path="/api/v1/repos/{owner}/{repo}/branches",
@@ -381,7 +385,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "The repository's branches, each with "
             "its tip, in the list envelope."),
         fields=("name", "tip", "protected"),
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="repository-contents",
         path=("/api/v1/repos/{owner}/{repo}"
@@ -394,7 +398,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "only: the API writes files through "
             "Git, never around it."),
         fields=("path", "kind", "oid", "size", "entries"),
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="repository-forks",
         path="/api/v1/repos/{owner}/{repo}/forks",
@@ -404,7 +408,7 @@ API_RESOURCES: tuple[ApiResource, ...] = (
             "envelope; POST forks it under the "
             "caller's name with S-055's own law."),
         fields=_REPO_FIELDS,
-        standing="contracted", slice="S-242"),
+        standing="landed", slice="S-242"),
     ApiResource(
         id="issues",
         path="/api/v1/repos/{owner}/{repo}/issues",
@@ -796,6 +800,8 @@ def audit_api_contract() -> ApiContractAudit:
             "search_api", SEARCH_RESULT_FIELDS),
         "group_to_dict": (
             "search_api", SEARCH_GROUP_FIELDS),
+        "repository_to_dict": (
+            "api_repositories", _REPO_FIELDS),
     }
     for function_name, (module_name, documented) in (
             landed.items()):
@@ -803,15 +809,17 @@ def audit_api_contract() -> ApiContractAudit:
         if tuple(live) != tuple(documented):
             mismatches.append(function_name)
     from . import (
-        api_auth, api_pagination, api_rate_limit, events_api,
-        search_api)
+        api_auth, api_pagination, api_rate_limit,
+        api_repositories, events_api, search_api)
     error_ok = True
     for module, exc_type in (
             (events_api, events_api.EventsAPIError),
             (search_api, search_api.SearchAPIError),
             (api_auth, api_auth.ApiAuthError),
             (api_rate_limit, api_rate_limit.ApiRateLimitError),
-            (api_pagination, api_pagination.ApiPaginationError)):
+            (api_pagination, api_pagination.ApiPaginationError),
+            (api_repositories,
+             api_repositories.RepositoriesAPIError)):
         rendered = module.error_to_dict(
             exc_type("audit_probe", "probe"))
         if tuple(rendered.keys()) != CURRENT_ERROR_FIELDS:

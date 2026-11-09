@@ -168,6 +168,34 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
     # S-019 rate_limited registration above, at 429)
     "rate_settings_invalid": (
         400, "That rate-limit setting is not allowed"),
+    # S-242 -- repositories API (its own reasons, plus
+    # the web stores' reasons it carries verbatim)
+    "payload_invalid": (
+        400, "That request body could not be understood"),
+    "repo_taken": (409, "That repository name is already taken"),
+    "repo_path_exists": (
+        409, "A directory already exists at that path"),
+    "repo_invalid": (400, "That repository name is not valid"),
+    "description_invalid": (400, "That description is not allowed"),
+    "visibility_invalid": (400, "That visibility is not allowed"),
+    "branch_invalid": (400, "That branch name is not valid"),
+    "not_repo_owner": (
+        403, "Only the repository's owner can do that"),
+    "git_init_failed": (500, "Something went wrong on our side"),
+    "git_head_failed": (500, "Something went wrong on our side"),
+    "git_clone_failed": (500, "Something went wrong on our side"),
+    "fork_visibility_escalation": (
+        400, "That fork would widen a repository's visibility"),
+    "ref_not_found": (404, "No such ref"),
+    "ref_invalid": (400, "That ref is not valid"),
+    "path_not_found": (404, "No such path"),
+    "path_invalid": (400, "That path is not valid"),
+    "not_a_file": (400, "That path is not a file"),
+    "already_pending": (409, "That is already scheduled"),
+    "sudo_required": (403, "A fresh confirmation is needed"),
+    "content_too_large": (413, "That content is too large to return"),
+    "object_not_found": (404, "No such object"),
+    "wrong_type": (400, "That object is not the kind asked for"),
 }
 
 # The canonical detail sentence of each S-019
