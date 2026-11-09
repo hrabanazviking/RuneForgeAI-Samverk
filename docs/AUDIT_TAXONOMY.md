@@ -1430,3 +1430,28 @@ Part XII builder (S-242..S-248). The contract is
 a document, not an act: reading it changes
 nothing, so the audit log does not move for it.
 No migration -- schema 94 stands.)
+
+S-238 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its API authentication, in
+samverk/api_auth.py, is the one door that
+turns an `Authorization` header into an API
+caller: a Bearer personal access token
+resolved by S-032's or S-033's own store, or
+session-free HTTP Basic for scripts with the
+account password or a token in the password
+slot, judged through S-081's git
+authenticator. No session is consulted,
+created, or extended, and authentication and
+authorisation write no row and audit nothing
+of their own -- the only write a call can
+cause is the token stores' own last-used
+stamp. Every authorisation resolves through
+S-190's permission engine alone: a missing
+repository and an unreadable one are the one
+uniform `repo_not_found` refusal, and a token's
+scopes are a ceiling over its owner's resolved
+role, never a widening of it. Refusals carry
+S-237's current two fields through
+`error_to_dict`. No migration -- schema 94
+stands.)
