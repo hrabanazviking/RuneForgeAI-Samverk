@@ -43,12 +43,17 @@ itself, in the shape S-216 set for API faces.
   addressing facts a script needs to walk the API
   (the event `id`, `actor_id`, `actor_kind`,
   `target_kind`, and the witnessed `outcome`).
-  There is deliberately no paging cursor here:
-  cursor pagination is S-239's Part XII work, and
-  this shape does not pretend to it -- a caller who
-  needs more than the cap (default 100, at most
-  500, the feeds' own bounds) is told so by
-  `complete`, never silently short-changed.
+  The capped shape is joined by a paged one:
+  since S-239 the same three feeds answer as
+  `*_page` calls through that slice's cursor
+  engine (filtering first, paging second, the
+  page size inside S-239's own bounds), and
+  the single event answers conditionally
+  through `get_event_conditional`. A caller
+  who needs more than the cap (default 100,
+  at most 500, the feeds' own bounds) is
+  still told so by `complete` on the capped
+  shape, never silently short-changed.
 - **Refusals a script can branch on.** A refused
   call raises `EventsAPIError` carrying a
   machine-branchable reason: the stores' own
@@ -93,11 +98,15 @@ from .activity_feeds import (
     ActivityFeedError, ActivityFeedStore, feed_scope, in_public_feed)
 from .event_store import (
     CanonicalEvent, EventStore, EventStoreError, event_payload)
+from .api_pagination import (
+    DEFAULT_PAGE_SIZE, ApiPaginationError,
+    conditional_response, paginate)
 from .repositories import RepositoryStore
 
 __all__ = [
     "DEFAULT_LIMIT", "MAX_LIMIT", "EventsAPI", "EventsAPIError",
-    "error_to_dict", "event_to_dict", "feed_to_dict", "feed_to_json",
+    "error_to_dict", "event_to_dict", "feed_to_dict",
+    "feed_page_to_dict", "feed_to_json",
 ]
 
 # The feeds' own bounds (S-229 clamps to the same
@@ -182,6 +191,34 @@ def feed_to_dict(kind: str, subject: str, scope: str,
         "complete": len(events) <= len(page),
         "limit": limit,
         "events": [event_to_dict(event) for event in page],
+    }
+
+
+def feed_page_to_dict(kind: str, subject: str, scope: str,
+                      page) -> dict:
+    """One feed page as data, from S-239's Page
+    over the feed's FULL filtered event list: the
+    capped envelope's own facts (kind, subject,
+    scope, the filtered total tallied before
+    paging, whether the crawl is complete on this
+    page) joined by the page's size, its walking
+    facts and cursors, and its events. The total
+    counts only what this reader may see --
+    paging happens after filtering, never
+    before."""
+    return {
+        "kind": kind,
+        "subject": subject,
+        "scope": scope,
+        "total": page.total,
+        "returned": page.returned,
+        "complete": page.complete,
+        "per_page": page.per_page,
+        "has_next": page.has_next,
+        "has_previous": page.has_previous,
+        "next_cursor": page.next_cursor,
+        "previous_cursor": page.previous_cursor,
+        "events": [event_to_dict(event) for event in page.items],
     }
 
 
@@ -319,6 +356,92 @@ class EventsAPI:
             "public", "public", feed_scope("public", "public"),
             self._filtered(shown, verb_prefix), limit=limit)
 
+    # -- the three feeds, paged (S-239) -----------------
+    def _paginate_feed(self, kind, subject, scope, shown, *,
+                       per_page, cursor, context) -> dict:
+        """S-239's engine over one feed's FULL
+        filtered list, keyed by event id in the
+        feed's own newest-first order: filtering
+        has already happened in the caller, so a
+        page can no more leak than the capped feed
+        could. The engine's refusals ride this
+        face's own error, reasons verbatim."""
+        try:
+            page = paginate(
+                shown, key=lambda event: event.id,
+                per_page=per_page, cursor=cursor,
+                context=context)
+        except ApiPaginationError as exc:
+            raise EventsAPIError(exc.reason, str(exc)) from None
+        return feed_page_to_dict(kind, subject, scope, page)
+
+    def user_events_page(self, viewer: User | None, actor: object,
+                         *, per_page: int = DEFAULT_PAGE_SIZE,
+                         cursor: str | None = None,
+                         verb_prefix: str | None = None) -> dict:
+        """One page of a person's feed (S-239):
+        S-231's user feed crawled by cursor -- the
+        same filtering, the same order, a bounded
+        page."""
+        verb_prefix = self._check_verb_prefix(verb_prefix)
+        try:
+            subject = self._feeds._resolve_actor(actor)
+        except ActivityFeedError as exc:
+            raise EventsAPIError(exc.reason, str(exc)) from None
+        shown = [e for e in self._feeds._all_events()
+                 if e.actor_id == subject.id
+                 and self._feeds._visible(viewer, e)]
+        return self._paginate_feed(
+            "user", subject.username,
+            feed_scope("user", subject.username),
+            self._filtered(shown, verb_prefix),
+            per_page=per_page, cursor=cursor,
+            context=f"user:{subject.username}")
+
+    def repo_events_page(self, viewer: User | None, owner: object,
+                         repo: object, *,
+                         per_page: int = DEFAULT_PAGE_SIZE,
+                         cursor: str | None = None,
+                         verb_prefix: str | None = None) -> dict:
+        """One page of a repository's feed (S-239):
+        the crawl of a large repository -- read
+        access judged exactly as the capped feed
+        judges it, the uniform `repo_not_found`
+        included, before any page is cut."""
+        verb_prefix = self._check_verb_prefix(verb_prefix)
+        current = self._repos.get_repository(owner, repo)
+        if current is None or not self._feeds._engine.can(
+                viewer, current, "read"):
+            raise EventsAPIError(
+                "repo_not_found", "No such repository.")
+        shown = [e for e in self._feeds._all_events()
+                 if e.repository == current.full_name]
+        return self._paginate_feed(
+            "repository", current.full_name,
+            feed_scope("repository", current.full_name),
+            self._filtered(shown, verb_prefix),
+            per_page=per_page, cursor=cursor,
+            context=f"repository:{current.full_name}")
+
+    def public_events_page(self, viewer: User | None = None, *,
+                           per_page: int = DEFAULT_PAGE_SIZE,
+                           cursor: str | None = None,
+                           verb_prefix: str | None = None) -> dict:
+        """One page of the instance's public feed
+        (S-239): public repositories only, for
+        every viewer alike -- *viewer* is accepted
+        for the uniform call shape and, as on the
+        capped face, deliberately not consulted."""
+        verb_prefix = self._check_verb_prefix(verb_prefix)
+        del viewer  # public means public, for everyone
+        shown = [e for e in self._feeds._all_events()
+                 if in_public_feed(self._feeds._repo_for(e))]
+        return self._paginate_feed(
+            "public", "public", feed_scope("public", "public"),
+            self._filtered(shown, verb_prefix),
+            per_page=per_page, cursor=cursor,
+            context="public")
+
     # -- the single event --------------------------------
     def get_event(self, viewer: User | None,
                   event_id: object) -> dict:
@@ -332,6 +455,20 @@ class EventsAPI:
         except EventStoreError as exc:
             raise EventsAPIError(exc.reason, str(exc)) from None
         return event_to_dict(event)
+
+    def get_event_conditional(self, viewer: User | None,
+                              event_id: object, *,
+                              if_none_match: object = None):
+        """One event, conditionally (S-239): the
+        event as data under S-221's visibility law,
+        answered through S-239's conditional
+        response -- 200 with the payload and its
+        ETag, or 304 with no payload when the
+        caller's `If-None-Match` already holds
+        these exact bytes."""
+        return conditional_response(
+            self.get_event(viewer, event_id),
+            if_none_match)
 
     # -- the wire forms -----------------------------------
     def user_events_json(self, viewer: User | None, actor: object,

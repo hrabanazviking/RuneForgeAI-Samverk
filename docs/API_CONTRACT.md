@@ -56,11 +56,16 @@ contracted endpoint exists.
   permission boundaries.
 - **cursor-pagination** — Cursor pagination tied
   to a stable ordering, `Link` headers, and
-  ETag / `If-None-Match` conditional requests are
-  S-239's contracted work. Neither landed face
-  carries a paging cursor today, and neither
-  pretends to: until S-239 lands, the envelope's
-  `complete` flag is the whole pagination story.
+  ETag / `If-None-Match` conditional requests
+  landed in S-239 (samverk/api_pagination.py):
+  keyset cursors over the permission-filtered
+  list, page size bounded at 100, Link headers
+  walking first / prev / next / last, and a
+  strong ETag whose `If-None-Match` match
+  answers 304 with no body. The events face
+  crawls through it today; the search groups
+  keep the envelope's `complete` flag until
+  S-245 gives their hits paging keys.
 - **error-shape** — Today both landed faces refuse
   with `error` and `detail` — a machine-branchable
   reason and a human sentence. S-240 lands the one

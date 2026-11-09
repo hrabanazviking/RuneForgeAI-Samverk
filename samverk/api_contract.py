@@ -226,18 +226,25 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "never silently short-changed.")),
     ContractRule(
         id="cursor-pagination",
-        title="Cursor pagination and conditional requests are S-239's, and are not pretended",
+        title="Cursor pagination and conditional requests (landed in S-239)",
         statement=(
-            "Neither landed face carries a paging "
-            "cursor today, and neither pretends to: "
-            "cursor pagination tied to a stable "
+            "Cursor pagination tied to a stable "
             "ordering, Link headers, and "
             "ETag / If-None-Match conditional "
-            "requests are S-239's contracted work. "
-            "Until S-239 lands, the envelope's "
-            "complete flag is the whole pagination "
-            "story, stated honestly rather than "
-            "dressed up.")),
+            "requests landed in S-239 "
+            "(samverk/api_pagination.py): keyset "
+            "cursors over the filtered list, page "
+            "size bounded at 100, Link headers "
+            "walking first / prev / next / last, "
+            "and a strong ETag whose If-None-Match "
+            "match answers 304 with no body. The "
+            "events face crawls through it today; "
+            "the search groups keep the envelope's "
+            "complete flag until S-245 gives their "
+            "hits paging keys. Permission filtering "
+            "still runs before paging on every "
+            "request, so a cursor never widens "
+            "what a caller may see.")),
     ContractRule(
         id="error-shape",
         title="One problem format, coming in S-240; today's refusals are two fields",
