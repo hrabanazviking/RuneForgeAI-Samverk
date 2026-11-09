@@ -70,6 +70,14 @@ FACE_REASONS = {
     "event_not_found", "no_such_user",
     "query_invalid", "auth_required", "recent_not_found",
     "rule_unknown", "rate_settings_invalid",
+    "payload_invalid", "repo_taken", "repo_path_exists",
+    "repo_invalid", "description_invalid", "visibility_invalid",
+    "branch_invalid", "not_repo_owner", "git_init_failed",
+    "git_head_failed", "git_clone_failed",
+    "fork_visibility_escalation", "ref_not_found", "ref_invalid",
+    "path_not_found", "path_invalid", "not_a_file",
+    "already_pending", "sudo_required", "content_too_large",
+    "object_not_found", "wrong_type",
 }
 
 EXPECTED_STATUS = {
@@ -87,6 +95,17 @@ EXPECTED_STATUS = {
     "query_invalid": 400, "auth_required": 401,
     "recent_not_found": 404, "rule_unknown": 404,
     "rate_settings_invalid": 400,
+    "payload_invalid": 400, "repo_taken": 409,
+    "repo_path_exists": 409, "repo_invalid": 400,
+    "description_invalid": 400, "visibility_invalid": 400,
+    "branch_invalid": 400, "not_repo_owner": 403,
+    "git_init_failed": 500, "git_head_failed": 500,
+    "git_clone_failed": 500, "fork_visibility_escalation": 400,
+    "ref_not_found": 404, "ref_invalid": 400,
+    "path_not_found": 404, "path_invalid": 400,
+    "not_a_file": 400, "already_pending": 409,
+    "sudo_required": 403, "content_too_large": 413,
+    "object_not_found": 404, "wrong_type": 400,
 }
 
 

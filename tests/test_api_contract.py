@@ -53,7 +53,9 @@ EXPECTED_RULE_IDS = (
     "cursor-pagination", "error-shape", "rate-limits",
     "no-back-doors")
 LANDED_IDS = (
-    "search", "events", "user-events",
+    "root", "repositories", "repository",
+    "repository-branches", "repository-contents",
+    "repository-forks", "search", "events", "user-events",
     "repository-events", "event")
 
 
@@ -137,8 +139,13 @@ class ApiContractTests(unittest.TestCase):
             r.id for r in API_RESOURCES if r.standing == "landed")
         self.assertEqual(landed, LANDED_IDS)
         self.assertEqual(get_resource("search").slice, "S-216")
-        for rid in LANDED_IDS[1:]:
+        for rid in ("events", "user-events",
+                    "repository-events", "event"):
             self.assertEqual(get_resource(rid).slice, "S-231")
+        for rid in ("root", "repositories", "repository",
+                    "repository-branches", "repository-contents",
+                    "repository-forks"):
+            self.assertEqual(get_resource(rid).slice, "S-242")
 
     def test_contracted_resources_name_part_xii_builders(self):
         for resource in API_RESOURCES:
@@ -155,7 +162,13 @@ class ApiContractTests(unittest.TestCase):
             self.assertIn(needed, builders)
 
     def test_landed_faces_are_read_only(self):
-        for rid in LANDED_IDS:
+        # The faces landed before S-242 are read-only;
+        # S-242's repositories family legitimately
+        # carries the contract's writes (POST, PATCH,
+        # DELETE), so the read-only pin now names the
+        # original five.
+        for rid in ("search", "events", "user-events",
+                    "repository-events", "event"):
             self.assertEqual(get_resource(rid).methods, ("GET",))
 
     def test_search_and_events_shapes_are_the_documented_ones(self):
@@ -191,7 +204,7 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(
             audit.resources_checked, len(EXPECTED_RESOURCE_IDS))
         self.assertEqual(audit.route_problems, ())
-        self.assertEqual(audit.landed_shapes_checked, 4)
+        self.assertEqual(audit.landed_shapes_checked, 5)
         self.assertEqual(audit.landed_shape_mismatches, ())
         self.assertTrue(audit.error_shape_ok)
         self.assertTrue(audit.permission_engine_present)

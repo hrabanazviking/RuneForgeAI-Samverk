@@ -1513,3 +1513,21 @@ named -- the existing event, as S-038 rides it
 -- while judging a call writes no row and
 audits nothing. No migration -- schema 94
 stands.)
+
+S-242 (2026-11-09) added no event of its own --
+129 events stand: 33 auth, 83 repo, 13 admin.
+(Its repositories API, in
+samverk/api_repositories.py, is the programmatic
+face of capabilities the web already has, and
+every act it performs is witnessed by the web's
+own stores on their existing events, exactly as
+the same act on the web is witnessed: creation
+on repo.create, metadata and rename and the
+deletion request on repo.settings.change, a
+visibility change on repo.visibility.change, a
+fork on repo.fork, and a deletion's execution --
+when its grace expires, by the web's own process
+-- on repo.delete. Reads (the root, the
+collection, one repository, branches, contents,
+forks) write no row and audit nothing. No
+migration -- schema 94 stands.)
