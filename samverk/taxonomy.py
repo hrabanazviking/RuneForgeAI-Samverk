@@ -178,6 +178,9 @@ REPO_EVENTS = frozenset({
     "repo.unwatch",
     "repo.star",
     "repo.unstar",
+    # S-246 additions (append-only, per the taxonomy rules):
+    "repo.status.post",
+    "repo.check_run.post",
 })
 
 ADMIN_EVENTS = frozenset({

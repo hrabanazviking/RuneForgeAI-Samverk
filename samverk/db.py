@@ -2074,6 +2074,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_weekly_digests_status"
         " ON weekly_digests (status, id)",
     ]),
+    # S-246: status and checks API -- the poster's
+    # name carried on S-157's one record, and the
+    # check runs' own table: one row per run per
+    # (repository, commit, name), in the run
+    # vocabulary (status + conclusion), with its
+    # poster and stamps; a re-post updates the row.
+    # Judged in samverk/api_checks.py
+    # (StatusChecksAPI); the fold onto commit_checks
+    # is that face's law.
+    (95, [
+        "ALTER TABLE commit_checks"
+        " ADD COLUMN poster TEXT NOT NULL DEFAULT ''",
+        "CREATE TABLE check_runs ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  status TEXT NOT NULL DEFAULT 'queued',"
+        "  conclusion TEXT NOT NULL DEFAULT '',"
+        "  poster TEXT NOT NULL DEFAULT '',"
+        "  target_url TEXT NOT NULL DEFAULT '',"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, head_oid, name)"
+        ")",
+        "CREATE INDEX idx_check_runs_repo_head"
+        " ON check_runs (repo_id, head_oid, id)",
+    ]),
 ]
 
 

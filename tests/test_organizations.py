@@ -245,11 +245,11 @@ class OrganizationTests(unittest.TestCase):
 
     # pins
     def test_migration_69_and_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(schema_version(self.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 83)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         self.assertIn("auth.organization.create", taxonomy.AUDIT_EVENTS)
         self.assertIn("auth.organization.update", taxonomy.AUDIT_EVENTS)
@@ -268,7 +268,7 @@ class OrganizationTests(unittest.TestCase):
                     conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', ?)", (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 94)
+            self.assertEqual(db.schema_version(conn), 95)
             names = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organizations'").fetchall()]
             self.assertEqual(names, ["organizations"])
             member_tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organization_members'").fetchall()]

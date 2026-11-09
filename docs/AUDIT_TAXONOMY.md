@@ -1595,3 +1595,27 @@ as the web search is. Searching is a read: it
 records no recent searches, writes no row and
 audits nothing. No migration -- schema 94
 stands.)
+
+S-246 (2026-11-09) added two events of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its status and checks API, in
+samverk/api_checks.py, is the seam S-157 named:
+external CI posts a commit status on
+`repo.status.post` and a check run on
+`repo.check_run.post`, each entry carrying the
+poster's scoped identity in its detail -- the
+username, the credential kind and the token id
+-- beside the commit, the context or run name
+and the state posted. A status lands on S-157's
+one commit_checks record (migration 95 adds the
+poster column the row carries); a check run is
+kept in its own check_runs table in the run
+vocabulary and folded onto that same record
+under its name, so the checks panel and the
+S-174 gate read what was posted with no second
+store to drift. Posting is judged through
+S-238's door and S-190 at the write rung, with
+the token scope as a ceiling; reads at the read
+rung audit nothing, and refused posts store
+nothing and audit nothing. Migration 95;
+schema 94 -> 95.)

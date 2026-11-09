@@ -81,9 +81,9 @@ class DefaultPermissionTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(schema_version(self.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertIn("auth.organization.update", taxonomy.AUDIT_EVENTS)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(org_default_permissions)").fetchall()]
         self.assertEqual(cols, ["org_id", "role", "set_by", "created_at", "updated_at"])
@@ -102,7 +102,7 @@ class DefaultPermissionTests(unittest.TestCase):
             self.assertEqual(db.schema_version(conn), 73)
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 94)
+            self.assertEqual(db.schema_version(conn), 95)
             tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()]
             self.assertIn("org_default_permissions", tables)
             conn.close()

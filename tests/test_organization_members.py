@@ -264,9 +264,9 @@ class OrgMembershipTests(unittest.TestCase):
 
     # pins
     def test_migration_69_pin(self):
-        self.assertEqual(schema_version(self.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(schema_version(self.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(organization_members)").fetchall()]
         for col in ("org_id", "user_id", "role", "added_by", "created_at", "updated_at"):
             self.assertIn(col, cols)
@@ -284,7 +284,7 @@ class OrgMembershipTests(unittest.TestCase):
                     conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', ?)", (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 94)
+            self.assertEqual(db.schema_version(conn), 95)
             names = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'organization_members'").fetchall()]
             self.assertEqual(names, ["organization_members"])
             conn.close()

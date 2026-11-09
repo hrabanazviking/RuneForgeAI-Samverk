@@ -108,6 +108,10 @@ FACE_REASONS = {
     "privacy_invalid", "parent_not_in_org",
     "repo_not_in_org", "not_org_member",
     "description_too_long",
+    "check_name_invalid", "check_status_invalid",
+    "check_conclusion_invalid", "check_state_invalid",
+    "check_context_invalid", "check_head_invalid",
+    "check_url_invalid",
 }
 
 EXPECTED_STATUS = {
@@ -173,6 +177,11 @@ EXPECTED_STATUS = {
     "team_taken": 409, "privacy_invalid": 400,
     "parent_not_in_org": 400, "repo_not_in_org": 400,
     "not_org_member": 400, "description_too_long": 400,
+    "check_name_invalid": 400, "check_status_invalid": 400,
+    "check_conclusion_invalid": 400,
+    "check_state_invalid": 400,
+    "check_context_invalid": 400,
+    "check_head_invalid": 400, "check_url_invalid": 400,
 }
 
 
@@ -220,14 +229,14 @@ class ErrorShapeTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_taxonomy_and_fields(self):
-        self.assertEqual(schema_version(self.w.conn), 94)
-        self.assertEqual(db.MIGRATIONS[-1][0], 94)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 129)
+        self.assertEqual(schema_version(self.w.conn), 95)
+        self.assertEqual(db.MIGRATIONS[-1][0], 95)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
-        self.assertEqual(families, {"auth": 33, "repo": 83, "admin": 13})
+        self.assertEqual(families, {"auth": 33, "repo": 85, "admin": 13})
         self.assertEqual(
             PROBLEM_FIELDS,
             ("type", "title", "status", "detail", "error_id"))

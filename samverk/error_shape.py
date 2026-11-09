@@ -318,6 +318,23 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         400, "That person is not a member of the organization"),
     "description_too_long": (
         400, "That description is too long"),
+    # S-246 -- status and checks API (its own
+    # reasons, plus S-157's record reasons it
+    # carries verbatim)
+    "check_name_invalid": (
+        400, "That check name is not valid"),
+    "check_status_invalid": (
+        400, "That check status is not valid"),
+    "check_conclusion_invalid": (
+        400, "That check conclusion is not valid"),
+    "check_state_invalid": (
+        400, "That check state is not valid"),
+    "check_context_invalid": (
+        400, "That check context is not valid"),
+    "check_head_invalid": (
+        400, "That commit could not be understood"),
+    "check_url_invalid": (
+        400, "That check link is not valid"),
 }
 
 # The canonical detail sentence of each S-019
