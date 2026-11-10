@@ -50,7 +50,14 @@ own shapes as they go.
   record and check runs kept in their own
   vocabulary and folded onto it, the poster
   scoped through S-238/S-190 and audit-logged on
-  repo.status.post / repo.check_run.post).
+  repo.status.post / repo.check_run.post), and
+  the webhook events taxonomy (S-247,
+  samverk/webhook_events.py: every event-store
+  verb ruled repository scope, organization
+  scope or never delivered, its payload S-221's
+  own shape, documented per event in
+  docs/WEBHOOK_EVENTS.md -- the vocabulary the
+  contracted hooks resources filter by).
   Everything else in the table is a promise
   with a named builder: S-238 auth, S-239
   pagination and conditional requests, S-240
