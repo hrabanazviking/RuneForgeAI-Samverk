@@ -1994,3 +1994,26 @@ row/audit-count snapshot in the battery, and
 audit_registry_core checks the refusal against
 the live instance. No migration -- schema 104
 stands.)
+
+S-266 (2026-11-10) added two events of its own --
+`repo.artifact.upload` and `repo.artifact.delete`:
+133 events stand: 33 auth, 87 repo, 13 admin.
+(Its CI artifacts API, in samverk/ci_artifacts.py,
+keeps build artifacts tied to a commit and to the
+standing S-246 check run that produced them, in
+migration 105 -- schema 104 to 105: ci_artifacts
+plus ci_artifact_upload_sessions. Upload is
+chunked under S-012's law through S-238's door at
+S-190's write rung, promotion stores the sniffed
+type, and every artifact carries its retention
+policy as data -- the chosen window and the
+expires_at stamp it computes, NULL for keep-
+forever -- which listings state, downloads judge
+(`artifact_expired`, never counted), and S-267's
+off-path job will enforce. A completed upload is
+witnessed on `repo.artifact.upload` and a deletion
+on `repo.artifact.delete`, each naming the poster,
+their credential and token beside the commit, the
+run and the artifact; listings and downloads are
+not witnessed, and refused acts store and audit
+nothing.)

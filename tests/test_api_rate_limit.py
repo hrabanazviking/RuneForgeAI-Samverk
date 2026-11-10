@@ -366,8 +366,8 @@ class DoorIntegrationTests(unittest.TestCase):
         self.assertEqual(audit_before, audit_after)
 
     def test_no_migration_and_no_new_taxonomy_event(self):
-        self.assertEqual(schema_version(self.conn), 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+        self.assertEqual(schema_version(self.conn), 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
 
 class HelpPageTests(unittest.TestCase):

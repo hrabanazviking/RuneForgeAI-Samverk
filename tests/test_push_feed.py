@@ -77,12 +77,12 @@ class PushFeedTests(unittest.TestCase):
         return self.pushes.record_push(owner, repo, updates=updates, **kw)
 
     # -- pins -------------------------------------------------
-    def test_pins_schema_99_taxonomy_131_no_new_storage(self):
-        self.assertEqual(schema_version(self.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+    def test_pins_schema_99_taxonomy_133_no_new_storage(self):
+        self.assertEqual(schema_version(self.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         self.assertIn("repo.push", taxonomy.AUDIT_EVENTS)
 

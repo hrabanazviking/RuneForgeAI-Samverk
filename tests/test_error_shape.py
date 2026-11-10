@@ -115,6 +115,14 @@ FACE_REASONS = {
     "payload_too_large", "payload_size_invalid",
     "concurrency_limit_exceeded", "abuse_settings_invalid",
     "endpoint_unknown", "lease_invalid",
+    "artifact_not_found", "artifact_taken",
+    "artifact_expired", "artifact_missing",
+    "artifact_name_required", "artifact_name_invalid",
+    "check_run_not_found", "retention_invalid",
+    "too_many_artifacts", "upload_not_found",
+    "upload_closed", "chunk_empty", "chunk_too_large",
+    "chunk_out_of_order", "size_invalid", "size_mismatch",
+    "too_large", "empty",
 }
 
 EXPECTED_STATUS = {
@@ -189,6 +197,16 @@ EXPECTED_STATUS = {
     "concurrency_limit_exceeded": 429,
     "abuse_settings_invalid": 400, "endpoint_unknown": 404,
     "lease_invalid": 400,
+    "artifact_not_found": 404, "artifact_taken": 409,
+    "artifact_expired": 410, "artifact_missing": 500,
+    "artifact_name_required": 400,
+    "artifact_name_invalid": 400,
+    "check_run_not_found": 404, "retention_invalid": 400,
+    "too_many_artifacts": 409, "upload_not_found": 404,
+    "upload_closed": 400, "chunk_empty": 400,
+    "chunk_too_large": 413, "chunk_out_of_order": 400,
+    "size_invalid": 400, "size_mismatch": 400,
+    "too_large": 413, "empty": 400,
 }
 
 
@@ -236,14 +254,14 @@ class ErrorShapeTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_taxonomy_and_fields(self):
-        self.assertEqual(schema_version(self.w.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+        self.assertEqual(schema_version(self.w.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
-        self.assertEqual(families, {"auth": 33, "repo": 85, "admin": 13})
+        self.assertEqual(families, {"auth": 33, "repo": 87, "admin": 13})
         self.assertEqual(
             PROBLEM_FIELDS,
             ("type", "title", "status", "detail", "error_id"))

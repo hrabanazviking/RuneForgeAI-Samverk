@@ -196,12 +196,12 @@ class SearchAPITests(unittest.TestCase):
         self.fail(f"no {kind} group in payload")
 
     # -- pins ------------------------------------------------
-    def test_pins_schema_99_taxonomy_131(self):
-        self.assertEqual(schema_version(self.w.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+    def test_pins_schema_99_taxonomy_133(self):
+        self.assertEqual(schema_version(self.w.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     # -- the payload shape ------------------------------------

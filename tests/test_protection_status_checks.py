@@ -326,8 +326,8 @@ class ProtectionStatusChecksTests(unittest.TestCase):
         self.assertFalse(empty.up_to_date)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+        self.assertEqual(schema_version(self.conn), 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
 
 if __name__ == "__main__":

@@ -2372,6 +2372,61 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_release_signatures_release"
         " ON release_signatures (release_id, created_at)",
     ]),
+    # S-266: CI artifacts -- one row per promoted
+    # artifact, tied to its commit (head_oid) and to
+    # the standing S-246 check run that produced it
+    # (check_run_id + the run's name kept verbatim),
+    # carrying its sniffed type, digest, download
+    # count, and its retention policy as data: the
+    # chosen window (retention_days; 0 keeps forever)
+    # and the expires_at stamp it computes (NULL when
+    # forever) for S-267's off-path sweep to enforce.
+    # One row per open chunked-upload session, whose
+    # staged bytes wait in quarantine. Judged in
+    # samverk/ci_artifacts.py (CIArtifactsAPI).
+    (105, [
+        "CREATE TABLE ci_artifacts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  check_run_id INTEGER NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  check_run TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  size INTEGER NOT NULL,"
+        "  sha256 TEXT NOT NULL,"
+        "  content_type TEXT NOT NULL,"
+        "  download_count INTEGER NOT NULL DEFAULT 0,"
+        "  retention_days INTEGER NOT NULL,"
+        "  expires_at INTEGER,"
+        "  uploader_id INTEGER NOT NULL,"
+        "  poster TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (check_run_id, name)"
+        ")",
+        "CREATE INDEX idx_ci_artifacts_repo_head"
+        " ON ci_artifacts (repo_id, head_oid, id)",
+        "CREATE INDEX idx_ci_artifacts_run"
+        " ON ci_artifacts (check_run_id, id)",
+        "CREATE INDEX idx_ci_artifacts_expiry"
+        " ON ci_artifacts (expires_at, id)",
+        "CREATE TABLE ci_artifact_upload_sessions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  check_run_id INTEGER NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  check_run TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  declared_type TEXT,"
+        "  expected_size INTEGER,"
+        "  retention_days INTEGER NOT NULL,"
+        "  received INTEGER NOT NULL DEFAULT 0,"
+        "  chunks INTEGER NOT NULL DEFAULT 0,"
+        "  uploader_id INTEGER NOT NULL,"
+        "  poster TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'open'"
+        ")",
+    ]),
 ]
 
 
