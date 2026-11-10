@@ -1900,3 +1900,24 @@ LATEST_RULE in words and marks the latest release
 in text. Reading, selecting and judging the pointer
 carry no verb of their own in the frozen vocabulary
 and are not witnessed.)
+
+S-262 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its release notifications, in
+samverk/release_notifications.py, are derived
+from the standing `repo.release.publish` witness
+alone: one delivery per (audit row, recipient)
+in migration 103's release_notification_deliveries
+ledger -- schema 102 to 103 -- materialised into
+an ordinary S-223 notification under reason
+`subscribed` for the repository's watchers in
+S-222's counted modes (`all` and `releases_only`
+expressly included; `ignore` and no watch row
+receive nothing, and the publisher is never
+notified of their own act). A draft witnesses
+nothing at creation or on edit (S-258), so draft
+saves notify nobody by construction; publishing
+a draft writes the one witness row and notifies
+then. Delivering a notification is the echo of
+an act already witnessed and is not itself
+witnessed.)
