@@ -84,8 +84,8 @@ class OrgRepoTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 101)
-        self.assertEqual(db.MIGRATIONS[-1][0], 101)
+        self.assertEqual(schema_version(self.conn), 102)
+        self.assertEqual(db.MIGRATIONS[-1][0], 102)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertIn("auth.organization.update", taxonomy.AUDIT_EVENTS)
         self.assertIn("repo.create", taxonomy.AUDIT_EVENTS)
@@ -106,7 +106,7 @@ class OrgRepoTests(unittest.TestCase):
             self.assertEqual(db.schema_version(conn), 76)
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 101)
+            self.assertEqual(db.schema_version(conn), 102)
             tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'org_repo_policies'").fetchall()]
             self.assertEqual(tables, ["org_repo_policies"])
             conn.close()

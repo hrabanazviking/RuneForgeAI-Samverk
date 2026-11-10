@@ -2282,6 +2282,41 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE releases ADD COLUMN prerelease"
         " INTEGER NOT NULL DEFAULT 0",
     ]),
+    # S-259: release assets — one row per promoted asset
+    # (its download count lives on the row) and one row
+    # per open chunked-upload session, whose staged bytes
+    # wait in quarantine until promotion judges them
+    # under S-012. Staging files are named by session id.
+    (102, [
+        "CREATE TABLE release_assets ("
+        "  id INTEGER PRIMARY KEY,"
+        "  release_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  size INTEGER NOT NULL,"
+        "  sha256 TEXT NOT NULL,"
+        "  content_type TEXT NOT NULL,"
+        "  download_count INTEGER NOT NULL DEFAULT 0,"
+        "  uploader_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (release_id, name)"
+        ")",
+        "CREATE INDEX idx_release_assets_release"
+        " ON release_assets (release_id, created_at)",
+        "CREATE TABLE release_upload_sessions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  release_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  declared_type TEXT,"
+        "  expected_size INTEGER,"
+        "  received INTEGER NOT NULL DEFAULT 0,"
+        "  chunks INTEGER NOT NULL DEFAULT 0,"
+        "  uploader_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'open'"
+        ")",
+    ]),
 ]
 
 

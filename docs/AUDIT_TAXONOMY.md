@@ -1832,3 +1832,22 @@ and publishing a release that is not a draft is
 refused release_not_draft. Edits — including
 setting or clearing the prerelease mark — and
 deletions carry no verb of their own.)
+
+S-259 (2026-11-10) added no event of its own —
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its release assets, in samverk/release_assets.py,
+ride S-012 law on a chunked wire: begin_upload
+fixes the name and a declared expected size judged
+against the per-asset cap at the door, chunks land
+strictly in order in quarantine staging with the
+running total judged against the cap as it flows,
+and complete_upload promotes under
+samverk.uploads.inspect_upload — the stored and
+served content type is the sniffed type and a
+disguised declared type is refused. Downloads are
+gated by the release's visibility (S-258) and
+counted on migration 102's release_assets row —
+schema 101 to 102; upload sessions stage in its
+release_upload_sessions row. Uploading, downloading
+and deleting an asset carry no verb of their own
+in the frozen vocabulary and are not witnessed.)

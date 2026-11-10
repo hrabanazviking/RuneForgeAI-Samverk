@@ -93,7 +93,8 @@ Further laws:
   ``Draft`` / ``Pre-release`` marker (words, never
   colour alone). A published release carries no
   marker — the absence is the ordinary case.
-  Assets land with S-259 and the latest pointer
+  Assets are S-259 (samverk/release_assets.py);
+  the latest pointer
   with S-261. Publication is witnessed on the
   standing verb `repo.release.publish` with detail
   ``{"tag": ...}`` (named in the taxonomy since its
