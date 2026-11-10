@@ -2317,6 +2317,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  state TEXT NOT NULL DEFAULT 'open'"
         ")",
     ]),
+    # S-262: release notification deliveries -- one
+    # ledger row per (publication audit row, recipient),
+    # materialised from the standing repo.release.publish
+    # witness into an S-223 notification; the UNIQUE pair
+    # is the exactly-once enforcement, and the stored tag
+    # keeps a delivery honest if its release is later
+    # deleted.
+    (103, [
+        "CREATE TABLE release_notification_deliveries ("
+        "  id INTEGER PRIMARY KEY,"
+        "  notification_id INTEGER NOT NULL UNIQUE,"
+        "  audit_seq INTEGER NOT NULL,"
+        "  recipient_id INTEGER NOT NULL,"
+        "  actor_id INTEGER,"
+        "  repo_id INTEGER NOT NULL,"
+        "  release_id INTEGER,"
+        "  tag TEXT NOT NULL,"
+        "  watch_mode TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (audit_seq, recipient_id)"
+        ")",
+        "CREATE INDEX idx_release_notif_deliv_recipient"
+        " ON release_notification_deliveries (recipient_id, id)",
+        "CREATE INDEX idx_release_notif_deliv_release"
+        " ON release_notification_deliveries (repo_id, release_id, id)",
+    ]),
 ]
 
 
