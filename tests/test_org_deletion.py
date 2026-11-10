@@ -490,8 +490,8 @@ class OrgDeletionTests(unittest.TestCase):
 
     # pins
     def test_pins_schema_80_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 98)
-        self.assertEqual(db.MIGRATIONS[-1][0], 98)
+        self.assertEqual(schema_version(self.conn), 99)
+        self.assertEqual(db.MIGRATIONS[-1][0], 99)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
@@ -516,7 +516,7 @@ class OrgDeletionTests(unittest.TestCase):
                         (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 98)
+            self.assertEqual(db.schema_version(conn), 99)
             names = [r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master"
                 " WHERE type = 'table'"

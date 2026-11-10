@@ -97,9 +97,9 @@ class LeakageBatteryTests(unittest.TestCase):
         self.addCleanup(self.b.conn.close)
 
     # -- pins -------------------------------------------------
-    def test_pins_schema_98_taxonomy_131(self):
-        self.assertEqual(schema_version(self.a.conn), 98)
-        self.assertEqual(db.MIGRATIONS[-1][0], 98)
+    def test_pins_schema_99_taxonomy_131(self):
+        self.assertEqual(schema_version(self.a.conn), 99)
+        self.assertEqual(db.MIGRATIONS[-1][0], 99)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)

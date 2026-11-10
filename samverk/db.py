@@ -2220,6 +2220,36 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_webhook_deliveries_redelivery"
         " ON webhook_deliveries (redelivery_of, id)",
     ]),
+    # S-252: webhook ping and test events -- the
+    # synthetic-send ledger. One row per on-demand
+    # send (a liveness ping under the event name
+    # ping, or a sample test event under a real
+    # S-247 verb), naming the subscription it was
+    # sent to, the kind, the event name carried,
+    # the outbox row it queued (delivery_id) and
+    # that row's delivery key, and who sent it.
+    # The payload bytes themselves live frozen on
+    # the outbox row (S-250); this ledger is the
+    # provenance that says the send was synthetic,
+    # so a ping is never mistaken for a real event
+    # and never deduped against one. Judged in
+    # samverk/webhook_ping.py (WebhookPingStore).
+    (99, [
+        "CREATE TABLE webhook_pings ("
+        "  id INTEGER PRIMARY KEY,"
+        "  webhook_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  verb TEXT NOT NULL,"
+        "  delivery_id INTEGER NOT NULL DEFAULT 0,"
+        "  delivery_key TEXT NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_webhook_pings_hook"
+        " ON webhook_pings (webhook_id, id)",
+        "CREATE INDEX idx_webhook_pings_delivery"
+        " ON webhook_pings (delivery_id)",
+    ]),
 ]
 
 

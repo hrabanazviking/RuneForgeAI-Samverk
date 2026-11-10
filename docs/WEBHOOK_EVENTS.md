@@ -447,3 +447,69 @@ a resurrection:
   be redelivered at all. Redelivery attempts
   nothing itself: the delivery worker carries
   the new row on its next run.
+
+## Ping and test events (S-252)
+
+A subscription can be proven before a real event
+matters, from samverk/webhook_ping.py. Two
+synthetic sends stand, both under the same gate
+as the delivery log (admin on the repository, an
+owner of the organization, or a site admin;
+anyone else is refused by name, and a repository
+the caller cannot see is answered as if it did
+not exist):
+
+- a ping, carried under the event name `ping` --
+a name no audit verb claims, so a receiver can
+always tell the knock from an event. Its payload
+is S-247's envelope and nothing else: the
+sender, the subscription's parent, and a detail
+that says, in so many words, that this is a
+synthetic test;
+- a test event, carried under one real event
+name the sender picks. The name is judged
+through S-247's taxonomy at the door: an unknown
+name is refused, a withheld verb is refused, and
+a name whose scope does not fit the
+subscription's level is refused. Its payload is
+the same envelope, its detail a sample shaped by
+the event's own stated detail fields -- a stated
+number arrives as the integer 1, any other
+stated field as the words test-<field> -- and
+marked synthetic in the detail itself.
+
+Both sends queue exactly one fresh delivery on
+S-250's outbox, due at once, keyed `ping-<n>` or
+`test-<n>` for the send's own ledger number, and
+both are carried by the ordinary delivery
+worker: a ping proves the address answers, the
+signature verifies (S-249, when a secret is
+set), and the worker and delivery log work,
+before anything real is at stake. A test event
+goes to the one subscription it was sent to,
+whatever its filter says -- the sender chose
+both the address and the event -- while real
+events keep flowing only where S-248's matching
+law routes them. A subscription standing
+inactive refuses a synthetic send whole: nothing
+is queued and nothing is witnessed.
+
+Synthetic sends are not events. Nothing is
+written to the event store, no payload carries
+an `evt-` delivery identity, and the outbox rows
+a send queues carry a negative event number, so
+no real event can ever collide with one or be
+mistaken for one; each send is its own row,
+never deduped and never exactly-once. Every send
+is ledgered in `webhook_pings` (migration 99):
+the subscription, the kind, the event name, the
+queued delivery and its key, and who sent it.
+The send itself is witnessed on the standing
+verbs: a repository send rides
+`repo.settings.change` with the key `webhook.ping`
+or `webhook.test` named, an organization send
+rides `auth.organization.update` with `fields`
+`webhooks` and action `ping` or `test`; the
+detail carries the host and the delivery key
+(and, for a test event, the event name), never
+the payload and never a secret.

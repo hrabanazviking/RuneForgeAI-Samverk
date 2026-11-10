@@ -106,8 +106,8 @@ class EventsAPITests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.w.conn), 98)
-        self.assertEqual(db.MIGRATIONS[-1][0], 98)
+        self.assertEqual(schema_version(self.w.conn), 99)
+        self.assertEqual(db.MIGRATIONS[-1][0], 99)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)

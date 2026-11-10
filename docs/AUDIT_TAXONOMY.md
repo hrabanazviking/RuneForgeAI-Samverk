@@ -1721,3 +1721,26 @@ that lineage to `webhook_deliveries` (schema
 97 -> 98) and widens the exactly-once index to
 (subscription, event, redelivery number), the
 original enqueue standing at number 0.)
+
+S-252 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its ping and test events, in
+samverk/webhook_ping.py, are synthetic sends,
+not events: a ping rides the event name `ping`,
+which no verb claims, and a test event rides one
+real verb's name with a sample detail shaped by
+that verb's stated detail fields, marked
+synthetic in the payload itself. Nothing is
+written to the event store; each send queues one
+fresh row on S-250's outbox under a negative
+event number and is ledgered in `webhook_pings`
+(migration 99, schema 98 -> 99). A send is
+witnessed on the standing verbs: a repository
+send rides `repo.settings.change` with the key
+`webhook.ping` or `webhook.test` named, an
+organization send rides
+`auth.organization.update` with `fields`
+`webhooks` and action `ping` or `test`; the
+detail carries the host and the delivery key
+(and, for a test event, the verb), never the
+payload and never a secret.)
