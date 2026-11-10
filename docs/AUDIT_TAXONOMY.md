@@ -1759,3 +1759,21 @@ GraphQL endpoint, schema or event to witness;
 a request to execute GraphQL is refused
 graphql_deferred and writes and audits nothing.
 No migration -- schema 99 stands.)
+
+S-254 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its API versioning policy, in
+samverk/api_versioning.py, is a pure read like
+S-202's billing hole, S-237's contract and
+S-253's verdict: v1 changes additively only --
+seven kinds of change are allowed inside v1 and
+eight are breaking and require a v2 -- a v2
+would be introduced alongside v1 under /api/v2,
+never in its place, and deprecation is announced
+in the Deprecation, Sunset and Link headers with
+at least 180 days between deprecation and
+sunset, as the contract's versioned-base rule
+now records. There is no v2 endpoint, no
+deprecation in force and no act to witness; the
+policy writes and audits nothing. No migration
+-- schema 99 stands.)
