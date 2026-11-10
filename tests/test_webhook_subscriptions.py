@@ -108,9 +108,9 @@ class PinTests(unittest.TestCase):
         self.w = make_world(Path(self._td.name))
         self.addCleanup(self.w.conn.close)
 
-    def test_pins_schema_96_taxonomy_131(self):
-        self.assertEqual(schema_version(self.w.conn), 96)
-        self.assertEqual(db.MIGRATIONS[-1][0], 96)
+    def test_pins_schema_97_taxonomy_131(self):
+        self.assertEqual(schema_version(self.w.conn), 97)
+        self.assertEqual(db.MIGRATIONS[-1][0], 97)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         families = {}
         for name in taxonomy.AUDIT_EVENTS:

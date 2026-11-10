@@ -100,8 +100,8 @@ class PermissionPreviewTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 96)
-        self.assertEqual(db.MIGRATIONS[-1][0], 96)
+        self.assertEqual(schema_version(self.conn), 97)
+        self.assertEqual(db.MIGRATIONS[-1][0], 97)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         tables = [r["name"] for r in self.conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()]
         self.assertNotIn("permission_previews", tables)
