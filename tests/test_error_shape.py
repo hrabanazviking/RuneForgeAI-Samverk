@@ -112,6 +112,9 @@ FACE_REASONS = {
     "check_conclusion_invalid", "check_state_invalid",
     "check_context_invalid", "check_head_invalid",
     "check_url_invalid",
+    "payload_too_large", "payload_size_invalid",
+    "concurrency_limit_exceeded", "abuse_settings_invalid",
+    "endpoint_unknown", "lease_invalid",
 }
 
 EXPECTED_STATUS = {
@@ -182,6 +185,10 @@ EXPECTED_STATUS = {
     "check_state_invalid": 400,
     "check_context_invalid": 400,
     "check_head_invalid": 400, "check_url_invalid": 400,
+    "payload_too_large": 413, "payload_size_invalid": 400,
+    "concurrency_limit_exceeded": 429,
+    "abuse_settings_invalid": 400, "endpoint_unknown": 404,
+    "lease_invalid": 400,
 }
 
 

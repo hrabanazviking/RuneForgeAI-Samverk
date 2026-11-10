@@ -97,8 +97,33 @@ endpoint exists.
   in the one problem format), and limits an
   instance configures in its settings table
   (landed in S-241, samverk/api_rate_limit.py).
-  Payload size caps and expensive-endpoint
-  accounting are S-255's abuse defences.
+  The abuse defences landed beside the buckets in
+  S-255 (samverk/api_abuse.py): every resource of
+  this table is catalogued with the size class of
+  the body it may carry (none for a bodiless call,
+  json under the instance's payload cap -- 1 MiB
+  by default, in the `api_abuse.*` settings) and a
+  price in cost units (an ordinary endpoint 1;
+  search, repository contents, repository forks
+  and pull-request merge 10, the expensive four).
+  A body past its cap is refused
+  `payload_too_large` (413, in the one problem
+  format) before it is read for meaning, and is
+  charged nothing; every admitted call is
+  accounted to its caller -- keyed as the buckets
+  key -- at its endpoint's price, in a ledger that
+  answers per caller and per endpoint; and one
+  token may hold only so many calls in flight at
+  once (8 by default, 2 of them expensive), past
+  which a call is refused
+  `concurrency_limit_exceeded` (429) holding no
+  slot and carrying no `Retry-After`, because a
+  slot frees when a held call ends, not when a
+  clock says so. Judging, accounting and holding a
+  slot write and audit nothing; only changing the
+  defences is witnessed, on the existing
+  `admin.settings.change` event. The full
+  statement lives in docs/API_ABUSE.md.
 - **graphql-deferred** — GraphQL is deferred
   (S-253, samverk/graphql_verdict.py): there is
   no GraphQL endpoint, schema or resolver, and

@@ -63,6 +63,19 @@ own shapes as they go.
   the versioned-base rule below, so the contract
   itself carries the policy that governs how it
   may change), and
+  the API abuse defences (S-255,
+  samverk/api_abuse.py: every resource of this
+  table catalogued with a body size class and a
+  price in cost units -- payload size caps judged
+  before a body is read for meaning
+  (payload_too_large at 413), expensive-endpoint
+  accounting that charges every admitted call to
+  its caller at its endpoint's price, and
+  per-token concurrency limits held in leases
+  (concurrency_limit_exceeded at 429) -- recorded
+  in the rate-limits rule below beside S-241's
+  buckets, so the contract itself carries the
+  defences that guard it), and
   the GraphQL verdict (S-253,
   samverk/graphql_verdict.py: deferred, with
   reasons, the three clients of research file
@@ -363,7 +376,8 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
         id="rate-limits",
         title=(
             "Rate limits are per-token, headed, and honest "
-            "(landed in S-241)"),
+            "(landed in S-241; abuse defences landed in "
+            "S-255)"),
         statement=(
             "S-241 landed the limiting itself, in "
             "samverk/api_rate_limit.py: per-token "
@@ -381,10 +395,39 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "problem format), and limits an "
             "instance configures in its settings "
             "table. No endpoint in this contract "
-            "is unbounded by design; payload size "
-            "caps and expensive-endpoint "
-            "accounting are S-255's abuse "
-            "defences.")),
+            "is unbounded by design. S-255 landed "
+            "the abuse defences beside the buckets, "
+            "in samverk/api_abuse.py: every "
+            "resource of this table is catalogued "
+            "with the size class of the body it may "
+            "carry (none for a bodiless call, json "
+            "under the instance's payload cap -- "
+            "1 MiB by default, in the api_abuse.* "
+            "settings) and a price in cost units "
+            "(an ordinary endpoint 1; search, "
+            "repository contents, repository forks "
+            "and pull-request merge 10, the "
+            "expensive four). A body past its cap "
+            "is refused payload_too_large (413, in "
+            "the one problem format) before it is "
+            "read for meaning, and is charged "
+            "nothing; every admitted call is "
+            "accounted to its caller -- keyed as "
+            "the buckets key -- at its endpoint's "
+            "price, in a ledger that answers per "
+            "caller and per endpoint; and one "
+            "token may hold only so many calls in "
+            "flight at once (8 by default, 2 of "
+            "them expensive), past which a call is "
+            "refused concurrency_limit_exceeded "
+            "(429) holding no slot and carrying no "
+            "Retry-After, because a slot frees when "
+            "a held call ends, not when a clock "
+            "says so. Judging, accounting and "
+            "holding a slot write and audit "
+            "nothing; only changing the defences "
+            "is witnessed, on the existing "
+            "admin.settings.change event.")),
     ContractRule(
         id="no-back-doors",
         title="No API-only back doors",

@@ -1777,3 +1777,24 @@ now records. There is no v2 endpoint, no
 deprecation in force and no act to witness; the
 policy writes and audits nothing. No migration
 -- schema 99 stands.)
+
+S-255 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its API abuse defences, in
+samverk/api_abuse.py, stand beside S-241's rate
+buckets at the API door: every resource of the
+contract's route table is catalogued with the
+size class of the body it may carry and a price
+in cost units, payload size caps are judged
+before a body is read for meaning
+(payload_too_large at 413), every admitted call
+is accounted to its caller at its endpoint's
+price, and per-token concurrency limits are held
+in leases (concurrency_limit_exceeded at 429).
+Judging, accounting and holding a slot write no
+row and audit nothing -- the ledger and the
+slots are memory, as S-241's buckets are; only
+changing the defences themselves is witnessed,
+on the standing admin.settings.change event with
+the api_abuse.* keys named. No migration --
+schema 99 stands.)
