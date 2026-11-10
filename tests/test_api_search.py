@@ -111,8 +111,8 @@ class ApiSearchTests(unittest.TestCase):
         self.fail(f"no {kind} group in payload")
 
     # -- pins ------------------------------------------------
-    def test_pins_schema_95_taxonomy_131(self):
-        self.assertEqual(schema_version(self.w.conn), 95)
+    def test_pins_schema_96_taxonomy_131(self):
+        self.assertEqual(schema_version(self.w.conn), 96)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
