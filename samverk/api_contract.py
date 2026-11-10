@@ -51,6 +51,13 @@ own shapes as they go.
   vocabulary and folded onto it, the poster
   scoped through S-238/S-190 and audit-logged on
   repo.status.post / repo.check_run.post), and
+  the GraphQL verdict (S-253,
+  samverk/graphql_verdict.py: deferred, with
+  reasons, the three clients of research file
+  24 judged one by one, and the invariants a
+  future GraphQL layer must not break recorded
+  as the graphql-deferred rule below, so the
+  contract itself carries them), and
   the webhook events taxonomy (S-247,
   samverk/webhook_events.py: every event-store
   verb ruled repository scope, organization
@@ -354,7 +361,40 @@ CONTRACT_RULES: tuple[ContractRule, ...] = (
             "web refuses, the API refuses. There "
             "is no endpoint whose only purpose is "
             "to bypass a page's law.")),
+    ContractRule(
+        id="graphql-deferred",
+        title=(
+            "GraphQL is deferred, and a future layer must "
+            "not break REST (S-253)"),
+        statement=(
+            "S-253's verdict is deferred: there is no "
+            "GraphQL endpoint, schema or resolver, and "
+            "the REST API in this contract is the "
+            "programmatic surface. A future GraphQL "
+            "layer is additive only and must not break "
+            "this contract: every object and field "
+            "resolves through S-190 with permission "
+            "parity, a private node is "
+            "indistinguishable from a missing one, "
+            "connections ride S-239's cursors with "
+            "the list envelope's totals and complete "
+            "flag, errors carry S-240's registered "
+            "reasons, S-241's buckets and stated "
+            "query-cost caps both apply, mutations go "
+            "through the same stores witnessed by "
+            "the same verbs and are idempotent and "
+            "never partially writing, the schema is "
+            "designed from these resources and never "
+            "exposes tables one-to-one, and the REST "
+            "v1 shapes and stable ids it maps from "
+            "are the source of truth, never renamed "
+            "or removed by the layer that maps them. "
+            "The full verdict, its reasons and its "
+            "reopen conditions live in "
+            "samverk/graphql_verdict.py and "
+            "docs/GRAPHQL_VERDICT.md.")),
 )
+
 
 
 @dataclass(frozen=True)
@@ -1146,6 +1186,8 @@ def render_api_contract_page(
         "docs/API_CONTRACT.md for a reader who "
         "never opens this page. The study behind "
         "it is research file 23; the GraphQL "
-        "verdict is S-253's, and the versioning "
-        "policy is S-254's.</p>")
+        "verdict (S-253) is deferred, recorded "
+        "in the graphql-deferred rule above and "
+        "in docs/GRAPHQL_VERDICT.md, and the "
+        "versioning policy is S-254's.</p>")
     return "\n".join(parts)

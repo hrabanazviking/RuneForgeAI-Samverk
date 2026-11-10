@@ -1744,3 +1744,18 @@ organization send rides
 detail carries the host and the delivery key
 (and, for a test event, the verb), never the
 payload and never a secret.)
+
+S-253 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its GraphQL verdict, in
+samverk/graphql_verdict.py, is a pure read like
+S-202's billing hole and S-237's contract: the
+study in research file 24 concludes DEFER, with
+reasons, the three named clients judged one by
+one, and the invariants a future GraphQL layer
+must not break recorded in the REST contract
+itself (rule graphql-deferred). There is no
+GraphQL endpoint, schema or event to witness;
+a request to execute GraphQL is refused
+graphql_deferred and writes and audits nothing.
+No migration -- schema 99 stands.)
