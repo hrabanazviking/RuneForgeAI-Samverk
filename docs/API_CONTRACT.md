@@ -92,6 +92,15 @@ endpoint exists.
   (landed in S-241, samverk/api_rate_limit.py).
   Payload size caps and expensive-endpoint
   accounting are S-255's abuse defences.
+- **graphql-deferred** — GraphQL is deferred
+  (S-253, samverk/graphql_verdict.py): there is
+  no GraphQL endpoint, schema or resolver, and
+  this REST contract is the programmatic
+  surface. A future GraphQL layer is additive
+  only and must not break this contract — the
+  invariants are recorded in the GraphQL
+  section below and in full in
+  docs/GRAPHQL_VERDICT.md.
 - **no-back-doors** — Every resource is the
   programmatic face of a capability the web already
   has, at the same permission. An act the API
@@ -279,13 +288,53 @@ endpoint exists.
   subscriptions at the organization level, under
   the same law as repository hooks (S-248).
 
+## GraphQL — deferred (S-253)
+
+There is no GraphQL endpoint. S-253's verdict,
+concluding research file 24's study, is
+**deferred**: REST meets the measured needs of
+the three clients the study names (the issue
+board, the PR review page, organization
+administration), only one in-house consumer
+would use a GraphQL layer today, and the
+governance its abuse class needs does not yet
+exist. The full verdict, reasons and reopen
+conditions live in docs/GRAPHQL_VERDICT.md
+(module: samverk/graphql_verdict.py).
+
+If a future layer is ever built, it must not
+break this contract. The recorded invariants:
+
+- `permission-parity-per-field` — per object
+  and per field through S-190.
+- `private-is-missing-by-node-id` — private is
+  indistinguishable from missing, by node id
+  too.
+- `rest-shapes-are-the-source-of-truth` —
+  additive only; REST v1 shapes and stable ids
+  govern.
+- `connections-keep-list-honesty` — S-239
+  cursors, filtered totals, complete flag.
+- `errors-stay-typed-and-shared` — S-240's
+  registered reasons only.
+- `cost-governance-from-day-one` — S-241's
+  buckets plus depth, cost, bytes, time and
+  alias caps.
+- `mutations-share-stores-and-witness` — same
+  stores, same audit verbs, idempotent, never
+  partially writing.
+- `schema-from-resources-not-tables` — schema
+  designed from resources, never tables
+  one-to-one.
+
 ## What this contract does not do
 
 It builds no endpoint: authentication is S-238's,
 pagination S-239's, the problem format S-240's,
 rate limiting S-241's, the resource families
-S-242..S-246's and S-248's, the GraphQL verdict
-S-253's, and the versioning policy S-254's. The
+S-242..S-246's and S-248's, and the versioning
+policy S-254's. The GraphQL verdict (S-253)
+has landed as a deferral, recorded above. The
 Part XII gate (S-256) will exercise every
 documented endpoint against its contract tests;
 until a resource's builder lands, its row here is

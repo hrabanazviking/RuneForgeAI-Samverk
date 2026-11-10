@@ -57,7 +57,7 @@ EXPECTED_RULE_IDS = (
     "versioned-base", "permission-parity",
     "uniform-not-found", "json-utf8", "list-envelope",
     "cursor-pagination", "error-shape", "rate-limits",
-    "no-back-doors")
+    "no-back-doors", "graphql-deferred")
 LANDED_IDS = (
     "root", "repositories", "repository",
     "repository-branches", "repository-contents",
