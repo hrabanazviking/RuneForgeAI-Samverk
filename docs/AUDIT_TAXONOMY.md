@@ -1619,3 +1619,27 @@ the token scope as a ceiling; reads at the read
 rung audit nothing, and refused posts store
 nothing and audit nothing. Migration 95;
 schema 94 -> 95.)
+
+S-247 (2026-11-09) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its webhook events taxonomy, in
+samverk/webhook_events.py and documented per
+event in docs/WEBHOOK_EVENTS.md, maps every
+verb in this taxonomy to its webhook ruling:
+the webhook event name is the verb itself and
+the payload is S-221's own event shape, with
+the detail keys this document contracts per
+event. Every repo.* verb is repository scope
+(deliverable to repository hooks, and to the
+hooks of the organization that owns the
+repository); auth.organization.create and
+auth.organization.update are organization scope
+(organization hooks only); the remaining 44
+verbs -- the rest of auth.* and the whole of
+admin.* -- are never delivered, because a
+webhook is an exfiltration path and account,
+credential and instance-administration facts
+are not on its closed list. The taxonomy is a
+pure read: it holds no store, writes no row
+and audits nothing. No migration -- schema 95
+stands.)

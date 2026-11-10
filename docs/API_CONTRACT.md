@@ -269,7 +269,11 @@ endpoint exists.
   webhook subscriptions on one repository: event
   filters, active or inactive, and a secret set at
   creation and never shown again. The event
-  taxonomy is S-247's, the signing S-249's, delivery
+  taxonomy is S-247's (samverk/webhook_events.py,
+  documented per event in docs/WEBHOOK_EVENTS.md:
+  repository-scope and organization-scope verbs
+  are deliverable, account and administration
+  verbs never are), the signing S-249's, delivery
   S-250's; this resource is built by S-248.
 - `GET, POST /api/v1/orgs/{org}/hooks` — webhook
   subscriptions at the organization level, under
