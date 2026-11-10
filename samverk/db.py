@@ -2343,6 +2343,35 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_release_notif_deliv_release"
         " ON release_notification_deliveries (repo_id, release_id, id)",
     ]),
+    # S-263: release signatures -- one row per detached
+    # signature attached to a release: what it claims to
+    # sign (the release, its checksums file, or one named
+    # asset, whose name is kept on the row), the claimed
+    # signer, the armoured text stored verbatim, and the
+    # trust it stands in -- unverified until S-305's
+    # verifier records what a check earned. The UNIQUE
+    # row is the one-signature-per-signer-kind-target law.
+    (104, [
+        "CREATE TABLE release_signatures ("
+        "  id INTEGER PRIMARY KEY,"
+        "  release_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  target_kind TEXT NOT NULL,"
+        "  asset_id INTEGER,"
+        "  asset_name TEXT NOT NULL DEFAULT '',"
+        "  signer TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL DEFAULT '',"
+        "  signature TEXT NOT NULL,"
+        "  trust TEXT NOT NULL DEFAULT 'unverified',"
+        "  verified_signer TEXT NOT NULL DEFAULT '',"
+        "  attached_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (release_id, target_kind, asset_name, signer, kind)"
+        ")",
+        "CREATE INDEX idx_release_signatures_release"
+        " ON release_signatures (release_id, created_at)",
+    ]),
 ]
 
 

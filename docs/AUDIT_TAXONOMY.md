@@ -1921,3 +1921,26 @@ a draft writes the one witness row and notifies
 then. Delivering a notification is the echo of
 an act already witnessed and is not itself
 witnessed.)
+
+S-263 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its release signing seam, in
+samverk/release_signatures.py, attaches detached
+signatures to a release in migration 104 --
+schema 103 to 104: a writer attaches armoured
+OpenPGP or SSH signature text naming its target
+(the release, its generated checksums file, or
+one standing asset, whose name is kept on the
+row) and its claimed signer, stored verbatim.
+Trust is spoken in the words S-305 will use for
+commit badges -- verified, partially verified,
+or unverified, the signer always named, never a
+bare tick -- judged by the pure
+decide_signature_trust; no verifier stands yet,
+so every attached signature stands unverified,
+and record_verification is the machine seam the
+Part XV verifier will record through. Reads ride
+the release visibility of S-258. Attaching,
+detaching and recording a verification carry no
+verb of their own in the frozen vocabulary and
+are not witnessed.)

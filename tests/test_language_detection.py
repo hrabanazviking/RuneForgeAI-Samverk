@@ -197,7 +197,7 @@ class PinsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             conn = db.init_db(Path(tmp) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 103)
+                self.assertEqual(schema_version(conn), 104)
             finally:
                 conn.close()
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
