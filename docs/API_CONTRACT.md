@@ -28,10 +28,17 @@ endpoint exists.
 ## The law every endpoint obeys
 
 - **versioned-base** — One versioned base, from
-  day one. Every API path stands under `/api/v1`.
-  The version is in the path, never in a header or
-  a query parameter. What may change inside v1, and
-  how a v2 would be introduced, is S-254's policy.
+  day one (versioning policy landed in S-254,
+  samverk/api_versioning.py). Every API path
+  stands under `/api/v1`. The version is in the
+  path, never in a header or a query parameter.
+  Inside v1, changes are additive only; a breaking
+  change requires a v2, introduced alongside v1
+  under `/api/v2` by the road in the Versioning
+  section below. Deprecation is announced in the
+  `Deprecation`, `Sunset` and `Link` headers, with
+  at least 180 days between deprecation and
+  sunset.
 - **permission-parity** — Every call resolves
   through S-190's permission engine exactly as the
   web surface behind it is judged (S-238 lands the
@@ -288,6 +295,61 @@ endpoint exists.
   subscriptions at the organization level, under
   the same law as repository hooks (S-248).
 
+## Versioning — the policy for change (S-254)
+
+The current version is v1. Inside v1, changes are
+additive only — the full policy, as data, lives in
+samverk/api_versioning.py and in
+docs/API_VERSIONING.md. The recorded
+classification:
+
+Allowed inside v1 (`allowed-in-v1`):
+
+- `add-endpoint` — a new resource or method.
+- `add-response-field` — a representation gains a
+  field.
+- `add-optional-request-field` — absence means
+  exactly what the old request meant.
+- `add-optional-header` — no client must send or
+  read it.
+- `add-refusal-for-new-case` — a new registered
+  reason for a case that could not occur before.
+- `widen-accepted-input` — values once refused are
+  accepted; old values keep their meaning.
+- `raise-a-limit` — a cap goes up.
+
+Breaking (`requires-v2`):
+
+- `remove-endpoint` — a resource or method stops
+  answering.
+- `remove-or-rename-field` — a field disappears
+  or moves to a new name.
+- `change-field-meaning-or-type` — a field's type
+  or meaning changes under the same name.
+- `require-previously-optional` — an optional
+  field or header becomes required.
+- `change-existing-refusal` — an existing reason
+  or the problem format changes.
+- `change-pagination-or-ordering` — cursor,
+  ordering or envelope semantics change.
+- `lower-a-limit` — a cap comes down.
+- `change-permission-semantics` — who may see or
+  do what changes, in either direction.
+
+A v2 would be introduced alongside v1 under
+`/api/v2` as a whole new contract, only to carry
+breaking changes, never by mutating or redirecting
+`/api/v1`; both versions are served concurrently
+and v1 keeps its promises for at least 365 days
+after v2 lands, with a migration guide for
+everything v2 changes. Deprecation is announced
+in headers on every response from the deprecated
+surface: `deprecation-date` (the `Deprecation`
+header), `sunset-date` (the `Sunset` header, at
+least 180 days after deprecation) and
+`deprecation-link` (a `Link` header with
+`rel="deprecation"` to the notice).
+
 ## GraphQL — deferred (S-253)
 
 There is no GraphQL endpoint. S-253's verdict,
@@ -333,8 +395,9 @@ It builds no endpoint: authentication is S-238's,
 pagination S-239's, the problem format S-240's,
 rate limiting S-241's, the resource families
 S-242..S-246's and S-248's, and the versioning
-policy S-254's. The GraphQL verdict (S-253)
-has landed as a deferral, recorded above. The
+policy S-254's, which has landed, recorded in
+the Versioning section above. The GraphQL verdict
+(S-253) has landed as a deferral, recorded above. The
 Part XII gate (S-256) will exercise every
 documented endpoint against its contract tests;
 until a resource's builder lands, its row here is

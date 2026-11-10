@@ -51,6 +51,18 @@ own shapes as they go.
   vocabulary and folded onto it, the poster
   scoped through S-238/S-190 and audit-logged on
   repo.status.post / repo.check_run.post), and
+  the API versioning policy (S-254,
+  samverk/api_versioning.py: v1 changes
+  additively only -- seven kinds of change are
+  allowed inside v1 and eight are breaking and
+  require a v2, a v2 is introduced alongside v1
+  under /api/v2 and never in its place, and
+  deprecation is announced in the Deprecation,
+  Sunset and Link headers with at least 180 days
+  between deprecation and sunset -- recorded as
+  the versioned-base rule below, so the contract
+  itself carries the policy that governs how it
+  may change), and
   the GraphQL verdict (S-253,
   samverk/graphql_verdict.py: deferred, with
   reasons, the three clients of research file
@@ -206,16 +218,42 @@ class ContractRule:
 CONTRACT_RULES: tuple[ContractRule, ...] = (
     ContractRule(
         id="versioned-base",
-        title="One versioned base, from day one",
+        title=(
+            "One versioned base, from day one "
+            "(versioning policy landed in S-254)"),
         statement=(
             "Every API path stands under /api/v1. "
             "The version is in the path, never in a "
             "header or a query parameter, so a script "
             "can see the contract it is speaking to "
-            "in the address itself. What may change "
-            "inside v1, and how a v2 would be "
-            "introduced, is S-254's policy; this "
-            "contract is the v1 it will govern.")),
+            "in the address itself. S-254 landed the "
+            "policy that governs change "
+            "(samverk/api_versioning.py): inside v1, "
+            "changes are additive only -- a new "
+            "endpoint, a new response field, a new "
+            "optional request field or header, a new "
+            "refusal for a case that could not occur "
+            "before, widened accepted input and a "
+            "raised limit are allowed, while removing "
+            "or renaming anything, changing a field's "
+            "type or meaning, requiring what was "
+            "optional, changing an existing refusal, "
+            "changing pagination or ordering, lowering "
+            "a limit, or changing who may see what is "
+            "breaking and requires a v2. A v2 would "
+            "stand under /api/v2 alongside v1, never "
+            "in its place and never by redirect: both "
+            "versions served concurrently, v1 keeping "
+            "every promise for at least 365 days "
+            "after v2 lands, with a migration guide "
+            "for everything v2 changes. Deprecation "
+            "is announced in headers -- Deprecation "
+            "(the date it began), Sunset (the date "
+            "the surface stops answering) and a Link "
+            "with rel=deprecation to the notice -- "
+            "with at least 180 days between the "
+            "deprecation date and the sunset. This "
+            "contract is the v1 that policy governs.")),
     ContractRule(
         id="permission-parity",
         title="Every call resolves through S-190, with the web's own filtering",
@@ -1189,5 +1227,7 @@ def render_api_contract_page(
         "verdict (S-253) is deferred, recorded "
         "in the graphql-deferred rule above and "
         "in docs/GRAPHQL_VERDICT.md, and the "
-        "versioning policy is S-254's.</p>")
+        "versioning policy (S-254) is recorded in "
+        "the versioned-base rule above and in "
+        "docs/API_VERSIONING.md.</p>")
     return "\n".join(parts)
