@@ -1798,3 +1798,17 @@ changing the defences themselves is witnessed,
 on the standing admin.settings.change event with
 the api_abuse.* keys named. No migration --
 schema 99 stands.)
+
+S-257 (2026-11-10) added no event of its own —
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its releases, in samverk/releases.py, bind a
+tag that stands in git to a title and Markdown
+notes in migration 100's releases table —
+schema 99 to 100 — created from the web, the
+API, or a tag push whose tagged commit carries
+RELEASE_NOTES.md. Publication is witnessed on
+the standing repo.release.publish verb above
+with its founding detail {"tag": ...}; release
+edits and deletions carry no verb of their own
+in the frozen vocabulary and are not witnessed.
+Draft and prerelease states are S-258's slice.)

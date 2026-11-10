@@ -2250,6 +2250,27 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_webhook_pings_delivery"
         " ON webhook_pings (delivery_id)",
     ]),
+    # S-257: releases — one row per (repository, tag):
+    # the binding of a tag that stands in git to a title
+    # and Markdown notes, with the tag's target commit
+    # captured at creation and the door it came through
+    # (web / api / tag_push) recorded as provenance.
+    (100, [
+        "CREATE TABLE releases ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  tag TEXT NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  notes TEXT NOT NULL DEFAULT '',"
+        "  target_oid TEXT NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  source TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, tag)"
+        ")",
+        "CREATE INDEX idx_releases_repo ON releases (repo_id, created_at)",
+    ]),
 ]
 
 
