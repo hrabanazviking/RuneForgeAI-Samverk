@@ -366,7 +366,7 @@ class ProtectionLinearHistoryTests(unittest.TestCase):
         self.assertIn("is a merge commit", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 101)
+        self.assertEqual(schema_version(self.conn), 102)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
 
 
