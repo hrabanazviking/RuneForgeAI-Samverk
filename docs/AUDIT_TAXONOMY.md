@@ -1851,3 +1851,29 @@ schema 101 to 102; upload sessions stage in its
 release_upload_sessions row. Uploading, downloading
 and deleting an asset carry no verb of their own
 in the frozen vocabulary and are not witnessed.)
+
+S-260 (2026-11-10) added no event of its own —
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its release checksums, in
+samverk/release_checksums.py, are generated, never
+stored: build_checksums_text is a pure function of
+migration 102's release_assets rows — one
+'<sha256>  <name>' line per asset in name order,
+the digest S-259's promotion stored — so the file
+(SHA256SUMS.txt, text/plain) is downloadable beside
+the assets through get_checksums /
+download_checksums and can never drift from them;
+no migration, schema 102 stands, and the generated
+file is never itself an asset. Downloads ride the
+release's visibility (S-258) through S-259's
+listing gate and count nothing — the assets' own
+download counts are untouched. The rendered
+section states the verification in words
+(sha256sum -c SHA256SUMS.txt; on macOS
+shasum -a 256 -c SHA256SUMS.txt; every asset must
+answer OK), and parse_checksums / verify_checksums
+make the same judgement in code, naming mismatches,
+missing and unexpected entries. Generating,
+downloading and verifying a checksums file carry
+no verb of their own in the frozen vocabulary and
+are not witnessed.)
