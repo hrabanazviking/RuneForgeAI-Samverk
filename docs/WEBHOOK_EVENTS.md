@@ -389,3 +389,61 @@ python3 -m samverk.webhook_delivery <db-path> <repos-root>
   bodies are never stored; an attempt records
   only its status code or a redacted transport
   error name.
+
+## Delivery log and redelivery (S-251)
+
+Every delivery and every attempt is inspectable
+in the delivery log, which lives in
+samverk/webhook_delivery_log.py. The log answers
+to the same people who may manage the
+subscription: a repository delivery needs admin
+on the repository (or a site admin), an
+organization delivery needs an owner of the
+organization (or a site admin). Anyone else is
+refused by name, and a repository the caller
+cannot see is answered as if it did not exist.
+
+An inspection shows one delivery whole:
+
+- its key, event verb, parent and address, and
+  its standing in words (queued, never attempted
+  / waiting to retry / delivered /
+  dead-lettered), with its attempts counted
+  against the stated five;
+- every attempt in the order it was made: its
+  number, the request's answer -- the HTTP
+  status code, or the redacted transport error
+  (`transport_<class>`) and no code -- how long
+  it took in milliseconds, and when it started
+  and finished;
+- whether a secret is set, in words. The secret
+  itself, its digest, the frozen payload and any
+  response body are never shown: response bodies
+  were never stored, and the payload is the
+  receiver's copy, not a page's content.
+
+A finished delivery -- delivered or
+dead-lettered -- can be redelivered in one click
+from the log. Redelivery is a NEW delivery, not
+a resurrection:
+
+- a fresh outbox row is queued for the same
+  subscription and event, carrying the original's
+  frozen payload (the event as witnessed, never
+  re-derived) and the subscription's address as
+  it stands at the click;
+- the new row is keyed `<stem>-redelivery-<n>`,
+  numbered per subscription and event, and names
+  the delivery it redelivers in `redelivery_of`
+  (migration 98). The original row -- standing,
+  attempts, stamps -- is never touched;
+- the exactly-once law is unchanged for original
+  enqueues: the outbox's unique index now covers
+  (subscription, event, redelivery number), and
+  number 0 is the original, queued exactly once;
+- a delivery still queued or retrying cannot be
+  redelivered (it is already on its way), and a
+  delivery whose subscription was deleted cannot
+  be redelivered at all. Redelivery attempts
+  nothing itself: the delivery worker carries
+  the new row on its next run.

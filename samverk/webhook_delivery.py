@@ -556,7 +556,8 @@ class WebhookDeliveryStore:
             created = cur.rowcount > 0
         row = self._conn.execute(
             "SELECT * FROM webhook_deliveries"
-            " WHERE webhook_id = ? AND event_id = ?",
+            " WHERE webhook_id = ? AND event_id = ?"
+            " AND redelivery_number = 0",
             (subscription.id, int(event.id))).fetchone()
         assert row is not None
         return (self._view(row), created)

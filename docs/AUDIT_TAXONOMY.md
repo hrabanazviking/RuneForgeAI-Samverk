@@ -1697,3 +1697,27 @@ signed at attempt time through S-249's
 delivery_headers road; attempts are recorded
 redacted in webhook_delivery_attempts for
 S-251's delivery log.)
+
+S-251 (2026-11-09) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its delivery log and redelivery, in
+samverk/webhook_delivery_log.py, read S-250's
+attempt history under S-248's own gate -- admin
+on the repository, an owner of the organization,
+or a site admin -- and inspections write and
+audit nothing. A redelivery is a manager's act
+and is witnessed on the standing verbs, as
+S-248's subscription changes are: a repository
+redelivery rides `repo.settings.change` with the
+key `webhook.redeliver` named, an organization
+redelivery rides `auth.organization.update` with
+`fields` `webhooks` and action `redeliver`; the
+detail carries the host and the original
+delivery's key, never the payload and never a
+secret. Redelivery queues a fresh outbox row
+carrying the original's frozen payload and
+naming it in `redelivery_of`; migration 98 adds
+that lineage to `webhook_deliveries` (schema
+97 -> 98) and widens the exactly-once index to
+(subscription, event, redelivery number), the
+original enqueue standing at number 0.)

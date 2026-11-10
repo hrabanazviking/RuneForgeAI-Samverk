@@ -2194,6 +2194,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_webhook_delivery_attempts_delivery"
         " ON webhook_delivery_attempts (delivery_id, id)",
     ]),
+    # S-251: delivery log and redelivery -- a
+    # redelivery is a NEW delivery of the same
+    # subscription x event, so the outbox gains its
+    # lineage: redelivery_of names the delivery a
+    # row redelivers (NULL for an original enqueue)
+    # and redelivery_number counts copies of the
+    # pair (0 for the original). The exactly-once
+    # index widens to the triple, so S-250's
+    # original enqueue stays exactly-once at
+    # number 0 while each redelivery takes the
+    # next number. Judged in
+    # samverk/webhook_delivery_log.py
+    # (DeliveryLogStore).
+    (98, [
+        "ALTER TABLE webhook_deliveries"
+        " ADD COLUMN redelivery_of INTEGER",
+        "ALTER TABLE webhook_deliveries"
+        " ADD COLUMN redelivery_number"
+        " INTEGER NOT NULL DEFAULT 0",
+        "DROP INDEX idx_webhook_deliveries_once",
+        "CREATE UNIQUE INDEX idx_webhook_deliveries_once"
+        " ON webhook_deliveries"
+        " (webhook_id, event_id, redelivery_number)",
+        "CREATE INDEX idx_webhook_deliveries_redelivery"
+        " ON webhook_deliveries (redelivery_of, id)",
+    ]),
 ]
 
 
