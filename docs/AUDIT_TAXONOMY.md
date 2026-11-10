@@ -1944,3 +1944,28 @@ the release visibility of S-258. Attaching,
 detaching and recording a verification carry no
 verb of their own in the frozen vocabulary and
 are not witnessed.)
+
+S-264 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its package registry verdict, in
+samverk/package_verdict.py, is a pure read like
+S-202's billing hole, S-237's contract and
+S-253's GraphQL verdict: the study in research
+file 26 concludes DEFER, decided by village
+need -- no ecosystem is hosted now, Python
+stands as the named first candidate, generic
+archives are already served by releases
+(S-257..S-263), Go modules by the git
+transports, and OCI containers are refused
+outright under the village's standing
+no-Docker law. The eight invariants a future
+registry must not break are recorded in the
+module and in docs/PACKAGE_VERDICT.md as the
+seam S-265 documents. There is no registry
+endpoint, package table or event to witness; a
+request to use a registry is answered per
+ecosystem -- registry_deferred,
+registry_refused, registry_served_by_releases
+or registry_served_by_git -- and writes and
+audits nothing. No migration -- schema 104
+stands.)
