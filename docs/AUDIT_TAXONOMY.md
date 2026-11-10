@@ -1877,3 +1877,26 @@ missing and unexpected entries. Generating,
 downloading and verifying a checksums file carry
 no verb of their own in the frozen vocabulary and
 are not witnessed.)
+
+S-261 (2026-11-10) added no event of its own —
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its latest release pointer, in
+samverk/releases.py — the pure is_latest_eligible /
+select_latest_release and
+ReleaseStore.get_latest_release — with its own face
+in samverk/release_latest.py, is computed, never
+stored: the latest is the newest published release,
+and "latest" excludes prereleases and drafts — a
+prerelease is never the latest however new it is,
+and a draft is never the latest even for a writer
+who can see it. No migration, schema 102 stands.
+Every door resolves through the release listing
+itself, so a private repository answers the uniform
+repo_not_found and a draft contributes nothing to
+anyone's pointer; when nothing eligible stands the
+pointer is honestly empty. The rule is stated on
+the releases page: render_releases_page carries
+LATEST_RULE in words and marks the latest release
+in text. Reading, selecting and judging the pointer
+carry no verb of their own in the frozen vocabulary
+and are not witnessed.)
