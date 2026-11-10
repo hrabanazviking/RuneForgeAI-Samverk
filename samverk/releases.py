@@ -93,9 +93,32 @@ Further laws:
   ``Draft`` / ``Pre-release`` marker (words, never
   colour alone). A published release carries no
   marker — the absence is the ordinary case.
-  Assets are S-259 (samverk/release_assets.py);
-  the latest pointer
-  with S-261. Publication is witnessed on the
+  Assets are S-259 (samverk/release_assets.py).
+- **Latest (S-261).** One release in a repository
+  is the *latest*: the newest published release.
+  "Latest" excludes prereleases and drafts — a
+  prerelease is not the latest however new it is,
+  and a draft is not the latest even for a writer
+  who can see it. The pure `is_latest_eligible`
+  judges one release (published, not prerelease,
+  not draft); the pure `select_latest_release`
+  picks the newest eligible release from any list
+  (newest by creation, ties by id — the listing
+  order of `list_releases`); the computed pointer
+  `ReleaseStore.get_latest_release` resolves
+  through the listing itself, so visibility is
+  the release's own (S-258): a private repository
+  answers the uniform `repo_not_found`, and no
+  reader ever learns a draft exists through the
+  pointer. When nothing eligible stands, the
+  pointer is honestly empty (None) — a repository
+  whose releases are all drafts or prereleases
+  has no latest. The rule is stated on the
+  releases page (`render_releases_page` carries
+  `LATEST_RULE` in words and marks the latest
+  release in text), and samverk/release_latest.py
+  is the pointer's own face. Publication is
+  witnessed on the
   standing verb `repo.release.publish` with detail
   ``{"tag": ...}`` (named in the taxonomy since its
   founding and in S-247's webhook taxonomy as the one
@@ -136,12 +159,19 @@ STATE_WORDS = {
     "prerelease": "Pre-release",
     "published": "Published",
 }
+LATEST_RULE = (
+    '"Latest" is the newest published release; '
+    'it excludes prereleases and drafts.')
+LATEST_MARKER = "Latest release"
 
 __all__ = [
+    "LATEST_MARKER", "LATEST_RULE",
     "NOTES_FILE", "NOTES_MAX", "SOURCES", "SOURCE_WORDS",
     "STATE_WORDS", "TITLE_MAX", "Release", "ReleaseError",
-    "ReleaseStore", "parse_notes_file", "release_state",
+    "ReleaseStore", "is_latest_eligible",
+    "parse_notes_file", "release_state",
     "release_to_dict", "render_release", "render_releases_page",
+    "select_latest_release",
     "state_markers", "validate_notes", "validate_source",
     "validate_state_flag", "validate_tag", "validate_title",
 ]
@@ -247,6 +277,27 @@ def state_markers(release: Release) -> list[str]:
     return marks
 
 
+def is_latest_eligible(release: Release) -> bool:
+    """S-261: one release can be the latest only
+    while it stands published — not a draft, not a
+    prerelease. The two flags are independent
+    (S-258), so either one alone excludes it."""
+    return not release.draft and not release.prerelease
+
+
+def select_latest_release(
+        releases: list[Release]) -> Release | None:
+    """S-261, pure: the latest release in any list —
+    the newest eligible release by (created_at, id),
+    the same order `list_releases` lists in, so the
+    first eligible entry of a listing is its latest.
+    None when no eligible release stands."""
+    eligible = [r for r in releases if is_latest_eligible(r)]
+    if not eligible:
+        return None
+    return max(eligible, key=lambda r: (r.created_at, r.id))
+
+
 def validate_source(source: object) -> str:
     if source not in SOURCES:
         raise ReleaseError(
@@ -320,15 +371,28 @@ def render_release(release: Release, full_name: str = "") -> str:
 
 def render_releases_page(full_name: str,
                          releases: list[Release]) -> str:
-    """The releases listing for one repository."""
+    """The releases listing for one repository. The
+    S-261 rule is stated on the page in words, and
+    the latest release — the newest published one,
+    never a prerelease or a draft — is marked in
+    text (words, never colour alone)."""
+    rule = ('<p class="latest-rule">'
+            + escape_html_text(LATEST_RULE) + "</p>")
     if not releases:
         body = "<p>No releases yet.</p>"
     else:
-        body = "".join(
-            render_release(r, full_name) for r in releases)
+        latest = select_latest_release(releases)
+        parts = []
+        for release in releases:
+            if latest is not None and release.id == latest.id:
+                parts.append(
+                    '<p class="latest-release">'
+                    + escape_html_text(LATEST_MARKER) + "</p>")
+            parts.append(render_release(release, full_name))
+        body = "".join(parts)
     return (
         '<section class="releases"><h2>Releases of '
-        + escape_html_text(full_name) + "</h2>" + body
+        + escape_html_text(full_name) + "</h2>" + rule + body
         + "</section>")
 
 
@@ -519,6 +583,19 @@ class ReleaseStore:
         return [release for release in
                 (_row_to_release(r) for r in rows)
                 if self._visible(viewer, current, release)]
+
+    def get_latest_release(self, viewer: User | None,
+                           owner: object, repo: object
+                           ) -> Release | None:
+        """S-261: this repository's latest release for
+        this viewer — the newest published release in
+        the viewer's own listing, or None when no
+        published release stands. Drafts never count,
+        not even for a writer who can see them; a
+        private repository answers the listing's
+        uniform repo_not_found."""
+        return select_latest_release(
+            self.list_releases(viewer, owner, repo))
 
     def update_release(self, actor: User, owner: object,
                        repo: object, tag: object, *,
