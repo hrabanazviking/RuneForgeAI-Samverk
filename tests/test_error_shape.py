@@ -229,8 +229,8 @@ class ErrorShapeTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_taxonomy_and_fields(self):
-        self.assertEqual(schema_version(self.w.conn), 96)
-        self.assertEqual(db.MIGRATIONS[-1][0], 96)
+        self.assertEqual(schema_version(self.w.conn), 97)
+        self.assertEqual(db.MIGRATIONS[-1][0], 97)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:

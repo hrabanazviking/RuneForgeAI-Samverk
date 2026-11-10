@@ -1682,3 +1682,18 @@ Signing writes no row and audits nothing; a
 subscription with no secret is unsigned and
 carries no header. No migration -- schema 96
 stands.)
+
+S-250 (2026-11-09) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its webhook delivery worker, in
+samverk/webhook_delivery.py, is bookkeeping over
+acts already witnessed, like S-221's store and
+S-235's digest job: enqueueing and attempting a
+delivery witness no mutation, so the worker
+audits nothing. Deliveries queue in migration
+97's webhook_deliveries outbox (schema 96 -> 97),
+routed by S-248's subscriptions_for_event and
+signed at attempt time through S-249's
+delivery_headers road; attempts are recorded
+redacted in webhook_delivery_attempts for
+S-251's delivery log.)

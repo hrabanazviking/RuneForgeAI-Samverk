@@ -2141,6 +2141,59 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_webhooks_org"
         " ON webhooks (org_id, id)",
     ]),
+    # S-250: webhook deliveries -- the delivery
+    # worker's outbox: one row per subscription x
+    # event (UNIQUE, so enqueueing is exactly-once),
+    # carrying the payload frozen at enqueue, the
+    # delivery address snapshotted at enqueue, the
+    # standing (queued / retrying / delivered /
+    # dead), the attempt count, when the next
+    # attempt falls due, and the last attempt's
+    # redacted outcome (a status code and a reason,
+    # never a response body). Attempts themselves
+    # are rows of their own, so S-251's delivery log
+    # reads history, not a summary. Judged in
+    # samverk/webhook_delivery.py
+    # (WebhookDeliveryStore).
+    (97, [
+        "CREATE TABLE webhook_deliveries ("
+        "  id INTEGER PRIMARY KEY,"
+        "  webhook_id INTEGER NOT NULL,"
+        "  event_id INTEGER NOT NULL,"
+        "  verb TEXT NOT NULL,"
+        "  delivery_key TEXT NOT NULL,"
+        "  url TEXT NOT NULL,"
+        "  host TEXT NOT NULL,"
+        "  payload_json TEXT NOT NULL,"
+        "  status TEXT NOT NULL DEFAULT 'queued',"
+        "  attempts INTEGER NOT NULL DEFAULT 0,"
+        "  next_attempt_at INTEGER NOT NULL,"
+        "  last_status_code INTEGER,"
+        "  last_error TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  delivered_at INTEGER,"
+        "  dead_at INTEGER"
+        ")",
+        "CREATE UNIQUE INDEX idx_webhook_deliveries_once"
+        " ON webhook_deliveries (webhook_id, event_id)",
+        "CREATE INDEX idx_webhook_deliveries_due"
+        " ON webhook_deliveries (status, next_attempt_at, id)",
+        "CREATE INDEX idx_webhook_deliveries_hook"
+        " ON webhook_deliveries (webhook_id, id)",
+        "CREATE TABLE webhook_delivery_attempts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  delivery_id INTEGER NOT NULL,"
+        "  attempt_number INTEGER NOT NULL,"
+        "  status_code INTEGER,"
+        "  error TEXT NOT NULL DEFAULT '',"
+        "  duration_ms INTEGER NOT NULL DEFAULT 0,"
+        "  started_at INTEGER NOT NULL,"
+        "  finished_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_webhook_delivery_attempts_delivery"
+        " ON webhook_delivery_attempts (delivery_id, id)",
+    ]),
 ]
 
 

@@ -343,3 +343,49 @@ Compare in constant time, and answer only
 yes or no: a missing or malformed header, a
 wrong secret, and a body altered by one byte
 all fail.
+
+## Delivery (S-250)
+
+A matched event is not sent on the request path.
+It is queued in the delivery outbox (one row per
+subscription and event, queued exactly once),
+carrying the payload above frozen as witnessed
+and the subscription's address as it stood at
+queueing, and the delivery worker -- run by an
+operator or a scheduler, never while anyone
+browses -- attempts it:
+
+```
+python3 -m samverk.webhook_delivery <db-path> <repos-root>
+```
+
+- Attempts: at most **5** per delivery. A 2xx
+  answer delivers it. Any other outcome --
+  another HTTP status, a connection failure, a
+  timeout -- is a failure and retries.
+- Backoff: after failure n the wait is
+  min(60 * 2^(n-1), 3600) seconds -- 60, 120,
+  240, 480, 960, then capped at one hour --
+  plus jitter of up to a quarter of the wait,
+  so failing receivers are not retried in
+  lockstep.
+- Dead-letter: the fifth failure rests the
+  delivery dead. It is kept, with every attempt
+  recorded (status code or redacted error,
+  timing), never silently dropped. A
+  subscription deleted before its attempt rests
+  the delivery dead at once; a subscription
+  standing inactive is skipped, attempt
+  uncounted, until it stands active again.
+- Every attempt is signed exactly as the
+  Signing section states, over the frozen
+  payload bytes, and carries two more headers:
+  `X-Samverk-Event` (the event verb) and
+  `X-Samverk-Delivery` (this delivery's stable
+  key, `evt-<event id>-hook-<subscription id>`
+  -- the same key on every retry, so a receiver
+  whose answer was lost after it accepted the
+  payload can dedupe the retry). Response
+  bodies are never stored; an attempt records
+  only its status code or a redacted transport
+  error name.

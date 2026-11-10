@@ -343,7 +343,7 @@ class ProtectionPushShapeTests(unittest.TestCase):
         self.assertIn("force push", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 96)
+        self.assertEqual(schema_version(self.conn), 97)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
 
 
