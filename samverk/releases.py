@@ -1,4 +1,4 @@
-"""Releases (S-257).
+"""Releases (S-257; states S-258).
 
 A release binds three things together in one
 repository: a **tag** that already stands in git, a
@@ -52,10 +52,48 @@ Further laws:
   `render_release` renders it through S-108's
   sanitised pipeline, and every other field rides
   S-010 escaping.
-- **States are S-258's slice.** Every release here is
-  published the moment it is created; drafts and
-  prereleases (and their listing marks) land with
-  S-258, assets with S-259, and the latest pointer
+- **States (S-258).** A release is *published* the
+  moment it is created unless it is created as a
+  **draft** (``draft=True``) or marked a
+  **prerelease** (``prerelease=True``) — two
+  independent flags on the row (migration 101), so a
+  draft may also carry the prerelease mark it will
+  wear once published. The flags ride every door:
+  ``create_release`` keywords on the web door and
+  ``draft`` / ``prerelease`` keys on the API door
+  (any other unknown key is still refused by name);
+  the tag-push door always creates published, never
+  a draft — a pushed tag is a public act. The pure
+  ``release_state`` names the standing state
+  (``draft`` wins over ``prerelease``: an unpublished
+  prerelease is a draft first).
+- **Drafts are private to writers.** A draft is
+  visible only to a viewer who can write the
+  repository (S-054's ``can_write`` — the owner,
+  site admins, write collaborators): ``list_releases``
+  omits drafts for everyone else, and ``get_release``
+  answers the uniform ``release_not_found`` for a
+  draft the viewer may not see, so a draft's
+  existence is itself private — the private-repo
+  anti-enumeration law applied one level down. A
+  draft is not a publication: creating one witnesses
+  nothing. ``publish_release`` (writer only) clears
+  the draft flag and is the moment of publication;
+  publishing a release that is not a draft is refused
+  ``release_not_draft``, because a person asking
+  twice should be told. The prerelease flag may be
+  set or cleared later through ``update_release``;
+  the draft flag moves only through creation and
+  ``publish_release``, never sideways through an edit.
+- **Prereleases are marked in every listing, in
+  text.** Every face carries the word: the API shape
+  (``release_to_dict``) gains ``draft``,
+  ``prerelease`` and ``state``; the rendered release
+  and the releases page carry a plain-text
+  ``Draft`` / ``Pre-release`` marker (words, never
+  colour alone). A published release carries no
+  marker — the absence is the ordinary case.
+  Assets land with S-259 and the latest pointer
   with S-261. Publication is witnessed on the
   standing verb `repo.release.publish` with detail
   ``{"tag": ...}`` (named in the taxonomy since its
@@ -91,14 +129,20 @@ SOURCE_WORDS = {
     "api": "created from the API",
     "tag_push": "created from a tag push",
 }
-_API_KEYS = frozenset({"tag", "title", "notes"})
+_API_KEYS = frozenset({"tag", "title", "notes", "draft", "prerelease"})
+STATE_WORDS = {
+    "draft": "Draft",
+    "prerelease": "Pre-release",
+    "published": "Published",
+}
 
 __all__ = [
     "NOTES_FILE", "NOTES_MAX", "SOURCES", "SOURCE_WORDS",
-    "TITLE_MAX", "Release", "ReleaseError", "ReleaseStore",
-    "parse_notes_file", "release_to_dict", "render_release",
-    "render_releases_page", "validate_notes", "validate_source",
-    "validate_tag", "validate_title",
+    "STATE_WORDS", "TITLE_MAX", "Release", "ReleaseError",
+    "ReleaseStore", "parse_notes_file", "release_state",
+    "release_to_dict", "render_release", "render_releases_page",
+    "state_markers", "validate_notes", "validate_source",
+    "validate_state_flag", "validate_tag", "validate_title",
 ]
 
 
@@ -120,6 +164,8 @@ class Release:
     source: str
     created_at: int
     updated_at: int
+    draft: bool = False
+    prerelease: bool = False
 
 
 def _row_to_release(row: sqlite3.Row) -> Release:
@@ -128,7 +174,10 @@ def _row_to_release(row: sqlite3.Row) -> Release:
         title=row["title"], notes=row["notes"],
         target_oid=row["target_oid"], author_id=row["author_id"],
         source=row["source"], created_at=row["created_at"],
-        updated_at=row["updated_at"])
+        updated_at=row["updated_at"],
+        draft=bool(row["draft"]) if "draft" in row.keys() else False,
+        prerelease=(bool(row["prerelease"])
+                    if "prerelease" in row.keys() else False))
 
 
 def validate_tag(tag: object) -> str:
@@ -164,6 +213,37 @@ def validate_notes(notes: object) -> str:
             "notes_invalid",
             f"Release notes are at most {NOTES_MAX} characters.")
     return notes
+
+
+def validate_state_flag(value: object, field: str) -> bool:
+    if not isinstance(value, bool):
+        raise ReleaseError(
+            "state_flag_invalid",
+            f"The {field} state of a release is true or false.")
+    return value
+
+
+def release_state(release: Release) -> str:
+    """The standing state's name: a draft first (an
+    unpublished prerelease is a draft before it is
+    anything else), then prerelease, then published."""
+    if release.draft:
+        return "draft"
+    if release.prerelease:
+        return "prerelease"
+    return "published"
+
+
+def state_markers(release: Release) -> list[str]:
+    """The plain-text marks a listing must carry for
+    this release: Draft and/or Pre-release, in words.
+    A published, non-prerelease release carries none."""
+    marks = []
+    if release.draft:
+        marks.append(STATE_WORDS["draft"])
+    if release.prerelease:
+        marks.append(STATE_WORDS["prerelease"])
+    return marks
 
 
 def validate_source(source: object) -> str:
@@ -205,14 +285,23 @@ def release_to_dict(release: Release, full_name: str = "") -> dict:
         "source": release.source,
         "created_at": release.created_at,
         "updated_at": release.updated_at,
+        "draft": release.draft,
+        "prerelease": release.prerelease,
+        "state": release_state(release),
     }
 
 
 def render_release(release: Release, full_name: str = "") -> str:
     """One release as HTML: title and tag escaped, the
-    notes through the sanitised Markdown pipeline."""
+    notes through the sanitised Markdown pipeline, and
+    the S-258 state carried as plain-text markers
+    (words, never colour alone)."""
     repo_line = (
         f"<p>{escape_html_text(full_name)}</p>" if full_name else "")
+    marks = "".join(
+        ' &middot; <span class="release-state">'
+        + escape_html_text(word) + "</span>"
+        for word in state_markers(release))
     return (
         '<section class="release"><h3>'
         + escape_html_text(release.title) + "</h3>"
@@ -222,6 +311,7 @@ def render_release(release: Release, full_name: str = "") -> str:
         + escape_html_text(release.target_oid[:12])
         + " &middot; "
         + escape_html_text(SOURCE_WORDS[release.source])
+        + marks
         + "</p><div class=\"release-notes\">"
         + render_markdown(release.notes)
         + "</div></section>")
@@ -272,6 +362,14 @@ class ReleaseStore:
                 "permission_denied",
                 "Only a repository writer can manage releases.")
         return current
+
+    def _visible(self, viewer: User | None,
+                 current: Repository, release: Release) -> bool:
+        """S-258: a published release is visible to every
+        reader; a draft only to a repository writer."""
+        if not release.draft:
+            return True
+        return viewer is not None and can_write(viewer, current)
 
     def _tag_target(self, current: Repository, tag: str) -> str:
         repo_path = self._repos.path_for(current.owner, current.name)
@@ -326,12 +424,17 @@ class ReleaseStore:
                        repo: object, tag: object,
                        title: object, notes: object = "",
                        *, source: object = "web",
+                       draft: object = False,
+                       prerelease: object = False,
                        source_ip: str | None = None) -> Release:
         current = self._repo_for_write(actor, owner, repo)
         tag_text = validate_tag(tag)
         title_text = validate_title(title)
         notes_text = validate_notes(notes)
         source_text = validate_source(source)
+        draft_flag = validate_state_flag(draft, "draft")
+        prerelease_flag = validate_state_flag(
+            prerelease, "prerelease")
         target = self._tag_target(current, tag_text)
         now = int(self._now())
         with self._conn:
@@ -339,10 +442,11 @@ class ReleaseStore:
                 cur = self._conn.execute(
                     "INSERT INTO releases (repo_id, tag, title,"
                     " notes, target_oid, author_id, source,"
-                    " created_at, updated_at)"
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    " created_at, updated_at, draft, prerelease)"
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (current.id, tag_text, title_text, notes_text,
-                     target, actor.id, source_text, now, now))
+                     target, actor.id, source_text, now, now,
+                     int(draft_flag), int(prerelease_flag)))
             except sqlite3.IntegrityError:
                 raise ReleaseError(
                     "release_taken",
@@ -350,7 +454,8 @@ class ReleaseStore:
                     "exists in this repository.") from None
         release = self._by_id(int(cur.lastrowid))
         assert release is not None
-        self._emit(actor, current, release, source_ip)
+        if not release.draft:
+            self._emit(actor, current, release, source_ip)
         return release
 
     def create_release_from_api(self, actor: User, owner: object,
@@ -368,7 +473,9 @@ class ReleaseStore:
         return self.create_release(
             actor, owner, repo, payload.get("tag"),
             payload.get("title"), payload.get("notes", ""),
-            source="api", source_ip=source_ip)
+            source="api", draft=payload.get("draft", False),
+            prerelease=payload.get("prerelease", False),
+            source_ip=source_ip)
 
     def create_release_from_tag_push(
             self, actor: User, owner: object, repo: object,
@@ -395,7 +502,8 @@ class ReleaseStore:
                     repo: object, tag: object) -> Release:
         current = self._repo_for_read(viewer, owner, repo)
         release = self._by_tag(current.id, tag)
-        if release is None:
+        if release is None or not self._visible(
+                viewer, current, release):
             raise ReleaseError(
                 "release_not_found", "No such release.")
         return release
@@ -407,12 +515,15 @@ class ReleaseStore:
             "SELECT * FROM releases WHERE repo_id = ?"
             " ORDER BY created_at DESC, id DESC",
             (current.id,)).fetchall()
-        return [_row_to_release(r) for r in rows]
+        return [release for release in
+                (_row_to_release(r) for r in rows)
+                if self._visible(viewer, current, release)]
 
     def update_release(self, actor: User, owner: object,
                        repo: object, tag: object, *,
                        title: object = None,
-                       notes: object = None) -> Release:
+                       notes: object = None,
+                       prerelease: object = None) -> Release:
         current = self._repo_for_write(actor, owner, repo)
         release = self._by_tag(current.id, tag)
         if release is None:
@@ -422,15 +533,45 @@ class ReleaseStore:
                       else validate_title(title))
         notes_text = (release.notes if notes is None
                       else validate_notes(notes))
+        prerelease_flag = (release.prerelease if prerelease is None
+                           else validate_state_flag(
+                               prerelease, "prerelease"))
         now = int(self._now())
         with self._conn:
             self._conn.execute(
                 "UPDATE releases SET title = ?, notes = ?,"
-                " updated_at = ? WHERE id = ?",
-                (title_text, notes_text, now, release.id))
+                " prerelease = ?, updated_at = ? WHERE id = ?",
+                (title_text, notes_text, int(prerelease_flag),
+                 now, release.id))
         updated = self._by_id(release.id)
         assert updated is not None
         return updated
+
+    def publish_release(self, actor: User, owner: object,
+                        repo: object, tag: object, *,
+                        source_ip: str | None = None) -> Release:
+        """Publish a draft: clears the draft flag (the
+        prerelease mark, if any, is kept) and witnesses
+        the publication on the standing verb. A release
+        that is not a draft is refused release_not_draft."""
+        current = self._repo_for_write(actor, owner, repo)
+        release = self._by_tag(current.id, tag)
+        if release is None:
+            raise ReleaseError(
+                "release_not_found", "No such release.")
+        if not release.draft:
+            raise ReleaseError(
+                "release_not_draft",
+                f"Release {release.tag!r} is not a draft.")
+        now = int(self._now())
+        with self._conn:
+            self._conn.execute(
+                "UPDATE releases SET draft = 0, updated_at = ?"
+                " WHERE id = ?", (now, release.id))
+        published = self._by_id(release.id)
+        assert published is not None
+        self._emit(actor, current, published, source_ip)
+        return published
 
     def delete_release(self, actor: User, owner: object,
                        repo: object, tag: object) -> Release:

@@ -1812,3 +1812,23 @@ with its founding detail {"tag": ...}; release
 edits and deletions carry no verb of their own
 in the frozen vocabulary and are not witnessed.
 Draft and prerelease states are S-258's slice.)
+
+S-258 (2026-11-10) added no event of its own —
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its release states, in samverk/releases.py, are
+two independent flags on the S-257 row — migration
+101, schema 100 to 101: draft, private to repository
+writers (listings omit drafts for everyone else and
+a draft answers the uniform release_not_found to a
+non-writer, so its existence is itself private), and
+prerelease, carried as plain text — Draft /
+Pre-release markers in the rendered listings and
+draft / prerelease / state in the API shape, words
+never colour alone. A draft's creation witnesses
+nothing; publishing a draft through publish_release
+is witnessed on the standing repo.release.publish
+verb above with its founding detail {"tag": ...},
+and publishing a release that is not a draft is
+refused release_not_draft. Edits — including
+setting or clearing the prerelease mark — and
+deletions carry no verb of their own.)

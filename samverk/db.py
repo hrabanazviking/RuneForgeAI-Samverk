@@ -2271,6 +2271,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_releases_repo ON releases (repo_id, created_at)",
     ]),
+    # S-258: release states — a draft flag (drafts are
+    # private to repository writers) and a prerelease flag
+    # (prereleases are marked in every listing) on the
+    # S-257 releases row. Standing rows take the defaults:
+    # published, not a prerelease — exactly what they were.
+    (101, [
+        "ALTER TABLE releases ADD COLUMN draft"
+        " INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE releases ADD COLUMN prerelease"
+        " INTEGER NOT NULL DEFAULT 0",
+    ]),
 ]
 
 
