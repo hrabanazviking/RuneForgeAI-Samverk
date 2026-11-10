@@ -1666,3 +1666,19 @@ S-247's taxonomy judged at the door; repository
 access is S-190's admin rung, organization
 access the owners'. Migration 96; schema
 95 -> 96.)
+
+S-249 (2026-11-09) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its webhook signing, in
+samverk/webhook_signing.py, is a pure road like
+S-247's taxonomy: HMAC-SHA256 over the raw
+delivered bytes, header
+X-Samverk-Signature-256 with a sha256= value,
+keyed by the secret's SHA-256 digest -- the
+only form S-248 stores -- so the sender signs
+from the stored digest and the receiver
+derives the same key from the raw secret.
+Signing writes no row and audits nothing; a
+subscription with no secret is unsigned and
+carries no header. No migration -- schema 96
+stands.)

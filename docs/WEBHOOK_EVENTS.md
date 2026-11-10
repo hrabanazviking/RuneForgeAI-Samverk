@@ -275,3 +275,71 @@ subscription receives its own repository's
 events; an organization subscription receives
 the events of the organization's repositories
 and the organization-scope events.
+
+## Signing (S-249)
+
+A signed delivery carries one header,
+`X-Samverk-Signature-256`, whose value is
+`sha256=` followed by the 64 lowercase hex
+characters of an HMAC-SHA256 over the exact
+bytes delivered -- for an event payload, the
+canonical `payload_json` bytes stated above.
+Verify over the raw bytes received; never
+re-serialise the payload first, because a
+re-serialised body is a different byte string
+and fails, by design.
+
+The HMAC key is the SHA-256 digest of the
+subscription's secret (its 32 raw bytes).
+Samverk stores only that digest (S-248), so
+the sender signs with the stored digest, and
+a receiver derives the same key by hashing
+the secret it holds once. The stored digest
+is therefore itself a signing credential --
+guard it as the secret is guarded. A
+subscription with no secret is unsigned: its
+deliveries carry no signature header and must
+not be treated as authenticated. The signing
+road lives in samverk/webhook_signing.py;
+S-250's delivery worker signs through it and
+no other.
+
+Worked example. Secret (the receiver's copy):
+`a very secret hook secret`. Body, exactly as
+delivered:
+
+```
+{"event":"repo.issue.create","number":1}
+```
+
+The key is SHA-256 of the secret:
+`e804e78efc6dc1ef37f85a4eac3b592c9255143f0ab7e0ebf0c01486de90d455`.
+The header the delivery carries:
+
+```
+X-Samverk-Signature-256: sha256=cb442452eb5cd9dc1a42ac1048d41216293c832f5994b09b458ce2174bb421d6
+```
+
+Verification in Python:
+
+```python
+import hashlib, hmac
+
+key = hashlib.sha256(secret.encode("utf-8")).digest()
+expected = hmac.new(key, raw_body, hashlib.sha256).hexdigest()
+presented = header_value.removeprefix("sha256=")
+ok = hmac.compare_digest(expected, presented)
+```
+
+The same check with openssl, the raw body in
+`body.bin` and the secret in the environment:
+
+```
+key_hex=$(printf '%s' "$WEBHOOK_SECRET" | openssl dgst -sha256 | cut -d' ' -f2)
+printf '%s' "$(openssl dgst -sha256 -mac HMAC -macopt hexkey:$key_hex body.bin | cut -d' ' -f2)"
+```
+
+Compare in constant time, and answer only
+yes or no: a missing or malformed header, a
+wrong secret, and a body altered by one byte
+all fail.
