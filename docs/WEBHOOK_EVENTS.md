@@ -245,12 +245,14 @@ event named here is a real event-store verb.
 | `auth.follow` | none | An account followed another account (S-232) | `followed` |
 | `auth.unfollow` | none | An account took its follow back (S-232) | `followed` |
 
-### checks (2)
+### checks (4)
 
 | Event | Scope | Meaning | detail may carry |
 |---|---|---|---|
 | `repo.status.post` | repository | A commit status posted through the API by a scoped poster (S-246) | `poster`, `credential`, `token_id`, `oid`, `context`, `state` |
 | `repo.check_run.post` | repository | A check run posted through the API by a scoped poster (S-246) | `poster`, `credential`, `token_id`, `oid`, `name`, `status`, `conclusion` |
+| `repo.artifact.upload` | repository | A CI artifact uploaded through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name`, `size`, `retention_days` |
+| `repo.artifact.delete` | repository | A CI artifact deleted through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name` |
 
 ## Subscriptions (S-248)
 

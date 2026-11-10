@@ -196,16 +196,16 @@ class WorldCase(unittest.TestCase):
 
 
 class PinTests(WorldCase):
-    def test_pins_schema_99_taxonomy_131(self):
-        self.assertEqual(schema_version(self.w.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+    def test_pins_schema_99_taxonomy_133(self):
+        self.assertEqual(schema_version(self.w.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         families = {}
         for name in taxonomy.AUDIT_EVENTS:
             families[name.split(".")[0]] = (
                 families.get(name.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 85, "admin": 13})
+            families, {"auth": 33, "repo": 87, "admin": 13})
 
     def test_ping_ledger_table_stands(self):
         cols = {r["name"] for r in self.w.conn.execute(

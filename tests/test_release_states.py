@@ -101,12 +101,12 @@ class ReleaseStateTests(unittest.TestCase):
         return self.conn.execute("SELECT COUNT(*) c FROM audit_log WHERE action='repo.release.publish'").fetchone()["c"]
 
     # -- pins ------------------------------------------
-    def test_pins_schema_101_taxonomy_131(self):
-        self.assertEqual(schema_version(self.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+    def test_pins_schema_101_taxonomy_133(self):
+        self.assertEqual(schema_version(self.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(releases)")}
         self.assertIn("draft", cols)
@@ -127,7 +127,7 @@ class ReleaseStateTests(unittest.TestCase):
                 conn.execute("INSERT INTO releases (repo_id, tag, title, notes, target_oid, author_id, source, created_at, updated_at) VALUES (1, 'v0', 'Old', '', 'abc', 1, 'web', 1, 1)")
             self.assertEqual(schema_version(conn), 100)
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 104)
+            self.assertEqual(schema_version(conn), 105)
             row = conn.execute("SELECT draft, prerelease FROM releases WHERE tag='v0'").fetchone()
             self.assertEqual((row["draft"], row["prerelease"]), (0, 0))
             conn.close()

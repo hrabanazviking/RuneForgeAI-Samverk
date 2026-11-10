@@ -181,6 +181,9 @@ REPO_EVENTS = frozenset({
     # S-246 additions (append-only, per the taxonomy rules):
     "repo.status.post",
     "repo.check_run.post",
+    # S-266 additions (append-only, per the taxonomy rules):
+    "repo.artifact.upload",
+    "repo.artifact.delete",
 })
 
 ADMIN_EVENTS = frozenset({

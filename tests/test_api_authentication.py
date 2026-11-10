@@ -110,12 +110,12 @@ class ApiAuthenticationTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.w.conn), 104)
-        self.assertEqual(db.MIGRATIONS[-1][0], 104)
+        self.assertEqual(schema_version(self.w.conn), 105)
+        self.assertEqual(db.MIGRATIONS[-1][0], 105)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(AUTH_HELP_PATH, "/api/authentication")
 
     def test_error_dict_matches_s237_current_shape(self):

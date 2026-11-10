@@ -335,6 +335,36 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         400, "That commit could not be understood"),
     "check_url_invalid": (
         400, "That check link is not valid"),
+    # S-266 -- CI artifacts API (its own reasons,
+    # plus S-012's upload reasons it carries and
+    # S-246's check reasons it reuses verbatim)
+    "artifact_not_found": (404, "No such artifact"),
+    "artifact_taken": (
+        409, "That artifact name is already taken"),
+    "artifact_expired": (
+        410, "That artifact has expired"),
+    "artifact_missing": (
+        500, "Something went wrong on our side"),
+    "artifact_name_required": (
+        400, "An artifact needs a name"),
+    "artifact_name_invalid": (
+        400, "That artifact name is not valid"),
+    "check_run_not_found": (404, "No such check run"),
+    "retention_invalid": (
+        400, "That retention policy is not allowed"),
+    "too_many_artifacts": (
+        409, "That check run carries too many artifacts"),
+    "upload_not_found": (404, "No such upload"),
+    "upload_closed": (400, "That upload is no longer open"),
+    "chunk_empty": (400, "That chunk carries no bytes"),
+    "chunk_too_large": (413, "That chunk is too large"),
+    "chunk_out_of_order": (
+        400, "That chunk is not the next one expected"),
+    "size_invalid": (400, "That size is not valid"),
+    "size_mismatch": (
+        400, "That upload does not match its declared size"),
+    "too_large": (413, "That artifact is too large"),
+    "empty": (400, "That artifact carries no bytes"),
     # S-255 -- API abuse defences (its own reasons;
     # the refusals every S-255 judgement raises)
     "payload_too_large": (
