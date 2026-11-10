@@ -2103,6 +2103,44 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_check_runs_repo_head"
         " ON check_runs (repo_id, head_oid, id)",
     ]),
+    # S-248: webhook subscriptions -- one row per
+    # subscription at repository or organization
+    # level (exactly one parent id set), carrying
+    # the delivery address and its host, the filter
+    # as chosen (S-247 verbs and categories, as
+    # JSON), the active standing, and the secret's
+    # SHA-256 digest only -- the secret itself is
+    # never stored. The table is named webhooks,
+    # not webhook_subscriptions, because S-202's
+    # billing audit forbids billing-shaped names
+    # for tables -- and a webhook subscription is
+    # not a billing subscription (S-225's law).
+    # Judged in
+    # samverk/webhook_subscriptions.py
+    # (WebhookSubscriptionStore).
+    (96, [
+        "CREATE TABLE webhooks ("
+        "  id INTEGER PRIMARY KEY,"
+        "  level TEXT NOT NULL,"
+        "  repo_id INTEGER,"
+        "  org_id INTEGER,"
+        "  parent_name TEXT NOT NULL,"
+        "  parent_key TEXT NOT NULL,"
+        "  url TEXT NOT NULL,"
+        "  host TEXT NOT NULL,"
+        "  events_json TEXT NOT NULL DEFAULT '[]',"
+        "  categories_json TEXT NOT NULL DEFAULT '[]',"
+        "  active INTEGER NOT NULL DEFAULT 1,"
+        "  secret_digest TEXT NOT NULL DEFAULT '',"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_webhooks_repo"
+        " ON webhooks (repo_id, id)",
+        "CREATE INDEX idx_webhooks_org"
+        " ON webhooks (org_id, id)",
+    ]),
 ]
 
 

@@ -1643,3 +1643,26 @@ are not on its closed list. The taxonomy is a
 pure read: it holds no store, writes no row
 and audits nothing. No migration -- schema 95
 stands.)
+
+S-248 (2026-11-09) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its webhook subscriptions, in
+samverk/webhook_subscriptions.py, are witnessed
+by the verbs that already stand: a repository
+subscription's creation appends
+`repo.webhook.add` and its deletion
+`repo.webhook.remove`, the detail carrying the
+target host only -- never the secret, which is
+stored only as its SHA-256 digest and shown by
+no face -- and a real update rides
+`repo.settings.change` with the key
+`webhook.update` named, as S-031's deploy keys
+ride it. Organization subscriptions ride the
+existing `auth.organization.update` event with
+detail {"fields": "webhooks", "action": ...,
+"host": ...}, the road S-186's membership and
+S-192's defaults already travel. Filters are
+S-247's taxonomy judged at the door; repository
+access is S-190's admin rung, organization
+access the owners'. Migration 96; schema
+95 -> 96.)

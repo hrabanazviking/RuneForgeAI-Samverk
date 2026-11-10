@@ -251,3 +251,27 @@ event named here is a real event-store verb.
 |---|---|---|---|
 | `repo.status.post` | repository | A commit status posted through the API by a scoped poster (S-246) | `poster`, `credential`, `token_id`, `oid`, `context`, `state` |
 | `repo.check_run.post` | repository | A check run posted through the API by a scoped poster (S-246) | `poster`, `credential`, `token_id`, `oid`, `name`, `status`, `conclusion` |
+
+## Subscriptions (S-248)
+
+Subscriptions live in
+samverk/webhook_subscriptions.py over migration
+96's `webhooks` table. A
+subscription sits at repository level or
+organization level, names one delivery address,
+and carries a filter in this taxonomy's own
+vocabulary: chosen verbs and/or chosen
+categories, judged at the door -- unknown verbs
+and categories are refused, withheld verbs and
+categories are refused, and organization-scope
+verbs are refused at repository level. A
+subscription is active or inactive; only active
+subscriptions receive events. Its secret is set
+at creation and never shown again: only its
+SHA-256 digest is stored, and every face reports
+only whether a secret is set. Matching follows
+the scope law stated above: a repository
+subscription receives its own repository's
+events; an organization subscription receives
+the events of the organization's repositories
+and the organization-scope events.
