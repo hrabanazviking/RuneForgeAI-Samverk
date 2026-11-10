@@ -335,6 +335,19 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         400, "That commit could not be understood"),
     "check_url_invalid": (
         400, "That check link is not valid"),
+    # S-255 -- API abuse defences (its own reasons;
+    # the refusals every S-255 judgement raises)
+    "payload_too_large": (
+        413, "That request body is too large"),
+    "payload_size_invalid": (
+        400, "That payload size could not be understood"),
+    "concurrency_limit_exceeded": (
+        429, "Too many calls in flight just now"),
+    "abuse_settings_invalid": (
+        400, "That abuse-defence setting is not allowed"),
+    "endpoint_unknown": (404, "No such API endpoint"),
+    "lease_invalid": (
+        400, "That concurrency lease is not valid"),
 }
 
 # The canonical detail sentence of each S-019
