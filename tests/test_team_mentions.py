@@ -133,8 +133,8 @@ class TeamMentionTests(unittest.TestCase):
 
     # -- pins and pure laws --------------------------------
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 100)
-        self.assertEqual(db.MIGRATIONS[-1][0], 100)
+        self.assertEqual(schema_version(self.conn), 101)
+        self.assertEqual(db.MIGRATIONS[-1][0], 101)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'")}

@@ -5,7 +5,8 @@ a tag, a title, and Markdown notes; created from the
 web, the API, or a tag push with notes file.
 
 The centre is samverk/releases.py: ReleaseStore over
-migration 100 (schema 99 to 100), one row per
+migration 100 (schema 99 to 100; states in migration
+101, S-258), one row per
 (repository, tag), the tag resolved in git at creation
 and its peeled commit captured. Creation is a writer
 act through all three doors (web create, the API
@@ -92,8 +93,8 @@ class ReleaseTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_100_taxonomy_131(self):
-        self.assertEqual(schema_version(self.conn), 100)
-        self.assertEqual(db.MIGRATIONS[-1][0], 100)
+        self.assertEqual(schema_version(self.conn), 101)
+        self.assertEqual(db.MIGRATIONS[-1][0], 101)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)
@@ -102,12 +103,12 @@ class ReleaseTests(unittest.TestCase):
         tables = {r["name"] for r in self.conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         self.assertIn("releases", tables)
 
-    def test_upgrade_from_99_creates_releases(self):
+    def test_upgrade_from_100_adds_state_columns(self):
         with tempfile.TemporaryDirectory() as td:
             path = Path(td) / "old.db"
             conn = db.connect(path)
             for target, statements in db.MIGRATIONS:
-                if target > 99:
+                if target > 100:
                     continue
                 with conn:
                     for stmt in statements:
@@ -116,12 +117,16 @@ class ReleaseTests(unittest.TestCase):
                         "INSERT OR REPLACE INTO schema_meta"
                         " (key, value) VALUES ('version', ?)",
                         (str(target),))
-            self.assertEqual(schema_version(conn), 99)
-            db.migrate(conn)
             self.assertEqual(schema_version(conn), 100)
+            db.migrate(conn)
+            self.assertEqual(schema_version(conn), 101)
             tables = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             self.assertIn("releases", tables)
+            cols = {r["name"] for r in conn.execute(
+                "PRAGMA table_info(releases)")}
+            self.assertIn("draft", cols)
+            self.assertIn("prerelease", cols)
             conn.close()
 
     # -- web door ---------------------------------------
@@ -172,10 +177,11 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(d["repository"], "volmarr/pub")
         self.assertEqual(d["tag"], "v1.0")
         self.assertEqual(d["target_oid"], self.c1)
-        self.assertEqual(set(d), {"repository", "tag", "title", "notes", "target_oid", "author_id", "source", "created_at", "updated_at"})
+        self.assertEqual(set(d), {"repository", "tag", "title", "notes", "target_oid", "author_id", "source", "created_at", "updated_at", "draft", "prerelease", "state"})
+        self.assertEqual((d["draft"], d["prerelease"], d["state"]), (False, False, "published"))
 
     def test_api_refuses_unknown_field_and_non_object(self):
-        self.assertEqual(self._reason(self.releases.create_release_from_api, self.owner, "volmarr", "pub", {"tag": "v1.0", "title": "T", "draft": True}), "payload_unknown_field")
+        self.assertEqual(self._reason(self.releases.create_release_from_api, self.owner, "volmarr", "pub", {"tag": "v1.0", "title": "T", "assets": []}), "payload_unknown_field")
         self.assertEqual(self._reason(self.releases.create_release_from_api, self.owner, "volmarr", "pub", ["v1.0"]), "payload_invalid")
 
     # -- tag-push door ------------------------------------
