@@ -1969,3 +1969,28 @@ registry_refused, registry_served_by_releases
 or registry_served_by_git -- and writes and
 audits nothing. No migration -- schema 104
 stands.)
+
+S-265 (2026-11-10) added no event of its own --
+131 events stand: 33 auth, 85 repo, 13 admin.
+(Its registry core, in samverk/registry_core.py,
+is the published refusal the roadmap names for
+the verdicted-out road: S-264 deferred the
+package registry, so the core's doors stand
+defined -- a package namespace is a linked
+repository, and publish (write), fetch (read),
+list (read) and delete (admin) are judged at
+S-054's rungs on that repository before the
+verdict is spoken, private answering as missing
+even in the refusal -- and every door refuses
+with S-264's per-ecosystem answer, delegated
+to the verdict's own decide_registry_request
+so the two slices cannot drift. The seam is
+S-264's eight must-not-break invariants,
+imported whole, and the record lives in
+docs/REGISTRY_CORE.md. There is no package
+table or registry event to witness; the
+refusal writes and audits nothing, proven by
+row/audit-count snapshot in the battery, and
+audit_registry_core checks the refusal against
+the live instance. No migration -- schema 104
+stands.)
