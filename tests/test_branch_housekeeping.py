@@ -613,7 +613,7 @@ class BranchHousekeepingTests(unittest.TestCase):
 
     # -- 6. migration + taxonomy ---------------------------------------------------
     def test_migration_62_fresh_v57_upgrade_and_taxonomy_120(self):
-        self.assertEqual(db.schema_version(self.conn), 97)
+        self.assertEqual(db.schema_version(self.conn), 98)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertIn("repo.branch.delete_on_merge",
                       taxonomy.AUDIT_EVENTS)
@@ -650,7 +650,7 @@ class BranchHousekeepingTests(unittest.TestCase):
                     " (repo_id, website, topics) VALUES (1, '', '[]')")
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 97)
+            self.assertEqual(db.schema_version(conn), 98)
             row = conn.execute(
                 "SELECT delete_branch_on_merge FROM repo_settings"
                 " WHERE repo_id = 1").fetchone()

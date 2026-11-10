@@ -196,9 +196,9 @@ class MeasuredBudgetTests(unittest.TestCase):
         self.fail(f"no measurement for {pattern!r}")
 
     # -- pins ------------------------------------------------
-    def test_pins_schema_97_taxonomy_131(self):
-        self.assertEqual(schema_version(self.w.conn), 97)
-        self.assertEqual(db.MIGRATIONS[-1][0], 97)
+    def test_pins_schema_98_taxonomy_131(self):
+        self.assertEqual(schema_version(self.w.conn), 98)
+        self.assertEqual(db.MIGRATIONS[-1][0], 98)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 85)

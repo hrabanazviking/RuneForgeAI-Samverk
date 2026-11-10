@@ -572,7 +572,7 @@ class PullRequestRebaseTests(unittest.TestCase):
         self.assertIn("rebas", text.lower())
 
     def test_schema_and_taxonomy_counts(self):
-        self.assertEqual(db.schema_version(self.conn), 97)
+        self.assertEqual(db.schema_version(self.conn), 98)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         self.assertIn("repo.pull_request.rebase", taxonomy.AUDIT_EVENTS)
 
