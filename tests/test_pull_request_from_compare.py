@@ -211,7 +211,7 @@ class PullRequestFromCompareTests(unittest.TestCase):
         self.assertEqual(caught.exception.reason, "repo_not_found")
 
     def test_no_migration_no_taxonomy_and_offer_writes_nothing(self):
-        self.assertEqual(db.schema_version(self.conn), 98)
+        self.assertEqual(db.schema_version(self.conn), 99)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         before = self.conn.execute("SELECT COUNT(*) FROM audit_log").fetchone()[0]
         offer = self.from_compare.offer(self.owner, "volmarr", "pub", "main", "feature")

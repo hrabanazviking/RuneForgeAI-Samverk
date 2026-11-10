@@ -106,8 +106,8 @@ class TeamPermissionTests(unittest.TestCase):
             self.assertEqual(ctx.exception.reason, "role_invalid")
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 98)
-        self.assertEqual(db.MIGRATIONS[-1][0], 98)
+        self.assertEqual(schema_version(self.conn), 99)
+        self.assertEqual(db.MIGRATIONS[-1][0], 99)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 131)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(team_repositories)").fetchall()]
         self.assertIn("permission", cols)
@@ -127,7 +127,7 @@ class TeamPermissionTests(unittest.TestCase):
                 conn.execute("INSERT INTO team_repositories (team_id, repo_id, added_by, created_at) VALUES (1, 2, NULL, 1)")
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 98)
+            self.assertEqual(db.schema_version(conn), 99)
             row = conn.execute("SELECT permission FROM team_repositories WHERE team_id = 1 AND repo_id = 2").fetchone()
             self.assertEqual(row["permission"], "read")
             conn.close()
