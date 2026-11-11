@@ -175,8 +175,8 @@ class StorageAccountingTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------------
     def test_pins_schema_105_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 111)
-        self.assertEqual(db.MIGRATIONS[-1][0], 111)
+        self.assertEqual(schema_version(self.conn), 112)
+        self.assertEqual(db.MIGRATIONS[-1][0], 112)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)

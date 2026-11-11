@@ -406,7 +406,7 @@ class WikiWebTests(unittest.TestCase):
     # -- standing invariants -----------------------------------
 
     def test_schema_and_taxonomy_stand_and_nothing_is_witnessed(self):
-        self.assertEqual(schema_version(self.conn), 111)
+        self.assertEqual(schema_version(self.conn), 112)
         before = self._audit_count()
         self._seed()
         self.web.index(None, 'volmarr', 'pub')
@@ -415,7 +415,7 @@ class WikiWebTests(unittest.TestCase):
             self.owner, 'volmarr', 'pub', 'Draft', '# Draft\n')
         self.web.history(None, 'volmarr', 'pub')
         self.assertEqual(self._audit_count(), before)
-        self.assertEqual(schema_version(self.conn), 111)
+        self.assertEqual(schema_version(self.conn), 112)
 
 
 if __name__ == '__main__':

@@ -173,3 +173,16 @@ to use discussions today is answered
 (build, queued for S-283..S-285) and
 `discussions_deferred` for polls and rich
 badges.
+
+## Build progress
+
+- S-283 (2026-11-11) landed the first piece:
+  categories and threads, in
+  samverk/discussions.py over migration 112
+  (schema 111 -> 112), under the invariants
+  above. The verdict audit now treats those six
+  tables as the sanctioned build and still
+  refuses any discussion-shaped name beyond
+  them. Answer marking (S-284) and conversion
+  (S-285) remain queued on this verdict; polls
+  and rich badges remain deferred.

@@ -22,7 +22,7 @@ history or embed one named file. Reading follows
 S-278: public and secret alike embeddable by link,
 signed in or not; an unknown gist is the uniform
 gist_not_found. No storage, no migration: the
-schema stands at 111.
+schema stands at 112.
 
 No new taxonomy event -- 133 stand (33 auth /
 87 repo / 13 admin); gist acts unwitnessed, as
@@ -98,9 +98,9 @@ class GistEmbedTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 111)
-        self.assertEqual(db.MIGRATIONS[-1][0], 111)
-        self.assertEqual(db.migrate(self.conn), 111)
+        self.assertEqual(schema_version(self.conn), 112)
+        self.assertEqual(db.MIGRATIONS[-1][0], 112)
+        self.assertEqual(db.migrate(self.conn), 112)
         from samverk.taxonomy import AUDIT_EVENTS
         self.assertEqual(len(AUDIT_EVENTS), 133)
 

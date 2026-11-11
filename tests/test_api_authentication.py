@@ -110,8 +110,8 @@ class ApiAuthenticationTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.w.conn), 111)
-        self.assertEqual(db.MIGRATIONS[-1][0], 111)
+        self.assertEqual(schema_version(self.w.conn), 112)
+        self.assertEqual(db.MIGRATIONS[-1][0], 112)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
