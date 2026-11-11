@@ -2221,3 +2221,27 @@ index and page views carry it. The git transports
 transport act, not an edit through this door. Wiki
 acts carry no verb of their own in the frozen
 vocabulary and are not witnessed.)
+S-277 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its gist model, in
+samverk/gists.py, makes a gist a mini-repository: its
+own bare git repository at `<data_root>/gists/<owner>/
+<id>.git`, created by `git init --bare` when the gist
+is created, holding multiple flat text files under one
+filename law (separators, `..`, control characters, a
+leading or trailing dot refused filename_invalid; file
+identity case-insensitive, so a case-twin is refused
+file_duplicate), capped at 1,048,576 bytes a file and
+100 files a gist, with the full revision history as
+the repository's own git log -- every file-set change
+is one plumbing commit carrying exactly the named set,
+guarded by an optimistic expected-tip check
+(gist_conflict). Migration 108's `gists` table
+(schema 107 -> 108) holds only the metadata git
+cannot: the owner, the one description (editing it is
+a metadata act and moves no revision), and the
+creation/update stamps. Until S-278 lands the
+public/secret choice, reads are the owner's (or a site
+admin's) alone and everyone else gets the uniform
+gist_not_found, fail-closed. Gist acts carry no verb
+of their own in the frozen vocabulary and are not
+witnessed.)

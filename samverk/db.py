@@ -2457,6 +2457,22 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-277: gist model -- one row per gist holding
+    # the metadata git cannot: the owner, the one
+    # description, and the creation/update stamps.
+    # The files and their full revision history live
+    # in the gist's own bare git repository, never
+    # duplicated into tables.
+    (108, [
+        "CREATE TABLE gists ("
+        "  id INTEGER PRIMARY KEY,"
+        "  owner_id INTEGER NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_gists_owner ON gists (owner_id)",
+    ]),
 ]
 
 
