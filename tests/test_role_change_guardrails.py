@@ -103,8 +103,8 @@ class RoleChangeGuardrailTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 108)
-        self.assertEqual(db.MIGRATIONS[-1][0], 108)
+        self.assertEqual(schema_version(self.conn), 109)
+        self.assertEqual(db.MIGRATIONS[-1][0], 109)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
     # the pure rule

@@ -242,8 +242,8 @@ class GlobalSearchTests(unittest.TestCase):
         self.addCleanup(self.a.conn.close)
 
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.a.conn), 108)
-        self.assertEqual(db.MIGRATIONS[-1][0], 108)
+        self.assertEqual(schema_version(self.a.conn), 109)
+        self.assertEqual(db.MIGRATIONS[-1][0], 109)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)

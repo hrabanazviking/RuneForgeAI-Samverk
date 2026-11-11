@@ -13,10 +13,12 @@ under one filename law (separators / `..` / leading
 dot refused, identity case-insensitive), each
 file-set change is one plumbing commit guarded by an
 expected-tip conflict (gist_conflict), and the
-history is the gist repo's own git log. Until S-278
-lands public/secret, reads are owner/admin only with
-uniform gist_not_found for everyone else. No new
-taxonomy event -- 133 stand; schema 107 -> 108.
+history is the gist repo's own git log. S-278 has
+since landed the public/secret choice on this model
+(see tests/test_gist_editor.py): reads by link are
+open, listings show secret gists to their owner
+only. No new taxonomy event -- 133 stand;
+schema 108 -> 109 (S-278's visibility column).
 
 Counted with: python3 -m unittest discover -s tests -v
 """
@@ -77,9 +79,9 @@ class GistModelTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 108)
-        self.assertEqual(db.MIGRATIONS[-1][0], 108)
-        self.assertEqual(db.migrate(self.conn), 108)
+        self.assertEqual(schema_version(self.conn), 109)
+        self.assertEqual(db.MIGRATIONS[-1][0], 109)
+        self.assertEqual(db.migrate(self.conn), 109)
         from samverk.taxonomy import AUDIT_EVENTS
         self.assertEqual(len(AUDIT_EVENTS), 133)
 
@@ -260,22 +262,29 @@ class GistModelTests(unittest.TestCase):
     # -- permissions ------------------------------------------
 
     def test_strangers_see_nothing(self):
-        gist = self._make()
+        # S-278 restates this S-277 law: a secret gist
+        # is unlisted for strangers (it stands in no
+        # listing but its owner's), though it stays
+        # readable by its link -- unlisted-but-linkable,
+        # never private. An unknown id is still the
+        # uniform gist_not_found for every viewer.
+        gist = self.gists.create_gist(
+            self.owner, "quiet", {"a.txt": "a"},
+            visibility="secret")
         for viewer in (None, self.other):
             self.assertEqual(
-                self._reason(self.gists.get_gist, viewer, gist.id),
-                "gist_not_found")
+                self.gists.list_gists(viewer, "volmarr"), [])
             self.assertEqual(
-                self._reason(self.gists.list_files, viewer, gist.id),
-                "gist_not_found")
-            self.assertEqual(
-                self._reason(self.gists.list_revisions, viewer, gist.id),
-                "gist_not_found")
+                self.gists.get_gist(viewer, gist.id).id, gist.id)
         self.assertEqual(
-            self._reason(self.gists.list_gists, self.other, "volmarr"),
-            "gist_not_found")
+            [g.id for g in self.gists.list_gists(
+                self.owner, "volmarr")], [gist.id])
         self.assertEqual(
             self._reason(self.gists.get_gist, self.owner, 99999),
+            "gist_not_found")
+        self.assertEqual(
+            self._reason(self.gists.list_gists,
+                         self.owner, "nosuchuser"),
             "gist_not_found")
 
     def test_only_owner_writes(self):
