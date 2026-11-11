@@ -2427,6 +2427,22 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  state TEXT NOT NULL DEFAULT 'open'"
         ")",
     ]),
+    # S-269: release-from-tag automation -- one row
+    # per repository holding the switch: enabled is
+    # the whole setting (no row means off, the
+    # honest default), updated_by / updated_at name
+    # the writer who last flipped it. The drafts the
+    # automation creates are ordinary S-257 release
+    # rows in S-258's draft state; the generated
+    # notes live on the release row itself.
+    (106, [
+        "CREATE TABLE release_tag_automation ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  enabled INTEGER NOT NULL DEFAULT 0,"
+        "  updated_by INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 

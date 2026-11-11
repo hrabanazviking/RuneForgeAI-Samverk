@@ -2066,3 +2066,23 @@ only and appends no audit entry: accounting is a
 measurement, not an act. No migration: the report reads
 the rows migrations 102 and 105 already keep, schema 105
 stands.)
+
+
+S-269 (2026-11-10) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its release-from-tag
+automation, in samverk/release_from_tag.py, drafts a
+release when a version tag is pushed and a writer has
+turned the per-repository switch on -- migration 106's
+release_tag_automation row, schema 105 to 106; no row
+means off. The draft is an ordinary S-257 release row in
+S-258's draft state, titled by its tag, with notes
+generated from the merged pull requests whose merge
+commits are ancestors of the tag's target and not of the
+previous version tag's target -- ancestry by git's own
+merge-base answer, never timestamps. A draft is not a
+publication (S-258): creating one writes no
+repo.release.publish witness and notifies nobody
+(S-262), and the automation never publishes -- a writer
+edits the draft and publishes it by hand. Flipping the
+switch is a settings act with no verb of its own in the
+frozen vocabulary and is not witnessed.)

@@ -94,6 +94,8 @@ Further laws:
   colour alone). A published release carries no
   marker — the absence is the ordinary case.
   Assets are S-259 (samverk/release_assets.py).
+  Release-from-tag automation is S-269
+  (samverk/release_from_tag.py).
 - **Latest (S-261).** One release in a repository
   is the *latest*: the newest published release.
   "Latest" excludes prereleases and drafts — a

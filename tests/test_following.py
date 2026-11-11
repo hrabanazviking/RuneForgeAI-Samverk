@@ -364,8 +364,8 @@ class FollowingTests(unittest.TestCase):
         self.assertNotIn("<u>yrsa</u>", page)
 
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.conn), 105)
-        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(schema_version(self.conn), 106)
+        self.assertEqual(db.MIGRATIONS[-1][0], 106)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
