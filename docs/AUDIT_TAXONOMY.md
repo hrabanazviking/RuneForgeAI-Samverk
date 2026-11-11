@@ -2040,3 +2040,29 @@ silently fixed, exactly as S-071 has always held. The
 sweep appends no audit entry and takes no verb: expiry is
 the retention policy executing on schedule, not a
 poster's act.)
+
+
+S-268 (2026-11-10) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its storage accounting,
+in samverk/storage_accounting.py, joins the two upload
+stores to S-058's size accounting and S-068-style quotas:
+a repository's storage is S-058's walked git objects, LFS
+and other bytes -- read from repo_size.measure_path, never
+re-walked -- plus its standing release_assets bytes
+(S-259, migration 102) and ci_artifacts bytes (S-266,
+migration 105), each row's size the measured size
+inspect_upload proved at promotion, counted once per
+content-addressed file at each store's own disk grouping
+-- artifacts once per digest within a repository, release
+assets once per digest within a release. The quota judged
+against the joined total is S-068's one effective quota
+-- per-repository wins, instance default next, otherwise
+unlimited -- with check_upload / enforce_upload in
+S-068's shape: a decision object first, a quota_exceeded
+exception second, and a refusal in plain numbers. Standing
+rows are the account, so an expired artifact counts until
+S-267's sweep removes it. Reading is owners and admins
+only and appends no audit entry: accounting is a
+measurement, not an act. No migration: the report reads
+the rows migrations 102 and 105 already keep, schema 105
+stands.)
