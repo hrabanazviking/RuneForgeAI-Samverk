@@ -100,6 +100,19 @@ at 110.
   seam. Comments are migration 111's tables, and
   the schema stands at 111. Gist acts remain
   unwitnessed: 133 events stand.
+
+- **Embedding (S-281).** The gist view carries the
+  gist's embed panel: the default HTML snippet from
+  ``samverk/gist_embed.py`` in a read-only text area,
+  ready to paste into a blog or a Samtal post. The
+  embed doors here are thin passes to
+  `GistEmbedStore`, so the script-free, iframe-free
+  by default, CSP-safe forms, the judged base, the
+  pinned-revision and single-file choices and every
+  refusal shape are inherited whole. Embedding
+  stores nothing and changes no schema: the schema
+  stands at 111. Gist acts remain unwitnessed: 133
+  events stand.
 """
 
 from __future__ import annotations
@@ -117,6 +130,7 @@ from .gist_comments import (
     GistComment, GistCommentEdit, GistCommentStore,
     render_gist_comments,
 )
+from .gist_embed import GistEmbedStore, render_embed_panel
 from .gists import (
     PUBLIC_WORDS, SECRET_WORDS, VISIBILITY_PUBLIC,
     VISIBILITY_SECRET, Gist, GistError, GistFile,
@@ -185,6 +199,7 @@ class GistView:
     comments: tuple[GistComment, ...] = ()   # live (S-280)
     comment_count: int = 0                   # live (S-280)
     comment_authors: dict = None             # id -> name (S-280)
+    embed_snippet: str = ""                   # default HTML (S-281)
 
     def __post_init__(self):
         if self.comment_authors is None:
@@ -208,6 +223,7 @@ class GistWeb:
         accounts: AccountStore,
         gists: GistStore | None = None,
         comments: GistCommentStore | None = None,
+        embeds: GistEmbedStore | None = None,
         audit: AuditLog | None = None,
         time_fn: Callable[[], float] = time.time,
     ):
@@ -216,6 +232,9 @@ class GistWeb:
             conn, data_root, accounts, audit=audit,
             time_fn=time_fn)
         self._comments = comments or GistCommentStore(
+            conn, data_root, accounts, gists=self._gists,
+            audit=audit, time_fn=time_fn)
+        self._embeds = embeds or GistEmbedStore(
             conn, data_root, accounts, gists=self._gists,
             audit=audit, time_fn=time_fn)
 
@@ -268,7 +287,9 @@ class GistWeb:
             fork_count=summary.fork_count,
             my_starred=summary.my_starred,
             comments=comments, comment_count=len(comments),
-            comment_authors=authors)
+            comment_authors=authors,
+            embed_snippet=self._call(
+                self._embeds.snippet, viewer, gist.id))
 
     def list_gists(self, viewer: User | None,
                    owner: object) -> list[Gist]:
@@ -328,6 +349,19 @@ class GistWeb:
                       gist_id: object) -> int:
         return self._call(
             self._comments.comment_count, viewer, gist_id)
+
+    # -- embedding (S-281) -----------------------------
+
+    def embed_snippet(self, viewer: User | None,
+                      gist_id: object, **kwargs) -> str:
+        return self._call(
+            self._embeds.snippet, viewer, gist_id, **kwargs)
+
+    def embed_document(self, viewer: User | None,
+                       gist_id: object, **kwargs) -> str:
+        return self._call(
+            self._embeds.embed_document, viewer, gist_id,
+            **kwargs)
 
     # -- edit ------------------------------------------
 
@@ -481,6 +515,7 @@ def render_gist_view_page(view: GistView) -> str:
         f'{view.comment_count}</p>'
         + render_gist_comments(
             list(view.comments), view.comment_authors)
+        + render_embed_panel(view.embed_snippet)
         + '</body></html>')
 
 

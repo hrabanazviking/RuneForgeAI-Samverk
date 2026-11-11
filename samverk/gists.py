@@ -9,7 +9,8 @@ below and the web editor face in
 ``samverk/gist_web.py``. Fork and star are S-279
 (this file, below); comments are S-280 (in
 ``samverk/gist_comments.py``, over this store);
-embedding is S-281, not built here.
+embedding is S-281 (in ``samverk/gist_embed.py``,
+over this store).
 
 The laws:
 
@@ -129,7 +130,9 @@ and migration 110's ``fork_of_id`` column and
 ``gist_stars`` table, plus migration 111's
 ``gist_comments`` / ``gist_comment_edits`` tables
 (schema 108 -> 111); the files stay git storage,
-not tables.
+not tables. Embedding (S-281) stores nothing of
+its own and changes no schema: the schema stands
+at 111.
 """
 
 from __future__ import annotations
