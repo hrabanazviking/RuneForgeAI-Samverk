@@ -2508,6 +2508,37 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_gist_stars_user"
         " ON gist_stars (user_id, id)",
     ]),
+    # S-280: gist comments -- migration 35's
+    # issue_comments / issue_comment_edits shape
+    # carried whole, one column renamed: gist_id
+    # for issue_id. Deletion is a tombstone on the
+    # comment row (body cleared, deleted_at /
+    # deleted_by stamped); every edit first records
+    # the previous body in gist_comment_edits.
+    (111, [
+        "CREATE TABLE gist_comments ("
+        "  id INTEGER PRIMARY KEY,"
+        "  gist_id INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  deleted_at INTEGER,"
+        "  deleted_by INTEGER"
+        ")",
+        "CREATE INDEX idx_gist_comments_gist"
+        " ON gist_comments (gist_id, id)",
+        "CREATE TABLE gist_comment_edits ("
+        "  id INTEGER PRIMARY KEY,"
+        "  comment_id INTEGER NOT NULL,"
+        "  editor_id INTEGER NOT NULL,"
+        "  previous_body TEXT NOT NULL,"
+        "  edited_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_gist_comment_edits_comment"
+        " ON gist_comment_edits (comment_id, id)",
+    ]),
 ]
 
 

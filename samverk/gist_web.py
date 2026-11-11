@@ -87,6 +87,19 @@ stores nothing of its own; the visibility choice
 is migration 109's column, fork provenance and
 stars are migration 110's, and the schema stands
 at 110.
+
+- **Comments (S-280).** The gist view carries the
+  gist's live conversation and its count, from
+  ``samverk/gist_comments.py`` -- S-123's machinery
+  reused, not duplicated. The comment doors here
+  are thin passes to `GistCommentStore`, so the one
+  body law, the visible edit history, the tombstone
+  deletion and the author/owner/admin hands are
+  inherited whole; comment bodies and author names
+  reach the page only through S-010's escaping
+  seam. Comments are migration 111's tables, and
+  the schema stands at 111. Gist acts remain
+  unwitnessed: 133 events stand.
 """
 
 from __future__ import annotations
@@ -100,6 +113,10 @@ from pathlib import Path
 from .accounts import AccountStore, User
 from .audit import AuditLog
 from .escaping import escape_html_attr, escape_html_text
+from .gist_comments import (
+    GistComment, GistCommentEdit, GistCommentStore,
+    render_gist_comments,
+)
 from .gists import (
     PUBLIC_WORDS, SECRET_WORDS, VISIBILITY_PUBLIC,
     VISIBILITY_SECRET, Gist, GistError, GistFile,
@@ -165,6 +182,13 @@ class GistView:
     star_count: int = 0           # live (S-279)
     fork_count: int = 0           # live (S-279)
     my_starred: bool = False      # viewer's own star (S-279)
+    comments: tuple[GistComment, ...] = ()   # live (S-280)
+    comment_count: int = 0                   # live (S-280)
+    comment_authors: dict = None             # id -> name (S-280)
+
+    def __post_init__(self):
+        if self.comment_authors is None:
+            object.__setattr__(self, "comment_authors", {})
 
 
 @dataclass(frozen=True)
@@ -183,12 +207,17 @@ class GistWeb:
         data_root: Path,
         accounts: AccountStore,
         gists: GistStore | None = None,
+        comments: GistCommentStore | None = None,
         audit: AuditLog | None = None,
         time_fn: Callable[[], float] = time.time,
     ):
+        self._accounts = accounts
         self._gists = gists or GistStore(
             conn, data_root, accounts, audit=audit,
             time_fn=time_fn)
+        self._comments = comments or GistCommentStore(
+            conn, data_root, accounts, gists=self._gists,
+            audit=audit, time_fn=time_fn)
 
     def _call(self, fn, *args, **kwargs):
         try:
@@ -224,11 +253,22 @@ class GistWeb:
                          or viewer.is_admin))
         summary = self._call(
             self._gists.star_summary, viewer, gist.id)
+        comments = tuple(self._call(
+            self._comments.list_comments, viewer, gist.id))
+        authors: dict[int, str] = {}
+        for comment in comments:
+            if comment.author_id not in authors:
+                user = self._accounts.get_by_id(comment.author_id)
+                authors[comment.author_id] = (
+                    user.username if user is not None
+                    else f"user {comment.author_id}")
         return GistView(
             gist=gist, files=files, can_edit=can_edit,
             star_count=summary.star_count,
             fork_count=summary.fork_count,
-            my_starred=summary.my_starred)
+            my_starred=summary.my_starred,
+            comments=comments, comment_count=len(comments),
+            comment_authors=authors)
 
     def list_gists(self, viewer: User | None,
                    owner: object) -> list[Gist]:
@@ -253,6 +293,41 @@ class GistWeb:
                     gist_id: object) -> Gist:
         self._call(self._gists.unstar, actor, gist_id)
         return self._call(self._gists.get_gist, actor, gist_id)
+
+    # -- comments (S-280) ------------------------------
+
+    def list_comments(self, viewer: User | None,
+                      gist_id: object) -> list[GistComment]:
+        return self._call(
+            self._comments.list_comments, viewer, gist_id)
+
+    def add_comment(self, actor: User | None, gist_id: object,
+                    body: object) -> GistComment:
+        return self._call(
+            self._comments.add_comment, actor, gist_id, body)
+
+    def edit_comment(self, actor: User | None, gist_id: object,
+                     comment_id: object,
+                     body: object) -> GistComment:
+        return self._call(
+            self._comments.edit_comment, actor, gist_id,
+            comment_id, body)
+
+    def delete_comment(self, actor: User | None, gist_id: object,
+                       comment_id: object) -> GistComment:
+        return self._call(
+            self._comments.delete_comment, actor, gist_id,
+            comment_id)
+
+    def comment_edits(self, viewer: User | None, gist_id: object,
+                      comment_id: object) -> list[GistCommentEdit]:
+        return self._call(
+            self._comments.edits_for, viewer, gist_id, comment_id)
+
+    def comment_count(self, viewer: User | None,
+                      gist_id: object) -> int:
+        return self._call(
+            self._comments.comment_count, viewer, gist_id)
 
     # -- edit ------------------------------------------
 
@@ -401,7 +476,12 @@ def render_gist_view_page(view: GistView) -> str:
         f'({star_word})</p>'
         f'<p class="gist-forks">Forks: {view.fork_count}</p>'
         f'{edit}'
-        '</body></html>')
+        f'<h2>Comments</h2>'
+        f'<p class="gist-comments-count">Comments: '
+        f'{view.comment_count}</p>'
+        + render_gist_comments(
+            list(view.comments), view.comment_authors)
+        + '</body></html>')
 
 
 def render_gist_list_page(owner: str, gists: list[Gist]) -> str:
