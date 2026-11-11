@@ -7,8 +7,9 @@ the primitives every later gist slice stands on.
 S-278 adds the public/secret visibility choice
 below and the web editor face in
 ``samverk/gist_web.py``. Fork and star are S-279
-(this file, below); comments are S-280 and
-embedding S-281; neither is built here.
+(this file, below); comments are S-280 (in
+``samverk/gist_comments.py``, over this store);
+embedding is S-281, not built here.
 
 The laws:
 
@@ -125,8 +126,10 @@ taxonomy event: 133 stand (33 auth / 87 repo /
 13 admin). Storage is migration 108's ``gists``
 table plus migration 109's ``visibility`` column
 and migration 110's ``fork_of_id`` column and
-``gist_stars`` table (schema 108 -> 110); the
-files stay git storage, not tables.
+``gist_stars`` table, plus migration 111's
+``gist_comments`` / ``gist_comment_edits`` tables
+(schema 108 -> 111); the files stay git storage,
+not tables.
 """
 
 from __future__ import annotations
@@ -877,6 +880,16 @@ class GistStore:
         before = self._view(row)
         path = self._path_for(row["owner_lower"], row["id"])
         with self._conn:
+            # S-280: the gist's conversation dies with
+            # it -- edit history first, then comments.
+            self._conn.execute(
+                "DELETE FROM gist_comment_edits"
+                " WHERE comment_id IN"
+                " (SELECT id FROM gist_comments"
+                " WHERE gist_id = ?)", (row["id"],))
+            self._conn.execute(
+                "DELETE FROM gist_comments WHERE gist_id = ?",
+                (row["id"],))
             self._conn.execute(
                 "DELETE FROM gist_stars WHERE gist_id = ?",
                 (row["id"],))

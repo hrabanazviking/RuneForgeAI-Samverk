@@ -2261,3 +2261,27 @@ for anonymous mutation, and the uniform gist_not_found
 for an unknown gist (schema 109 -> 110). Gist acts
 carry no verb of their own in the frozen vocabulary
 and are not witnessed.)
+
+S-280 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its gist comments, in
+samverk/gist_comments.py with the face in samverk/gist_web.py,
+reuse the issue-comment machinery of S-123 rather than
+duplicating it: the body law is S-123's own validator
+(comment_required / comment_invalid under the one BODY_MAX
+cap), editing records the previous body in migration 111's
+gist_comment_edits before the new body lands and edits_for
+shows that history, and deletion is S-123's tombstone --
+body cleared, deleted_at / deleted_by stamped, list views
+skip it -- by the author, the gist's owner (the moderator
+here, as a repository admin is for an issue), or a site
+admin; editing is the author's alone. Migration 111's
+gist_comments / gist_comment_edits tables are migration
+35's shape carried whole with gist_id for issue_id
+(schema 110 -> 111). Permissions ride the gist's, not a
+repository's: reading follows S-278 (public and secret
+alike readable by link, signed in or not; an unknown gist
+is the uniform gist_not_found), commenting is a signed-in
+act, and comments belong to the gist, not a revision --
+a fork starts with none and deleting the gist deletes
+its conversation. Gist acts carry no verb of their own
+in the frozen vocabulary and are not witnessed.)

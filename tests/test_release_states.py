@@ -102,8 +102,8 @@ class ReleaseStateTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_101_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 110)
-        self.assertEqual(db.MIGRATIONS[-1][0], 110)
+        self.assertEqual(schema_version(self.conn), 111)
+        self.assertEqual(db.MIGRATIONS[-1][0], 111)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
@@ -127,7 +127,7 @@ class ReleaseStateTests(unittest.TestCase):
                 conn.execute("INSERT INTO releases (repo_id, tag, title, notes, target_oid, author_id, source, created_at, updated_at) VALUES (1, 'v0', 'Old', '', 'abc', 1, 'web', 1, 1)")
             self.assertEqual(schema_version(conn), 100)
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 110)
+            self.assertEqual(schema_version(conn), 111)
             row = conn.execute("SELECT draft, prerelease FROM releases WHERE tag='v0'").fetchone()
             self.assertEqual((row["draft"], row["prerelease"]), (0, 0))
             conn.close()

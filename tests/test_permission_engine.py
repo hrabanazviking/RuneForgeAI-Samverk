@@ -102,8 +102,8 @@ class PermissionEngineTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 110)
-        self.assertEqual(db.MIGRATIONS[-1][0], 110)
+        self.assertEqual(schema_version(self.conn), 111)
+        self.assertEqual(db.MIGRATIONS[-1][0], 111)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
     # pure judgement
