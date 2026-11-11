@@ -15,6 +15,14 @@ study 42's three stores under one roof:
 - **LFS objects** — every object file in a registered
   repository's S-060 layout must sit at the fan-out path its
   oid names, and its bytes must still hash to that oid.
+- **CI artifacts (S-267)** — every standing `ci_artifacts`
+  row must be unexpired at the checker's clock and its
+  content-addressed bytes must sit on disk at S-266's
+  address; every byte file under `ci-artifacts/<repo>/`
+  must be named by a standing row in that repository.
+  A standing expired row is the drift S-267's off-path
+  job exists to clear; the checker names it, the job
+  removes it — never the other way round.
 
 The law of this checker: **drift is reported, never silently
 "fixed".** The sweep is read-only — it opens no write
@@ -29,9 +37,13 @@ from __future__ import annotations
 
 import hashlib
 import sqlite3
+import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
+from .artifact_expiry import artifact_bytes_path
+from .ci_artifacts import is_expired
 from .repo_paths import repos_root
 from .repositories import RepositoryStore
 
@@ -49,6 +61,7 @@ class ConsistencyReport:
     disk_repos_seen: int
     lfs_objects_checked: int
     drifts: tuple[Drift, ...] = ()
+    artifacts_checked: int = 0
 
     @property
     def is_clean(self) -> bool:
@@ -62,10 +75,12 @@ class ConsistencyChecker:
     """Read-only reconciliation of rows ↔ disk ↔ LFS objects."""
 
     def __init__(self, conn: sqlite3.Connection, data_root: Path,
-                 repositories: RepositoryStore):
+                 repositories: RepositoryStore,
+                 time_fn: Callable[[], float] = time.time):
         self._conn = conn
         self._data_root = Path(data_root)
         self._repos = repositories
+        self._now = time_fn
 
     def check(self) -> ConsistencyReport:
         drifts: list[Drift] = []
@@ -136,9 +151,69 @@ class ConsistencyChecker:
                 f"repo_mirrors row names repository id "
                 f"{orphan['repo_id']}, which has no row"))
 
+        artifacts_checked = self._check_artifacts(drifts)
+
         return ConsistencyReport(
             repos_checked=len(rows), disk_repos_seen=disk_seen,
-            lfs_objects_checked=lfs_checked, drifts=tuple(drifts))
+            lfs_objects_checked=lfs_checked, drifts=tuple(drifts),
+            artifacts_checked=artifacts_checked)
+
+    # -- CI artifacts (S-267) --------------------------------------
+    def _check_artifacts(self, drifts: list[Drift]) -> int:
+        """Reconcile migration 105's artifact rows against
+        their content-addressed bytes: a standing expired
+        row, a row whose bytes are gone, and bytes no
+        standing row names are each drift, reported and
+        never fixed here. S-267's job is the deliberate
+        act that clears the expired standing rows."""
+        standing = self._conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table'"
+            " AND name = 'ci_artifacts'").fetchone()
+        if standing is None:
+            return 0
+        now = int(self._now())
+        rows = self._conn.execute(
+            "SELECT * FROM ci_artifacts ORDER BY id").fetchall()
+        named: dict[int, set[str]] = {}
+        for row in rows:
+            repo_row = self._conn.execute(
+                "SELECT owner, name FROM repositories WHERE id = ?",
+                (row["repo_id"],)).fetchone()
+            full = (f"{repo_row['owner']}/{repo_row['name']}"
+                    if repo_row else "")
+            named.setdefault(row["repo_id"], set()).add(row["sha256"])
+            if is_expired(row["expires_at"], now):
+                drifts.append(Drift(
+                    "artifact_expired_standing", full,
+                    f"artifact {row['id']} ({row['name']}) expired at "
+                    f"{row['expires_at']} and still stands; "
+                    "S-267's sweep is the act that removes it"))
+            path = artifact_bytes_path(
+                self._data_root, row["repo_id"],
+                row["sha256"], row["content_type"])
+            if not path.is_file():
+                drifts.append(Drift(
+                    "artifact_bytes_missing", full,
+                    f"artifact {row['id']} ({row['name']}) names bytes "
+                    f"at {path}, which are not on disk"))
+        store = self._data_root / "ci-artifacts"
+        if store.is_dir():
+            for repo_dir in sorted(
+                    p for p in store.iterdir() if p.is_dir()):
+                try:
+                    repo_id = int(repo_dir.name)
+                except ValueError:
+                    continue
+                for entry in sorted(repo_dir.iterdir()):
+                    if entry.is_symlink() or not entry.is_file():
+                        continue
+                    if entry.stem not in named.get(repo_id, set()):
+                        drifts.append(Drift(
+                            "artifact_bytes_orphan", "",
+                            f"{entry} is named by no standing "
+                            "ci_artifacts row; reported, never "
+                            "adopted or deleted silently"))
+        return len(rows)
 
     # -- LFS ------------------------------------------------------
     def _check_lfs(self, repo_path: Path, full: str,

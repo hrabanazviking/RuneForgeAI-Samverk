@@ -2017,3 +2017,26 @@ their credential and token beside the commit, the
 run and the artifact; listings and downloads are
 not witnessed, and refused acts store and audit
 nothing.)
+
+S-267 (2026-11-10) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its artifact expiry
+job, in samverk/artifact_expiry.py, enforces the retention
+windows S-266 stored as data: run off the request path, it
+sweeps exactly the rows S-266's own is_expired judges
+expired at the sweep's clock, deleting each swept
+artifact's row and its content-addressed bytes together --
+shared bytes kept while a live row in the repository still
+names them, already-missing bytes counted honestly -- so
+expired artifacts vanish from listings and disk in the
+same sweep. No migration: the job reads and deletes the
+rows migration 105 already keeps, schema 105 stands.
+S-071's consistency checker reconciles the artifact store
+from this slice: a standing expired row is drift
+(`artifact_expired_standing`, the drift this sweep exists
+to clear), a standing row whose bytes are gone is
+`artifact_bytes_missing`, and bytes no standing row names
+are `artifact_bytes_orphan` -- reported there, never
+silently fixed, exactly as S-071 has always held. The
+sweep appends no audit entry and takes no verb: expiry is
+the retention policy executing on schedule, not a
+poster's act.)
