@@ -2285,3 +2285,26 @@ act, and comments belong to the gist, not a revision --
 a fork starts with none and deleting the gist deletes
 its conversation. Gist acts carry no verb of their own
 in the frozen vocabulary and are not witnessed.)
+S-281 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its gist embedding, in
+samverk/gist_embed.py with the face in samverk/gist_web.py,
+is a pure read rendered at read time over S-277's store:
+a script-free HTML snippet by default -- a static section
+carrying the description, the honest visibility words and
+every file body as S-010-escaped plain text, with no
+script, no iframe, no event handler and no inline style,
+so it is safe under S-016's CSP -- a Markdown form for
+Samtal posts whose fence grows past any fence in a body,
+and an iframe form only when explicitly named, framing a
+standalone embed document that declares default-src 'none'
+and granting the frame no scripts. Links are built on a
+judged base (S-010's safe_url; http/https or
+instance-relative, else base_url_invalid), a caller may pin
+one revision of the gist's own history (revision_not_found
+outside it) or embed one named file, and a secret gist's
+snippet carries S-278's not-private words, since embedding
+is sharing its link. Embedding witnesses no act -- it
+quotes what the gist's readers may already read -- so no
+taxonomy verb is added and no storage is created: the
+schema stands at 111. Gist acts carry no verb of their own
+in the frozen vocabulary and are not witnessed.)
