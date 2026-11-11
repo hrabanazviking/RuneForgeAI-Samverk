@@ -2109,3 +2109,27 @@ compare is private to writers); the write rides S-257's
 update_release — an edit, which carries no verb of its
 own in the frozen vocabulary and is not witnessed. No
 migration: schema 106 stands.)
+
+
+S-271 (2026-11-10) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its download integrity,
+in samverk/download_integrity.py, serves every downloadable
+asset -- a release asset (S-259), the generated checksums
+file (S-260), a CI artifact (S-266) -- with the SHA-256 its
+row already stores stated on the wire on every answer (200,
+206 and 304 alike): ETag in S-239's strong quoted-hex shape
+and Digest / Repr-Digest (RFC 9530). One Range per request
+is honoured with a 206 whose Content-Range names exactly
+the slice served, so an interrupted download resumes;
+If-Range is judged strongly (any other value serves the
+whole current file with a 200) and If-None-Match is judged
+first (a match answers 304 with the digest headers and no
+body). A malformed range is refused range_invalid (400)
+and a range that cannot be served from the file
+range_not_satisfiable (416), both registered in S-240's
+registry. Counting stays the doors' own: the facade plans
+before it opens, so a refusal and a 304 open nothing and
+count nothing, and each byte-serving answer opens its
+door's download exactly once. Download acts carry no verb
+of their own in the frozen vocabulary and are not
+witnessed. No migration: schema 106 stands.)

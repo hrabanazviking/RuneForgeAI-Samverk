@@ -378,6 +378,13 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
     "endpoint_unknown": (404, "No such API endpoint"),
     "lease_invalid": (
         400, "That concurrency lease is not valid"),
+    # S-271 -- download integrity (its own reasons;
+    # every other reason it raises is a door store
+    # reason carried verbatim)
+    "range_invalid": (
+        400, "That range could not be understood"),
+    "range_not_satisfiable": (
+        416, "That range cannot be served from this file"),
 }
 
 # The canonical detail sentence of each S-019

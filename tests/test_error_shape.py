@@ -123,6 +123,7 @@ FACE_REASONS = {
     "upload_closed", "chunk_empty", "chunk_too_large",
     "chunk_out_of_order", "size_invalid", "size_mismatch",
     "too_large", "empty",
+    "range_invalid", "range_not_satisfiable",
 }
 
 EXPECTED_STATUS = {
@@ -207,6 +208,7 @@ EXPECTED_STATUS = {
     "chunk_too_large": 413, "chunk_out_of_order": 400,
     "size_invalid": 400, "size_mismatch": 400,
     "too_large": 413, "empty": 400,
+    "range_invalid": 400, "range_not_satisfiable": 416,
 }
 
 
