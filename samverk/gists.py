@@ -6,9 +6,9 @@ model -- where a gist lives, what it holds, and
 the primitives every later gist slice stands on.
 S-278 adds the public/secret visibility choice
 below and the web editor face in
-``samverk/gist_web.py``. Fork and star are S-279,
-comments S-280 and embedding S-281; none of that
-is built here.
+``samverk/gist_web.py``. Fork and star are S-279
+(this file, below); comments are S-280 and
+embedding S-281; neither is built here.
 
 The laws:
 
@@ -81,13 +81,52 @@ The laws:
   unknown gist id is the uniform ``gist_not_found``
   for every viewer.
 
+- **Fork copies history (S-279).** Forking is a
+  server-side bare clone through S-014's
+  local-paths-only seam (``run_git_clone_local``,
+  the S-055 road): the fork is a new gist owned by
+  the forker, standing in its own bare repository
+  with its own complete object store, so its full
+  revision history -- the same commits, the same
+  tip -- survives the source being edited or even
+  deleted. The description is copied; the
+  visibility is inherited unless the forker names
+  the other choice at the fork (both are readable
+  by link, so neither direction escalates anything:
+  a secret gist is unlisted, never private).
+  Migration 110's ``fork_of_id`` column records the
+  direct source as lineage only, exactly as S-055's
+  does for repositories; a fork of a fork points at
+  its direct source. Forking needs a signed-in
+  account (``permission_denied``, as creating does)
+  and read reach, which S-278's law grants by link
+  for both visibilities; an unknown id is the
+  uniform ``gist_not_found``.
+- **Stars work as S-222 (S-279).** A star is a
+  stored row in migration 110's ``gist_stars``
+  table; counts are ``COUNT(*)`` over those rows at
+  read time, never a cached counter. Re-starring
+  and un-starring what was never starred are quiet
+  no-ops; un-starring removes only the actor's own
+  row. Starring is a reader act: it needs a
+  signed-in account (``login_required``, S-222's
+  refusal), any signed-in reader who can reach the
+  gist by its link may star it -- a secret gist
+  included -- and an unknown id is the uniform
+  ``gist_not_found``. Anonymous visitors read the
+  counts but hold no star. Starred-gist and fork
+  listings follow S-278's listing law: a secret
+  gist is listed only for its owner (or an admin,
+  or the holder of the star list itself).
+
 Gist acts carry no verb of their own in the frozen
 taxonomy vocabulary and are not witnessed -- no new
 taxonomy event: 133 stand (33 auth / 87 repo /
 13 admin). Storage is migration 108's ``gists``
 table plus migration 109's ``visibility`` column
-(schema 108 -> 109); the files stay git storage,
-not tables.
+and migration 110's ``fork_of_id`` column and
+``gist_stars`` table (schema 108 -> 110); the
+files stay git storage, not tables.
 """
 
 from __future__ import annotations
@@ -104,7 +143,7 @@ from .accounts import AccountStore, User
 from .audit import AuditLog
 from .escaping import escape_html_text
 from .platform_seam import ensure_dir
-from .proc import run_git, run_git_in
+from .proc import run_git, run_git_clone_local, run_git_in
 
 FILE_MAX = 1_048_576
 FILES_MAX = 100
@@ -133,7 +172,8 @@ __all__ = [
     "PUBLIC_WORDS", "SECRET_WORDS", "VISIBILITIES",
     "VISIBILITY_PUBLIC", "VISIBILITY_SECRET",
     "Gist", "GistError", "GistFile", "GistRevision",
-    "GistStore", "gist_to_dict", "render_gist",
+    "GistStarSummary", "GistStore", "decide_star",
+    "gist_to_dict", "render_gist", "render_gist_fork_star",
     "render_gist_list", "validate_description",
     "validate_filename", "validate_files",
     "validate_visibility", "visibility_words",
@@ -155,8 +195,9 @@ class Gist:
     visibility: str      # 'public' or 'secret' (S-278)
     created_at: int
     updated_at: int
-    head_oid: str | None      # standing tip commit, if any
-    revision_count: int       # commits in the history
+    fork_of_id: int | None = None  # direct source (S-279)
+    head_oid: str | None = None    # standing tip commit, if any
+    revision_count: int = 0        # commits in the history
 
 
 @dataclass(frozen=True)
@@ -166,6 +207,21 @@ class GistFile:
     blob_oid: str      # git blob of the standing body
     commit_oid: str    # commit the body was read at
     content: str = ""  # body text (read answers only)
+
+
+@dataclass(frozen=True)
+class GistStarSummary:
+    gist_id: int
+    owner: str            # the gist owner's username
+    star_count: int       # live COUNT(*) over gist_stars
+    fork_count: int       # live COUNT(*) over fork_of_id
+    my_starred: bool      # the viewer's own star
+
+
+def decide_star(starred: bool, want: bool) -> bool:
+    """Pure (S-222's law): True when moving to *want*
+    changes the stored star state."""
+    return starred != want
 
 
 @dataclass(frozen=True)
@@ -295,6 +351,7 @@ def gist_to_dict(gist: Gist,
         "updated_at": gist.updated_at,
         "head_oid": gist.head_oid,
         "revision_count": gist.revision_count,
+        "fork_of_id": gist.fork_of_id,
     }
     if files is not None:
         out["files"] = [
@@ -309,6 +366,9 @@ def render_gist(gist: Gist, files: list[GistFile]) -> str:
     description, the file list, and the revision count
     stated as a number. The web editor is S-278."""
     desc = escape_html_text(gist.description)
+    fork = (f'<p class="gist-fork">Forked from gist '
+            f'{gist.fork_of_id}</p>'
+            if gist.fork_of_id is not None else '')
     words = escape_html_text(visibility_words(gist.visibility))
     items = "".join(
         f'<li data-file="{escape_html_text(f.name)}">'
@@ -317,11 +377,27 @@ def render_gist(gist: Gist, files: list[GistFile]) -> str:
     return (
         f'<section class="gist" data-gist="{gist.id}">'
         f"<h2>Gist {gist.id}</h2>"
-        f'<p class="gist-description">{desc}</p>'
+        f'<p class="gist-description">{desc}</p>{fork}'
         f'<p class="gist-visibility">{words}</p>'
         f"<ul>{items}</ul>"
         f'<p class="gist-revisions">{gist.revision_count} '
         f"revision(s)</p></section>")
+
+
+def render_gist_fork_star(summary: GistStarSummary) -> str:
+    """The fork/star panel in words (S-222's shape):
+    the live counts, and the viewer's own star state
+    named plainly -- meaning never rides on an icon
+    or a colour alone. Every value passes S-010."""
+    star_word = ("starred by you" if summary.my_starred
+                 else "not starred by you")
+    return "\n".join([
+        '<section class="gist-fork-star">',
+        f"<p>Stars: {summary.star_count} - "
+        f"{escape_html_text(star_word)}</p>",
+        f"<p>Forks: {summary.fork_count}</p>",
+        "</section>",
+    ])
 
 
 def render_gist_list(gists: list[Gist]) -> str:
@@ -386,6 +462,7 @@ class GistStore:
             " g.visibility AS visibility,"
             " g.created_at AS created_at,"
             " g.updated_at AS updated_at,"
+            " g.fork_of_id AS fork_of_id,"
             " u.username AS owner, u.username_lower AS owner_lower"
             " FROM gists g JOIN users u ON u.id = g.owner_id"
             " WHERE g.id = ?", (gist_id,)).fetchone()
@@ -469,6 +546,7 @@ class GistStore:
             visibility=row["visibility"],
             created_at=row["created_at"],
             updated_at=row["updated_at"],
+            fork_of_id=row["fork_of_id"],
             head_oid=tip, revision_count=count)
 
     def _commit_files(self, path: Path, actor: User,
@@ -800,6 +878,206 @@ class GistStore:
         path = self._path_for(row["owner_lower"], row["id"])
         with self._conn:
             self._conn.execute(
+                "DELETE FROM gist_stars WHERE gist_id = ?",
+                (row["id"],))
+            self._conn.execute(
                 "DELETE FROM gists WHERE id = ?", (row["id"],))
         shutil.rmtree(path, ignore_errors=True)
         return before
+
+    # -- fork (S-279) ------------------------------------
+
+    def fork_gist(self, actor: User | None, gist_id: object,
+                  *, visibility: object = None) -> Gist:
+        """Fork a gist: a server-side bare clone of the
+        source's repository (S-014's local seam, the
+        S-055 road) under a new row owned by the
+        forker, carrying the source's full revision
+        history and its description. The visibility is
+        inherited unless the forker names the other
+        choice. If git refuses, no row and no
+        directory are left behind."""
+        if actor is None:
+            raise GistError(
+                "permission_denied",
+                "Only a signed-in user can fork a gist.")
+        row = self._gist_for_read(actor, gist_id)
+        vis = (validate_visibility(visibility)
+               if visibility is not None else row["visibility"])
+        src_path = self._path_for(row["owner_lower"], row["id"])
+        if not self._is_bare(src_path):
+            raise GistError(
+                "gist_unreadable",
+                "That gist's repository does not stand on disk.")
+        now = int(self._now())
+        with self._conn:
+            cur = self._conn.execute(
+                "INSERT INTO gists (owner_id, description,"
+                " visibility, created_at, updated_at, fork_of_id)"
+                " VALUES (?, ?, ?, ?, ?, ?)",
+                (actor.id, row["description"], vis, now, now,
+                 row["id"]))
+            new_id = int(cur.lastrowid)
+        dest_path = self._path_for(actor.username_lower, new_id)
+        try:
+            if dest_path.exists():
+                raise GistError(
+                    "gist_path_exists",
+                    "A directory already exists at that gist's "
+                    "path; refusing to adopt it silently.")
+            ensure_dir(dest_path.parent)
+            result = run_git_clone_local(
+                src_path, dest_path, timeout=120.0)
+            if result.returncode != 0:
+                raise GistError(
+                    "gist_clone_failed",
+                    "git could not clone the gist repository: "
+                    + result.stderr.decode(
+                        "utf-8", "replace").strip()[:200])
+        except BaseException:
+            with self._conn:
+                self._conn.execute(
+                    "DELETE FROM gists WHERE id = ?", (new_id,))
+            shutil.rmtree(dest_path, ignore_errors=True)
+            raise
+        fresh = self._row(new_id)
+        assert fresh is not None
+        return self._view(fresh)
+
+    def fork_count(self, gist_id: int) -> int:
+        """Direct forks of a gist, counted live over
+        the fork_of_id lineage rows."""
+        row = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM gists"
+            " WHERE fork_of_id = ?", (gist_id,)).fetchone()
+        return int(row["c"])
+
+    def fork_source(self, viewer: User | None,
+                    gist_id: object) -> Gist | None:
+        """The gist this one was forked from (its direct
+        source), or None for an original gist."""
+        row = self._gist_for_read(viewer, gist_id)
+        if row["fork_of_id"] is None:
+            return None
+        return self.get_gist(viewer, row["fork_of_id"])
+
+    def list_forks(self, viewer: User | None,
+                   gist_id: object) -> list[Gist]:
+        """A gist's direct forks, oldest first, as
+        *viewer* may see them listed (S-278's listing
+        law: a secret fork is listed only for its
+        owner or an admin)."""
+        row = self._gist_for_read(viewer, gist_id)
+        rows = self._conn.execute(
+            "SELECT id FROM gists WHERE fork_of_id = ?"
+            " ORDER BY id", (row["id"],)).fetchall()
+        out: list[Gist] = []
+        for r in rows:
+            fork = self.get_gist(viewer, r["id"])
+            if (fork.visibility == VISIBILITY_PUBLIC
+                    or (viewer is not None
+                        and (viewer.id == fork.owner_id
+                             or viewer.is_admin))):
+                out.append(fork)
+        return out
+
+    # -- star (S-279, as S-222) ---------------------------
+
+    @staticmethod
+    def _require_star_actor(actor: User | None) -> User:
+        if actor is None:
+            raise GistError(
+                "login_required",
+                "Starring needs a signed-in account.")
+        return actor
+
+    def _starred_row(self, gist_id: int, user_id: int) -> bool:
+        row = self._conn.execute(
+            "SELECT 1 AS x FROM gist_stars"
+            " WHERE gist_id = ? AND user_id = ?",
+            (gist_id, user_id)).fetchone()
+        return row is not None
+
+    def star(self, actor: User | None,
+             gist_id: object) -> GistStarSummary:
+        """Star the gist: one stored row. Re-starring
+        is a quiet no-op (S-222's law)."""
+        actor = self._require_star_actor(actor)
+        row = self._gist_for_read(actor, gist_id)
+        if decide_star(self._starred_row(row["id"], actor.id),
+                       True):
+            with self._conn:
+                self._conn.execute(
+                    "INSERT OR IGNORE INTO gist_stars"
+                    " (gist_id, user_id, created_at)"
+                    " VALUES (?, ?, ?)",
+                    (row["id"], actor.id, int(self._now())))
+        return self.star_summary(actor, gist_id)
+
+    def unstar(self, actor: User | None,
+               gist_id: object) -> GistStarSummary:
+        """Take the actor's own star back. Un-starring
+        what was never starred is a quiet no-op; no
+        seam removes another account's star."""
+        actor = self._require_star_actor(actor)
+        row = self._gist_for_read(actor, gist_id)
+        if decide_star(self._starred_row(row["id"], actor.id),
+                       False):
+            with self._conn:
+                self._conn.execute(
+                    "DELETE FROM gist_stars WHERE gist_id = ?"
+                    " AND user_id = ?", (row["id"], actor.id))
+        return self.star_summary(actor, gist_id)
+
+    def is_starred(self, viewer: User | None,
+                   gist_id: object) -> bool:
+        row = self._gist_for_read(viewer, gist_id)
+        if viewer is None:
+            return False
+        return self._starred_row(row["id"], viewer.id)
+
+    def star_count(self, gist: Gist) -> int:
+        """The star counter: counted star rows, at
+        read time (S-222's seam shape)."""
+        row = self._conn.execute(
+            "SELECT COUNT(*) AS c FROM gist_stars"
+            " WHERE gist_id = ?", (gist.id,)).fetchone()
+        return int(row["c"])
+
+    def star_summary(self, viewer: User | None,
+                     gist_id: object) -> GistStarSummary:
+        row = self._gist_for_read(viewer, gist_id)
+        gist = self._view(row)
+        starred = (viewer is not None
+                   and self._starred_row(row["id"], viewer.id))
+        return GistStarSummary(
+            gist_id=gist.id, owner=gist.owner,
+            star_count=self.star_count(gist),
+            fork_count=self.fork_count(gist.id),
+            my_starred=starred)
+
+    def list_starred_gists(self, viewer: User | None,
+                           username: object) -> list[Gist]:
+        """The gists *username* has starred, oldest star
+        first, filtered to what this viewer may see
+        listed (S-278's listing law): a secret gist
+        shows only to its owner, an admin, or the
+        holder of the list itself. An unknown username
+        answers the uniform gist_not_found."""
+        subject = (self._accounts.get_by_username(username)
+                   if isinstance(username, str) else None)
+        if subject is None:
+            raise GistError("gist_not_found", "No such gist.")
+        rows = self._conn.execute(
+            "SELECT gist_id FROM gist_stars WHERE user_id = ?"
+            " ORDER BY created_at, id", (subject.id,)).fetchall()
+        out: list[Gist] = []
+        for r in rows:
+            gist = self.get_gist(viewer, int(r["gist_id"]))
+            if (gist.visibility == VISIBILITY_PUBLIC
+                    or (viewer is not None
+                        and (viewer.id == gist.owner_id
+                             or viewer.is_admin
+                             or viewer.id == subject.id))):
+                out.append(gist)
+        return out

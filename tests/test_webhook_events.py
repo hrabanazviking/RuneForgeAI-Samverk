@@ -64,8 +64,8 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 109)
-        self.assertEqual(db.MIGRATIONS[-1][0], 109)
+        self.assertEqual(schema_version(self.conn), 110)
+        self.assertEqual(db.MIGRATIONS[-1][0], 110)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:

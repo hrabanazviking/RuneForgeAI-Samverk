@@ -2483,6 +2483,31 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE gists ADD COLUMN visibility"
         " TEXT NOT NULL DEFAULT 'secret'",
     ]),
+    # S-279: gist fork and star -- provenance and
+    # stars. `fork_of_id` on the gist row points at
+    # its direct source gist (NULL for an original),
+    # lineage only, exactly as S-055's fork_of_id is
+    # for repositories: the fork's git bytes are its
+    # own clone and never depend on the source row.
+    # `gist_stars` holds one row per star, shaped as
+    # migration 86's `repo_stars` (S-222): counts are
+    # COUNT(*) over these rows at read time.
+    (110, [
+        "ALTER TABLE gists ADD COLUMN fork_of_id INTEGER",
+        "CREATE INDEX idx_gists_fork_of"
+        " ON gists (fork_of_id)",
+        "CREATE TABLE gist_stars ("
+        "  id INTEGER PRIMARY KEY,"
+        "  gist_id INTEGER NOT NULL,"
+        "  user_id INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (gist_id, user_id)"
+        ")",
+        "CREATE INDEX idx_gist_stars_gist"
+        " ON gist_stars (gist_id, id)",
+        "CREATE INDEX idx_gist_stars_user"
+        " ON gist_stars (user_id, id)",
+    ]),
 ]
 
 
