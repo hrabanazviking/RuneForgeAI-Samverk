@@ -2133,3 +2133,27 @@ count nothing, and each byte-serving answer opens its
 door's download exactly once. Download acts carry no verb
 of their own in the frozen vocabulary and are not
 witnessed. No migration: schema 106 stands.)
+
+
+S-273 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its wiki storage,
+in samverk/wiki_storage.py, gives each repository a
+wiki that is its own bare git repository, `<repo>.wiki`
+beside `<repo>.git` under S-013's layout, created
+lazily by `git init --bare` on the first page write
+only -- probing, listing and reading never create it,
+and a path standing there that is not a bare git
+repository is refused wiki_path_exists, never adopted.
+Pages are flat Markdown files under one normalization
+law (whitespace read as hyphens, one trailing .md
+canonicalised away, separators and `..` refused,
+page identity case-insensitive so no twin pages),
+capped at 1,048,576 bytes, and written as plumbing
+commits with an optimistic expected-tip check
+(page_conflict: one writer wins, the other is told).
+Every read and write rides the parent repository's
+S-054 answers, so a private repository's wiki answers
+repo_not_found together with the repository. Wiki
+acts carry no verb of their own in the frozen
+vocabulary and are not witnessed. No migration:
+schema 106 stands.)
