@@ -2086,3 +2086,26 @@ repo.release.publish witness and notifies nobody
 edits the draft and publishes it by hand. Flipping the
 switch is a settings act with no verb of its own in the
 frozen vocabulary and is not witnessed.)
+
+
+S-270 (2026-11-10) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its compare-in-release,
+in samverk/release_compare.py, embeds the compare range
+(S-105) between the previous tag and a release's tag into
+the release's notes. The previous tag is S-269's previous
+version tag for a version tag; for any other tag it is the
+newest other release whose stored target is an ancestor of
+this release's target, by git's own merge-base answer.
+When no previous tag stands, embedding is refused by name
+(no_previous_tag) — a base is never invented. The range
+itself is S-105's compare unchanged: ahead/behind counts,
+the capped commit list with its true total, and S-104's
+diff totals. Embedding is explicit and once: the section
+opens with a standing marker, the {{compare}} placeholder
+is replaced when the notes carry one, and a second embed
+is refused compare_already_embedded. Reading resolves
+through the release's own S-257/S-258 gate (a draft's
+compare is private to writers); the write rides S-257's
+update_release — an edit, which carries no verb of its
+own in the frozen vocabulary and is not witnessed. No
+migration: schema 106 stands.)
