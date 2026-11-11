@@ -2308,3 +2308,27 @@ quotes what the gist's readers may already read -- so no
 taxonomy verb is added and no storage is created: the
 schema stands at 111. Gist acts carry no verb of their own
 in the frozen vocabulary and are not witnessed.)
+S-282 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its discussions
+verdict, in samverk/discussions_verdict.py, is a pure
+read like S-202's billing hole, S-253's GraphQL verdict
+and S-264's package verdict: the study in research
+file 30 concludes BUILD for a village-scale forge --
+categories and threads (S-283), answer marking (S-284)
+and issue-discussion conversion (S-285) are verdicted
+in, on the study's own distinction that discussions
+are open-ended knowledge exchange while issues capture
+actionable work, and on the standing machinery the
+build reuses (S-123's timeline, S-219's notifications,
+S-190's permissions, Part X's search); polls and rich
+badges are deferred on the study's own instruction,
+no village need for either having been measured, so
+S-286 takes its verdicted-out road. The eight
+invariants the build must not break are recorded in
+the module and in docs/DISCUSSIONS_VERDICT.md. There
+is no discussion endpoint, table or event to witness
+yet; a request to use discussions is answered
+discussions_build_queued for a core piece or
+discussions_deferred for a deferred one, and writes
+and audits nothing. No migration -- schema 111
+stands.)
