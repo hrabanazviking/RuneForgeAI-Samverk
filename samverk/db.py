@@ -2473,6 +2473,16 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         ")",
         "CREATE INDEX idx_gists_owner ON gists (owner_id)",
     ]),
+    # S-278: gist visibility -- the public/secret
+    # choice. Rows that stand from S-277 (owner-only
+    # reads, no choice ever offered) default to
+    # 'secret': the narrower of the two new readings
+    # (unlisted, readable only by link), never
+    # silently made public.
+    (109, [
+        "ALTER TABLE gists ADD COLUMN visibility"
+        " TEXT NOT NULL DEFAULT 'secret'",
+    ]),
 ]
 
 

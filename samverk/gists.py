@@ -2,11 +2,13 @@
 
 A gist is a **mini-repository**: multiple files, full
 revision history, one description. This slice is the
-model only -- where a gist lives, what it holds, and
-the primitives every later gist slice stands on. The
-web editor and the public/secret choice are S-278,
-fork and star are S-279, comments S-280 and embedding
-S-281; none of that is built here.
+model -- where a gist lives, what it holds, and
+the primitives every later gist slice stands on.
+S-278 adds the public/secret visibility choice
+below and the web editor face in
+``samverk/gist_web.py``. Fork and star are S-279,
+comments S-280 and embedding S-281; none of that
+is built here.
 
 The laws:
 
@@ -56,23 +58,36 @@ The laws:
   nothing is stored. An update names the **full**
   standing file set: a file absent from the set is
   removed by that commit, plainly, in the open.
-- **The owner writes; visibility is S-278.** Until
-  the public/secret choice lands, a gist is read
-  only by its owner or a site admin, and a stranger
-  (or an anonymous visitor) gets the uniform
-  ``gist_not_found`` for every read, so a gist's
-  existence is itself private -- fail-closed, and
-  S-278 widens it on purpose, never by accident.
-  Only the owner (or a site admin) writes or
-  deletes; any other signed-in user is refused
-  ``permission_denied`` at the write doors.
+- **The owner writes; visibility is the owner's
+  choice (S-278).** Every gist is **public** or
+  **secret**, chosen at creation and changeable by
+  the owner as a metadata act (no revision). The
+  words are honest: a *public* gist is listed for
+  everyone and readable by anyone, signed in or
+  not. A *secret* gist is **unlisted but linkable
+  -- it is not private**: it appears in no listing
+  but the owner's own, yet anyone who has the link
+  (the gist's id) can read it in full, signed in or
+  not, and the editor says exactly that wherever
+  the choice is offered (``samverk/gist_web.py``).
+  There is no third, private reading in this slice,
+  and none is implied. Gists that stood before the
+  choice existed (migration 109) default to
+  ``secret`` -- the narrower widening, never
+  silently made public. Only the owner (or a site
+  admin) writes or deletes, whatever the
+  visibility; any other signed-in user is refused
+  ``permission_denied`` at the write doors, and an
+  unknown gist id is the uniform ``gist_not_found``
+  for every viewer.
 
 Gist acts carry no verb of their own in the frozen
 taxonomy vocabulary and are not witnessed -- no new
 taxonomy event: 133 stand (33 auth / 87 repo /
 13 admin). Storage is migration 108's ``gists``
-table (schema 107 -> 108); the files stay git
-storage, not tables.
+table plus migration 109's ``visibility`` column
+(schema 108 -> 109); the files stay git storage,
+not tables.
 """
 
 from __future__ import annotations
@@ -97,16 +112,31 @@ FILENAME_MAX = 120
 DESCRIPTION_MAX = 1_000
 MESSAGE_MAX = 1_000
 DEFAULT_BRANCH = "main"
+VISIBILITY_PUBLIC = "public"
+VISIBILITY_SECRET = "secret"
+VISIBILITIES = (VISIBILITY_PUBLIC, VISIBILITY_SECRET)
+# The honest words for the choice, stated once here
+# and carried by every face that offers or reports
+# it (S-278): a secret gist is NOT private.
+PUBLIC_WORDS = (
+    "Public — anyone can find and read this gist.")
+SECRET_WORDS = (
+    "Secret — unlisted, but not private: anyone who "
+    "has the link can read this gist. Do not put "
+    "anything in it that must stay private.")
 
 _NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 __all__ = [
     "DEFAULT_BRANCH", "DESCRIPTION_MAX", "FILES_MAX",
     "FILE_MAX", "FILENAME_MAX", "MESSAGE_MAX",
+    "PUBLIC_WORDS", "SECRET_WORDS", "VISIBILITIES",
+    "VISIBILITY_PUBLIC", "VISIBILITY_SECRET",
     "Gist", "GistError", "GistFile", "GistRevision",
     "GistStore", "gist_to_dict", "render_gist",
     "render_gist_list", "validate_description",
     "validate_filename", "validate_files",
+    "validate_visibility", "visibility_words",
 ]
 
 
@@ -122,6 +152,7 @@ class Gist:
     owner: str           # owner's username (display case)
     owner_id: int
     description: str     # the gist's one description
+    visibility: str      # 'public' or 'secret' (S-278)
     created_at: int
     updated_at: int
     head_oid: str | None      # standing tip commit, if any
@@ -159,6 +190,23 @@ def validate_description(description: object) -> str:
             f"A gist description is at most {DESCRIPTION_MAX} "
             "characters of plain text.")
     return description
+
+
+def validate_visibility(visibility: object) -> str:
+    """The S-278 choice, judged: exactly 'public' or
+    'secret' -- no third reading exists or is implied."""
+    if visibility not in VISIBILITIES:
+        raise GistError(
+            "visibility_invalid",
+            "A gist is public or secret; there is no "
+            "other visibility.")
+    return str(visibility)
+
+
+def visibility_words(visibility: str) -> str:
+    """The honest words for one standing visibility."""
+    return (PUBLIC_WORDS if visibility == VISIBILITY_PUBLIC
+            else SECRET_WORDS)
 
 
 def validate_filename(filename: object) -> str:
@@ -242,6 +290,7 @@ def gist_to_dict(gist: Gist,
         "id": gist.id,
         "owner": gist.owner,
         "description": gist.description,
+        "visibility": gist.visibility,
         "created_at": gist.created_at,
         "updated_at": gist.updated_at,
         "head_oid": gist.head_oid,
@@ -260,6 +309,7 @@ def render_gist(gist: Gist, files: list[GistFile]) -> str:
     description, the file list, and the revision count
     stated as a number. The web editor is S-278."""
     desc = escape_html_text(gist.description)
+    words = escape_html_text(visibility_words(gist.visibility))
     items = "".join(
         f'<li data-file="{escape_html_text(f.name)}">'
         f"{escape_html_text(f.name)} ({f.size} bytes)</li>"
@@ -268,6 +318,7 @@ def render_gist(gist: Gist, files: list[GistFile]) -> str:
         f'<section class="gist" data-gist="{gist.id}">'
         f"<h2>Gist {gist.id}</h2>"
         f'<p class="gist-description">{desc}</p>'
+        f'<p class="gist-visibility">{words}</p>'
         f"<ul>{items}</ul>"
         f'<p class="gist-revisions">{gist.revision_count} '
         f"revision(s)</p></section>")
@@ -285,6 +336,7 @@ def render_gist_list(gists: list[Gist]) -> str:
     items = "".join(
         f'<li data-gist="{g.id}">'
         f"{escape_html_text(g.description)} "
+        f"[{escape_html_text(g.visibility)}] "
         f"({g.revision_count} revision(s))</li>"
         for g in gists)
     return (
@@ -331,6 +383,7 @@ class GistStore:
         return self._conn.execute(
             "SELECT g.id AS id, g.owner_id AS owner_id,"
             " g.description AS description,"
+            " g.visibility AS visibility,"
             " g.created_at AS created_at,"
             " g.updated_at AS updated_at,"
             " u.username AS owner, u.username_lower AS owner_lower"
@@ -339,8 +392,12 @@ class GistStore:
 
     @staticmethod
     def _may_read(viewer: User | None, row: sqlite3.Row) -> bool:
-        return (viewer is not None
-                and (viewer.id == row["owner_id"] or viewer.is_admin))
+        # S-278: a standing gist is readable by anyone
+        # who reaches it by its id -- public gists are
+        # listed for all, secret gists are unlisted but
+        # linkable (NOT private; see SECRET_WORDS). The
+        # listing gate lives in list_gists, not here.
+        return row["visibility"] in VISIBILITIES
 
     def _gist_for_read(self, viewer: User | None,
                        gist_id: object) -> sqlite3.Row:
@@ -409,6 +466,7 @@ class GistStore:
             id=row["id"], owner=row["owner"],
             owner_id=row["owner_id"],
             description=row["description"],
+            visibility=row["visibility"],
             created_at=row["created_at"],
             updated_at=row["updated_at"],
             head_oid=tip, revision_count=count)
@@ -467,7 +525,8 @@ class GistStore:
     # -- create -------------------------------------------------
 
     def create_gist(self, actor: User | None, description: object,
-                    files: object, *, message: object = None) -> Gist:
+                    files: object, *, message: object = None,
+                    visibility: object = VISIBILITY_PUBLIC) -> Gist:
         """Create a gist: its metadata row, its bare
         repository, and its first revision carrying the
         whole file set, as one act -- if git refuses,
@@ -478,13 +537,15 @@ class GistStore:
                 "Only a signed-in user can create a gist.")
         text = validate_description(description)
         judged = validate_files(files)
+        vis = validate_visibility(visibility)
         text_message = _validate_message(message, "Create gist")
         now = int(self._now())
         with self._conn:
             cur = self._conn.execute(
                 "INSERT INTO gists (owner_id, description,"
-                " created_at, updated_at) VALUES (?, ?, ?, ?)",
-                (actor.id, text, now, now))
+                " visibility, created_at, updated_at)"
+                " VALUES (?, ?, ?, ?, ?)",
+                (actor.id, text, vis, now, now))
             gist_id = int(cur.lastrowid)
         path = self._path_for(actor.username_lower, gist_id)
         try:
@@ -518,26 +579,40 @@ class GistStore:
     # -- reads ----------------------------------------------------
 
     def get_gist(self, viewer: User | None, gist_id: object) -> Gist:
-        """One gist's standing view (owner/admin only until
-        S-278; uniform gist_not_found otherwise)."""
+        """One gist's standing view, by its id (the link):
+        any viewer, signed in or not, for a public or a
+        secret gist; an unknown id is the uniform
+        gist_not_found."""
         return self._view(self._gist_for_read(viewer, gist_id))
 
     def list_gists(self, viewer: User | None,
                    owner: object) -> list[Gist]:
-        """Every gist of one owner, newest-updated first.
-        The listing is the owner's own face: anyone else
-        (a stranger, an anonymous visitor, a misspelt
-        owner) gets the uniform gist_not_found."""
-        if viewer is None or not isinstance(owner, str):
+        """One owner's gists, newest-updated first, as
+        *viewer* may see them listed (S-278): the owner
+        (or a site admin) sees every gist, public and
+        secret; everyone else -- a stranger or an
+        anonymous visitor -- sees the public gists only.
+        A secret gist is unlisted, never listed here for
+        anyone but its owner, though it stays readable
+        by its link. A misspelt owner names no user and
+        answers the uniform gist_not_found."""
+        if not isinstance(owner, str):
             raise GistError("gist_not_found", "No such gist.")
-        if not (viewer.username_lower == owner.lower()
-                or viewer.is_admin):
+        known = self._conn.execute(
+            "SELECT id FROM users WHERE username_lower = ?",
+            (owner.lower(),)).fetchone()
+        if known is None:
             raise GistError("gist_not_found", "No such gist.")
+        own = (viewer is not None
+               and (viewer.username_lower == owner.lower()
+                    or viewer.is_admin))
         rows = self._conn.execute(
             "SELECT g.id AS id FROM gists g"
             " JOIN users u ON u.id = g.owner_id"
             " WHERE u.username_lower = ?"
-            " ORDER BY g.updated_at DESC, g.id DESC",
+            + ("" if own else
+               " AND g.visibility = 'public'")
+            + " ORDER BY g.updated_at DESC, g.id DESC",
             (owner.lower(),)).fetchall()
         return [self.get_gist(viewer, r["id"]) for r in rows]
 
@@ -658,20 +733,26 @@ class GistStore:
                     description: object = None,
                     files: object = None,
                     message: object = None,
-                    expected_oid: object = None) -> Gist:
-        """Change a gist. A new description is a metadata
-        act (no revision). A new file set is one new
-        revision carrying exactly that set -- a file
-        absent from the set is removed by the commit.
-        Naming neither is refused update_empty."""
+                    expected_oid: object = None,
+                    visibility: object = None) -> Gist:
+        """Change a gist. A new description or a new
+        visibility is a metadata act (no revision). A
+        new file set is one new revision carrying
+        exactly that set -- a file absent from the set
+        is removed by the commit. Naming none of them
+        is refused update_empty."""
         row = self._gist_for_write(actor, gist_id)
         assert actor is not None
-        if description is None and files is None:
+        if (description is None and files is None
+                and visibility is None):
             raise GistError(
                 "update_empty",
-                "An update names a description, a file set, or both.")
+                "An update names a description, a file set, "
+                "a visibility, or a combination.")
         text = (validate_description(description)
                 if description is not None else None)
+        vis = (validate_visibility(visibility)
+               if visibility is not None else None)
         judged = validate_files(files) if files is not None else None
         path = self._path_for(row["owner_lower"], row["id"])
         if not self._is_bare(path):
@@ -689,10 +770,19 @@ class GistStore:
             self._commit_files(path, actor, judged, tip, text_message)
         now = int(self._now())
         with self._conn:
-            if text is not None:
+            if text is not None and vis is not None:
+                self._conn.execute(
+                    "UPDATE gists SET description = ?,"
+                    " visibility = ?, updated_at = ?"
+                    " WHERE id = ?", (text, vis, now, row["id"]))
+            elif text is not None:
                 self._conn.execute(
                     "UPDATE gists SET description = ?, updated_at = ?"
                     " WHERE id = ?", (text, now, row["id"]))
+            elif vis is not None:
+                self._conn.execute(
+                    "UPDATE gists SET visibility = ?, updated_at = ?"
+                    " WHERE id = ?", (vis, now, row["id"]))
             else:
                 self._conn.execute(
                     "UPDATE gists SET updated_at = ? WHERE id = ?",
