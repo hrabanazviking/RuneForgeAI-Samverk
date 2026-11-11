@@ -84,12 +84,23 @@ The laws:
   authors) reaches the page only through S-010's
   escaping seam.
 
+- **Access policy shown on the wiki home (S-276).**
+  The standing choice (S-273's store: editable by
+  collaborators, or by all readers, at the owner's
+  choosing) rides every index and every page view
+  here -- the wiki home (the index, and the `Home`
+  page view) states it in plain words, never colour
+  alone. This face sets it only through the store's
+  owner-gated door and judges edits only through
+  the store's writer door, so the policy is enforced
+  in exactly one place.
+
 Wiki acts carry no verb of their own in the frozen
 taxonomy vocabulary and are not witnessed (S-273's
 law, unchanged): no new taxonomy event -- 133 stand
-(33 auth / 87 repo / 13 admin). No migration: the
-web experience stores nothing of its own and the
-schema stays 106.
+(33 auth / 87 repo / 13 admin). The web experience
+stores nothing of its own; the S-276 policy row is
+migration 107's, and the schema stands at 107.
 """
 
 from __future__ import annotations
@@ -106,8 +117,9 @@ from .markdown_pipeline import render_markdown
 from .proc import run_git_in
 from .repositories import Repository, RepositoryStore
 from .wiki_storage import (
-    PAGE_MAX, WikiError, WikiPage, WikiStore,
-    normalize_page_title, wiki_path_for)
+    DEFAULT_POLICY, PAGE_MAX, WikiAccess, WikiError,
+    WikiPage, WikiStore, normalize_page_title,
+    wiki_path_for, wiki_policy_words)
 
 HOME_PAGE = "Home"
 SIDEBAR_PAGE = "Sidebar"
@@ -121,8 +133,8 @@ MAX_HISTORY_PER_PAGE = 100
 __all__ = [
     "DEFAULT_HISTORY_PER_PAGE", "FOOTER_PAGE", "HOME_PAGE",
     "MAX_HISTORY_PER_PAGE", "SIDEBAR_PAGE", "SPECIAL_PAGES",
-    "WikiHistory", "WikiHistoryEntry", "WikiIndex",
-    "WikiPageView", "WikiPreview", "WikiWeb",
+    "WikiAccess", "WikiHistory", "WikiHistoryEntry",
+    "WikiIndex", "WikiPageView", "WikiPreview", "WikiWeb",
     "WikiWebError", "render_wiki_edit_form",
     "render_wiki_history_page", "render_wiki_index_page",
     "render_wiki_page_view", "render_wiki_preview",
@@ -145,6 +157,7 @@ class WikiIndex:
     pages: tuple[WikiPage, ...]      # ordinary pages only
     sidebar: WikiPage | None         # standing Sidebar, if any
     footer: WikiPage | None          # standing Footer, if any
+    access_policy: str = DEFAULT_POLICY  # S-276 standing choice
 
     @property
     def has_pages(self) -> bool:
@@ -161,6 +174,7 @@ class WikiPageView:
     sidebar_html: str                # "" when no sidebar stands
     footer: WikiPage | None
     footer_html: str                 # "" when no footer stands
+    access_policy: str = DEFAULT_POLICY  # S-276 standing choice
 
 
 @dataclass(frozen=True)
@@ -273,11 +287,14 @@ class WikiWeb:
         pages = self._call(
             self._wiki.list_pages, viewer, owner, repo)
         regular, sidebar, footer = self._split(pages)
+        access = self._call(
+            self._wiki.access_policy, viewer, owner, repo)
         repository = self._repos.get_repository(owner, repo)
         full = repository.full_name if repository else ""
         return WikiIndex(
             full_name=full, pages=regular,
-            sidebar=sidebar, footer=footer)
+            sidebar=sidebar, footer=footer,
+            access_policy=access.policy)
 
     # -- viewing -------------------------------------------
 
@@ -299,8 +316,11 @@ class WikiWeb:
         footer = self._read_special(viewer, owner, repo, footer_row)
         repository = self._repos.get_repository(owner, repo)
         full = repository.full_name if repository else ""
+        access = self._call(
+            self._wiki.access_policy, viewer, owner, repo)
         return WikiPageView(
             full_name=full, page=page,
+            access_policy=access.policy,
             body_html=render_markdown(page.content),
             pages=regular, sidebar=sidebar,
             sidebar_html=(render_markdown(sidebar.content)
@@ -350,6 +370,32 @@ class WikiWeb:
         return self._call(
             self._wiki.write_page, actor, owner, repo, title,
             content, message=message, expected_oid=expected_oid)
+
+    # -- access policy (S-276) ---------------------------
+
+    def access_policy(self, viewer: User | None, owner: object,
+                      repo: object) -> WikiAccess:
+        """The standing choice, read-gated through the
+        store (a private repository answers
+        ``repo_not_found``)."""
+        return self._call(
+            self._wiki.access_policy, viewer, owner, repo)
+
+    def set_access_policy(self, actor: User | None, owner: object,
+                          repo: object,
+                          policy: object) -> WikiAccess:
+        """The owner's choice, through the store's one
+        owner-gated door."""
+        return self._call(
+            self._wiki.set_access_policy, actor, owner, repo, policy)
+
+    def can_edit(self, viewer: User | None, owner: object,
+                 repo: object) -> bool:
+        """Whether *viewer* may edit under the standing
+        policy -- the words a wiki home needs beside
+        its Edit links."""
+        return self._call(
+            self._wiki.can_edit_wiki, viewer, owner, repo)
 
     # -- history: the wiki repo's own log -------------------
 
@@ -515,6 +561,9 @@ def render_wiki_index_page(index: WikiIndex) -> str:
         f"<title>{full} \u2014 wiki \u2014 Samverk</title></head>",
         "<body>",
         f"<h1>Wiki \u2014 {full}</h1>",
+        '<section class="wiki-access"><h2>Wiki access</h2><p>'
+        + escape_html_text(wiki_policy_words(index.access_policy))
+        + "</p></section>",
     ]
     if not index.has_pages:
         parts.append(
@@ -569,6 +618,10 @@ def render_wiki_page_view(view: WikiPageView) -> str:
     if view.footer is not None:
         parts.append(
             f'<footer class="wiki-footer">{view.footer_html}</footer>')
+    parts.append(
+        '<section class="wiki-access"><h2>Wiki access</h2><p>'
+        + escape_html_text(wiki_policy_words(view.access_policy))
+        + "</p></section>")
     parts.append(
         '<p class="wiki-history-link"><a href="'
         + f"/{escape_html_attr(view.full_name)}/wiki/history"

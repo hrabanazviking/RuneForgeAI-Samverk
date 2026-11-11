@@ -309,7 +309,7 @@ class MergePermissionTests(unittest.TestCase):
 
     def test_no_migration_and_no_new_taxonomy_event(self):
         self.assertIn("repo.pull_request.merge", taxonomy.AUDIT_EVENTS)
-        self.assertEqual(schema_version(self.conn), 106)
+        self.assertEqual(schema_version(self.conn), 107)
 
 
 if __name__ == "__main__":
