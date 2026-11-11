@@ -2245,3 +2245,19 @@ admin's) alone and everyone else gets the uniform
 gist_not_found, fail-closed. Gist acts carry no verb
 of their own in the frozen vocabulary and are not
 witnessed.)
+S-279 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its gist fork and
+star, in samverk/gists.py over S-277's model and
+S-278's visibility law, with the face in
+samverk/gist_web.py, copies a gist's full revision
+history by a server-side bare clone through S-014's
+local-paths-only seam (the S-055 road) into a new gist
+owned by the forker, with migration 110's fork_of_id
+column recording the direct source as lineage only;
+stars are stored rows in migration 110's gist_stars
+table and work as S-222's repository stars -- live
+COUNT(*) counts, quiet no-op retries, login_required
+for anonymous mutation, and the uniform gist_not_found
+for an unknown gist (schema 109 -> 110). Gist acts
+carry no verb of their own in the frozen vocabulary
+and are not witnessed.)

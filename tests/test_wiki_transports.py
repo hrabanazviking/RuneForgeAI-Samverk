@@ -491,7 +491,7 @@ class WikiWorldTests(unittest.TestCase):
         self.assertNotIn("git@samverk", unborn)
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 109)
+        self.assertEqual(schema_version(self.conn), 110)
         from samverk import taxonomy
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 

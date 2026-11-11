@@ -109,8 +109,8 @@ class PinTests(unittest.TestCase):
         self.addCleanup(self.w.conn.close)
 
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 109)
-        self.assertEqual(db.MIGRATIONS[-1][0], 109)
+        self.assertEqual(schema_version(self.w.conn), 110)
+        self.assertEqual(db.MIGRATIONS[-1][0], 110)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         families = {}
         for name in taxonomy.AUDIT_EVENTS:

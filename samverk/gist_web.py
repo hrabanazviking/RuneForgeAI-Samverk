@@ -71,13 +71,22 @@ The laws:
   through a markup pipeline, so a gist holding
   HTML shows that HTML as text.
 
+- **Fork and star (S-279).** The view carries the
+  gist's live star and fork counts and the viewer's
+  own star state from the store's summary; the fork
+  and star doors here are thin passes to
+  `GistStore.fork_gist` / `star` / `unstar`, so the
+  clone-copies-history law, the S-222 star semantics
+  and every refusal shape are inherited whole.
+
 Gist acts carry no verb of their own in the frozen
 taxonomy vocabulary and are not witnessed (S-277's
 law, unchanged): no new taxonomy event -- 133
 stand (33 auth / 87 repo / 13 admin). The editor
 stores nothing of its own; the visibility choice
-is migration 109's column, and the schema stands
-at 109.
+is migration 109's column, fork provenance and
+stars are migration 110's, and the schema stands
+at 110.
 """
 
 from __future__ import annotations
@@ -153,6 +162,9 @@ class GistView:
     gist: Gist
     files: tuple[GistFile, ...]   # standing bodies, name order
     can_edit: bool                # viewer owns it (or is admin)
+    star_count: int = 0           # live (S-279)
+    fork_count: int = 0           # live (S-279)
+    my_starred: bool = False      # viewer's own star (S-279)
 
 
 @dataclass(frozen=True)
@@ -210,11 +222,37 @@ class GistWeb:
         can_edit = (viewer is not None
                     and (viewer.id == gist.owner_id
                          or viewer.is_admin))
-        return GistView(gist=gist, files=files, can_edit=can_edit)
+        summary = self._call(
+            self._gists.star_summary, viewer, gist.id)
+        return GistView(
+            gist=gist, files=files, can_edit=can_edit,
+            star_count=summary.star_count,
+            fork_count=summary.fork_count,
+            my_starred=summary.my_starred)
 
     def list_gists(self, viewer: User | None,
                    owner: object) -> list[Gist]:
         return self._call(self._gists.list_gists, viewer, owner)
+
+    # -- fork and star (S-279) -------------------------
+
+    def fork_gist(self, actor: User | None, gist_id: object,
+                  *, visibility: object = None) -> Gist:
+        """Fork from the web face: the store's clone,
+        provenance and refusal shapes, unchanged."""
+        return self._call(
+            self._gists.fork_gist, actor, gist_id,
+            visibility=visibility)
+
+    def star_gist(self, actor: User | None,
+                  gist_id: object) -> Gist:
+        self._call(self._gists.star, actor, gist_id)
+        return self._call(self._gists.get_gist, actor, gist_id)
+
+    def unstar_gist(self, actor: User | None,
+                    gist_id: object) -> Gist:
+        self._call(self._gists.unstar, actor, gist_id)
+        return self._call(self._gists.get_gist, actor, gist_id)
 
     # -- edit ------------------------------------------
 
@@ -333,6 +371,8 @@ def render_gist_view_page(view: GistView) -> str:
     not-private warning stands on its face), and every
     file body as escaped plain text."""
     gist = view.gist
+    star_word = ("starred by you" if view.my_starred
+                 else "not starred by you")
     desc = escape_html_text(gist.description)
     words = escape_html_text(visibility_words(gist.visibility))
     sections = ''.join(
@@ -357,6 +397,9 @@ def render_gist_view_page(view: GistView) -> str:
         f'{sections}'
         f'<p class="gist-revisions">{gist.revision_count} '
         f'revision(s)</p>'
+        f'<p class="gist-stars">Stars: {view.star_count} '
+        f'({star_word})</p>'
+        f'<p class="gist-forks">Forks: {view.fork_count}</p>'
         f'{edit}'
         '</body></html>')
 

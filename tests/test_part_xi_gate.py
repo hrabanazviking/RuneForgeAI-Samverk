@@ -243,8 +243,8 @@ class PartXIGateTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 109)
-        self.assertEqual(db.MIGRATIONS[-1][0], 109)
+        self.assertEqual(schema_version(self.conn), 110)
+        self.assertEqual(db.MIGRATIONS[-1][0], 110)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
@@ -261,8 +261,8 @@ class PartXIGateTests(unittest.TestCase):
     def test_fresh_database_migrates_to_95(self):
         conn = db.connect(self.root / "fresh.db")
         self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 109)
-        self.assertEqual(db.schema_version(conn), 109)
+        self.assertEqual(db.migrate(conn), 110)
+        self.assertEqual(db.schema_version(conn), 110)
 
     # -- the vocabularies --------------------------------------
     def test_vocabularies_are_exact(self):
