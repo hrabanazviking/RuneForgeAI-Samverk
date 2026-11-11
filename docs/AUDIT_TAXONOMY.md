@@ -2157,3 +2157,23 @@ repo_not_found together with the repository. Wiki
 acts carry no verb of their own in the frozen
 vocabulary and are not witnessed. No migration:
 schema 106 stands.)
+
+
+S-274 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its wiki web
+experience, in samverk/wiki_web.py, is the browsing
+and editing face over S-273's WikiStore: the page
+list with the Sidebar and Footer pages named apart
+-- the underscore forms GitHub uses cannot be stored
+under S-273's one-name law, so Samverk's convention
+drops the underscore -- page views rendered through
+S-107's Markdown pipeline with the standing sidebar
+and footer rendered beside the body, an
+edit-in-browser preview that renders a draft and
+writes nothing (no wiki created, no tip moved), the
+save door carrying S-273's expected-tip
+`page_conflict`, and history read from `git log` in
+the wiki repository itself, never the parent
+repository's log. Wiki acts carry no verb of their
+own in the frozen vocabulary and are not witnessed.
+No migration: schema 106 stands.)
