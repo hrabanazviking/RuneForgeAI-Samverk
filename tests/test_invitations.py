@@ -64,8 +64,8 @@ class InvitationTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 112)
-        self.assertEqual(db.MIGRATIONS[-1][0], 112)
+        self.assertEqual(schema_version(self.conn), 113)
+        self.assertEqual(db.MIGRATIONS[-1][0], 113)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertIn("auth.organization.update", taxonomy.AUDIT_EVENTS)
         cols = [r["name"] for r in self.conn.execute("PRAGMA table_info(org_invitations)").fetchall()]
@@ -85,7 +85,7 @@ class InvitationTests(unittest.TestCase):
             self.assertEqual(db.schema_version(conn), 74)
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 112)
+            self.assertEqual(db.schema_version(conn), 113)
             tables = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'").fetchall()]
             self.assertIn("org_invitations", tables)
             conn.close()

@@ -2623,6 +2623,21 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_discussion_events_thread"
         " ON discussion_events (thread_id, id)",
     ]),
+    # S-284: answer marking -- the standing mark on
+    # a question thread: which reply is the answer,
+    # who marked it, and when. The mark's history
+    # lives on the thread's own timeline as
+    # discussion_events rows (answer_marked /
+    # answer_unmarked); these columns hold only the
+    # standing mark, exactly one per thread.
+    (113, [
+        "ALTER TABLE discussion_threads"
+        " ADD COLUMN accepted_reply_id INTEGER",
+        "ALTER TABLE discussion_threads"
+        " ADD COLUMN accepted_by INTEGER",
+        "ALTER TABLE discussion_threads"
+        " ADD COLUMN accepted_at INTEGER",
+    ]),
 ]
 
 

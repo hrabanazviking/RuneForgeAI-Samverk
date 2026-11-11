@@ -71,18 +71,40 @@ invariants:
   every input carries its ``<label>``, so it is
   keyboard- and mobile-first by construction.
 
-What this slice does NOT build: answer marking is
-S-284 (a question thread here carries no accepted
-answer yet), conversion is S-285, polls stay
-deferred (S-286 records the refusal on S-282's
-verdict), and subscriptions ride S-219 from a later
-seam -- no parallel notifier is created here.
+Answer marking (S-284) extends this module below:
+on a question thread the asker or a maintainer
+(a holder of the ``maintain`` rung, S-190) marks
+one live reply as the answer. The mark is an
+event -- ``answer_marked`` / ``answer_unmarked``
+rows on the thread's one timeline, written in the
+same transaction as the mark itself -- never an
+edit to the marked reply, and exactly one reply
+is the answer at a time: marking another moves
+the mark, unmarking clears it, and deleting the
+accepted reply clears it too (its tombstone and
+the ``reply_deleted`` event say what became of
+it, as S-282's verdict requires). The standing
+mark rides migration 113's ``accepted_reply_id``
+/ ``accepted_by`` / ``accepted_at`` columns on
+``discussion_threads``. Conversion is S-285: a
+converted question keeps this thread -- mark,
+timeline and all -- as the linked origin the
+issue points back to, and nothing here converts,
+copies or closes a thread in conversion's name.
+
+What this slice does NOT build: conversion is
+S-285, polls stay deferred (S-286 records the
+refusal on S-282's verdict), and subscriptions
+ride S-219 from a later seam -- no parallel
+notifier is created here.
 
 Storage is migration 112's ``discussion_categories``,
 ``discussion_threads``, ``discussion_counters``,
 ``discussion_replies``, ``discussion_reply_edits``
 and ``discussion_events`` tables (schema 111 ->
-112). Thread numbers are per-repository, claimed
+112), plus migration 113's answer columns on
+``discussion_threads`` (schema 112 -> 113).
+Thread numbers are per-repository, claimed
 from ``discussion_counters`` by the same atomic
 upsert S-121 uses for issue numbers, and never
 reused. Discussion acts carry no verb of their own
@@ -114,8 +136,9 @@ __all__ = [
     "KIND_SPECS", "THREAD_STATES", "CategoryKind",
     "Discussion", "DiscussionCategory", "DiscussionError",
     "DiscussionEvent", "DiscussionReply", "DiscussionReplyEdit",
-    "DiscussionStore", "TimelineEntry", "category_to_dict",
-    "decide_power", "describe_timeline_entry", "kind_spec",
+    "DiscussionStore", "TimelineEntry", "can_mark_answer",
+    "category_to_dict", "decide_power",
+    "describe_timeline_entry", "kind_spec",
     "render_board_page", "render_composer_form",
     "render_thread_page", "reply_to_dict", "thread_to_dict",
 ]
@@ -202,6 +225,21 @@ def decide_power(kind: object, action: object,
     return False
 
 
+def can_mark_answer(kind: object, *, is_asker: bool,
+                    role: str | None) -> bool:
+    """Pure answer-mark judgement (S-284): only a
+    question thread has an answer to mark, and the
+    hands that may mark it are the asker's own or a
+    maintainer's -- a holder of the ``maintain``
+    rung or above on the owning repository, judged
+    through S-190. A writer below that rung, a
+    fellow reader, a stranger and the anonymous
+    hold no mark."""
+    if kind != KIND_QUESTION:
+        return False
+    return bool(is_asker) or role_covers(role, "maintain")
+
+
 @dataclass(frozen=True)
 class DiscussionCategory:
     id: int
@@ -234,6 +272,15 @@ class Discussion:
     created_at: int
     updated_at: int
     edited_at: int | None = None
+    accepted_reply_id: int | None = None
+    accepted_by: int | None = None
+    accepted_at: int | None = None
+
+    @property
+    def is_answered(self) -> bool:
+        """True while one reply stands marked as this
+        question's answer (S-284)."""
+        return self.accepted_reply_id is not None
 
     @property
     def ref(self) -> str:
@@ -242,9 +289,11 @@ class Discussion:
     @property
     def state_words(self) -> str:
         """The state in words, never colour alone:
-        'open', 'closed', with 'pinned' and 'locked'
-        said as well when they stand."""
+        'open', 'closed', with 'answered', 'pinned'
+        and 'locked' said as well when they stand."""
         words = [self.state]
+        if self.is_answered:
+            words.append("answered")
         if self.pinned:
             words.append("pinned")
         if self.locked:
@@ -287,7 +336,8 @@ class DiscussionEvent:
     thread_id: int
     actor_id: int
     kind: str           # created|pinned|unpinned|locked|unlocked|
-                        # closed|reopened|reply_deleted
+                        # closed|reopened|reply_deleted|
+                        # answer_marked|answer_unmarked
     detail: str
     created_at: int
 
@@ -315,6 +365,8 @@ _EVENT_WORDS = {
     "closed": "closed this discussion",
     "reopened": "reopened this discussion",
     "reply_deleted": "removed a reply",
+    "answer_marked": "marked the answer",
+    "answer_unmarked": "unmarked the answer",
 }
 
 
@@ -334,6 +386,10 @@ def describe_timeline_entry(
     name = authors.get(
         entry.event.actor_id, f"user {entry.event.actor_id}")
     words = _EVENT_WORDS.get(entry.event.kind, entry.event.kind)
+    if entry.event.kind == "answer_marked" and entry.event.detail:
+        return f"{name} marked {entry.event.detail} as the answer"
+    if entry.event.kind == "answer_unmarked" and entry.event.detail:
+        return f"{name} unmarked {entry.event.detail} as the answer"
     return f"{name} {words}"
 
 
@@ -366,6 +422,10 @@ def thread_to_dict(thread: Discussion) -> dict:
         "created_at": thread.created_at,
         "updated_at": thread.updated_at,
         "edited_at": thread.edited_at,
+        "accepted_reply_id": thread.accepted_reply_id,
+        "accepted_by": thread.accepted_by,
+        "accepted_at": thread.accepted_at,
+        "is_answered": thread.is_answered,
     }
 
 
@@ -399,7 +459,10 @@ def _row_to_thread(row: sqlite3.Row) -> Discussion:
         body=row["body"], state=row["state"],
         pinned=bool(row["pinned"]), locked=bool(row["locked"]),
         created_at=row["created_at"], updated_at=row["updated_at"],
-        edited_at=row["edited_at"])
+        edited_at=row["edited_at"],
+        accepted_reply_id=row["accepted_reply_id"],
+        accepted_by=row["accepted_by"],
+        accepted_at=row["accepted_at"])
 
 
 def _row_to_reply(row: sqlite3.Row) -> DiscussionReply:
@@ -763,10 +826,12 @@ class DiscussionStore:
                      state: object = None,
                      author_id: object = None,
                      pinned: bool | None = None,
+                     answered: bool | None = None,
                      query: object = None) -> list[Discussion]:
         """The board's threads, filtered in words:
-        category, kind, state, author, pinned, and a
-        plain-text query over title and body. Pinned
+        category, kind, state, author, pinned, answered
+        (S-284's mark), and a plain-text query over
+        title and body. Pinned
         threads stand first, then newest. The read
         door judges first, so a private board's list
         is its not-found answer, never a filtered
@@ -804,6 +869,10 @@ class DiscussionStore:
         if pinned is not None:
             sql += " AND t.pinned = ?"
             params.append(1 if pinned else 0)
+        if answered is not None:
+            sql += (" AND t.accepted_reply_id IS NOT NULL"
+                    if answered else
+                    " AND t.accepted_reply_id IS NULL")
         if query is not None:
             if not isinstance(query, str):
                 raise DiscussionError(
@@ -962,6 +1031,124 @@ class DiscussionStore:
         assert found is not None
         return found
 
+    # -- answer marking (S-284) --------------------------------
+
+    def mark_answer(self, actor: User | None, owner: object,
+                    repo: object, number: object,
+                    reply_id: object) -> Discussion:
+        """Mark one live reply as a question's answer:
+        the asker's act, or a maintainer's (a holder
+        of the ``maintain`` rung or above, S-190).
+        The mark is an event on the thread's timeline
+        written in the same transaction as the mark
+        itself; it never edits the marked reply.
+        Exactly one answer stands at a time -- marking
+        another reply moves the mark, the new event
+        naming the answer it replaces -- and
+        re-marking the standing answer is a quiet
+        no-op. Only a question thread has an answer:
+        any other kind is refused not_a_question.
+        Marking is curation, not a reply, so a closed
+        or locked question may still be marked."""
+        thread = self.get_thread(actor, owner, repo, number)
+        current = self._repo(owner, repo)
+        self._require_signed_in(actor)
+        assert actor is not None
+        category = self._category_by_id(
+            current.id, thread.category_id)
+        assert category is not None
+        if category.kind != KIND_QUESTION:
+            raise DiscussionError(
+                "not_a_question",
+                "Only a question has an answer to mark.")
+        role = self._role(actor, current)
+        if not can_mark_answer(
+                category.kind,
+                is_asker=actor.id == thread.author_id, role=role):
+            raise DiscussionError(
+                "permission_denied",
+                "Only the asker or a repository maintainer "
+                "can mark the answer.")
+        reply = self._reply_by_id(reply_id)
+        if reply is None or reply.thread_id != thread.id \
+                or reply.is_deleted:
+            raise DiscussionError(
+                "reply_not_found", "No such reply.")
+        if thread.accepted_reply_id == reply.id:
+            return thread  # the standing answer: a quiet no-op
+        now = int(self._now())
+        detail = f"reply {reply.id}"
+        if thread.accepted_reply_id is not None:
+            detail += f" (was reply {thread.accepted_reply_id})"
+        with self._conn:  # mark and its event land together
+            self._conn.execute(
+                "UPDATE discussion_threads"
+                " SET accepted_reply_id = ?, accepted_by = ?,"
+                " accepted_at = ?, updated_at = ? WHERE id = ?",
+                (reply.id, actor.id, now, now, thread.id))
+            self._record_event(
+                thread.id, actor.id, "answer_marked", detail, now)
+        found = self._thread_by_id(thread.id)
+        assert found is not None
+        return found
+
+    def unmark_answer(self, actor: User | None, owner: object,
+                      repo: object, number: object) -> Discussion:
+        """Clear a question's standing answer mark:
+        the same hands that may mark it. The unmark
+        is an event written in the same transaction
+        as the clearing; the reply itself is never
+        touched. Unmarking a question with no standing
+        answer is a quiet no-op."""
+        thread = self.get_thread(actor, owner, repo, number)
+        current = self._repo(owner, repo)
+        self._require_signed_in(actor)
+        assert actor is not None
+        category = self._category_by_id(
+            current.id, thread.category_id)
+        assert category is not None
+        if category.kind != KIND_QUESTION:
+            raise DiscussionError(
+                "not_a_question",
+                "Only a question has an answer to unmark.")
+        role = self._role(actor, current)
+        if not can_mark_answer(
+                category.kind,
+                is_asker=actor.id == thread.author_id, role=role):
+            raise DiscussionError(
+                "permission_denied",
+                "Only the asker or a repository maintainer "
+                "can unmark the answer.")
+        if thread.accepted_reply_id is None:
+            return thread  # nothing stands marked: a quiet no-op
+        now = int(self._now())
+        detail = f"reply {thread.accepted_reply_id}"
+        with self._conn:  # clearing and its event land together
+            self._conn.execute(
+                "UPDATE discussion_threads"
+                " SET accepted_reply_id = NULL, accepted_by = NULL,"
+                " accepted_at = NULL, updated_at = ? WHERE id = ?",
+                (now, thread.id))
+            self._record_event(
+                thread.id, actor.id, "answer_unmarked", detail, now)
+        found = self._thread_by_id(thread.id)
+        assert found is not None
+        return found
+
+    def accepted_answer(self, viewer: User | None, owner: object,
+                        repo: object, number: object
+                        ) -> DiscussionReply | None:
+        """The thread's standing answer, or None,
+        read through the same door as the thread
+        itself: a question with no mark -- and every
+        other kind -- answers None, and a private
+        board answers discussion_not_found before
+        any mark can be confirmed."""
+        thread = self.get_thread(viewer, owner, repo, number)
+        if thread.accepted_reply_id is None:
+            return None
+        return self._reply_by_id(thread.accepted_reply_id)
+
     # -- replies ----------------------------------------------------
 
     def add_reply(self, actor: User | None, owner: object,
@@ -1116,6 +1303,17 @@ class DiscussionStore:
                 " deleted_at = ?, deleted_by = ?, updated_at = ?"
                 " WHERE id = ?",
                 (now, actor.id, now, reply.id))
+            if thread.accepted_reply_id == reply.id:
+                # S-284: a deleted answer cannot stay the
+                # answer -- the standing mark clears in
+                # this same transaction; the mark's own
+                # event and this removal stay on the
+                # timeline saying what became of it.
+                self._conn.execute(
+                    "UPDATE discussion_threads"
+                    " SET accepted_reply_id = NULL,"
+                    " accepted_by = NULL, accepted_at = NULL"
+                    " WHERE id = ?", (thread.id,))
             self._record_event(
                 thread.id, actor.id, "reply_deleted",
                 f"reply {reply.id}", now)
@@ -1244,12 +1442,17 @@ def render_thread_page(
         if entry.reply is not None:
             edited = (' <span class="edited">edited</span>'
                       if entry.reply.was_edited else "")
+            answer = (' <span class="accepted-answer">'
+                      'Accepted answer</span>'
+                      if thread.accepted_reply_id is not None
+                      and entry.reply.id == thread.accepted_reply_id
+                      else "")
             parts.append(
                 '<li class="timeline-reply">'
                 f"<p>{escape_html_text(words)}</p>"
                 f'<div class="reply-body">'
                 f"{escape_html_text(entry.reply.body)}</div>"
-                f"{edited}</li>")
+                f"{edited}{answer}</li>")
         else:
             parts.append(
                 '<li class="timeline-event">'

@@ -2356,3 +2356,30 @@ discussion_events tables are the board's storage
 their own in the frozen vocabulary -- the thread's own
 timeline is their attributable record -- and are not
 witnessed.)
+S-284 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its answer marking,
+in samverk/discussions.py extending S-283's board,
+builds the second piece S-282 verdicted in: on a
+question thread the asker or a repository maintainer
+(the maintain rung or above, judged through S-190's
+engine by the pure can_mark_answer) marks one live
+reply as the answer. The mark is an event --
+answer_marked / answer_unmarked rows on the thread's
+own timeline, written in the same transaction as the
+mark -- never an edit to the marked reply; exactly
+one answer stands at a time, marking another reply
+moves the mark with the replaced answer named in the
+event, unmarking clears it, and deleting the accepted
+reply clears the standing mark in the deletion's own
+transaction while both events stay on the timeline
+saying what became of it. The standing mark rides
+migration 113's accepted_reply_id / accepted_by /
+accepted_at columns on discussion_threads (schema
+112 -> 113); answered is said in words in a thread's
+state and on its page, and the board's list filters
+by answered or unanswered. Conversion is S-285's
+road: a converted question keeps this thread, mark
+and timeline as the linked origin, and nothing here
+converts. Discussion acts carry no verb of their own
+in the frozen vocabulary -- the thread's own timeline
+is their attributable record -- and are not witnessed.)
