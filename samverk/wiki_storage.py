@@ -74,11 +74,35 @@ The laws (research file 28):
   standing wiki holding an empty tree, not a vanished
   repository.
 
+- **Access policy (S-276).** Who may edit is the
+  repository owner's choice, held as data: the
+  policy is ``collaborators`` (the default, and the
+  law above -- only a repository writer edits) or
+  ``readers`` (every signed-in reader edits: anyone
+  S-054 lets read the repository may write and
+  delete its wiki pages). The choice is judged here,
+  in the one writer door, through the pure
+  ``decide_wiki_edit`` -- so the web save (S-274)
+  inherits it whole, exactly as it inherits the
+  conflict law. Anonymous visitors never edit under
+  either policy (a commit needs an identity), and a
+  private repository's readers are only those S-054
+  lets read it, so ``readers`` never widens a private
+  wiki past the repository's own ACL. Only an
+  administrator of the repository (its owner, or a
+  site admin -- S-054's ``can_admin``) may set the
+  policy; the choice is shown on the wiki home
+  (S-274's index and Home view carry it in words).
+  The git transports (S-275) keep their repo-equal
+  writer law unchanged: a push is a transport act,
+  judged there, not an edit through this door.
+
 Wiki acts carry no verb of their own in the frozen
 taxonomy vocabulary and are not witnessed -- no new
 taxonomy event: 133 stand (33 auth / 87 repo /
-13 admin). No migration: a wiki is git storage, not
-a table, and the schema stays 106.
+13 admin). The policy choice rides migration 107's
+``wiki_access_policies`` table (schema 106 -> 107);
+the wiki's pages stay git storage, not tables.
 """
 
 from __future__ import annotations
@@ -93,7 +117,7 @@ from pathlib import Path
 from .accounts import User
 from .audit import AuditLog
 from .escaping import escape_html_text
-from .permissions import can_read, can_write
+from .permissions import can_admin, can_read, can_write
 from .platform_seam import ensure_dir
 from .proc import run_git, run_git_in
 from .repositories import Repository, RepositoryStore
@@ -102,15 +126,23 @@ PAGE_MAX = 1_048_576
 TITLE_MAX = 120
 MESSAGE_MAX = 1_000
 
+POLICY_COLLABORATORS = "collaborators"
+POLICY_READERS = "readers"
+WIKI_POLICIES = (POLICY_COLLABORATORS, POLICY_READERS)
+DEFAULT_POLICY = POLICY_COLLABORATORS
+
 _PAGE_EXT = ".md"
 _NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 __all__ = [
-    "MESSAGE_MAX", "PAGE_MAX", "TITLE_MAX",
-    "WikiError", "WikiPage", "WikiStore",
-    "normalize_page_title", "page_filename",
-    "page_to_dict", "render_wiki_page_list",
-    "wiki_path_for",
+    "DEFAULT_POLICY", "MESSAGE_MAX", "PAGE_MAX",
+    "POLICY_COLLABORATORS", "POLICY_READERS",
+    "TITLE_MAX", "WIKI_POLICIES",
+    "WikiAccess", "WikiError", "WikiPage", "WikiStore",
+    "decide_wiki_edit", "normalize_page_title",
+    "page_filename", "page_to_dict",
+    "render_wiki_page_list", "wiki_path_for",
+    "wiki_policy_words",
 ]
 
 
@@ -185,8 +217,47 @@ def page_to_dict(page: WikiPage, *, with_content: bool = False) -> dict:
     return out
 
 
+@dataclass(frozen=True)
+class WikiAccess:
+    full_name: str
+    policy: str              # POLICY_COLLABORATORS or POLICY_READERS
+    updated_by: str | None   # username of the chooser, if a row stands
+    updated_at: int | None
+
+    @property
+    def is_default(self) -> bool:
+        return self.updated_at is None
+
+
+def decide_wiki_edit(policy: object, *, signed_in: bool,
+                     readable: bool, writable: bool) -> bool:
+    """The S-276 judgement, pure: may this person edit
+    the wiki? A writer always may; a signed-in reader
+    may only under the ``readers`` policy; anyone else
+    -- anonymous, or a stranger to a private repo --
+    never. An unknown policy value judges as the
+    default (collaborators): a corrupt row narrows,
+    never widens."""
+    if not signed_in or not readable:
+        return False
+    if writable:
+        return True
+    return policy == POLICY_READERS
+
+
+def wiki_policy_words(policy: object) -> str:
+    """The policy in plain words, for the wiki home:
+    the standing choice, stated, never colour alone."""
+    if policy == POLICY_READERS:
+        return ("Editable by all readers -- anyone who can "
+                "read this repository can edit its wiki.")
+    return ("Editable by collaborators -- only repository "
+            "writers can edit this wiki.")
+
+
 def render_wiki_page_list(repository: Repository,
-                          pages: list[WikiPage]) -> str:
+                          pages: list[WikiPage],
+                          policy: str = DEFAULT_POLICY) -> str:
     """The storage face in words (S-010-escaped): the
     wiki's standing pages beside its repository, or the
     honest empty state -- a wiki with no pages may not
@@ -194,13 +265,15 @@ def render_wiki_page_list(repository: Repository,
     of dressing an absence as a listing. The browsing
     experience (sidebar, footer, editing) is S-274."""
     full = escape_html_text(repository.full_name)
+    access = (f'<p class="wiki-access">'
+              f"{escape_html_text(wiki_policy_words(policy))}</p>")
     if not pages:
         return (
             f'<section class="wiki-storage" data-repo="{full}">'
             "<h2>Wiki</h2>"
             "<p>This repository's wiki has no pages yet. "
             "Its wiki is its own bare git repository, created "
-            "lazily on the first page.</p></section>")
+            "lazily on the first page.</p>" + access + "</section>")
     items = "".join(
         f'<li data-page="{escape_html_text(p.name)}">'
         f"{escape_html_text(p.name)} "
@@ -208,7 +281,7 @@ def render_wiki_page_list(repository: Repository,
         for p in pages)
     return (
         f'<section class="wiki-storage" data-repo="{full}">'
-        f"<h2>Wiki</h2><ul>{items}</ul></section>")
+        f"<h2>Wiki</h2><ul>{items}</ul>" + access + "</section>")
 
 
 class WikiStore:
@@ -238,14 +311,104 @@ class WikiStore:
         if actor is None:
             raise WikiError(
                 "permission_denied",
-                "Only a signed-in repository writer can write "
-                "wiki pages.")
+                "Only a signed-in user can write wiki pages.")
         current = self._repo_for_read(actor, owner, repo)
-        if not can_write(actor, current):
+        if not decide_wiki_edit(
+                self._policy_for(current.id), signed_in=True,
+                readable=True, writable=can_write(actor, current)):
             raise WikiError(
                 "permission_denied",
-                "Only a repository writer can write wiki pages.")
+                "This wiki's access policy does not let this "
+                "user edit its pages.")
         return current
+
+    # -- access policy (S-276) ---------------------------
+
+    def _policy_for(self, repo_id: int) -> str:
+        """The standing policy value for a repository id:
+        the row's choice, or the default when no row
+        stands (no choice made yet)."""
+        row = self._conn.execute(
+            "SELECT policy FROM wiki_access_policies"
+            " WHERE repo_id = ?", (repo_id,)).fetchone()
+        if row is None or row["policy"] not in WIKI_POLICIES:
+            return DEFAULT_POLICY
+        return row["policy"]
+
+    def _access_view(self, current: Repository) -> WikiAccess:
+        row = self._conn.execute(
+            "SELECT p.policy AS policy, p.updated_at AS at,"
+            " u.username AS by_name FROM wiki_access_policies p"
+            " LEFT JOIN users u ON u.id = p.updated_by"
+            " WHERE p.repo_id = ?", (current.id,)).fetchone()
+        if row is None:
+            return WikiAccess(
+                full_name=current.full_name, policy=DEFAULT_POLICY,
+                updated_by=None, updated_at=None)
+        policy = (row["policy"] if row["policy"] in WIKI_POLICIES
+                  else DEFAULT_POLICY)
+        return WikiAccess(
+            full_name=current.full_name, policy=policy,
+            updated_by=row["by_name"], updated_at=row["at"])
+
+    def access_policy(self, viewer: User | None, owner: object,
+                      repo: object) -> WikiAccess:
+        """The wiki's standing access policy. Read-gated:
+        a private repository's policy is as invisible as
+        the repository (``repo_not_found``). Reading the
+        policy writes nothing and creates no wiki."""
+        current = self._repo_for_read(viewer, owner, repo)
+        return self._access_view(current)
+
+    def can_edit_wiki(self, viewer: User | None, owner: object,
+                      repo: object) -> bool:
+        """Whether *viewer* may edit this wiki under its
+        standing policy (read-gated, as access_policy)."""
+        current = self._repo_for_read(viewer, owner, repo)
+        return decide_wiki_edit(
+            self._policy_for(current.id),
+            signed_in=viewer is not None, readable=True,
+            writable=(can_write(viewer, current)
+                      if viewer is not None else False))
+
+    def set_access_policy(self, actor: User | None, owner: object,
+                          repo: object, policy: object) -> WikiAccess:
+        """The owner's choice: set who may edit the wiki.
+        Only a repository administrator (the owner, or a
+        site admin -- S-054's can_admin) chooses; any
+        other signed-in reader is refused
+        ``permission_denied`` and an unreadable or
+        missing repository answers ``repo_not_found``.
+        A value outside the two policies is refused
+        ``policy_invalid`` and stores nothing."""
+        if actor is None:
+            raise WikiError(
+                "permission_denied",
+                "Only the repository's owner can choose who "
+                "may edit its wiki.")
+        current = self._repo_for_read(actor, owner, repo)
+        if not can_admin(actor, current):
+            raise WikiError(
+                "permission_denied",
+                "Only the repository's owner can choose who "
+                "may edit its wiki.")
+        if policy not in WIKI_POLICIES:
+            raise WikiError(
+                "policy_invalid",
+                "A wiki is editable by collaborators or by "
+                "all readers.")
+        now = int(self._now())
+        with self._conn:
+            self._conn.execute(
+                "INSERT INTO wiki_access_policies"
+                " (repo_id, policy, updated_by, updated_at)"
+                " VALUES (?, ?, ?, ?)"
+                " ON CONFLICT(repo_id) DO UPDATE SET"
+                " policy = excluded.policy,"
+                " updated_by = excluded.updated_by,"
+                " updated_at = excluded.updated_at",
+                (current.id, policy, actor.id, now))
+        return self._access_view(current)
 
     # -- paths / existence -------------------------------------
 

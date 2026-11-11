@@ -140,8 +140,8 @@ class ReleaseChecksumTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_102_taxonomy_133_no_new_tables(self):
-        self.assertEqual(schema_version(self.conn), 106)
-        self.assertEqual(db.MIGRATIONS[-1][0], 106)
+        self.assertEqual(schema_version(self.conn), 107)
+        self.assertEqual(db.MIGRATIONS[-1][0], 107)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)

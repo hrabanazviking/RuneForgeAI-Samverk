@@ -308,7 +308,7 @@ class PullRequestLargeTests(unittest.TestCase):
         after = self.conn.execute(
             "SELECT COUNT(*) FROM audit_log").fetchone()[0]
         self.assertEqual(before, after)
-        self.assertEqual(db.schema_version(self.conn), 106)
+        self.assertEqual(db.schema_version(self.conn), 107)
 
 
 if __name__ == "__main__":

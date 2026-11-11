@@ -2443,6 +2443,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  updated_at INTEGER NOT NULL"
         ")",
     ]),
+    # S-276: wiki access policy -- one row per
+    # repository holding the owner's choice:
+    # 'collaborators' (only repository writers edit)
+    # or 'readers' (every reader edits). No row means
+    # the default, 'collaborators' -- the law as it
+    # stood before the choice existed.
+    (107, [
+        "CREATE TABLE wiki_access_policies ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  policy TEXT NOT NULL,"
+        "  updated_by INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+    ]),
 ]
 
 

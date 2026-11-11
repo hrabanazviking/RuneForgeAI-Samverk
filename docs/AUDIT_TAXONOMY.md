@@ -2201,3 +2201,23 @@ stand yet (no page written) answers repo_not_found
 on every leg of both transports and is never created
 by a transport attempt; the first page remains
 S-273's door. No migration: schema 106 stands.)
+S-276 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its wiki access
+policy, in samverk/wiki_storage.py over S-274's face
+in samverk/wiki_web.py, makes who may edit a wiki the
+repository owner's choice, held as data in migration
+107's wiki_access_policies table (schema 106 -> 107):
+'collaborators', the default and the law as it stood,
+lets only repository writers edit; 'readers' lets
+every signed-in reader edit. The pure decide_wiki_edit
+judges in S-273's one writer door, so the web save
+inherits it whole; anonymous visitors never edit, and
+a private repository's readers are only those S-054
+lets read it. Only a repository administrator (the
+owner, or a site admin) sets the policy. The standing
+choice is shown in words on the wiki home -- S-274's
+index and page views carry it. The git transports
+(S-275) keep their repo-equal writer law: a push is a
+transport act, not an edit through this door. Wiki
+acts carry no verb of their own in the frozen
+vocabulary and are not witnessed.)

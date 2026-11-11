@@ -216,13 +216,13 @@ class PurePlanTests(unittest.TestCase):
         self.assertEqual(shaped["type"],
                          "/api/v1/problems/range_invalid")
 
-    def test_pins_schema_106_taxonomy_133(self):
+    def test_pins_schema_107_taxonomy_133(self):
         td = tempfile.TemporaryDirectory()
         self.addCleanup(td.cleanup)
         conn = db.init_db(Path(td.name) / "samverk.db")
         self.addCleanup(conn.close)
-        self.assertEqual(schema_version(conn), 106)
-        self.assertEqual(db.MIGRATIONS[-1][0], 106)
+        self.assertEqual(schema_version(conn), 107)
+        self.assertEqual(db.MIGRATIONS[-1][0], 107)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
 
