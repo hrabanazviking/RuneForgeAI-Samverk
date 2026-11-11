@@ -95,8 +95,8 @@ class CodeIndexingTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 105)
-        self.assertEqual(db.MIGRATIONS[-1][0], 105)
+        self.assertEqual(schema_version(self.conn), 106)
+        self.assertEqual(db.MIGRATIONS[-1][0], 106)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
@@ -110,7 +110,7 @@ class CodeIndexingTests(unittest.TestCase):
     def test_fresh_database_migrates_to_93(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 105)
+            self.assertEqual(db.schema_version(conn), 106)
             conn.close()
 
     def test_upgrade_from_81_creates_code_fts(self):
@@ -128,7 +128,7 @@ class CodeIndexingTests(unittest.TestCase):
                         " (key, value) VALUES ('version', ?)",
                         (str(target),))
             self.assertEqual(db.schema_version(conn), 81)
-            self.assertEqual(db.migrate(conn), 105)
+            self.assertEqual(db.migrate(conn), 106)
             names = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type = 'table'")}
             self.assertIn("code_fts", names)
