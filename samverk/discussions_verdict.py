@@ -86,7 +86,8 @@ from .escaping import escape_html_text
 
 __all__ = [
     "BUILD_CONDITIONS", "FEATURES", "MUST_NOT_BREAK",
-    "REASONS", "VERDICT", "DiscussionsVerdictAudit",
+    "REASONS", "SANCTIONED_TABLES", "VERDICT",
+    "DiscussionsVerdictAudit",
     "DiscussionsVerdictError", "FeatureAssessment",
     "VerdictInvariant", "VerdictReason",
     "audit_discussions_verdict",
@@ -97,6 +98,18 @@ __all__ = [
 ]
 
 VERDICT = "build"
+
+SANCTIONED_TABLES = frozenset({
+    "discussion_categories", "discussion_threads",
+    "discussion_counters", "discussion_replies",
+    "discussion_reply_edits", "discussion_events"})
+"""The tables S-283 was verdicted to build, and
+did: migration 112's board. The audit below
+treats exactly these as the sanctioned build
+and still refuses any discussion-shaped name
+beyond them -- an answer-marking, conversion or
+poll surface arriving ahead of its own slice
+(S-284, S-285, S-286) is still caught."""
 
 
 class DiscussionsVerdictError(ValueError):
@@ -594,8 +607,8 @@ class DiscussionsVerdictAudit:
     every discussion-shaped name found in it.
     The queue is clean only when every offender
     list is empty -- no discussion table, column
-    or audit event exists before S-283 builds
-    one."""
+    or audit event exists beyond the sanctioned
+    build S-283 landed (SANCTIONED_TABLES)."""
     verdict: str
     tables_scanned: int
     columns_scanned: int
@@ -616,11 +629,13 @@ def audit_discussions_verdict(
         conn: sqlite3.Connection) -> DiscussionsVerdictAudit:
     """Check the build queue against the live
     instance: no table, column or audit event may
-    carry a discussion yet -- a discussion surface
-    arriving ahead of S-283, unnamed in any
-    slice, would be the verdict bypassed by a
-    back door. (The scan hunts the word
-    discussion.) Pure read."""
+    carry a discussion beyond S-283's sanctioned
+    build -- a discussion surface arriving ahead
+    of its own slice, unnamed in any slice, would
+    be the verdict bypassed by a back door. (The
+    scan hunts the word discussion; the columns
+    of a sanctioned table are the build itself
+    and are counted, never flagged.) Pure read."""
     tables = [r["name"] for r in conn.execute(
         "SELECT name FROM sqlite_master"
         " WHERE type = 'table' ORDER BY name").fetchall()]
@@ -629,14 +644,15 @@ def audit_discussions_verdict(
     columns_scanned = 0
     for table in tables:
         lowered = table.lower()
-        if "discussion" in lowered:
+        if "discussion" in lowered                 and table not in SANCTIONED_TABLES:
             offending_tables.append(table)
         safe = table.replace('"', '""')
         for row in conn.execute(
                 f'PRAGMA table_info("{safe}")').fetchall():
             columns_scanned += 1
             column = str(row[1]).lower()
-            if "discussion" in column:
+            if "discussion" in column \
+                    and table not in SANCTIONED_TABLES:
                 offending_columns.append(f"{table}.{row[1]}")
     events = sorted(taxonomy.AUDIT_EVENTS)
     offending_events = [

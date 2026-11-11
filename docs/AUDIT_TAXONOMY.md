@@ -2332,3 +2332,27 @@ discussions_build_queued for a core piece or
 discussions_deferred for a deferred one, and writes
 and audits nothing. No migration -- schema 111
 stands.)
+S-283 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its discussion
+categories and threads, in samverk/discussions.py, build
+the core S-282 verdicted in: per-repository categories
+of question, announcement and open-discussion kinds --
+each kind declaring its allowed states and its create
+and reply rungs as data before any thread opens --
+threads numbered per repository and never reused, one
+timeline per thread holding its replies and its
+happenings together, replies reusing the standing
+comment machinery whole (its body law, its visible edit
+history, its tombstone), pins and locks and category
+administration judged as administrator acts, and every
+act judged by the permission engine on the owning
+repository, a private board answering exactly as a
+missing one in reads, lists, counts and the filtered
+search alike. Migration 112's discussion_categories,
+discussion_threads, discussion_counters,
+discussion_replies, discussion_reply_edits and
+discussion_events tables are the board's storage
+(schema 111 -> 112). Discussion acts carry no verb of
+their own in the frozen vocabulary -- the thread's own
+timeline is their attributable record -- and are not
+witnessed.)

@@ -383,7 +383,7 @@ class ReviewAssignmentTests(unittest.TestCase):
 
     # -- counts and render -------------------------------------------------------
     def test_schema_and_taxonomy_counts(self):
-        self.assertEqual(db.schema_version(self.conn), 111)
+        self.assertEqual(db.schema_version(self.conn), 112)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertIn("repo.pull_request.review_request",
                       taxonomy.AUDIT_EVENTS)

@@ -2539,6 +2539,90 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_gist_comment_edits_comment"
         " ON gist_comment_edits (comment_id, id)",
     ]),
+    # S-283: discussion categories and threads --
+    # the per-repository board verdicted in by
+    # S-282. Categories carry a name unique per
+    # repository case-insensitively (name_lower)
+    # and a declared kind; threads are numbered
+    # per repository from discussion_counters and
+    # never reused; replies carry S-123's
+    # tombstone (body cleared, deleted_at /
+    # deleted_by stamped) with every edit's
+    # previous body in discussion_reply_edits;
+    # discussion_events is the thread's one
+    # timeline of happenings.
+    (112, [
+        "CREATE TABLE discussion_categories ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, name_lower)"
+        ")",
+        "CREATE INDEX idx_discussion_categories_repo"
+        " ON discussion_categories (repo_id, id)",
+        "CREATE TABLE discussion_threads ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  category_id INTEGER NOT NULL,"
+        "  number INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  pinned INTEGER NOT NULL DEFAULT 0,"
+        "  locked INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  UNIQUE (repo_id, number)"
+        ")",
+        "CREATE INDEX idx_discussion_threads_repo"
+        " ON discussion_threads (repo_id, id)",
+        "CREATE INDEX idx_discussion_threads_category"
+        " ON discussion_threads (category_id, id)",
+        "CREATE TABLE discussion_counters ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  last_number INTEGER NOT NULL"
+        ")",
+        "CREATE TABLE discussion_replies ("
+        "  id INTEGER PRIMARY KEY,"
+        "  thread_id INTEGER NOT NULL,"
+        "  author_id INTEGER NOT NULL,"
+        "  body TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  edited_at INTEGER,"
+        "  deleted_at INTEGER,"
+        "  deleted_by INTEGER"
+        ")",
+        "CREATE INDEX idx_discussion_replies_thread"
+        " ON discussion_replies (thread_id, id)",
+        "CREATE TABLE discussion_reply_edits ("
+        "  id INTEGER PRIMARY KEY,"
+        "  reply_id INTEGER NOT NULL,"
+        "  editor_id INTEGER NOT NULL,"
+        "  previous_body TEXT NOT NULL,"
+        "  edited_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_discussion_reply_edits_reply"
+        " ON discussion_reply_edits (reply_id, id)",
+        "CREATE TABLE discussion_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  thread_id INTEGER NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  detail TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_discussion_events_thread"
+        " ON discussion_events (thread_id, id)",
+    ]),
 ]
 
 
