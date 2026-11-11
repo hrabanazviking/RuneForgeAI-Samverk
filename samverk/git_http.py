@@ -40,6 +40,8 @@ from .proc import run_git_pack
 from .push_events import diff_refs
 from .refs import RefStore
 from .repositories import Repository, RepositoryStore
+from .wiki_storage import WikiStore, wiki_path_for
+from .wiki_transports import resolve_wiki_parent
 
 # service name (as it arrives in ?service=) ->
 # (pack program, minimum permission)
@@ -126,12 +128,30 @@ class SmartHttpService:
         meets the honest `permission_denied` at the write gate.
         """
         current = self._repos.get_repository(owner, repo)
+        wiki = False
+        if current is None:
+            # S-275: a `<repo>.wiki` name with no exact row names
+            # the parent repository's wiki (the wiki_transports
+            # naming law); every check below is judged on the
+            # parent, through S-054, exactly as for code.
+            parent = resolve_wiki_parent(self._repos, owner, repo)
+            if parent is not None:
+                current, wiki = parent, True
         if current is None or not can_read(viewer, current):
             raise TransportError("repo_not_found", "No such repository.")
         if minimum == "write" and not can_write(viewer, current):
             raise TransportError(
                 "permission_denied",
                 "You do not have write permission on this repository.")
+        if wiki:
+            path = wiki_path_for(self._repos, current)
+            if not WikiStore._is_bare_wiki(path):
+                # A wiki that does not stand yet (no page written)
+                # answers exactly as a missing repository, on
+                # every leg; a transport attempt creates nothing.
+                raise TransportError(
+                    "repo_not_found", "No such repository.")
+            return current, path
         return current, self._repos.path_for(current.owner, current.name)
 
     @staticmethod
@@ -397,6 +417,12 @@ class TransportGate:
             return GateDecision(False, 400, None, "service_invalid", False)
         _program, minimum = SERVICES[str(service)]
         current = self._repos.get_repository(owner, repo)
+        if current is None:
+            # S-275: the gate judges a wiki name by its parent
+            # repository (the service itself re-checks that the
+            # wiki stands, so the gate's shapes leak nothing
+            # about the wiki beyond the parent's own shapes).
+            current = resolve_wiki_parent(self._repos, owner, repo)
         public_read = (current is not None
                        and current.visibility == "public"
                        and minimum == "read")

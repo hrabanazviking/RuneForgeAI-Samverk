@@ -2177,3 +2177,27 @@ the wiki repository itself, never the parent
 repository's log. Wiki acts carry no verb of their
 own in the frozen vocabulary and are not witnessed.
 No migration: schema 106 stands.)
+S-275 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its wiki transports,
+in samverk/wiki_transports.py, put the wiki on the
+Parts IV doors: the naming law lives there -- a
+`<repo>.wiki` name (either transport's `.git` clone
+spelling included) names the parent repository's
+wiki, and an exact repository row always wins over
+the reading -- while samverk/git_http.py and
+samverk/ssh_serve.py resolve the name to the parent
+and then serve the wiki repository through their own
+unchanged machinery. Every answer is repo-equal
+through S-054: a private repository's wiki is
+invisible exactly as the repository is, reads follow
+read access, pushes require the writer law, deploy
+keys are judged on the parent repository, and the
+receive gate, push locks, transfer limits and push
+witnesses all name the parent -- a landed transport
+push is witnessed as the standing repo.push on the
+parent repository. The two repositories never touch:
+a wiki push moves no code ref. A wiki that does not
+stand yet (no page written) answers repo_not_found
+on every leg of both transports and is never created
+by a transport attempt; the first page remains
+S-273's door. No migration: schema 106 stands.)

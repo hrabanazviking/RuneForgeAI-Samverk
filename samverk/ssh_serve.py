@@ -56,6 +56,8 @@ from .push_events import diff_refs
 from .refs import RefStore
 from .repo_paths import validate_owner_name, validate_repo_name
 from .repositories import RepositoryStore
+from .wiki_storage import WikiStore, wiki_path_for
+from .wiki_transports import resolve_wiki_parent
 from .ssh_auth import SshPrincipal
 from .ssh_keys import SshKeyStore
 
@@ -163,6 +165,17 @@ class SshServeService:
             return self._refuse(stderr, exc.reason, exc.message)
         program, minimum = SERVICES[service]
         current = self._repos.get_repository(owner, repo)
+        wiki = False
+        if current is None:
+            # S-275: a `<repo>.wiki` name with no exact row names
+            # the parent repository's wiki (the wiki_transports
+            # naming law). `repo` becomes the parent's name, so
+            # deploy-key authorisation, the receive gate and the
+            # push witness all name the parent repository, and
+            # every check below is judged on the parent.
+            parent = resolve_wiki_parent(self._repos, owner, repo)
+            if parent is not None:
+                current, repo, wiki = parent, parent.name, True
         if current is None:
             return self._refuse(
                 stderr, "repo_not_found",
@@ -208,7 +221,17 @@ class SshServeService:
             self._deploy_keys.record_use(principal.deploy_key.id)
         elif principal.ssh_key is not None:
             self._ssh_keys.record_use(principal.ssh_key.id)
-        path = self._repos.path_for(current.owner, current.name)
+        if wiki:
+            path = wiki_path_for(self._repos, current)
+            if not WikiStore._is_bare_wiki(path):
+                # A wiki that does not stand yet (no page written)
+                # answers exactly as a missing repository; a
+                # transport attempt creates nothing.
+                return self._refuse(
+                    stderr, "repo_not_found",
+                    "Repository not found or access denied.")
+        else:
+            path = self._repos.path_for(current.owner, current.name)
         protocol_version = 2 if git_protocol == "version=2" else None
         refs_before: dict[str, str] = {}
         if service == "git-receive-pack" and self._push_events is not None:
