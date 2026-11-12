@@ -129,8 +129,8 @@ class ReleaseLatestTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_102_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 115)
-        self.assertEqual(db.MIGRATIONS[-1][0], 115)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 87)

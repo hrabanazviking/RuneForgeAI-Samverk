@@ -2561,3 +2561,35 @@ audit event when it lands. No migration -- schema
 stands at 114 on this slice's base, and S-291's
 migration 115, which banks before this slice, is
 untouched by it.)
+S-295 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its custom patterns,
+in samverk/custom_patterns.py, are the org/instance-
+defined regex patterns of Part XV's scanning line: a
+pattern is defined at instance scope by a site
+administrator or at organization scope by an
+organization owner or a site administrator, standing
+draft under a regex judged at the door -- it must
+compile, fit the cap, carry no backreference, nest no
+quantifiers, and be unable to match the empty string.
+Activation is refused until a complete dry-run of the
+pattern's current text against a repository's whole
+history from its tips stands behind it (no dry-run is
+dry_run_required, an older text's is dry_run_stale, a
+capped partial run is dry_run_incomplete), judged
+through S-291's introduced-blob law by an operator who
+must both manage the pattern's scope and read the
+repository -- an unreadable private repository answers
+exactly as a missing one. A dry-run match carries the
+commit, path, line, a redacted preview and a SHA-256
+fingerprint, never the matched text. The effective set
+judging a repository is its active instance patterns
+plus its owning organization's active patterns.
+Definition, edit, activation and disablement are
+witnessed on the standing events -- instance patterns
+ride admin.settings.change, organization patterns ride
+auth.organization.update -- and a dry-run, like S-291's
+scan, is a judgement over a record and is not
+witnessed; its own row is its record. Migration 116's
+custom_patterns, custom_pattern_dry_runs and
+custom_pattern_dry_run_matches tables are the storage
+(schema 115 -> 116).)

@@ -765,7 +765,7 @@ class PartVIIIGateTests(unittest.TestCase):
     # -- invariants ----------------------------------------------------------------------
 
     def test_schema_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 115)
+        self.assertEqual(schema_version(self.conn), 116)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
 

@@ -2725,6 +2725,67 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_secret_alerts_scan"
         " ON secret_alerts (scan_id, id)",
     ]),
+    # S-295: custom patterns -- org/instance-defined
+    # regex patterns, their dry-runs against repo
+    # history, and the dry-runs' matches. A pattern
+    # stands draft until a complete dry-run of its
+    # current text stands behind it; activation is
+    # recorded on the pattern row itself. A match
+    # never carries the matched text: place, redacted
+    # preview and fingerprint only.
+    (116, [
+        "CREATE TABLE custom_patterns ("
+        "  id INTEGER PRIMARY KEY,"
+        "  scope TEXT NOT NULL,"
+        "  org_id INTEGER,"
+        "  org_name TEXT,"
+        "  org_name_lower TEXT,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  regex TEXT NOT NULL,"
+        "  regex_sha TEXT NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'draft',"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  activated_by INTEGER,"
+        "  activated_at INTEGER"
+        ")",
+        "CREATE INDEX idx_custom_patterns_scope"
+        " ON custom_patterns (scope, org_id, state)",
+        "CREATE TABLE custom_pattern_dry_runs ("
+        "  id INTEGER PRIMARY KEY,"
+        "  pattern_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  repo_full_name TEXT NOT NULL,"
+        "  pattern_sha TEXT NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  partial_reason TEXT NOT NULL DEFAULT '',"
+        "  commits_scanned INTEGER NOT NULL,"
+        "  blobs_scanned INTEGER NOT NULL,"
+        "  blobs_skipped INTEGER NOT NULL,"
+        "  matches_count INTEGER NOT NULL,"
+        "  matches_stored INTEGER NOT NULL,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_custom_pattern_dry_runs_pattern"
+        " ON custom_pattern_dry_runs (pattern_id, id)",
+        "CREATE TABLE custom_pattern_dry_run_matches ("
+        "  id INTEGER PRIMARY KEY,"
+        "  dry_run_id INTEGER NOT NULL,"
+        "  commit_oid TEXT NOT NULL,"
+        "  path TEXT NOT NULL,"
+        "  blob_oid TEXT NOT NULL,"
+        "  line INTEGER NOT NULL,"
+        "  column INTEGER NOT NULL,"
+        "  redacted TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL"
+        ")",
+        "CREATE INDEX idx_custom_pattern_dry_run_matches_run"
+        " ON custom_pattern_dry_run_matches (dry_run_id, id)",
+    ]),
 ]
 
 
