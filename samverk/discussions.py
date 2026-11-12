@@ -89,12 +89,20 @@ mark rides migration 113's ``accepted_reply_id``
 ``discussion_threads``. Conversion is S-285: a
 converted question keeps this thread -- mark,
 timeline and all -- as the linked origin the
-issue points back to, and nothing here converts,
+issue points back to. S-285 landed that road in
+samverk/discussion_conversion.py, over this
+board and the issue store; this module gained
+only the conversion's timeline words
+(converted_to_issue / converted_from_issue
+events, written by the conversion store in its
+own transaction) -- nothing here converts,
 copies or closes a thread in conversion's name.
 
 What this slice does NOT build: conversion is
-S-285, polls stay deferred (S-286 records the
-refusal on S-282's verdict), and subscriptions
+S-285's, built in samverk/discussion_conversion.py
+over this board; polls stay deferred (S-286
+records the refusal on S-282's verdict), and
+subscriptions
 ride S-219 from a later seam -- no parallel
 notifier is created here.
 
@@ -104,6 +112,9 @@ Storage is migration 112's ``discussion_categories``,
 and ``discussion_events`` tables (schema 111 ->
 112), plus migration 113's answer columns on
 ``discussion_threads`` (schema 112 -> 113).
+Migration 114's ``discussion_conversions``
+table (schema 113 -> 114) is S-285's link
+record, owned by its own module.
 Thread numbers are per-repository, claimed
 from ``discussion_counters`` by the same atomic
 upsert S-121 uses for issue numbers, and never
@@ -367,6 +378,8 @@ _EVENT_WORDS = {
     "reply_deleted": "removed a reply",
     "answer_marked": "marked the answer",
     "answer_unmarked": "unmarked the answer",
+    "converted_to_issue": "converted this discussion to",
+    "converted_from_issue": "converted this discussion from",
 }
 
 
@@ -390,6 +403,12 @@ def describe_timeline_entry(
         return f"{name} marked {entry.event.detail} as the answer"
     if entry.event.kind == "answer_unmarked" and entry.event.detail:
         return f"{name} unmarked {entry.event.detail} as the answer"
+    if entry.event.kind == "converted_to_issue" and entry.event.detail:
+        return f"{name} converted this discussion to {entry.event.detail}"
+    if entry.event.kind == "converted_from_issue" \
+            and entry.event.detail:
+        return (f"{name} converted this discussion from "
+                f"{entry.event.detail}")
     return f"{name} {words}"
 
 

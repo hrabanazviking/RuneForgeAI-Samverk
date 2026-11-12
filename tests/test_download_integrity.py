@@ -221,8 +221,8 @@ class PurePlanTests(unittest.TestCase):
         self.addCleanup(td.cleanup)
         conn = db.init_db(Path(td.name) / "samverk.db")
         self.addCleanup(conn.close)
-        self.assertEqual(schema_version(conn), 113)
-        self.assertEqual(db.MIGRATIONS[-1][0], 113)
+        self.assertEqual(schema_version(conn), 114)
+        self.assertEqual(db.MIGRATIONS[-1][0], 114)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
 
 
