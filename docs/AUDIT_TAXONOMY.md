@@ -2540,3 +2540,27 @@ present and are recorded absent when not. The push
 itself is already witnessed (repo.push, S-090's push
 events); scanning is a judgement over that record and
 is not witnessed. Migration 115 -- schema 114 to 115.)
+S-294 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its secret alert
+lifecycle, in samverk/secret_alert_lifecycle.py, governs
+the alerts S-291's scan on push stands open in migration
+115's secret_alerts: open -> resolved under exactly one
+of the three named kinds -- revoked, false_positive,
+used_in_test -- with the resolver and a stated reason
+recorded on the alert row, and reopening of a resolved
+alert supported, the standing resolution cleared whole.
+Acts are judged by S-190's permission engine: only the
+admin and maintain rungs may move an alert, the rungs
+S-293 trusts at the bypass door. Every transition stands
+as a row in migration 116's secret_alert_events, the
+alert's own lifecycle record, written in the same
+transaction as the transition it records -- the S-284
+pattern of an act witnessed on its own surface rather
+than in this log. A lifecycle transition changes no code,
+lands no push and lets no secret in, so it claims no
+audit event; the battery proves the audit log does not
+move across a resolve, a reopen and a re-resolve.
+Migration 116 on this slice's base -- schema 115 to 116;
+S-293 claims migration 116 on its own base for its bypass
+table, and the keeper renumbers one of the two at
+banking.)

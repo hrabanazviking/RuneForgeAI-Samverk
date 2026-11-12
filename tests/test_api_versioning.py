@@ -81,8 +81,8 @@ class ApiVersioningTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 115)
-        self.assertEqual(db.MIGRATIONS[-1][0], 115)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
