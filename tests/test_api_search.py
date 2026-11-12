@@ -303,7 +303,7 @@ class ApiSearchTests(unittest.TestCase):
         self.assertEqual(page["type"], "repositories")
         self.assertEqual(
             self._reason(self.api.search_group_page,
-                         None, "forge", "wiki"),
+                         None, "forge", "wiki2"),
             "query_invalid")
         self.assertEqual(
             self._reason(self.api.search_group_page,

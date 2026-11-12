@@ -38,7 +38,9 @@ from samverk.index_architecture import SearchIndexStore
 from samverk.issue_pr_search import IssuePRSearch
 from samverk.issues import IssueStore
 from samverk.organizations import OrganizationStore
+from samverk.gists import GistStore
 from samverk.repositories import RepositoryStore
+from samverk.wiki_storage import WikiStore
 from test_repo_home import GIT_ENV, run_git
 
 PW = "correct horse battery"
@@ -129,6 +131,11 @@ def make_world(root: Path, with_secret: bool) -> SimpleNamespace:
                         "Forge door sticks", "the forge door drags")
     issues.create_issue(owner, "volmarr", "anvil",
                         "Forge <b>markup</b> check", "escape me")
+    WikiStore(conn, repos).write_page(
+        owner, "volmarr", "anvil", "Home",
+        "The forge hall wiki.\n")
+    GistStore(conn, root, accounts).create_gist(
+        owner, "forge gist notes", {"notes.md": "forge hammering\n"})
 
     if with_secret:
         repos.create_repository(
@@ -163,6 +170,10 @@ def signature(results):
             ids = [(h.full_name, h.subject) for h in group.hits]
         elif group.kind == "code":
             ids = [(h.full_name, h.path) for h in group.hits]
+        elif group.kind == "wiki":
+            ids = [(h.full_name, h.page_name) for h in group.hits]
+        elif group.kind == "gists":
+            ids = [(h.owner, h.gist_id) for h in group.hits]
         else:
             ids = [(h.full_name, h.number, h.title)
                    for h in group.hits]
@@ -186,7 +197,8 @@ class PureLawTests(unittest.TestCase):
     def test_parse_negation_and_default_all(self):
         q = parse_global_query("forge -type:code")
         self.assertEqual(
-            q.groups, ("repositories", "people", "commits", "issues"))
+            q.groups, ("repositories", "people", "commits", "issues",
+                       "wiki", "gists"))
         q = parse_global_query("forge")
         self.assertEqual(q.groups, GROUP_ORDER)
 
@@ -211,7 +223,7 @@ class PureLawTests(unittest.TestCase):
             self.assertIn(name, str(ctx.exception), bad)
 
     def test_parse_bad_type_values_refused(self):
-        for bad in ("forge type:", "forge type:wiki",
+        for bad in ("forge type:", "forge type:wiki2",
                     "forge type:repositoryy", "-forge",
                     '"unterminated'):
             with self.assertRaises(GlobalSearchError) as ctx:
@@ -228,7 +240,8 @@ class PureLawTests(unittest.TestCase):
         self.assertEqual(
             keyboard_focus_order(),
             ("search-box", "group-repositories", "group-people",
-             "group-commits", "group-code", "group-issues"))
+             "group-commits", "group-code", "group-issues",
+             "group-wiki", "group-gists"))
         self.assertEqual(
             keyboard_focus_order(("code",), has_recents=True),
             ("search-box", "recent-searches", "group-code"))
@@ -284,7 +297,8 @@ class GlobalSearchTests(unittest.TestCase):
         results = self.a.search.search(
             self.a.owner, "forge -type:code -type:commits")
         self.assertEqual(
-            results.kinds, ("repositories", "people", "issues"))
+            results.kinds, ("repositories", "people", "issues",
+                            "wiki", "gists"))
 
     def test_explicit_types_replace_text_selection(self):
         results = self.a.search.search(
@@ -292,7 +306,7 @@ class GlobalSearchTests(unittest.TestCase):
         self.assertEqual(results.kinds, ("people",))
         with self.assertRaises(GlobalSearchError) as ctx:
             self.a.search.search(
-                self.a.owner, "forge", types=("wiki",))
+                self.a.owner, "forge", types=("wiki2",))
         self.assertEqual(ctx.exception.reason, "query_invalid")
         with self.assertRaises(GlobalSearchError) as ctx:
             self.a.search.search(self.a.owner, "forge", types=())

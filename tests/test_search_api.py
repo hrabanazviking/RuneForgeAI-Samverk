@@ -316,7 +316,7 @@ class SearchAPITests(unittest.TestCase):
     def test_refusals_carry_the_engines_reason_verbatim(self):
         self.assertEqual(
             self._reason(self.w.api.search, self.w.stranger,
-                         "forge", types=["wiki"]),
+                         "forge", types=["wiki2"]),
             "query_invalid")
         self.assertEqual(
             self._reason(self.w.api.search, self.w.stranger,

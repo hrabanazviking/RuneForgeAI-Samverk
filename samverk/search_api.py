@@ -189,6 +189,42 @@ def _code_hit(hit) -> dict:
     }
 
 
+def _snippets(hit) -> list:
+    return [
+        {"start_line": snippet.start_line,
+         "lines": [
+             {"number": line.number, "text": line.text,
+              "is_match": line.is_match,
+              "spans": [list(span) for span in line.spans]}
+             for line in snippet.lines]}
+        for snippet in hit.snippets]
+
+
+def _wiki_hit(hit) -> dict:
+    return {
+        "repository": hit.full_name,
+        "page_name": hit.page_name,
+        "filename": hit.filename,
+        "matched_fields": list(hit.matched_fields),
+        "matched_lines": hit.matched_lines,
+        "snippets": _snippets(hit),
+    }
+
+
+def _gist_hit(hit) -> dict:
+    return {
+        "gist_id": hit.gist_id,
+        "owner": hit.owner,
+        "description": hit.description,
+        "visibility": hit.visibility,
+        "matched_fields": list(hit.matched_fields),
+        "matched_files": list(hit.matched_files),
+        "matched_lines": hit.matched_lines,
+        "snippet_file": hit.snippet_file,
+        "snippets": _snippets(hit),
+    }
+
+
 def _issue_hit(hit) -> dict:
     return {
         "repository": hit.full_name,
@@ -211,6 +247,8 @@ _HIT_SERIALISERS = {
     "commits": _commit_hit,
     "code": _code_hit,
     "issues": _issue_hit,
+    "wiki": _wiki_hit,
+    "gists": _gist_hit,
 }
 
 
