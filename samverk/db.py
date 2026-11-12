@@ -2749,6 +2749,51 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_push_protection_bypasses_repo"
         " ON push_protection_bypasses (repo_id, id)",
     ]),
+    # S-297: dependency graph -- where a repo graph
+    # stands, its manifests with their standing, and
+    # the dependency table parsed from them on push.
+    (117, [
+        "CREATE TABLE dependency_graph_states ("
+        "  repo_id INTEGER PRIMARY KEY,"
+        "  commit_oid TEXT NOT NULL,"
+        "  manifests_count INTEGER NOT NULL,"
+        "  dependencies_count INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE TABLE dependency_manifests ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  path TEXT NOT NULL,"
+        "  ecosystem TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  reason TEXT NOT NULL DEFAULT '',"
+        "  dependencies_count INTEGER NOT NULL,"
+        "  blob_oid TEXT NOT NULL,"
+        "  UNIQUE (repo_id, path)"
+        ")",
+        "CREATE INDEX idx_dependency_manifests_repo"
+        " ON dependency_manifests (repo_id, id)",
+        "CREATE TABLE repo_dependencies ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  manifest_path TEXT NOT NULL,"
+        "  ecosystem TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  name_key TEXT NOT NULL,"
+        "  specifier TEXT NOT NULL,"
+        "  extras TEXT NOT NULL DEFAULT '',"
+        "  scope TEXT NOT NULL,"
+        "  resolved INTEGER NOT NULL,"
+        "  marker TEXT NOT NULL DEFAULT '',"
+        "  UNIQUE (repo_id, manifest_path, name_key, scope)"
+        ")",
+        "CREATE INDEX idx_repo_dependencies_repo"
+        " ON repo_dependencies (repo_id, ecosystem, name_key)",
+        "CREATE INDEX idx_repo_dependencies_name"
+        " ON repo_dependencies (name_key, ecosystem)",
+    ]),
 ]
 
 

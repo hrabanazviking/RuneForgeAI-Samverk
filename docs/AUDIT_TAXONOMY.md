@@ -2591,3 +2591,29 @@ S-292's module is reached through a lazy seam
 only, probed at use time and never imported at
 load, and a caller behind the S-089 gate may hand
 its decision in directly.)
+S-297 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its dependency
+graph, in samverk/dependency_graph.py, is derived data
+over the push's own standing record -- manifests in
+the default branch's tip snapshot parsed on push by
+four isolated pure parsers (requirements.txt,
+package.json, go.mod, Cargo.toml -- the manifest list
+research file 33 and the roadmap name; lockfiles are
+not parsed and the graph says so) into migration
+117's per-repo dependency table (schema 116 -> 117
+on this slice's base; the keeper renumbers at
+banking, S-294 taking 117 first, then S-295, S-296).
+A dependency is resolved only when its specifier
+pins one exact version under its own ecosystem's
+semantics; URL userinfo is redacted before storage
+and skipped requirement lines are recorded by number
+and reason only, so no credential a manifest carries
+enters the table. Vendored manifests under
+node_modules are recorded skipped, never promoted;
+malformed, oversized and binary manifests are
+skipped by named reason on the run report. Reads
+resolve through S-190's permission engine with the
+uniform repo_not_found for strangers to a private
+repository. S-298's advisory data and S-299's
+alerts will read this table; nothing of them is
+pre-built here.)
