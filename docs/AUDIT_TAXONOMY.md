@@ -2649,3 +2649,30 @@ custom_pattern_dry_run_matches tables are the storage
 from 116 at banking, S-293's migration 116 and
 S-294's migration 117 banking first in roadmap
 order.)
+S-296 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its validity checks
+seam, in samverk/secret_validity.py, is the road on
+which a secret alert's credential may be asked after
+at its provider: where the provider offers a public
+validation path -- one registry entry per S-289
+detector, written from the providers' public
+documentation -- an injected checker may answer
+*live* or *no longer live*; where no public path
+stands, no checker is configured (the offline
+instance), no secret is handed in (Samverk stores
+none), or a checker fails or answers in no
+recognised shape, the honest answer is *unknown*,
+recorded with its detail named and displayed as
+unknown on every surface. A check is judged by
+S-190's permission engine -- only the admin and
+maintain rungs may run one -- and stands on the
+alert's own secret_validity_checks record, written
+in the same transaction as the alert's standing
+validity columns (migration 119: schema 118 -> 119
+on the banked line; renumbered from 116 at
+banking, S-293's migration 116, S-294's 117 and
+S-295's 118 banking first in roadmap order). The handed-in secret goes
+to the checker alone and is stored nowhere. A
+validity check changes no code, lands no push and
+lets no secret in, so it is unwitnessed here, as
+S-294's lifecycle transitions are unwitnessed.)
