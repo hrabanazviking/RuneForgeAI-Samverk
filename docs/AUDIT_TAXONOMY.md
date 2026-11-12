@@ -2759,3 +2759,34 @@ unwitnessed. At banking the keeper applied the
 value move this slice's neighbours received
 in-slice to S-298's battery pin as well: schema
 120 -> 121, in the merge-fix commit.)
+S-300 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its advisory
+refresh, in samverk/advisory_refresh.py, is the road
+by which S-298's bundled snapshot is replaced: an
+operator action and the scheduled fetch land through
+one refresh path, the fetch itself an injected seam
+-- no network call is made from inside the judgement,
+and an instance with no fetcher configured is the
+offline instance, whose attempts are recorded failed
+/ fetch_unavailable while the standing snapshot
+stands and its age is shown as it is, stale past
+thirty days and said so. Every candidate is validated
+by S-298's parse_snapshot itself before it may
+replace anything: a malformed, undated, future-dated
+or empty candidate is refused by the validator's own
+reason name and changes nothing, a candidate older
+than the standing snapshot is refused
+snapshot_older_than_standing, and a same-day
+candidate is recorded unchanged. A landed refresh
+writes migration 122's singleton
+advisory_snapshot_state row and its provenance row
+in one transaction (schema 121 -> 122 on the banked
+line; the suite's standing schema pins moved
+in-slice); every attempt, landed or not, stands on
+migration 122's advisory_refreshes with when, by
+whom, by what trigger, the old date, the candidate's
+date where one was validated, the result and the
+named reason. A refresh changes no code, lands no
+push and lets nothing in, so it is unwitnessed here,
+as S-296's checks are unwitnessed; its witness is
+its own provenance record.)

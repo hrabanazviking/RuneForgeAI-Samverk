@@ -3014,6 +3014,43 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_dependency_alert_events_repo"
         " ON dependency_alert_events (repo_id, id)",
     ]),
+    # S-300: advisory refresh -- the standing
+    # refreshed snapshot (a singleton row, landed
+    # only through S-298 parse_snapshot's own
+    # validation, atomically with its provenance
+    # row) and the provenance record of every
+    # refresh attempt: when, by whom, by what
+    # trigger, the standing date before, the
+    # candidate's date where one was validated,
+    # the result and the named reason where it
+    # did not land. Where no state row stands,
+    # the standing snapshot is the bundled one.
+    (122, [
+        "CREATE TABLE advisory_snapshot_state ("
+        "  id INTEGER PRIMARY KEY CHECK (id = 1),"
+        "  snapshot_text TEXT NOT NULL,"
+        "  snapshot_date TEXT NOT NULL,"
+        "  source TEXT NOT NULL,"
+        "  advisory_count INTEGER NOT NULL,"
+        "  refreshed_at INTEGER NOT NULL,"
+        "  trigger TEXT NOT NULL,"
+        "  actor TEXT NOT NULL"
+        ")",
+        "CREATE TABLE advisory_refreshes ("
+        "  id INTEGER PRIMARY KEY,"
+        "  trigger TEXT NOT NULL,"
+        "  actor TEXT NOT NULL,"
+        "  old_snapshot_date TEXT NOT NULL,"
+        "  new_snapshot_date TEXT NOT NULL,"
+        "  result TEXT NOT NULL,"
+        "  reason TEXT NOT NULL DEFAULT '',"
+        "  detail TEXT NOT NULL DEFAULT '',"
+        "  advisory_count INTEGER,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_advisory_refreshes_id"
+        " ON advisory_refreshes (id)",
+    ]),
 ]
 
 
