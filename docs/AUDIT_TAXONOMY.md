@@ -2703,3 +2703,36 @@ uniform repo_not_found for strangers to a private
 repository. S-298's advisory data and S-299's
 alerts will read this table; nothing of them is
 pre-built here.)
+S-299 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its dependency
+alerts, in samverk/dependency_alerts.py, are the join
+of S-297's dependency graph and S-298's advisory
+snapshot: a pure range judgement (a pinned version
+judged on itself; a range judged by intersection; a
+specifier with no judgeable version shape counted
+unjudged, never silently cleared) standing as
+migration 121's dependency_alerts (schema 120 -> 121
+on this base; the keeper renumbers at banking if
+later slices land first), each alert carrying its
+advisory's severity, its affected range exactly as
+published, and its fixed version or honestly NULL --
+fix unknown, never invented -- with the snapshot
+date it was computed against, and S-298's age words
+on every rendered surface. The lifecycle is S-294's
+shape carried whole: open -> resolved (fixed / false
+positive / risk accepted) with resolver and stated
+reason recorded, reopening supported, the admin and
+maintain rungs only, and every transition --
+including refresh's automatic resolution of a live
+alert whose match has vanished, recorded under the
+system actor with no human resolver claimed --
+standing on the alert's own dependency_alert_events
+in the same transaction. A refresh is derived data
+over an already-witnessed push, rebuildable like
+S-297's graph, and a lifecycle transition changes no
+code and lands no push, so both are unwitnessed
+here, as S-294's transitions and S-296's checks are
+unwitnessed. S-298 is not yet banked on this base;
+its battery's schema pin will need the same value
+move at banking that this slice's neighbours
+receive in-slice.)
