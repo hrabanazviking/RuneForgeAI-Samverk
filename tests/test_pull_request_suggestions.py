@@ -143,7 +143,7 @@ class SuggestionTests(unittest.TestCase):
 
     # -- proposal ---------------------------------------------------------
     def test_a_proposal_stores_its_anchor_and_the_lines_it_replaces(self):
-        self.assertEqual(db.schema_version(self.conn), 116)
+        self.assertEqual(db.schema_version(self.conn), 117)
         suggestion = self._propose(body="Clearer this way.")
         self.assertEqual(suggestion.file_path, "a.txt")
         self.assertEqual((suggestion.start_line, suggestion.end_line), (2, 2))

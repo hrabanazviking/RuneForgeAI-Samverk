@@ -2749,6 +2749,48 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_push_protection_bypasses_repo"
         " ON push_protection_bypasses (repo_id, id)",
     ]),
+    # S-294: secret alert lifecycle -- an alert's
+    # standing resolution lives on the alert row
+    # itself (kind, resolver, reason, when; all
+    # empty while the alert stands open or
+    # reopened), and every transition stands as a
+    # row in secret_alert_events, the alert's own
+    # lifecycle record, written in the same
+    # transaction as the transition it records.
+    # (Renumbered 116 -> 117 at banking: S-293's
+    # migration 116 for push_protection_bypasses
+    # banks first, in roadmap order.)
+    (117, [
+        "ALTER TABLE secret_alerts ADD COLUMN"
+        " resolution TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE secret_alerts ADD COLUMN"
+        " resolved_by_id INTEGER",
+        "ALTER TABLE secret_alerts ADD COLUMN"
+        " resolved_by TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE secret_alerts ADD COLUMN"
+        " resolved_at INTEGER",
+        "ALTER TABLE secret_alerts ADD COLUMN"
+        " resolution_reason TEXT NOT NULL DEFAULT ''",
+        "CREATE TABLE secret_alert_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  alert_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  from_state TEXT NOT NULL,"
+        "  to_state TEXT NOT NULL,"
+        "  resolution TEXT NOT NULL DEFAULT '',"
+        "  actor_id INTEGER NOT NULL,"
+        "  actor_username TEXT NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  role_source TEXT NOT NULL,"
+        "  reason TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_secret_alert_events_alert"
+        " ON secret_alert_events (alert_id, id)",
+        "CREATE INDEX idx_secret_alert_events_repo"
+        " ON secret_alert_events (repo_id, id)",
+    ]),
 ]
 
 

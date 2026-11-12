@@ -2591,3 +2591,26 @@ S-292's module is reached through a lazy seam
 only, probed at use time and never imported at
 load, and a caller behind the S-089 gate may hand
 its decision in directly.)
+S-294 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its secret alert
+lifecycle, in samverk/secret_alert_lifecycle.py, governs
+the alerts S-291's scan on push stands open in migration
+115's secret_alerts: open -> resolved under exactly one
+of the three named kinds -- revoked, false_positive,
+used_in_test -- with the resolver and a stated reason
+recorded on the alert row, and reopening of a resolved
+alert supported, the standing resolution cleared whole.
+Acts are judged by S-190's permission engine: only the
+admin and maintain rungs may move an alert, the rungs
+S-293 trusts at the bypass door. Every transition stands
+as a row in migration 117's secret_alert_events, the
+alert's own lifecycle record, written in the same
+transaction as the transition it records -- the S-284
+pattern of an act witnessed on its own surface rather
+than in this log. A lifecycle transition changes no code,
+lands no push and lets no secret in, so it claims no
+audit event; the battery proves the audit log does not
+move across a resolve, a reopen and a re-resolve.
+Migration 117 on the banked line -- schema 116 to 117;
+renumbered from 116 at banking, S-293's migration 116
+for its bypass table banking first in roadmap order.)

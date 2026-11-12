@@ -120,9 +120,9 @@ class DiscussionTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 116)
-        self.assertEqual(db.MIGRATIONS[-1][0], 116)
-        self.assertEqual(db.migrate(self.conn), 116)
+        self.assertEqual(schema_version(self.conn), 117)
+        self.assertEqual(db.MIGRATIONS[-1][0], 117)
+        self.assertEqual(db.migrate(self.conn), 117)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
