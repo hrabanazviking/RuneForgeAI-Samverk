@@ -2476,3 +2476,27 @@ gains the wiki and gists groups through this executor,
 and S-216's and S-245's search APIs serialise them the
 same way. Searching is a read over reads and is not
 witnessed. No migration -- schema stays 114.)
+S-290 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its generic secret
+detection, in samverk/generic_secret_detection.py, is
+the complement of S-289's published-shape patterns:
+Shannon entropy plus context heuristics — secret-named
+assignment keys and URL-userinfo password position
+raise a candidate's score; hash-named keys, placeholder
+markers, UUID shapes, encoded-asset base64 magic, and
+base64 that decodes to ordinary printable prose lower
+or suppress it. Quality is measured, not vibes: the
+module ships a labelled corpus of 39 cases (16 secret,
+23 benign) and evaluate_corpus re-runs the real
+detector over it; the measured and published rates
+agree — false-positive rate 0.0, precision 1.0, recall
+1.0 — and the battery refuses any drift between the
+measured and published numbers. Findings never carry
+the matched text: span, entropy, score, context in
+words, a length-only redaction, and a SHA-256
+fingerprint. Detection is a pure judgement over text
+handed to it and is not witnessed. Its road to
+S-289 is a lazy seam: combined_scan merges the
+pattern findings when samverk.secret_scanning is
+present and stands alone, saying so, when it is not.
+No migration -- schema stays 114.)
