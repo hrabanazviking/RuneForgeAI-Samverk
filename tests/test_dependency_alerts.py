@@ -302,8 +302,8 @@ class AlertTests(unittest.TestCase):
     # -- pins -------------------------------------------------
 
     def test_pins_schema_121_taxonomy_134(self):
-        self.assertEqual(schema_version(self.conn), 121)
-        self.assertEqual(db.MIGRATIONS[-1][0], 121)
+        self.assertEqual(schema_version(self.conn), 122)
+        self.assertEqual(db.MIGRATIONS[-1][0], 122)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
@@ -316,7 +316,7 @@ class AlertTests(unittest.TestCase):
     def test_fresh_database_migrates_to_121(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 121)
+            self.assertEqual(db.schema_version(conn), 122)
             conn.close()
 
     def test_upgrade_from_120_creates_tables(self):
@@ -334,7 +334,7 @@ class AlertTests(unittest.TestCase):
                         " (key, value) VALUES ('version', ?)",
                         (str(target),))
             self.assertEqual(db.schema_version(conn), 120)
-            self.assertEqual(db.migrate(conn), 121)
+            self.assertEqual(db.migrate(conn), 122)
             names = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master"
                 " WHERE type = 'table'")}
