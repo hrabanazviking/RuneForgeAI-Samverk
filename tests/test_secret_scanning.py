@@ -208,7 +208,7 @@ class StandingPinTests(unittest.TestCase):
     def test_no_migration_and_no_new_taxonomy_event(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "samverk.db")
-            self.assertEqual(schema_version(conn), 117)
+            self.assertEqual(schema_version(conn), 118)
             conn.close()
         self.assertEqual(len(AUDIT_EVENTS), 134)
         self.assertEqual(len(AUTH_EVENTS), 33)

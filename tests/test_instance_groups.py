@@ -64,8 +64,8 @@ class InstanceGroupTests(unittest.TestCase):
 
     # schema pin
     def test_pins_schema_80_taxonomy_123(self):
-        self.assertEqual(schema_version(self.conn), 117)
-        self.assertEqual(db.MIGRATIONS[-1][0], 117)
+        self.assertEqual(schema_version(self.conn), 118)
+        self.assertEqual(db.MIGRATIONS[-1][0], 118)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         tables = {r["name"] for r in self.conn.execute("SELECT name FROM sqlite_master WHERE type = 'table'")}
         self.assertIn("instance_groups", tables)
@@ -75,7 +75,7 @@ class InstanceGroupTests(unittest.TestCase):
     def test_fresh_database_migrates_to_80(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 117)
+            self.assertEqual(db.schema_version(conn), 118)
             conn.close()
 
     # creation

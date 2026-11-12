@@ -148,9 +148,9 @@ class AnswerMarkingTests(unittest.TestCase):
     # -- schema / taxonomy / verdict seam -------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 117)
-        self.assertEqual(db.MIGRATIONS[-1][0], 117)
-        self.assertEqual(db.migrate(self.conn), 117)
+        self.assertEqual(schema_version(self.conn), 118)
+        self.assertEqual(db.MIGRATIONS[-1][0], 118)
+        self.assertEqual(db.migrate(self.conn), 118)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
