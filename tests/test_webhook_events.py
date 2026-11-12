@@ -64,15 +64,15 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 114)
-        self.assertEqual(db.MIGRATIONS[-1][0], 114)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 87, "admin": 13})
+            families, {"auth": 33, "repo": 88, "admin": 13})
 
     def test_payload_fields_are_s221s_own_shape(self):
         self.assertEqual(PAYLOAD_FIELDS, (
@@ -85,19 +85,19 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
 
     def test_every_taxonomy_verb_ruled_exactly_once(self):
         verbs = all_verbs()
-        self.assertEqual(len(verbs), 133)
-        self.assertEqual(len(set(verbs)), 133)
+        self.assertEqual(len(verbs), 134)
+        self.assertEqual(len(set(verbs)), 134)
         self.assertEqual(set(verbs), set(taxonomy.AUDIT_EVENTS))
         self.assertEqual(
             tuple(s.verb for s in WEBHOOK_EVENTS), verbs)
 
     def test_scope_counts(self):
         self.assertEqual(SCOPES, ("repository", "organization", "none"))
-        self.assertEqual(len(verbs_for_scope("repository")), 87)
+        self.assertEqual(len(verbs_for_scope("repository")), 88)
         self.assertEqual(len(verbs_for_scope("organization")), 2)
         self.assertEqual(len(verbs_for_scope("none")), 44)
-        self.assertEqual(len(deliverable_verbs()), 89)
-        self.assertEqual(len(deliverable_verbs("repository")), 87)
+        self.assertEqual(len(deliverable_verbs()), 90)
+        self.assertEqual(len(deliverable_verbs("repository")), 88)
         self.assertEqual(len(deliverable_verbs("organization")), 2)
         self.assertEqual(deliverable_verbs("none"), ())
 
@@ -139,9 +139,9 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
             "account": 29, "administration": 13, "branches": 2,
             "checks": 4, "following": 2, "issues": 24,
             "labels": 3, "milestones": 3, "organization": 2,
-            "pull_requests": 28, "push": 1, "releases": 1,
+            "pull_requests": 28, "push": 2, "releases": 1,
             "repository": 19, "webhooks": 2})
-        self.assertEqual(sum(counts.values()), 133)
+        self.assertEqual(sum(counts.values()), 134)
 
     def test_category_spot_checks(self):
         self.assertEqual(
@@ -316,9 +316,9 @@ class WebhookAuditAndRenderTests(unittest.TestCase):
         audit = audit_webhook_events()
         self.assertTrue(audit.ratified, audit.problems)
         self.assertEqual(audit.problems, ())
-        self.assertEqual(audit.verbs_checked, 133)
-        self.assertEqual(audit.deliverable, 89)
-        self.assertEqual(audit.repository_scope, 87)
+        self.assertEqual(audit.verbs_checked, 134)
+        self.assertEqual(audit.deliverable, 90)
+        self.assertEqual(audit.repository_scope, 88)
         self.assertEqual(audit.organization_scope, 2)
         self.assertEqual(audit.withheld, 44)
 
@@ -340,7 +340,7 @@ class WebhookAuditAndRenderTests(unittest.TestCase):
         self.assertIn("auth.organization.create", page)
         self.assertIn("never delivered", page)
         self.assertIn("Checked, not just claimed", page)
-        self.assertIn("89 of them deliverable", page)
+        self.assertIn("90 of them deliverable", page)
         self.assertIn("44 withheld", page)
         self.assertIn("docs/WEBHOOK_EVENTS.md", page)
         for verb in all_verbs():

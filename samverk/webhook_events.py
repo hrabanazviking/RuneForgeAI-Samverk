@@ -421,6 +421,8 @@ WEBHOOK_EVENT_DATA: tuple[tuple[str, str, str, tuple[str, ...], str], ...] = (
      'An account took its follow back (S-232)'),
     ('repo.protection.bypass', 'repository', 'repository', ('branch', 'patterns', 'rule_ids', 'bypass_entry', 'gate', 'actor'),
      'A branch-protection bypass was used by an actor it named (S-179)'),
+    ('repo.push_protection.bypass', 'push', 'repository', ('repository', 'actor', 'role', 'role_source', 'reason', 'findings', 'refs'),
+     'A push-protection refusal was bypassed by a permitted role with a stated reason; the bypass stands as an alert visible to owners (S-293)'),
     ('repo.pull_request.auto_merge_arm', 'pull_requests', 'repository', ('number', 'strategy', 'checks', 'head'),
      'Auto-merge armed on a pull request (S-158)'),
     ('repo.pull_request.auto_merge_cancel', 'pull_requests', 'repository', ('number',),

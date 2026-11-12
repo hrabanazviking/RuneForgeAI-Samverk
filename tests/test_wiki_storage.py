@@ -355,9 +355,9 @@ class WikiStorageTests(unittest.TestCase):
         self.assertIn("volmarr/pub", html)
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 114)
+        self.assertEqual(schema_version(self.conn), 116)
         from samverk import taxonomy
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
 
 
 if __name__ == "__main__":

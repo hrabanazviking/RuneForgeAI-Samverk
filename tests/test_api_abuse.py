@@ -84,15 +84,15 @@ class PinTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 114)
-        self.assertEqual(db.MIGRATIONS[-1][0], 114)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 87, "admin": 13})
+            families, {"auth": 33, "repo": 88, "admin": 13})
 
     def test_reasons_registered_at_their_statuses(self):
         expected = {

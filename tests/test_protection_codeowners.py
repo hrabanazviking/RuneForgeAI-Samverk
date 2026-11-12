@@ -442,9 +442,9 @@ class ProtectionCodeownersTests(unittest.TestCase):
         self.assertIn("no code owner has a counting approval", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 114)
-        self.assertEqual(db.MIGRATIONS[-1][0], 114)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
 
 
 if __name__ == "__main__":

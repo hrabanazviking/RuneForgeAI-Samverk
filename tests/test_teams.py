@@ -307,9 +307,9 @@ class TeamTests(unittest.TestCase):
 
     # pins
     def test_migration_70_pin(self):
-        self.assertEqual(schema_version(self.conn), 114)
-        self.assertEqual(db.MIGRATIONS[-1][0], 114)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         for table, cols in (
             ("teams", ("id", "org_id", "name", "name_lower", "description", "privacy", "created_by", "created_at", "updated_at")),
             ("team_members", ("team_id", "user_id", "added_by", "created_at")),
@@ -330,7 +330,7 @@ class TeamTests(unittest.TestCase):
                     conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', ?)", (str(version),))
             conn.close()
             conn = db.init_db(path)
-            self.assertEqual(db.schema_version(conn), 114)
+            self.assertEqual(db.schema_version(conn), 116)
             names = [r["name"] for r in conn.execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('teams', 'team_members', 'team_repositories') ORDER BY name").fetchall()]
             self.assertEqual(names, ["team_members", "team_repositories", "teams"])
             conn.close()

@@ -62,6 +62,7 @@ any name not in this document's set.*
 | `repo.transfer` | Ownership transferred | `{"from_owner": ..., "to_owner": ...}` |
 | `repo.push` | Refs updated by a push | `{"ref": ..., "old": ..., "new": ...}` (oid prefixes) |
 | `repo.protection.change` | Branch protection changed | `{"branch": ..., "rule": ...}` |
+| `repo.push_protection.bypass` | Push-protection refusal bypassed by a permitted role with a stated reason; the bypass stands as an alert visible to owners (S-293) | `{\"repository\": ..., \"actor\": ..., \"role\": ..., \"role_source\": ..., \"reason\": ..., \"findings\": [...], \"refs\": [...]}` -- never the secret |
 | `repo.collaborator.add` | Collaborator added | `{"user": ..., "role": ...}` |
 | `repo.collaborator.remove` | Collaborator removed | `{"user": ...}` |
 | `repo.collaborator.role_change` | Collaborator role changed | `{"user": ..., "from": ..., "to": ...}` |
@@ -2494,3 +2495,32 @@ to one finding per span; an unknown detector id is refused
 `detector_unknown`. No storage, no witnessing: scanning is
 a judgement over text handed to it. No migration --
 schema stays 114.)
+S-293 (2026-11-12) added
+`repo.push_protection.bypass` -- 134 events stand:
+33 auth, 88 repo, 13 admin. (Its push-protection
+bypass, in samverk/push_protection_bypass.py, is
+the one road on which S-292's refusal may be
+answered: a holder of the admin or maintain rung
+-- judged by S-190's permission engine on the
+owning repository, never re-derived -- may bypass
+with a stated reason. A bypass without a reason,
+or by any other rung, is refused with a named
+reason and writes nothing. A used bypass appends
+this event, with detail naming the repository,
+the actor, their role and its source, the stated
+reason, the covered refs, and each finding as
+file, pattern class, line and fingerprint -- never
+the secret, never even the redacted preview --
+and writes one standing alert row in migration
+116's push_protection_bypasses table (schema
+115 -> 116 on the banked line; S-291's migration
+115 lands before this slice and is untouched by
+it), carrying the audit row's sequence number.
+The alert stands open and is visible only to the
+admin rung -- the repository owners' rung --
+through the store's list and get reads; a store
+built without an audit log refuses every use.
+S-292's module is reached through a lazy seam
+only, probed at use time and never imported at
+load, and a caller behind the S-089 gate may hand
+its decision in directly.)
