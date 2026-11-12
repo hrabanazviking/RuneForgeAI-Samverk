@@ -2703,3 +2703,26 @@ uniform repo_not_found for strangers to a private
 repository. S-298's advisory data and S-299's
 alerts will read this table; nothing of them is
 pre-built here.)
+S-298 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its advisory data,
+in samverk/advisory_data.py, is a bundled, dated
+snapshot of public vulnerability data shipped in the
+repo as samverk/advisory_snapshot.json: a pure
+validator refuses a snapshot whose date is missing,
+malformed or in the future, an unrecognised format, a
+malformed or empty advisory list, or any advisory
+naming an unknown ecosystem or severity, and a fixed
+version is either a version string or honestly null
+-- *fix unknown*. The read-only AdvisoryStore loads
+the snapshot offline (no migration of its own; schema 120
+stands) and answers per-package lookups under each
+ecosystem's own name equivalence. The snapshot's age
+is computed in whole days and displayed wherever
+alerts are shown: every render surface carries the
+date and the age in words, a snapshot older than
+thirty days is shown as *stale*, and no usable
+snapshot is shown as *age unknown* -- never as fresh.
+Reading a bundled data file changes no code, lands no
+push and opens no alert, so it is unwitnessed here,
+as S-296's checks are unwitnessed; S-299's dependency
+alerts will stand on their own record.)
