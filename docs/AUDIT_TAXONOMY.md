@@ -2476,3 +2476,24 @@ gains the wiki and gists groups through this executor,
 and S-216's and S-245's search APIs serialise them the
 same way. Searching is a read over reads and is not
 witnessed. No migration -- schema stays 114.)
+S-292 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its push protection,
+in samverk/push_protection.py, is the refusal side of
+Part XV's scanning line at S-089's pre-receive gate: a
+`secret_scan`-stage plug-in judges the push's full
+introduced history through the lazy detector seam
+(S-291's combined judgement when present, S-289's
+patterns and S-290's generic detection probed directly
+otherwise, a named `detector_unavailable` error when
+no layer can judge -- which the gate's fail-closed law
+turns into a refusal) and vetoes any push containing a
+detected secret, the veto sentence naming the file and
+the pattern class and never echoing the secret. A walk
+cut by the commit or blob cap refuses naming the cap;
+binary and oversize blobs are skipped and counted. A
+refusal is a gate veto, not a stored act, and is not
+witnessed; S-293's bypass will add its own alert +
+audit event when it lands. No migration -- schema
+stands at 114 on this slice's base, and S-291's
+migration 115, which banks before this slice, is
+untouched by it.)
