@@ -2638,6 +2638,31 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE discussion_threads"
         " ADD COLUMN accepted_at INTEGER",
     ]),
+    # S-285: issue <-> discussion conversion --
+    # the durable link both ways: which issue and
+    # which discussion stand converted into each
+    # other, the direction the conversion ran, who
+    # converted, and when. UNIQUE (issue_id) and
+    # UNIQUE (discussion_id) are the exactly-once
+    # backstop: an object stands on at most one
+    # side of one conversion, ever.
+    (114, [
+        "CREATE TABLE discussion_conversions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  issue_id INTEGER NOT NULL,"
+        "  issue_number INTEGER NOT NULL,"
+        "  discussion_id INTEGER NOT NULL,"
+        "  discussion_number INTEGER NOT NULL,"
+        "  direction TEXT NOT NULL,"
+        "  converted_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (issue_id),"
+        "  UNIQUE (discussion_id)"
+        ")",
+        "CREATE INDEX idx_discussion_conversions_repo"
+        " ON discussion_conversions (repo_id, id)",
+    ]),
 ]
 
 

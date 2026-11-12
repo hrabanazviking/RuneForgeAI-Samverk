@@ -2383,3 +2383,39 @@ and timeline as the linked origin, and nothing here
 converts. Discussion acts carry no verb of their own
 in the frozen vocabulary -- the thread's own timeline
 is their attributable record -- and are not witnessed.)
+S-285 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its issue <->
+discussion conversion, in
+samverk/discussion_conversion.py over S-283's board
+and S-121's issue store, builds the third piece
+S-282 verdicted in: both directions convert through
+the standing stores' own doors, judged by S-190 on
+the owning repository -- the source's author or a
+holder of the write rung or above, the new thread
+opened under its category's declared create rung --
+and a private object answers issue_not_found /
+discussion_not_found exactly as missing, on the act
+and on both link reads. The origin is preserved:
+the counterpart carries the source's title, body
+and author, the source keeps its state and number,
+and a converted question keeps its thread, its
+S-284 accepted-answer mark and its whole timeline
+as the linked origin -- replies and comments are
+never copied across. A forwarding note stands on
+both sides, written in the conversion's own
+transaction: a converted_to_issue /
+converted_from_issue event on the thread's one
+timeline, and a forwarding comment in the issue's
+conversation; the durable link is migration 114's
+discussion_conversions row (schema 113 -> 114),
+sanctioned in S-282's verdict audit as S-283's
+tables were. Conversion is exactly once: a second
+conversion from either seat is refused
+already_converted naming the first link, and the
+table's UNIQUE (issue_id) / UNIQUE (discussion_id)
+are the concurrency backstop. Conversion acts
+carry no verb of their own in the frozen
+vocabulary -- the thread timeline, the issue
+conversation and the link row are their
+attributable record -- and are not witnessed,
+proven by an audit-count snapshot in the battery.)

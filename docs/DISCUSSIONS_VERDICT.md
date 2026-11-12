@@ -186,3 +186,19 @@ badges.
   them. Answer marking (S-284) and conversion
   (S-285) remain queued on this verdict; polls
   and rich badges remain deferred.
+
+- S-285 (2026-11-11) landed the third piece:
+  issue <-> discussion conversion, in
+  samverk/discussion_conversion.py over
+  migration 114 (schema 113 -> 114), under the
+  invariants above -- both ways with a
+  forwarding note both ways, the origin
+  preserved (a converted question keeps its
+  thread, mark and timeline as the linked
+  origin), exactly once even under concurrency
+  (UNIQUE backstops in the link table). The
+  verdict audit now treats
+  discussion_conversions as part of the
+  sanctioned build and still refuses any
+  discussion-shaped name beyond it. Polls and
+  rich badges remain deferred.

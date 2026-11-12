@@ -102,14 +102,16 @@ VERDICT = "build"
 SANCTIONED_TABLES = frozenset({
     "discussion_categories", "discussion_threads",
     "discussion_counters", "discussion_replies",
-    "discussion_reply_edits", "discussion_events"})
-"""The tables S-283 was verdicted to build, and
-did: migration 112's board. The audit below
-treats exactly these as the sanctioned build
-and still refuses any discussion-shaped name
-beyond them -- an answer-marking, conversion or
-poll surface arriving ahead of its own slice
-(S-284, S-285, S-286) is still caught."""
+    "discussion_reply_edits", "discussion_events",
+    "discussion_conversions"})
+"""The tables the verdicted build was ordered to
+build, and did: migration 112's board (S-283)
+and migration 114's conversion link (S-285).
+The audit below treats exactly these as the
+sanctioned build and still refuses any
+discussion-shaped name beyond them -- a poll
+surface arriving ahead of its own slice (S-286)
+is still caught."""
 
 
 class DiscussionsVerdictError(ValueError):
