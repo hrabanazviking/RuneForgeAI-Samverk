@@ -197,8 +197,8 @@ class WorldCase(unittest.TestCase):
 
 class PinTests(WorldCase):
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 119)
-        self.assertEqual(db.MIGRATIONS[-1][0], 119)
+        self.assertEqual(schema_version(self.w.conn), 120)
+        self.assertEqual(db.MIGRATIONS[-1][0], 120)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         families = {}
         for name in taxonomy.AUDIT_EVENTS:

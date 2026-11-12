@@ -114,7 +114,7 @@ class BranchViewTests(unittest.TestCase):
 
     # -- migration -------------------------------------------------------
     def test_migration_62_is_the_schema_version(self):
-        self.assertEqual(db.schema_version(self.conn), 119)
+        self.assertEqual(db.schema_version(self.conn), 120)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}
         self.assertIn("deleted_branches", tables)

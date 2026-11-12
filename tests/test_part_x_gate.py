@@ -337,8 +337,8 @@ class PartXGateTests(unittest.TestCase):
     # -- pins ---------------------------------------------------
 
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.a.conn), 119)
-        self.assertEqual(db.MIGRATIONS[-1][0], 119)
+        self.assertEqual(schema_version(self.a.conn), 120)
+        self.assertEqual(db.MIGRATIONS[-1][0], 120)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
