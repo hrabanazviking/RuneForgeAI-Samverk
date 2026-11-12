@@ -81,7 +81,7 @@ slice is that data and its laws:
   carrying date, age and freshness for any
   surface to display. The store holds no database
   rows: the snapshot is a file, this slice adds
-  **no migration** of its own (schema 120 stands on the banked line), and
+  **no migration** of its own (schema 121 stands on the banked line), and
   loading writes nothing.
 - **Unwitnessed in the audit taxonomy -- said
   plainly.** No new taxonomy event: 134 stand
