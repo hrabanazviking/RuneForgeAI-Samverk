@@ -202,3 +202,21 @@ badges.
   sanctioned build and still refuses any
   discussion-shaped name beyond it. Polls and
   rich badges remain deferred.
+
+- S-286 (2026-11-11) landed the deferred piece's
+  refusal: discussion polls, in
+  samverk/discussion_polls.py -- the published
+  refusal built on this verdict, judged for real
+  first through S-283's board doors and S-190's
+  engine (a thread the caller cannot read answers
+  discussion_not_found exactly as missing;
+  create, vote and results at the read rung;
+  close at the thread's author or the maintain
+  rung), and only then refused with this
+  verdict's own deferral. It builds no poll
+  table, so this audit's sanctioned build is
+  unchanged and still refuses any poll-shaped
+  name; the refusal writes and audits nothing.
+  The record is docs/DISCUSSION_POLLS.md. Rich
+  badges remain deferred, unbuilt and unrefused
+  by any slice yet.

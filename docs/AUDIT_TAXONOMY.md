@@ -2419,3 +2419,32 @@ vocabulary -- the thread timeline, the issue
 conversation and the link row are their
 attributable record -- and are not witnessed,
 proven by an audit-count snapshot in the battery.)
+S-286 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its discussion polls,
+in samverk/discussion_polls.py, take the verdicted-out
+road S-282 named for them: the published refusal built on
+the discussions verdict, in the house shape of S-265.
+Polls were deferred by S-282 -- no village need measured,
+and research 30's honesty warning that a poll's counts are
+honest only under fraud-resistant rules claiming no
+identity beyond account scope. The face names a poll whole
+on its discussion thread (PollRef) and judges its four
+operations for real first -- create, vote and results at
+the read rung, close at the thread's author or the
+maintain rung -- through S-283's DiscussionStore doors and
+S-190's permission engine on the owning repository: a
+thread in a repository the caller cannot read answers
+exactly as missing (discussion_not_found), shapeless
+requests are refused by name (poll_question_invalid,
+poll_options_invalid, poll_close_invalid,
+poll_choice_invalid, poll_action_invalid), and only a
+well-formed, permitted request meets the verdict's own
+deferral, discussions_deferred, delegated to
+decide_discussion_request so the slices cannot drift.
+The refusal writes and audits nothing, proven in the
+battery by row and audit counts; its audit re-proves
+S-282's verdict against the live instance and catches any
+poll-shaped table, column or event, planted in the
+battery. No migration -- schema stays 114. The seam is
+S-282's MUST_NOT_BREAK tuple imported whole; the
+published refusal also lives in docs/DISCUSSION_POLLS.md.)
