@@ -15,7 +15,7 @@ lists, unknown ecosystems or severities and
 duplicate ids are each refused by name, and a fixed
 version is a string or honestly None (*fix unknown*).
 AdvisoryStore loads the bundled snapshot offline --
-no migration (schema 119 stands), no database, no
+no migration of its own (schema 120 stands on the banked line), no database, no
 network -- and answers per-package lookups under
 each ecosystem's own name equivalence. Age is whole
 days from the snapshot date; past thirty days is
@@ -280,11 +280,11 @@ class RenderLawTests(unittest.TestCase):
 
 
 class InvariantTests(unittest.TestCase):
-    def test_no_migration_schema_119_stands(self):
+    def test_no_migration_schema_120_stands(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 119)
+                self.assertEqual(schema_version(conn), 120)
             finally:
                 conn.close()
 
