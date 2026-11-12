@@ -1,0 +1,106 @@
+{
+  "snapshot_format": 1,
+  "source": "Public vulnerability data (OSV, the GitHub Advisory Database and the NVD), compiled by hand into Samverk's bundled snapshot",
+  "snapshot_date": "2026-11-12",
+  "advisories": [
+    {
+      "id": "CVE-2020-14343",
+      "ecosystem": "python",
+      "package": "PyYAML",
+      "severity": "high",
+      "affected": "<5.4",
+      "fixed_version": "5.4",
+      "summary": "PyYAML's full_load can load arbitrary Python objects, allowing code execution on untrusted YAML.",
+      "published": "2020-07-27",
+      "references": ["https://osv.dev/vulnerability/CVE-2020-14343"]
+    },
+    {
+      "id": "CVE-2021-33503",
+      "ecosystem": "python",
+      "package": "urllib3",
+      "severity": "high",
+      "affected": "<1.26.5",
+      "fixed_version": "1.26.5",
+      "summary": "urllib3's URL parsing can be driven into catastrophic backtracking by a crafted authority component, denying service.",
+      "published": "2021-06-29",
+      "references": ["https://osv.dev/vulnerability/CVE-2021-33503"]
+    },
+    {
+      "id": "CVE-2022-22817",
+      "ecosystem": "python",
+      "package": "Pillow",
+      "severity": "high",
+      "affected": "<9.0.0",
+      "fixed_version": "9.0.0",
+      "summary": "Pillow's PIL.ImageMath.eval evaluates arbitrary expressions, so untrusted expressions execute code.",
+      "published": "2022-01-10",
+      "references": ["https://osv.dev/vulnerability/CVE-2022-22817"]
+    },
+    {
+      "id": "CVE-2020-8203",
+      "ecosystem": "npm",
+      "package": "lodash",
+      "severity": "high",
+      "affected": "<4.17.19",
+      "fixed_version": "4.17.19",
+      "summary": "lodash's zipObjectDeep allows prototype pollution through crafted property paths.",
+      "published": "2020-07-15",
+      "references": ["https://osv.dev/vulnerability/CVE-2020-8203"]
+    },
+    {
+      "id": "CVE-2021-44906",
+      "ecosystem": "npm",
+      "package": "minimist",
+      "severity": "critical",
+      "affected": "<1.2.6",
+      "fixed_version": "1.2.6",
+      "summary": "minimist allows prototype pollution through its argument parsing (CVE-2021-44906).",
+      "published": "2022-03-18",
+      "references": ["https://osv.dev/vulnerability/CVE-2021-44906"]
+    },
+    {
+      "id": "CVE-2022-32149",
+      "ecosystem": "go",
+      "package": "golang.org/x/text",
+      "severity": "high",
+      "affected": "<0.3.8",
+      "fixed_version": "0.3.8",
+      "summary": "golang.org/x/text's language tag parsing can be driven to consume excessive resources by crafted tags, denying service.",
+      "published": "2022-10-14",
+      "references": ["https://osv.dev/vulnerability/CVE-2022-32149"]
+    },
+    {
+      "id": "CVE-2020-26160",
+      "ecosystem": "go",
+      "package": "github.com/dgrijalva/jwt-go",
+      "severity": "high",
+      "affected": "<=3.2.0",
+      "fixed_version": null,
+      "summary": "jwt-go can be confused about token audiences when a claim is crafted with an unexpected type; no fixed release stands in this line (the project moved to golang-jwt), so the fixed version is honestly unknown.",
+      "published": "2020-09-30",
+      "references": ["https://osv.dev/vulnerability/CVE-2020-26160"]
+    },
+    {
+      "id": "CVE-2022-24713",
+      "ecosystem": "rust",
+      "package": "regex",
+      "severity": "high",
+      "affected": "<1.5.5",
+      "fixed_version": "1.5.5",
+      "summary": "The regex crate can be driven into exponential-time matching by a crafted pattern or input, denying service.",
+      "published": "2022-03-08",
+      "references": ["https://osv.dev/vulnerability/CVE-2022-24713"]
+    },
+    {
+      "id": "CVE-2021-25900",
+      "ecosystem": "rust",
+      "package": "smallvec",
+      "severity": "critical",
+      "affected": "<0.6.14",
+      "fixed_version": "0.6.14",
+      "summary": "smallvec's 0.6 line can double-free on a grow that panics, corrupting memory (the 1.x line is fixed at 1.6.1).",
+      "published": "2021-01-27",
+      "references": ["https://osv.dev/vulnerability/CVE-2021-25900"]
+    }
+  ]
+}
