@@ -109,11 +109,12 @@ event named here is a real event-store verb.
 | `repo.unstar` | repository | A star taken back by its own giver (S-222) | -- |
 | `repo.protection.bypass` | repository | A branch-protection bypass was used by an actor it named (S-179) | `branch`, `patterns`, `rule_ids`, `bypass_entry`, `gate`, `actor` |
 
-### push (1)
+### push (2)
 
 | Event | Scope | Meaning | detail may carry |
 |---|---|---|---|
 | `repo.push` | repository | Refs updated by a push | `ref`, `old`, `new` |
+| `repo.push_protection.bypass` | repository | A push-protection refusal was bypassed by a permitted role with a stated reason; the bypass stands as an alert visible to owners (S-293) | `repository`, `actor`, `role`, `role_source`, `reason`, `findings`, `refs` |
 
 ### releases (1)
 

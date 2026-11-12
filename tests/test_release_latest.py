@@ -129,11 +129,11 @@ class ReleaseLatestTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_102_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 115)
-        self.assertEqual(db.MIGRATIONS[-1][0], 115)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(schema_version(self.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         self.assertIn("excludes prereleases and drafts", LATEST_RULE)
         self.assertEqual(LATEST_MARKER, "Latest release")

@@ -154,12 +154,12 @@ class RepositoriesAPITests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.w.conn), 115)
-        self.assertEqual(db.MIGRATIONS[-1][0], 115)
+        self.assertEqual(schema_version(self.w.conn), 116)
+        self.assertEqual(db.MIGRATIONS[-1][0], 116)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         self.assertEqual(REPOSITORIES_API_PATH, "/api/repositories")
 
     def test_contract_now_lands_the_family(self):

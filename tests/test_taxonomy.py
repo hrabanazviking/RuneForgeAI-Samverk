@@ -65,12 +65,13 @@ class TaxonomyTests(unittest.TestCase):
         # S-159 added repo.branch.delete_on_merge/restore.
         # S-185 added auth.organization.create/update.
         # S-179 added repo.protection.bypass.
+        # S-293 added repo.push_protection.bypass.
         # S-158 added repo.pull_request.auto_merge_arm/
         # auto_merge_cancel/auto_merge_fire.
         # S-215 added admin.index.rebuild.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 133)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 87)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_names_are_well_formed(self):

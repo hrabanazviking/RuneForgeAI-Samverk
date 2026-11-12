@@ -2725,6 +2725,30 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_secret_alerts_scan"
         " ON secret_alerts (scan_id, id)",
     ]),
+    # S-293: push-protection bypass -- one standing
+    # alert per used bypass: who bypassed S-292
+    # refusal, under which role and its source,
+    # the stated reason, the findings (never the
+    # secret) and refs as JSON, the audit sequence
+    # of its witness row, and its standing state.
+    (116, [
+        "CREATE TABLE push_protection_bypasses ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  actor_username TEXT NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  role_source TEXT NOT NULL,"
+        "  reason TEXT NOT NULL,"
+        "  findings TEXT NOT NULL,"
+        "  refs TEXT NOT NULL,"
+        "  audit_seq INTEGER NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_push_protection_bypasses_repo"
+        " ON push_protection_bypasses (repo_id, id)",
+    ]),
 ]
 
 
