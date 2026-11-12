@@ -2476,3 +2476,25 @@ gains the wiki and gists groups through this executor,
 and S-216's and S-245's search APIs serialise them the
 same way. Searching is a read over reads and is not
 witnessed. No migration -- schema stays 114.)
+S-291 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its scan on push, in
+samverk/push_scanning.py, walks every accepted push
+across its full introduced history -- reachable from
+the new oid, not from the old oid nor any prior ref
+tip; deletions introduce nothing; force-push rewrites
+are new oids and are scanned -- judges every blob
+version each introduced commit introduces, and stands
+each finding as one open secret alert in migration
+115's secret_alerts, the rows S-294's lifecycle will
+govern. A scan is exactly-once per (repository, exact
+ref updates): a rescan returns the standing scan and
+creates no second alert. Alerts carry commit, path,
+detector, line, a redacted preview and a fingerprint
+-- never the secret. Caps and binary skips are counted
+on the scan record; a capped scan stands partial
+naming its cap. The detector seam is lazy: S-289's
+patterns and S-290's generic judgement judge when
+present and are recorded absent when not. The push
+itself is already witnessed (repo.push, S-090's push
+events); scanning is a judgement over that record and
+is not witnessed. Migration 115 -- schema 114 to 115.)
