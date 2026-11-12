@@ -151,6 +151,7 @@ from .repository_search import (
     RepositorySearch, RepositorySearchError)
 from .search_api import SearchAPI, SearchAPIError, hit_to_dict
 from .user_org_search import PeopleSearch, PeopleSearchError
+from .wiki_gist_search import WikiGistSearch, WikiGistSearchError
 
 __all__ = [
     "GROUP_LIMIT", "SEARCH_API_PATH", "PublicSearchAPI",
@@ -169,12 +170,13 @@ SEARCH_API_PATH = "/api/search"
 GROUP_LIMIT = 500
 
 _BACKEND_ERRORS = (RepositorySearchError, PeopleSearchError,
+                   WikiGistSearchError,
                    CommitSearchError, CodeSearchError,
                    SearchBackendError)
 
 _GROUP_INVALID = (
     "The group is one of: repositories, people, "
-    "commits, code, or issues.")
+    "commits, code, issues, wiki, or gists.")
 
 
 class PublicSearchAPIError(ValueError):
@@ -267,7 +269,8 @@ class PublicSearchAPI:
     contract -- the whole search through S-238's
     door over S-216's own face, and one group at
     a time paged by S-239's cursor engine over
-    the five banked group executors. It owns no
+    the banked group executors (seven since S-287
+    added the wiki and gists groups). It owns no
     index, no grammar, and no permission law of
     its own, so the public contract cannot drift
     from the web search it stands behind."""
@@ -290,6 +293,7 @@ class PublicSearchAPI:
         self._commits = CommitSearch(conn, repositories)
         self._code = CodeSearch(conn, repositories)
         self._issues = IssuePRSearch(conn, repositories)
+        self._wiki_gists = WikiGistSearch(conn, repositories)
 
     # -- shared judgements --------------------------------
     def _caller(self, header: object) -> ApiIdentity:
@@ -363,6 +367,14 @@ class PublicSearchAPI:
                 viewer, pattern, limit=GROUP_LIMIT)
             return (found.hits, found.total_files,
                     found.total_matches, found.total_matched_lines)
+        if kind == "wiki":
+            found_w = self._wiki_gists.search_wiki_counted(
+                viewer, text, limit=GROUP_LIMIT)
+            return found_w.hits, found_w.total, None, None
+        if kind == "gists":
+            found_g = self._wiki_gists.search_gists_counted(
+                viewer, text, limit=GROUP_LIMIT)
+            return found_g.hits, found_g.total, None, None
         found = self._issues.search_counted(viewer, text)
         return found.hits, found.total, None, None
 

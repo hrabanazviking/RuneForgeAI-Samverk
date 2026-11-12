@@ -2,10 +2,12 @@
 
 One box, typed result groups, keyboard-first, recent
 searches per user — Part X's front door, over the
-five faces the part already built: S-210's repository
+faces the parts already built: S-210's repository
 search, S-211's user and org search, S-212's commit
-search, S-208's code search, and S-206's issue/PR
-backend. S-118's repository search box has pointed at
+search, S-208's code search, S-206's issue/PR
+backend, and S-287's wiki/gist search — Part XIV's
+kinds joining Part X's index here, under the same
+permission filtering (S-209's law, per kind). S-118's repository search box has pointed at
 this page (`/search`) since it landed; this slice is
 the page it points at.
 
@@ -13,7 +15,7 @@ the page it points at.
   free-text terms (a double-quoted phrase is one term)
   plus `type:` qualifiers naming the result groups to
   search — `repositories`, `people`, `commits`,
-  `code`, `issues`, with the alias spellings each
+  `code`, `issues`, `wiki`, `gists`, with the alias spellings each
   group's own page teaches (`repo`, `users`, `orgs`,
   `pr`, …). A leading `-` negates one `type:`
   qualifier; an explicit `types=` argument replaces
@@ -116,6 +118,7 @@ from .repo_search import SEARCH_PATH
 from .repositories import RepositoryStore
 from .repository_search import RepositorySearch, RepositorySearchError
 from .user_org_search import PeopleSearch, PeopleSearchError
+from .wiki_gist_search import WikiGistSearch, WikiGistSearchError
 
 __all__ = [
     "DEFAULT_GROUP_LIMIT", "GROUP_ORDER", "GROUP_WORDS", "MAX_GROUP_LIMIT",
@@ -133,13 +136,16 @@ MAX_GROUP_LIMIT = 100
 RECENT_LIMIT = 10
 
 GROUP_ORDER: tuple[str, ...] = (
-    "repositories", "people", "commits", "code", "issues")
+    "repositories", "people", "commits", "code", "issues",
+    "wiki", "gists")
 GROUP_WORDS = {
     "repositories": "Repositories",
     "people": "People and organizations",
     "commits": "Commits",
     "code": "Code",
     "issues": "Issues and pull requests",
+    "wiki": "Wiki pages",
+    "gists": "Gists",
 }
 TYPE_ALIASES = {
     "repositories": "repositories", "repository": "repositories",
@@ -151,6 +157,8 @@ TYPE_ALIASES = {
     "code": "code",
     "issues": "issues", "issue": "issues", "prs": "issues",
     "pr": "issues", "pulls": "issues",
+    "wiki": "wiki", "wikis": "wiki",
+    "gists": "gists", "gist": "gists",
 }
 QUALIFIER_NAMES = frozenset({"type"})
 
@@ -163,6 +171,10 @@ _GROUP_COUNT_LAW = {
     "code": "only code in repositories you can read is counted",
     "issues": ("only issues and pull requests in repositories "
                "you can read are counted"),
+    "wiki": ("only wiki pages in repositories you can read "
+             "are counted"),
+    "gists": ("only gists you may find are counted — public "
+              "gists for everyone, secret gists for their owner"),
 }
 
 
@@ -243,7 +255,8 @@ def _check_type(value: object) -> str:
             or value.strip().lower() not in TYPE_ALIASES:
         raise _invalid(
             "The type: qualifier names a result group: "
-            "repositories, people, commits, code, or issues.")
+            "repositories, people, commits, code, issues, "
+            "wiki, or gists.")
     return TYPE_ALIASES[value.strip().lower()]
 
 
@@ -285,7 +298,8 @@ def parse_global_query(query: object) -> GlobalSearchQuery:
                 f"The qualifier {head!r} is not part of global "
                 "search. The global grammar is free words plus "
                 "type: (repositories, people, commits, code, "
-                "issues); each group's own page keeps its full "
+                "issues, wiki, gists); each group's own page "
+                "keeps its full "
                 "grammar.")
         if negated:
             raise _invalid(
@@ -498,7 +512,7 @@ class GlobalSearchResults:
 
 _BACKEND_ERRORS = (RepositorySearchError, PeopleSearchError,
                    CommitSearchError, CodeSearchError,
-                   SearchBackendError)
+                   SearchBackendError, WikiGistSearchError)
 
 
 class GlobalSearch:
@@ -522,6 +536,7 @@ class GlobalSearch:
         self._commits = CommitSearch(conn, repositories)
         self._code = CodeSearch(conn, repositories)
         self._issues = IssuePRSearch(conn, repositories)
+        self._wiki_gists = WikiGistSearch(conn, repositories)
 
     def search(self, viewer: User | None, query: object = "", *,
                types: object = None,
@@ -543,7 +558,8 @@ class GlobalSearch:
             except TypeError:
                 raise _invalid(
                     "The types are group names: repositories, "
-                    "people, commits, code, or issues.") from None
+                    "people, commits, code, issues, wiki, or "
+                    "gists.") from None
             if not wanted:
                 raise _invalid(
                     "That search names no result group.")
@@ -599,6 +615,16 @@ class GlobalSearch:
                 kind=kind, hits=found.hits, total=found.total_files,
                 total_matches=found.total_matches,
                 total_matched_lines=found.total_matched_lines)
+        if kind == "wiki":
+            found_w = self._wiki_gists.search_wiki_counted(
+                viewer, text, limit=limit)
+            return GroupResults(
+                kind=kind, hits=found_w.hits, total=found_w.total)
+        if kind == "gists":
+            found_g = self._wiki_gists.search_gists_counted(
+                viewer, text, limit=limit)
+            return GroupResults(
+                kind=kind, hits=found_g.hits, total=found_g.total)
         found = self._issues.search_counted(viewer, text)
         return GroupResults(
             kind=kind, hits=tuple(found.hits[:limit]),
@@ -640,9 +666,10 @@ def render_global_search_box(query: object = "") -> str:
         f'value="{escape_html_attr(query_text)}">',
         '<button type="submit">Search</button>',
         "<p>Type words to search repositories, people and "
-        "organizations, commits, code, and issues and pull "
-        "requests together — or add type:repositories, "
-        "type:people, type:commits, type:code, or type:issues "
+        "organizations, commits, code, issues and pull "
+        "requests, wiki pages, and gists together — or add "
+        "type:repositories, type:people, type:commits, "
+        "type:code, type:issues, type:wiki, or type:gists "
         "to search one kind. Press <kbd>/</kbd> from anywhere "
         "on the page to come back to this box.</p>",
         "</form>",
@@ -755,6 +782,25 @@ def _code_lines(hit) -> list[str]:
     return lines
 
 
+def _wiki_line(hit) -> str:
+    words = [f"{hit.full_name} — {hit.page_name}"]
+    if hit.matched_fields:
+        words.append("Matched in: " + ", ".join(hit.matched_fields))
+    return f"<li>{escape_html_text(' — '.join(words))}</li>"
+
+
+def _gist_line(hit) -> str:
+    words = [f"{hit.owner} — gist #{hit.gist_id}"]
+    if hit.description:
+        words.append(hit.description)
+    words.append(f"Visibility: {hit.visibility}")
+    if hit.matched_fields:
+        words.append("Matched in: " + ", ".join(hit.matched_fields))
+    if hit.matched_files:
+        words.append("Files: " + ", ".join(hit.matched_files))
+    return f"<li>{escape_html_text(' — '.join(words))}</li>"
+
+
 def _issue_line(hit) -> str:
     return (
         f"<li>{escape_html_text(hit.full_name)} "
@@ -788,7 +834,9 @@ def _group_section(group: GroupResults) -> str:
                                  "repositories match"),
                 "people": ("match", "matches"),
                 "commits": ("commit matches", "commits match"),
-                "issues": ("item matches", "items match")}[kind]
+                "issues": ("item matches", "items match"),
+                "wiki": ("wiki page matches", "wiki pages match"),
+                "gists": ("gist matches", "gists match")}[kind]
         parts.append(
             f"<p>{group.total} "
             f"{noun[0] if group.total == 1 else noun[1]}"
@@ -815,7 +863,9 @@ def _group_section(group: GroupResults) -> str:
     else:
         line = {"repositories": _repo_line,
                 "commits": _commit_line,
-                "issues": _issue_line}[kind]
+                "issues": _issue_line,
+                "wiki": _wiki_line,
+                "gists": _gist_line}[kind]
         parts.append('<ul class="search-results">')
         for hit in group.hits:
             parts.append(line(hit))

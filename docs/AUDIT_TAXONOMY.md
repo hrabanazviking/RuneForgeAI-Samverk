@@ -2448,3 +2448,31 @@ poll-shaped table, column or event, planted in the
 battery. No migration -- schema stays 114. The seam is
 S-282's MUST_NOT_BREAK tuple imported whole; the
 published refusal also lives in docs/DISCUSSION_POLLS.md.)
+S-287 (2026-11-11) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its wiki/gist search,
+in samverk/wiki_gist_search.py, brings Part XIV's two
+kinds into Part X's search under S-209's permission
+filtering: wiki pages are searched by page name and
+standing body inside their parent repository, gathered
+live through S-273's WikiStore only for repositories
+resolved visible through S-209's one resolution over
+S-054's can_read, so a private repository's wiki
+contributes no page, title, snippet or count; gists are
+searched by their one description, file names and file
+bodies as one hit per gist, gathered live through
+S-277's GistStore, with S-278's listing law as the
+search law -- public gists findable by anyone, secret
+gists findable only by their owner or a site admin, the
+visibility judgement made over the gist rows before any
+description is matched or any file is read, because a
+secret gist's read-by-link reach is not a listing reach.
+Matching is pure (wiki_page_matches / gist_matches) and
+says where it hit; snippets are S-208's Snippet blocks;
+counted faces tally over the filtered hits before any
+cap, and the battery proves the S-209 equivalence per
+kind against a world where the planted private wiki and
+secret gist were never created. S-213's global fan-out
+gains the wiki and gists groups through this executor,
+and S-216's and S-245's search APIs serialise them the
+same way. Searching is a read over reads and is not
+witnessed. No migration -- schema stays 114.)
