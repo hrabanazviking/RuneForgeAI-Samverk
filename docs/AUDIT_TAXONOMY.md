@@ -2476,3 +2476,21 @@ gains the wiki and gists groups through this executor,
 and S-216's and S-245's search APIs serialise them the
 same way. Searching is a read over reads and is not
 witnessed. No migration -- schema stays 114.)
+S-289 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its secret scanning
+patterns v1, in samverk/secret_scanning.py, are a pure
+detector set for the major public token formats, written
+from public documentation of their shapes: GitHub's six
+prefixed forms, GitLab `glpat-`, AWS access key IDs,
+Google `AIza` keys and `GOCSPX-` client secrets, Slack
+tokens and webhook URLs, Stripe secret/restricted and
+webhook keys, SendGrid, Twilio, npm, PyPI, DigitalOcean,
+Square and Mailchimp keys, compact JWTs, and PEM
+private-key block headers. A finding carries the detector,
+the span, a redacted preview keeping only the published
+prefix and the match length, and a SHA-256 fingerprint --
+never the matched text. Overlaps resolve deterministically
+to one finding per span; an unknown detector id is refused
+`detector_unknown`. No storage, no witnessing: scanning is
+a judgement over text handed to it. No migration --
+schema stays 114.)
