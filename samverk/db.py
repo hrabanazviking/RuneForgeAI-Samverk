@@ -2663,8 +2663,69 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_discussion_conversions_repo"
         " ON discussion_conversions (repo_id, id)",
     ]),
+    # S-291: scan on push -- one row per scanned
+    # accepted push (exactly-once on (repo_id,
+    # push_key)), its ref updates, and the secret
+    # alerts its findings created (S-294's lifecycle
+    # governs them from here). An alert never carries
+    # the secret: detector, place, redacted preview
+    # and fingerprint only. Alert identity is unique
+    # per (repo, commit, path, detector, fingerprint).
+    (115, [
+        "CREATE TABLE push_scans ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  push_key TEXT NOT NULL,"
+        "  actor_kind TEXT NOT NULL,"
+        "  actor_id INTEGER,"
+        "  transport TEXT NOT NULL,"
+        "  status TEXT NOT NULL,"
+        "  partial_reason TEXT NOT NULL DEFAULT '',"
+        "  commits_scanned INTEGER NOT NULL,"
+        "  blobs_scanned INTEGER NOT NULL,"
+        "  blobs_skipped INTEGER NOT NULL,"
+        "  findings_count INTEGER NOT NULL,"
+        "  alerts_created INTEGER NOT NULL,"
+        "  pattern_available INTEGER NOT NULL,"
+        "  generic_available INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, push_key)"
+        ")",
+        "CREATE INDEX idx_push_scans_repo"
+        " ON push_scans (repo_id, id)",
+        "CREATE TABLE push_scan_updates ("
+        "  id INTEGER PRIMARY KEY,"
+        "  scan_id INTEGER NOT NULL,"
+        "  ref TEXT NOT NULL,"
+        "  old_oid TEXT NOT NULL,"
+        "  new_oid TEXT NOT NULL"
+        ")",
+        "CREATE INDEX idx_push_scan_updates_scan"
+        " ON push_scan_updates (scan_id, id)",
+        "CREATE TABLE secret_alerts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  scan_id INTEGER NOT NULL,"
+        "  commit_oid TEXT NOT NULL,"
+        "  path TEXT NOT NULL,"
+        "  blob_oid TEXT NOT NULL,"
+        "  source TEXT NOT NULL,"
+        "  detector_id TEXT NOT NULL,"
+        "  line INTEGER NOT NULL,"
+        "  column INTEGER NOT NULL,"
+        "  redacted TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, commit_oid, path,"
+        " detector_id, fingerprint)"
+        ")",
+        "CREATE INDEX idx_secret_alerts_repo"
+        " ON secret_alerts (repo_id, id)",
+        "CREATE INDEX idx_secret_alerts_scan"
+        " ON secret_alerts (scan_id, id)",
+    ]),
 ]
-
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
