@@ -2947,6 +2947,73 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_repo_dependencies_name"
         " ON repo_dependencies (name_key, ecosystem)",
     ]),
+    # S-299: dependency alerts -- the join of
+    # S-297's graph and S-298's advisory snapshot
+    # as standing alert rows, with S-294's
+    # lifecycle (standing resolution on the row,
+    # every transition on the alert's own events
+    # table). fixed_version is NULL where the
+    # snapshot knows no fix: fix unknown, never
+    # invented. The name column is dependency_name:
+    # S-264/S-265's registry audit refuses any
+    # schema name carrying the registry's own
+    # words, and an alert is not a registry.
+    # (Schema 120 -> 121 on this base;
+    # the keeper renumbers at banking if later
+    # slices land first.)
+    (121, [
+        "CREATE TABLE dependency_alerts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  dependency_id INTEGER,"
+        "  ecosystem TEXT NOT NULL,"
+        "  dependency_name TEXT NOT NULL,"
+        "  name_key TEXT NOT NULL,"
+        "  manifest_path TEXT NOT NULL,"
+        "  specifier TEXT NOT NULL,"
+        "  basis TEXT NOT NULL,"
+        "  pinned_version TEXT NOT NULL DEFAULT '',"
+        "  advisory_id TEXT NOT NULL,"
+        "  severity TEXT NOT NULL,"
+        "  affected TEXT NOT NULL,"
+        "  fixed_version TEXT,"
+        "  summary TEXT NOT NULL,"
+        "  snapshot_date TEXT NOT NULL,"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  resolution TEXT NOT NULL DEFAULT '',"
+        "  resolved_by_id INTEGER,"
+        "  resolved_by TEXT NOT NULL DEFAULT '',"
+        "  resolved_at INTEGER,"
+        "  resolution_reason TEXT NOT NULL DEFAULT '',"
+        "  UNIQUE (repo_id, ecosystem, name_key,"
+        "  manifest_path, advisory_id)"
+        ")",
+        "CREATE INDEX idx_dependency_alerts_repo"
+        " ON dependency_alerts (repo_id, state, id)",
+        "CREATE INDEX idx_dependency_alerts_advisory"
+        " ON dependency_alerts (advisory_id, repo_id)",
+        "CREATE TABLE dependency_alert_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  alert_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  from_state TEXT NOT NULL,"
+        "  to_state TEXT NOT NULL,"
+        "  resolution TEXT NOT NULL DEFAULT '',"
+        "  actor_id INTEGER,"
+        "  actor_username TEXT NOT NULL,"
+        "  role TEXT NOT NULL DEFAULT '',"
+        "  role_source TEXT NOT NULL DEFAULT '',"
+        "  reason TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_dependency_alert_events_alert"
+        " ON dependency_alert_events (alert_id, id)",
+        "CREATE INDEX idx_dependency_alert_events_repo"
+        " ON dependency_alert_events (repo_id, id)",
+    ]),
 ]
 
 

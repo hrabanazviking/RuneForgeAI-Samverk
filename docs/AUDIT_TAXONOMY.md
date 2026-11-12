@@ -2726,3 +2726,36 @@ Reading a bundled data file changes no code, lands no
 push and opens no alert, so it is unwitnessed here,
 as S-296's checks are unwitnessed; S-299's dependency
 alerts will stand on their own record.)
+S-299 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its dependency
+alerts, in samverk/dependency_alerts.py, are the join
+of S-297's dependency graph and S-298's advisory
+snapshot: a pure range judgement (a pinned version
+judged on itself; a range judged by intersection; a
+specifier with no judgeable version shape counted
+unjudged, never silently cleared) standing as
+migration 121's dependency_alerts (schema 120 -> 121;
+no renumber was needed at banking, S-298 having
+added no migration), each alert carrying its
+advisory's severity, its affected range exactly as
+published, and its fixed version or honestly NULL --
+fix unknown, never invented -- with the snapshot
+date it was computed against, and S-298's age words
+on every rendered surface. The lifecycle is S-294's
+shape carried whole: open -> resolved (fixed / false
+positive / risk accepted) with resolver and stated
+reason recorded, reopening supported, the admin and
+maintain rungs only, and every transition --
+including refresh's automatic resolution of a live
+alert whose match has vanished, recorded under the
+system actor with no human resolver claimed --
+standing on the alert's own dependency_alert_events
+in the same transaction. A refresh is derived data
+over an already-witnessed push, rebuildable like
+S-297's graph, and a lifecycle transition changes no
+code and lands no push, so both are unwitnessed
+here, as S-294's transitions and S-296's checks are
+unwitnessed. At banking the keeper applied the
+value move this slice's neighbours received
+in-slice to S-298's battery pin as well: schema
+120 -> 121, in the merge-fix commit.)
