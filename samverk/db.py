@@ -2725,6 +2725,45 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_secret_alerts_scan"
         " ON secret_alerts (scan_id, id)",
     ]),
+    # S-296: validity checks seam -- the standing
+    # validity of a secret alert (unknown until a
+    # check through a provider's public validation
+    # path answers otherwise) and the alert's own
+    # check record: one row per performed check,
+    # naming the answer, why it stands, the checker,
+    # who asked, their role and its source, and
+    # when. The secret is never a column anywhere.
+    (116, [
+        "ALTER TABLE secret_alerts"
+        " ADD COLUMN validity TEXT NOT NULL"
+        " DEFAULT 'unknown'",
+        "ALTER TABLE secret_alerts"
+        " ADD COLUMN validity_checked_at INTEGER",
+        "ALTER TABLE secret_alerts"
+        " ADD COLUMN validity_checker TEXT NOT NULL"
+        " DEFAULT ''",
+        "ALTER TABLE secret_alerts"
+        " ADD COLUMN validity_detail TEXT NOT NULL"
+        " DEFAULT ''",
+        "CREATE TABLE secret_validity_checks ("
+        "  id INTEGER PRIMARY KEY,"
+        "  alert_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  detector_id TEXT NOT NULL,"
+        "  validity TEXT NOT NULL,"
+        "  checker TEXT NOT NULL DEFAULT '',"
+        "  detail TEXT NOT NULL DEFAULT '',"
+        "  checked_by_id INTEGER NOT NULL,"
+        "  checked_by TEXT NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  role_source TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_secret_validity_checks_alert"
+        " ON secret_validity_checks (alert_id, id)",
+        "CREATE INDEX idx_secret_validity_checks_repo"
+        " ON secret_validity_checks (repo_id, id)",
+    ]),
 ]
 
 

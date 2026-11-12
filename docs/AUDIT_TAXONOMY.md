@@ -2561,3 +2561,30 @@ audit event when it lands. No migration -- schema
 stands at 114 on this slice's base, and S-291's
 migration 115, which banks before this slice, is
 untouched by it.)
+S-296 (2026-11-12) added no event of its own: 133 events
+stand: 33 auth, 87 repo, 13 admin. (Its validity checks
+seam, in samverk/secret_validity.py, is the road on
+which a secret alert's credential may be asked after
+at its provider: where the provider offers a public
+validation path -- one registry entry per S-289
+detector, written from the providers' public
+documentation -- an injected checker may answer
+*live* or *no longer live*; where no public path
+stands, no checker is configured (the offline
+instance), no secret is handed in (Samverk stores
+none), or a checker fails or answers in no
+recognised shape, the honest answer is *unknown*,
+recorded with its detail named and displayed as
+unknown on every surface. A check is judged by
+S-190's permission engine -- only the admin and
+maintain rungs may run one -- and stands on the
+alert's own secret_validity_checks record, written
+in the same transaction as the alert's standing
+validity columns (migration 116: schema 115 -> 116
+on this slice's base; S-293 and S-294 claim
+migration 116 on their own bases and the keeper
+renumbers at banking). The handed-in secret goes
+to the checker alone and is stored nowhere. A
+validity check changes no code, lands no push and
+lets no secret in, so it is unwitnessed here, as
+S-294's lifecycle transitions are unwitnessed.)
