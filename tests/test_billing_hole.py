@@ -70,8 +70,8 @@ class BillingHoleTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 126)
-        self.assertEqual(db.MIGRATIONS[-1][0], 126)
+        self.assertEqual(schema_version(self.conn), 127)
+        self.assertEqual(db.MIGRATIONS[-1][0], 127)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertFalse(any("billing" in e for e in taxonomy.AUDIT_EVENTS))
 

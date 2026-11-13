@@ -2921,3 +2921,34 @@ stored verdict row, and
 audit_commit_signatures re-proves that no row
 claims verified without a signer, a fingerprint
 and a passed check.)
+
+S-306 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its vigil mode, in samverk/vigil_mode.py, is
+the stricter rule an account declares for itself
+over S-305's verdicts: only my known keys count.
+A commit claiming the declaring account's
+identity -- its author email names the account --
+displays verified only when S-305's check passed
+under one of that account's own registered
+signing keys; a real signature under another
+account's key, a signature under an unknown key,
+a failed check and no signature all display as
+unverified, and the badge says so in words --
+vigil mode, the account and the signer named --
+never silently and never by colour alone. The
+stored S-305 verdict is never rewritten: vigil
+is a display judgement, so lifting the
+declaration restores the ordinary badges exactly
+as they stood. The declaration is the account's
+own act on itself alone, in migration 127's
+vigil_settings (schema 126 -> 127 on the banked
+line; the suite's standing schema pins moved
+in-slice, its taxonomy pins unmoved). Declaring
+vigil lands no push and the re-judgement is a
+machine judgement over data already in the
+forge, so nothing here is witnessed; the witness
+is the declaration row, and audit_vigil
+re-proves that no stored row whose author stands
+under vigil claims verified under a key that is
+not that author's own.)

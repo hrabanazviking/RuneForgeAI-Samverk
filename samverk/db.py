@@ -3200,6 +3200,17 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE UNIQUE INDEX idx_commit_verifications_repo_oid"
         " ON commit_verifications (repo_id, oid)",
     ]),
+    (127, [
+        "CREATE TABLE vigil_settings ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  username TEXT NOT NULL,"
+        "  enabled INTEGER NOT NULL DEFAULT 0,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_vigil_settings_user"
+        " ON vigil_settings (user_id)",
+    ]),
 ]
 
 
