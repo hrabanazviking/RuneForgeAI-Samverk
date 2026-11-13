@@ -167,9 +167,9 @@ class ConversionTests(unittest.TestCase):
     # -- schema / taxonomy / verdict seam -------------------
 
     def test_schema_taxonomy_and_verdict_stand(self):
-        self.assertEqual(schema_version(self.conn), 125)
-        self.assertEqual(db.MIGRATIONS[-1][0], 125)
-        self.assertEqual(db.migrate(self.conn), 125)
+        self.assertEqual(schema_version(self.conn), 126)
+        self.assertEqual(db.MIGRATIONS[-1][0], 126)
+        self.assertEqual(db.migrate(self.conn), 126)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:

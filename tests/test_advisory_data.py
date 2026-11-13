@@ -284,7 +284,7 @@ class InvariantTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 125)
+                self.assertEqual(schema_version(conn), 126)
             finally:
                 conn.close()
 

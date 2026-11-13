@@ -3167,6 +3167,39 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_code_scanning_alert_events_repo"
         " ON code_scanning_alert_events (repo_id, id)",
     ]),
+    (126, [
+        "CREATE TABLE signing_keys ("
+        "  id INTEGER PRIMARY KEY,"
+        "  user_id INTEGER NOT NULL,"
+        "  username TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  fingerprint TEXT NOT NULL,"
+        "  key_id TEXT NOT NULL DEFAULT '',"
+        "  material TEXT NOT NULL,"
+        "  blob BLOB NOT NULL DEFAULT X'',"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_signing_keys_kind_fingerprint"
+        " ON signing_keys (kind, fingerprint)",
+        "CREATE INDEX idx_signing_keys_user"
+        " ON signing_keys (user_id, id)",
+        "CREATE TABLE commit_verifications ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  oid TEXT NOT NULL,"
+        "  kind TEXT NOT NULL DEFAULT '',"
+        "  trust TEXT NOT NULL,"
+        "  check_state TEXT NOT NULL,"
+        "  signer TEXT NOT NULL DEFAULT '',"
+        "  fingerprint TEXT NOT NULL DEFAULT '',"
+        "  author_email TEXT NOT NULL DEFAULT '',"
+        "  detail TEXT NOT NULL DEFAULT '',"
+        "  verified_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_commit_verifications_repo_oid"
+        " ON commit_verifications (repo_id, oid)",
+    ]),
 ]
 
 

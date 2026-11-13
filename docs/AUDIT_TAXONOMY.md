@@ -2893,3 +2893,31 @@ changed line. A dismissal is a human act, but
 like S-294's transitions it changes no code and
 lands no push, so it is unwitnessed here; its
 witness is its own events record.)
+
+S-305 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its signed-commit verification, in
+samverk/commit_signatures.py, verifies GPG and
+SSH commit signatures on ingest and display:
+the gpgsig header is extracted from the raw
+commit, the signed payload rebuilt byte for
+byte, SSH signatures checked in-process against
+the registered key blob and OpenPGP signatures
+checked by gpg against the registered public
+keys, and the badge speaks S-263's trust words
+-- verified, partially verified, unverified --
+with the signer named, never a bare tick. A
+passed check under a key registered to another
+account than the author's is partial, honestly.
+Keys and verdicts live in migration 126's
+signing_keys and commit_verifications (schema
+125 -> 126 on the banked line; the suite's
+standing schema pins moved in-slice, its
+taxonomy pins unmoved). Verification is a
+machine judgement over data already in the
+forge and key registration lands no push, so
+nothing here is witnessed; the witness is the
+stored verdict row, and
+audit_commit_signatures re-proves that no row
+claims verified without a signer, a fingerprint
+and a passed check.)

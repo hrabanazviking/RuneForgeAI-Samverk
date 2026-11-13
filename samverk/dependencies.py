@@ -21,8 +21,12 @@ here. An unregistered import fails the build — a dependency
 cannot drift in through a stray `import` or a quiet pyproject
 edit; both doors are watched.
 
-Today the register is empty, and that emptiness is a fact the
-battery proves on every run, not a claim in a README.
+Today the register holds exactly one admission, `cryptography`,
+registered at S-305 (the roadmap's founding stance names it the
+admitted dependency, as in Samtal; S-305's SSH-signature
+verification is the first code that truly needs it). The battery
+proves the register, the project file and this doc agree on
+every run.
 """
 
 from __future__ import annotations
@@ -41,4 +45,16 @@ class AdmittedDependency:
 # Admit by appending here AND to docs/DEPENDENCY_REGISTER.md,
 # with the pin mirrored in pyproject.toml — the battery checks
 # all three agree.
-ADMITTED_DEPENDENCIES: tuple[AdmittedDependency, ...] = ()
+ADMITTED_DEPENDENCIES: tuple[AdmittedDependency, ...] = (
+    AdmittedDependency(
+        distribution="cryptography",
+        pin="==46.0.5",
+        import_name="cryptography",
+        reason=(
+            "The standard library cannot verify Ed25519, ECDSA "
+            "or RSA SSHSIG signatures (S-305 signed-commit "
+            "verification); hand-rolling public-key signature "
+            "checks is exactly the unsafe kind of stdlib-only. "
+            "The roadmap founding stance names cryptography "
+            "as the admitted dependency, as in Samtal.")),
+)
