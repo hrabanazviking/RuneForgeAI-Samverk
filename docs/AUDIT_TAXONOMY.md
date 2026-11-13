@@ -3006,3 +3006,36 @@ re-proves that every row the rollup counts
 stands inside its family's vocabulary and names
 a standing repository. This slice adds no
 migration: schema 127 stands.)
+
+S-309 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its audit log UI, in samverk/audit_log_ui.py,
+is the general face over S-007's chain: repo,
+org, and instance views with exact per-scope
+belonging (a repo row names exactly that
+repository, S-221's shape; an org row is the
+organization itself or a repository under its
+own first path semment, as S-198 judged; the
+instance view is every row), behind the three
+doors the slice decides (the repo view where
+S-054's can_read opens the repository, uniform
+repo_not_found otherwise; the org view for the
+organization's members and owners under S-186
+and for site admins, uniform org_not_found
+otherwise; the instance view for site admins
+only, uniform audit_not_found otherwise), with
+pure filter law (action, outcome, actor,
+target kind, time window, query, limit -- an
+unknown action filter refused filter_invalid),
+export in JSON or CSV through the same doors
+and the same filters, and S-007's chain
+verification status recomputed by verify_chain
+over the whole chain and shown on every view,
+in words, never colour alone. The UI judges
+no event, moves no event and writes nothing,
+so nothing here is witnessed;
+audit_audit_log_ui re-proves that every row
+the UI reads stands inside the taxonomy, in
+unbroken sequence, with both hashes carried
+and every named actor standing. This slice
+adds no migration: schema 127 stands.)
