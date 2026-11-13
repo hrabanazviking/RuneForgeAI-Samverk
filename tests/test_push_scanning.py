@@ -185,11 +185,11 @@ class PushScanningTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------------------
 
     def test_schema_stands_at_115(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
 
     def test_taxonomy_still_133(self):
-        self.assertEqual(len(AUDIT_EVENTS), 134)
+        self.assertEqual(len(AUDIT_EVENTS), 135)
 
     # -- the full-history law ------------------------------------------
 

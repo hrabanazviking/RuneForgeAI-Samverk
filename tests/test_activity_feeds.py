@@ -273,12 +273,12 @@ class ActivityFeedTests(unittest.TestCase):
             self.conn.execute("SELECT COUNT(*) AS n FROM events").fetchone()["n"], rows)
 
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
     # -- rendering -----------------------------------------------------
     def test_render_pages_label_and_count(self):

@@ -246,7 +246,7 @@ event named here is a real event-store verb.
 | `auth.follow` | none | An account followed another account (S-232) | `followed` |
 | `auth.unfollow` | none | An account took its follow back (S-232) | `followed` |
 
-### checks (4)
+### checks (5)
 
 | Event | Scope | Meaning | detail may carry |
 |---|---|---|---|
@@ -254,6 +254,7 @@ event named here is a real event-store verb.
 | `repo.check_run.post` | repository | A check run posted through the API by a scoped poster (S-246) | `poster`, `credential`, `token_id`, `oid`, `name`, `status`, `conclusion` |
 | `repo.artifact.upload` | repository | A CI artifact uploaded through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name`, `size`, `retention_days` |
 | `repo.artifact.delete` | repository | A CI artifact deleted through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name` |
+| `repo.code_scanning.upload` | repository | A SARIF document uploaded through the code-scanning API by a scoped poster (S-302) | `poster`, `credential`, `token_id`, `oid`, `ref`, `runs`, `results` |
 
 ## Subscriptions (S-248)
 

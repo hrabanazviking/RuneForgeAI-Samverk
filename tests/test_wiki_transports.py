@@ -491,9 +491,9 @@ class WikiWorldTests(unittest.TestCase):
         self.assertNotIn("git@samverk", unborn)
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 122)
+        self.assertEqual(schema_version(self.conn), 123)
         from samverk import taxonomy
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
 
 def _cross(root: Path, **kw) -> SmartHttpService:

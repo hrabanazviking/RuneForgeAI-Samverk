@@ -195,13 +195,13 @@ class SecretAlertLifecycleTests(unittest.TestCase):
     # -- pins ------------------------------------------------------
 
     def test_schema_stands_at_117(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
 
     def test_taxonomy_still_134(self):
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_resolution_vocabulary_is_the_roadmaps_three(self):

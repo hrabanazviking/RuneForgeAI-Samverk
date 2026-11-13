@@ -122,10 +122,10 @@ class PushProtectionBypassTests(unittest.TestCase):
     # -- pins -----------------------------------------------------------
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertIn(BYPASS_EVENT, taxonomy.REPO_EVENTS)
         spec = get_webhook_event(BYPASS_EVENT)
         self.assertEqual(spec.scope, "repository")

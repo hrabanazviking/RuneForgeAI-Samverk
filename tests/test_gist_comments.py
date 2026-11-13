@@ -100,11 +100,11 @@ class GistCommentTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(db.migrate(self.conn), 122)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(db.migrate(self.conn), 123)
         from samverk.taxonomy import AUDIT_EVENTS
-        self.assertEqual(len(AUDIT_EVENTS), 134)
+        self.assertEqual(len(AUDIT_EVENTS), 135)
 
     def test_comment_acts_are_unwitnessed(self):
         before = self._audit_count()

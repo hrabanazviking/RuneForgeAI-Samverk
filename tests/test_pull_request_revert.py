@@ -480,7 +480,7 @@ class PullRequestRevertTests(unittest.TestCase):
 
     # -- the record itself ----------------------------------------------------
     def test_migration_63_shape(self):
-        self.assertEqual(db.schema_version(self.conn), 122)
+        self.assertEqual(db.schema_version(self.conn), 123)
         cols = {r["name"] for r in self.conn.execute(
             "PRAGMA table_info(pull_request_reverts)").fetchall()}
         self.assertTrue({

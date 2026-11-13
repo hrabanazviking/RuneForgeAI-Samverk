@@ -148,16 +148,16 @@ class AnswerMarkingTests(unittest.TestCase):
     # -- schema / taxonomy / verdict seam -------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(db.migrate(self.conn), 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(db.migrate(self.conn), 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 88, "admin": 13})
+            families, {"auth": 33, "repo": 89, "admin": 13})
 
     def test_verdict_audit_still_clean(self):
         audit = audit_discussions_verdict(self.conn)

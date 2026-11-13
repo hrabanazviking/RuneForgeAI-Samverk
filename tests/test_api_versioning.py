@@ -81,15 +81,15 @@ class ApiVersioningTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 88, "admin": 13})
+            families, {"auth": 33, "repo": 89, "admin": 13})
 
     # the current version
     def test_current_version_is_v1_under_its_base(self):

@@ -2813,3 +2813,29 @@ rebuildable like S-297's graph, adds no migration
 (schema 122 stands), and is unwitnessed here -- the
 durable artefact is the check row itself, which
 S-157's seam already stands behind.)
+S-302 (2026-11-12) added one event of its own:
+`repo.code_scanning.upload` -- 135 events stand:
+33 auth, 89 repo, 13 admin. (Its code scanning
+ingestion, in samverk/code_scanning.py, takes SARIF
+uploads through the API door (S-238, judged by
+S-190): a scanner posts one SARIF 2.1.0 document
+naming the commit it was computed against, the
+document is validated whole against the SARIF
+schema by the pure sarif_problems before anything
+is stored -- a document that stands against the
+schema is refused sarif_invalid with its problems
+named, stores nothing and audits nothing -- and an
+accepted upload lands in migration 123's
+code_scanning_uploads (schema 122 -> 123 on the
+banked line; the suite's standing schema and
+taxonomy pins moved in-slice), keyed by commit,
+its canonical text stored with the tool names, run
+and result counts and per-level counts its
+validation judged it with. A re-upload is a new
+row beside the old; listings read newest first and
+one upload fetches whole with its document. Every
+accepted upload is witnessed here exactly once,
+naming the poster, the credential kind and token
+id beside the commit, the ref and the counts; the
+stored row carries the poster too. Listings and
+fetches are reads and are unwitnessed.)

@@ -315,11 +315,11 @@ class GraphTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
     def test_pins_schema_117_taxonomy_134(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'")}
@@ -330,7 +330,7 @@ class GraphTests(unittest.TestCase):
     def test_fresh_database_migrates_to_117(self):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "fresh.db")
-            self.assertEqual(db.schema_version(conn), 122)
+            self.assertEqual(db.schema_version(conn), 123)
             conn.close()
 
     def test_upgrade_from_116_creates_tables(self):
@@ -348,7 +348,7 @@ class GraphTests(unittest.TestCase):
                         " (key, value) VALUES ('version', ?)",
                         (str(target),))
             self.assertEqual(db.schema_version(conn), 116)
-            self.assertEqual(db.migrate(conn), 122)
+            self.assertEqual(db.migrate(conn), 123)
             names = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type = 'table'")}
             self.assertIn("repo_dependencies", names)
