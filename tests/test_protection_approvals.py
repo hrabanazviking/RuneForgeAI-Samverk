@@ -387,8 +387,8 @@ class ProtectionApprovalsTests(unittest.TestCase):
         self.assertIn("Approvals are short", html)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 123)
-        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(schema_version(self.conn), 124)
+        self.assertEqual(db.MIGRATIONS[-1][0], 124)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
 

@@ -374,6 +374,11 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         413, "That SARIF document is too large"),
     "code_scanning_not_found": (
         404, "No such code-scanning upload"),
+    "code_scanning_alert_not_found": (
+        404, "No such code-scanning alert"),
+    "code_scanning_stale_upload": (
+        409, "That SARIF upload is older than the newest"
+        " processed for its branch"),
     # S-255 -- API abuse defences (its own reasons;
     # the refusals every S-255 judgement raises)
     "payload_too_large": (
