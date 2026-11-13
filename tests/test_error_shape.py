@@ -208,6 +208,8 @@ EXPECTED_STATUS = {
     "chunk_too_large": 413, "chunk_out_of_order": 400,
     "size_invalid": 400, "size_mismatch": 400,
     "too_large": 413, "empty": 400,
+    "sarif_invalid": 400, "sarif_too_large": 413,
+    "code_scanning_not_found": 404,
     "range_invalid": 400, "range_not_satisfiable": 416,
 }
 
@@ -256,14 +258,14 @@ class ErrorShapeTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_taxonomy_and_fields(self):
-        self.assertEqual(schema_version(self.w.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.w.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
-        self.assertEqual(families, {"auth": 33, "repo": 88, "admin": 13})
+        self.assertEqual(families, {"auth": 33, "repo": 89, "admin": 13})
         self.assertEqual(
             PROBLEM_FIELDS,
             ("type", "title", "status", "detail", "error_id"))

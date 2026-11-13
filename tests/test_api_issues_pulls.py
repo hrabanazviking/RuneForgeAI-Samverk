@@ -181,12 +181,12 @@ class IssuesPullsAPITests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_and_taxonomy(self):
-        self.assertEqual(schema_version(self.w.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
+        self.assertEqual(schema_version(self.w.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(ISSUES_PULLS_API_PATH, "/api/issues-pulls")
 
     def test_contract_now_lands_the_family(self):

@@ -85,11 +85,11 @@ class NotificationPreferenceTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}
@@ -100,8 +100,8 @@ class NotificationPreferenceTests(unittest.TestCase):
     def test_fresh_database_migrates_to_93(self):
         path = self.root / "fresh.db"
         conn = db.connect(path); self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 122)
-        self.assertEqual(db.schema_version(conn), 122)
+        self.assertEqual(db.migrate(conn), 123)
+        self.assertEqual(db.schema_version(conn), 123)
 
     # -- findability map ---------------------------------------------
     def test_sections_map_is_the_whole_page(self):

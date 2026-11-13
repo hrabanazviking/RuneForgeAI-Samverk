@@ -365,6 +365,15 @@ _PROBLEM_REGISTRY: dict[str, tuple[int, str]] = {
         400, "That upload does not match its declared size"),
     "too_large": (413, "That artifact is too large"),
     "empty": (400, "That artifact carries no bytes"),
+    # S-302 -- code scanning ingestion (its own
+    # reasons; the door and payload reasons it
+    # raises ride their own registrations above)
+    "sarif_invalid": (
+        400, "That SARIF document is not valid"),
+    "sarif_too_large": (
+        413, "That SARIF document is too large"),
+    "code_scanning_not_found": (
+        404, "No such code-scanning upload"),
     # S-255 -- API abuse defences (its own reasons;
     # the refusals every S-255 judgement raises)
     "payload_too_large": (

@@ -112,10 +112,10 @@ class ApiSearchTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.w.conn), 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_contract_ratifies_search_under_s245(self):

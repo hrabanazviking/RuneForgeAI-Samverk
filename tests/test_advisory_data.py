@@ -284,14 +284,14 @@ class InvariantTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "t.db")
             try:
-                self.assertEqual(schema_version(conn), 122)
+                self.assertEqual(schema_version(conn), 123)
             finally:
                 conn.close()
 
     def test_no_new_taxonomy_event(self):
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 88)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_loading_writes_nothing_and_audits_nothing(self):

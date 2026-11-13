@@ -3051,6 +3051,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_advisory_refreshes_id"
         " ON advisory_refreshes (id)",
     ]),
+    # S-302: code scanning ingestion -- one row
+    # per accepted SARIF upload, keyed by the
+    # commit it was computed against: the
+    # canonical document text, the summary its
+    # validation judged it with (tool names, run
+    # and result counts, results by level), the
+    # poster and when it landed. A re-upload is
+    # a new row beside the old; no row is ever
+    # updated in place.
+    (123, [
+        "CREATE TABLE code_scanning_uploads ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  commit_oid TEXT NOT NULL,"
+        "  ref TEXT NOT NULL DEFAULT '',"
+        "  sarif_text TEXT NOT NULL,"
+        "  tool_names TEXT NOT NULL DEFAULT '[]',"
+        "  run_count INTEGER NOT NULL,"
+        "  result_count INTEGER NOT NULL,"
+        "  level_counts TEXT NOT NULL DEFAULT '{}',"
+        "  poster TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_code_scanning_uploads_repo_commit"
+        " ON code_scanning_uploads (repo_id, commit_oid, id)",
+        "CREATE INDEX idx_code_scanning_uploads_repo"
+        " ON code_scanning_uploads (repo_id, id)",
+    ]),
 ]
 
 

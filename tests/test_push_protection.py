@@ -394,7 +394,7 @@ class PushProtectionTests(unittest.TestCase):
         # On the banked line the taxonomy stands at 134
         # (S-293's bypass event) and the one table of
         # this shape is S-293's bypass alert table.
-        self.assertEqual(len(AUDIT_EVENTS), 134)
+        self.assertEqual(len(AUDIT_EVENTS), 135)
         rows = self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' "
             "AND name LIKE '%push_protection%'").fetchall()

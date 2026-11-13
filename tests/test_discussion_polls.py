@@ -120,15 +120,15 @@ class DiscussionPollsTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 122)
-        self.assertEqual(db.MIGRATIONS[-1][0], 122)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 134)
+        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 88, "admin": 13})
+            families, {"auth": 33, "repo": 89, "admin": 13})
         self.assertFalse(any(
             "poll" in e for e in taxonomy.AUDIT_EVENTS))
 
@@ -405,7 +405,7 @@ class DiscussionPollsTests(unittest.TestCase):
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())
         self.assertEqual(audit.verdict_offending_tables, ())
-        self.assertEqual(audit.events_scanned, 134)
+        self.assertEqual(audit.events_scanned, 135)
         self.assertEqual(audit.operations_defined, 4)
         self.assertEqual(audit.seam_invariants, 8)
         self.assertGreater(audit.tables_scanned, 50)
