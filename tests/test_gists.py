@@ -79,9 +79,9 @@ class GistModelTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.conn), 127)
-        self.assertEqual(db.MIGRATIONS[-1][0], 127)
-        self.assertEqual(db.migrate(self.conn), 127)
+        self.assertEqual(schema_version(self.conn), 128)
+        self.assertEqual(db.MIGRATIONS[-1][0], 128)
+        self.assertEqual(db.migrate(self.conn), 128)
         from samverk.taxonomy import AUDIT_EVENTS
         self.assertEqual(len(AUDIT_EVENTS), 135)
 

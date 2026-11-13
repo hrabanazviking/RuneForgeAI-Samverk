@@ -485,7 +485,7 @@ class AuditLogUITests(unittest.TestCase):
     # -- honesty: pins, no writes, audit re-proof --------------------------------
 
     def test_no_migration_no_new_taxonomy_event(self):
-        self.assertEqual(schema_version(self.conn), 127)
+        self.assertEqual(schema_version(self.conn), 128)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         counts = (len(taxonomy.AUTH_EVENTS), len(taxonomy.REPO_EVENTS),
                   len(taxonomy.ADMIN_EVENTS))
