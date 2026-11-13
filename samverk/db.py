@@ -3129,6 +3129,44 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "  PRIMARY KEY (repo_id, branch)"
         ")",
     ]),
+    # S-304: code scanning alerts UI -- the
+    # dismissal standing on S-303's alert rows:
+    # the kind, the dismisser and the stated
+    # reason, cleared whole on a reopen; plus the
+    # alert's own dismissal record -- one row per
+    # transition, written in the same transaction
+    # that moves the alert.
+    (125, [
+        "ALTER TABLE code_scanning_alerts ADD COLUMN"
+        " dismissal TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE code_scanning_alerts ADD COLUMN"
+        " dismissed_by_id INTEGER",
+        "ALTER TABLE code_scanning_alerts ADD COLUMN"
+        " dismissed_by TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE code_scanning_alerts ADD COLUMN"
+        " dismissed_at INTEGER",
+        "ALTER TABLE code_scanning_alerts ADD COLUMN"
+        " dismissal_reason TEXT NOT NULL DEFAULT ''",
+        "CREATE TABLE code_scanning_alert_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  alert_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  from_state TEXT NOT NULL,"
+        "  to_state TEXT NOT NULL,"
+        "  dismissal TEXT NOT NULL DEFAULT '',"
+        "  actor_id INTEGER NOT NULL,"
+        "  actor_username TEXT NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  role_source TEXT NOT NULL,"
+        "  reason TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_code_scanning_alert_events_alert"
+        " ON code_scanning_alert_events (alert_id, id)",
+        "CREATE INDEX idx_code_scanning_alert_events_repo"
+        " ON code_scanning_alert_events (repo_id, id)",
+    ]),
 ]
 
 
