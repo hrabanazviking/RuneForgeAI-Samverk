@@ -8,7 +8,7 @@ job, or cannot do it safely, and the admission is written down
 here and in `samverk/dependencies.py` with an exact pinned
 version and a reason line.
 
-**Runtime dependencies admitted: none.** The battery
+**Runtime dependencies admitted: one** -- `cryptography==46.0.5`, admitted at S-305. The battery
 (`tests/test_dependencies.py`) proves this on every run: it
 requires `pyproject.toml`'s declared dependencies to match the
 register exactly, and AST-scans the package and the test suite
@@ -18,7 +18,7 @@ so no unregistered import can drift in.
 
 | Distribution | Pin | Import name | Reason |
 |---|---|---|---|
-| *(none)* | — | — | — |
+| cryptography | ==46.0.5 | cryptography | The standard library cannot verify Ed25519, ECDSA or RSA SSHSIG signatures (S-305 signed-commit verification); hand-rolling public-key signature checks is exactly the unsafe kind of stdlib-only. The roadmap founding stance names cryptography as the admitted dependency, as in Samtal. |
 
 ## How a dependency is admitted
 

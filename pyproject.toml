@@ -9,9 +9,9 @@ description = "Samverk — our own clean-room, open-source version-control appli
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "AGPL-3.0" }
-# Stdlib-first (roadmap S-017): no runtime dependencies admitted yet.
-# Each future dependency needs a reason line in the dependency register.
-dependencies = []
+# Stdlib-first (roadmap S-017): dependencies admitted one at a time,
+# each with a reason line in the dependency register.
+dependencies = ["cryptography==46.0.5"]
 
 [project.scripts]
 samverk = "samverk.cli:main"

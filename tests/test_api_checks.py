@@ -142,8 +142,8 @@ class ApiChecksTests(unittest.TestCase):
     # -- pins ------------------------------------------------
 
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 125)
-        self.assertEqual(db.MIGRATIONS[-1][0], 125)
+        self.assertEqual(schema_version(self.w.conn), 126)
+        self.assertEqual(db.MIGRATIONS[-1][0], 126)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)

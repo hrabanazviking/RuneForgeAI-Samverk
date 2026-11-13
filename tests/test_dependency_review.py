@@ -514,8 +514,8 @@ class ReviewTests(StoreCase):
 
 class StandingTests(StoreCase):
     def test_no_migration_and_taxonomy_unchanged(self):
-        self.assertEqual(schema_version(self.conn), 125)
-        self.assertEqual(db.MIGRATIONS[-1][0], 125)
+        self.assertEqual(schema_version(self.conn), 126)
+        self.assertEqual(db.MIGRATIONS[-1][0], 126)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
     def test_audit_log_does_not_move_across_publish(self):

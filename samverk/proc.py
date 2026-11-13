@@ -53,7 +53,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-ALLOWED_PROGRAMS = frozenset({"git"})
+ALLOWED_PROGRAMS = frozenset({"git", "gpg"})  # gpg: S-305 OpenPGP verification
 
 # The git subcommands Samverk's core may run. Part III (git core)
 # and the transport slices extend this list here, with reasons,
