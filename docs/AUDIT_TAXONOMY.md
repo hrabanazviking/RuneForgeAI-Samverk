@@ -3039,3 +3039,43 @@ the UI reads stands inside the taxonomy, in
 unbroken sequence, with both hashes carried
 and every named actor standing. This slice
 adds no migration: schema 127 stands.)
+
+S-310 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its private security advisories, in
+samverk/security_advisories.py, are the
+maintainer's instrument Part XV was missing: an
+advisory is drafted in private -- visible to the
+repository's admin and maintain rungs alone,
+answering the uniform advisory_not_found to
+everyone else on any repository -- coordinated in
+private (its working facts edited, its fix
+reference recorded, standing alerts of the three
+families linked from its own repository only),
+and published by a judged act (decide_publish:
+state first, then the actor's rung, then
+completeness, the alert linkage or the affected
+dependency named) with its linkage frozen into
+the published record and its publisher and time
+recorded; a maintainer may withdraw a draft or a
+published advisory with a stated reason, and a
+withdrawn advisory stays readable in that state
+and never publishes again. Storage is migration
+128's security_advisories,
+security_advisory_alerts and
+security_advisory_events (schema 127 -> 128 on
+the banked line; the suite's standing schema pins
+moved in-slice, its taxonomy pins unmoved).
+Drafting, coordinating and publishing change no
+code and land no push, so nothing here is
+witnessed -- the reasoning is S-294's and
+S-299's for their lifecycle transitions; the
+advisory's witness is its own events record,
+complete and in-transaction, and
+audit_security_advisories re-proves that every
+standing row is honest: states and severities
+inside their vocabularies, keys minted by their
+ids, publications and withdrawals carrying
+their actors, times and reasons, and every link
+naming a standing alert of its family in the
+advisory's own repository, once.)

@@ -3211,6 +3211,83 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE UNIQUE INDEX idx_vigil_settings_user"
         " ON vigil_settings (user_id)",
     ]),
+    # S-310: security advisories (private) -- a
+    # repository advisory drafted in private by
+    # maintainers, its alert linkage (one row per
+    # linked standing alert of the three families,
+    # in the same repository), and the advisory's
+    # own coordination record: one row per act
+    # (create / update / link / unlink / publish /
+    # withdraw), written in the same transaction
+    # as the change it records. The affected
+    # dependency's name column is dependency_name
+    # by design (S-264/S-265's registry audit
+    # refuses schema names carrying the registry's
+    # own words; S-299's lesson, kept).
+    (128, [
+        "CREATE TABLE security_advisories ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  advisory_key TEXT NOT NULL,"
+        "  title TEXT NOT NULL,"
+        "  summary TEXT NOT NULL DEFAULT '',"
+        "  description TEXT NOT NULL DEFAULT '',"
+        "  severity TEXT NOT NULL,"
+        "  ecosystem TEXT NOT NULL DEFAULT '',"
+        "  dependency_name TEXT NOT NULL DEFAULT '',"
+        "  affected TEXT NOT NULL DEFAULT '',"
+        "  fixed_version TEXT,"
+        "  cve_id TEXT NOT NULL DEFAULT '',"
+        "  fix_reference TEXT NOT NULL DEFAULT '',"
+        "  state TEXT NOT NULL DEFAULT 'draft',"
+        "  created_by_id INTEGER NOT NULL,"
+        "  created_by TEXT NOT NULL,"
+        "  published_by_id INTEGER,"
+        "  published_by TEXT NOT NULL DEFAULT '',"
+        "  published_at INTEGER,"
+        "  withdrawn_by_id INTEGER,"
+        "  withdrawn_by TEXT NOT NULL DEFAULT '',"
+        "  withdrawn_at INTEGER,"
+        "  withdrawn_reason TEXT NOT NULL DEFAULT '',"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_security_advisories_key"
+        " ON security_advisories (advisory_key)",
+        "CREATE INDEX idx_security_advisories_repo"
+        " ON security_advisories (repo_id, state, id)",
+        "CREATE TABLE security_advisory_alerts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  advisory_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  family TEXT NOT NULL,"
+        "  alert_id INTEGER NOT NULL,"
+        "  created_by_id INTEGER NOT NULL,"
+        "  created_by TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  UNIQUE (advisory_id, family, alert_id)"
+        ")",
+        "CREATE INDEX idx_security_advisory_alerts_adv"
+        " ON security_advisory_alerts (advisory_id, id)",
+        "CREATE TABLE security_advisory_events ("
+        "  id INTEGER PRIMARY KEY,"
+        "  advisory_id INTEGER NOT NULL,"
+        "  repo_id INTEGER NOT NULL,"
+        "  action TEXT NOT NULL,"
+        "  from_state TEXT NOT NULL,"
+        "  to_state TEXT NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  actor_username TEXT NOT NULL,"
+        "  role TEXT NOT NULL,"
+        "  role_source TEXT NOT NULL,"
+        "  detail TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_security_advisory_events_adv"
+        " ON security_advisory_events (advisory_id, id)",
+        "CREATE INDEX idx_security_advisory_events_repo"
+        " ON security_advisory_events (repo_id, id)",
+    ]),
 ]
 
 
