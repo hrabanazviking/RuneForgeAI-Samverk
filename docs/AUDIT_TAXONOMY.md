@@ -2866,3 +2866,30 @@ a newer run's verdicts. Processing and reading
 append nothing here; the durable artefact is
 the alert row itself.)
 
+S-304 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its code scanning alerts UI, in
+samverk/code_scanning_ui.py, renders S-303's
+alerts as pages -- the list and the detail, with
+rule help lifted from the reporting upload's own
+SARIF rule metadata and honestly absent where
+the upload carried none, and every location the
+finding stands at -- and gives the alerts a
+dismissal life modelled on S-294's: an open
+alert dismissed under one closed kind set
+(false_positive / wont_fix / used_in_tests) with
+the dismisser and a stated reason recorded, and
+reopening supported, judged by S-190 at the
+admin and maintain rungs, standing on migration
+125's dismissal columns and the alert's own
+code_scanning_alert_events record in the same
+transaction (schema 124 -> 125 on the banked
+line; the suite's standing schema pins moved
+in-slice, its taxonomy pins unmoved). Its PR
+annotations lay the head branch's open alerts
+over S-145's files view of S-104's diff, and a
+finding annotates only where its line is a
+changed line. A dismissal is a human act, but
+like S-294's transitions it changes no code and
+lands no push, so it is unwitnessed here; its
+witness is its own events record.)
