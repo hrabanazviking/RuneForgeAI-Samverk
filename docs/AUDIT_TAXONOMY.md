@@ -2790,3 +2790,26 @@ named reason. A refresh changes no code, lands no
 push and lets nothing in, so it is unwitnessed here,
 as S-296's checks are unwitnessed; its witness is
 its own provenance record.)
+S-301 (2026-11-12) added no event of its own: 134 events
+stand: 33 auth, 88 repo, 13 admin. (Its dependency
+review, in samverk/dependency_review.py, summarises a
+pull request's manifest changes between its recorded
+base and head snapshots -- both read through S-297's
+parsers under the graph's own skip law -- and flags
+new vulnerabilities under S-299's own pure judgement
+against the standing advisory snapshot (S-300's seam:
+the last landed refresh, else S-298's bundled one).
+New means new: a vulnerability the base already
+carried is never laid at the pull request's door, and
+a match the change removes is reported resolved. An
+added or changed specifier no judgement could reach,
+or a changed manifest skipped on either side, makes
+the review incomplete, and its check fails. The
+verdict is published as a check (S-246) through
+S-157's record_result seam under the standing context
+dependency-review on the head commit, so branch rules
+can require it; the review itself is derived data,
+rebuildable like S-297's graph, adds no migration
+(schema 122 stands), and is unwitnessed here -- the
+durable artefact is the check row itself, which
+S-157's seam already stands behind.)
