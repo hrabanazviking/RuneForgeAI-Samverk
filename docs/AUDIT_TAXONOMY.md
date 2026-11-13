@@ -2975,3 +2975,34 @@ that every row the tab counts stands inside its
 family's vocabulary, with its resolution or
 dismissal honestly recorded. This slice adds no
 migration: schema 127 stands.)
+
+S-308 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its security overview, in
+samverk/security_overview.py, is the org and
+instance rollup over S-307's tab: one gathered
+live read across many repositories, counting
+each family in its own vocabulary -- secret and
+dependency alerts live in open + reopened with
+live dependency counts by severity, code
+scanning live in its effective open state
+(dismissed while a dismissal stands, else the
+scanner state) with live counts by SARIF level,
+the secret family standing as its own total --
+with distinct repositories affected overall and
+per family, behind the doors the slice decides
+(the org rollup for the organization's members
+and owners and for site admins, the uniform
+org_not_found otherwise; the instance rollup for
+site admins only), repository names shown only
+where S-054's can_read opens them, and the
+advisory snapshot's age standing on the page
+under S-298's law. Counts only: no alert is
+named and no code content stands anywhere in
+the surface. The overview judges no alert,
+moves no alert and writes nothing, so nothing
+here is witnessed; audit_security_overview
+re-proves that every row the rollup counts
+stands inside its family's vocabulary and names
+a standing repository. This slice adds no
+migration: schema 127 stands.)
