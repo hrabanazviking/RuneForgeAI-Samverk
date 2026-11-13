@@ -2952,3 +2952,26 @@ is the declaration row, and audit_vigil
 re-proves that no stored row whose author stands
 under vigil claims verified under a key that is
 not that author's own.)
+
+S-307 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its security tab, in samverk/security_tab.py, is
+the per-repository home the alert families report
+into: one gathered read over S-294's secret
+alerts, S-299's dependency alerts and S-304's
+code-scanning alerts, counting each family in its
+own vocabulary -- lifecycle states for secret and
+dependency alerts with live dependency counts by
+severity, effective states for code scanning
+(dismissed while a dismissal stands, else the
+scanner state) with live counts by SARIF level --
+behind the S-054 can_read display door, with the
+advisory snapshot's age standing on the tab under
+S-298's law and the recent alerts shown in their
+non-secret faces only. The tab judges no alert,
+moves no alert and writes nothing, so nothing
+here is witnessed; audit_security_tab re-proves
+that every row the tab counts stands inside its
+family's vocabulary, with its resolution or
+dismissal honestly recorded. This slice adds no
+migration: schema 127 stands.)
