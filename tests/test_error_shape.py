@@ -210,6 +210,8 @@ EXPECTED_STATUS = {
     "too_large": 413, "empty": 400,
     "sarif_invalid": 400, "sarif_too_large": 413,
     "code_scanning_not_found": 404,
+    "code_scanning_alert_not_found": 404,
+    "code_scanning_stale_upload": 409,
     "range_invalid": 400, "range_not_satisfiable": 416,
 }
 
@@ -258,8 +260,8 @@ class ErrorShapeTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_pins_schema_taxonomy_and_fields(self):
-        self.assertEqual(schema_version(self.w.conn), 123)
-        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(schema_version(self.w.conn), 124)
+        self.assertEqual(db.MIGRATIONS[-1][0], 124)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:

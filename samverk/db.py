@@ -3079,6 +3079,56 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_code_scanning_uploads_repo"
         " ON code_scanning_uploads (repo_id, id)",
     ]),
+    # S-303: code scanning alerts -- one alert
+    # per (repo, branch, fingerprint): the
+    # standing facts of the run that most
+    # recently reported the finding, its state
+    # (open / fixed), and the uploads that
+    # first reported it, most recently reported
+    # it, and first stopped reporting it; plus
+    # the branch heads -- the newest upload
+    # processed per (repo, branch), so an older
+    # upload's transitions can never rewrite a
+    # newer run's verdicts.
+    (124, [
+        "CREATE TABLE code_scanning_alerts ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  branch TEXT NOT NULL DEFAULT '',"
+        "  fingerprint TEXT NOT NULL,"
+        "  basis TEXT NOT NULL,"
+        "  tool_name TEXT NOT NULL DEFAULT '',"
+        "  rule_id TEXT NOT NULL DEFAULT '',"
+        "  level TEXT NOT NULL DEFAULT 'warning',"
+        "  message TEXT NOT NULL DEFAULT '',"
+        "  artifact_uri TEXT NOT NULL DEFAULT '',"
+        "  start_line INTEGER NOT NULL DEFAULT 0,"
+        "  start_column INTEGER NOT NULL DEFAULT 0,"
+        "  state TEXT NOT NULL DEFAULT 'open',"
+        "  first_seen_upload_id INTEGER NOT NULL,"
+        "  first_seen_oid TEXT NOT NULL,"
+        "  last_seen_upload_id INTEGER NOT NULL,"
+        "  last_seen_oid TEXT NOT NULL,"
+        "  fixed_upload_id INTEGER,"
+        "  fixed_oid TEXT NOT NULL DEFAULT '',"
+        "  times_seen INTEGER NOT NULL DEFAULT 1,"
+        "  times_fixed INTEGER NOT NULL DEFAULT 0,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, branch, fingerprint)"
+        ")",
+        "CREATE INDEX idx_code_scanning_alerts_repo_branch"
+        " ON code_scanning_alerts"
+        " (repo_id, branch, state, id)",
+        "CREATE TABLE code_scanning_branch_heads ("
+        "  repo_id INTEGER NOT NULL,"
+        "  branch TEXT NOT NULL DEFAULT '',"
+        "  upload_id INTEGER NOT NULL,"
+        "  oid TEXT NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  PRIMARY KEY (repo_id, branch)"
+        ")",
+    ]),
 ]
 
 

@@ -91,7 +91,7 @@ class NestedTeamTests(unittest.TestCase):
         self.assertFalse(would_create_cycle(parent_of, 3, 1))
 
     def test_schema_is_71(self):
-        self.assertEqual(schema_version(self.conn), 123)
+        self.assertEqual(schema_version(self.conn), 124)
 
     # create with parent (S-187 extension)
     def test_create_team_with_parent(self):

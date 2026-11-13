@@ -128,8 +128,8 @@ class UsersOrgsTeamsAPITests(unittest.TestCase):
 
     # -- pins ------------------------------------------------
     def test_schema_taxonomy_and_path_pins(self):
-        self.assertEqual(schema_version(self.w.conn), 123)
-        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(schema_version(self.w.conn), 124)
+        self.assertEqual(db.MIGRATIONS[-1][0], 124)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(USERS_ORGS_TEAMS_API_PATH,
                          "/api/users-orgs-teams")

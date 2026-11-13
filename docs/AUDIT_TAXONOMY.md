@@ -2839,3 +2839,30 @@ naming the poster, the credential kind and token
 id beside the commit, the ref and the counts; the
 stored row carries the poster too. Listings and
 fetches are reads and are unwitnessed.)
+S-303 (2026-11-12) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its SARIF fingerprinting and dedup, in
+samverk/code_scanning_alerts.py, is derived data
+over S-302's witnessed uploads, like S-299's
+refresh: every result is fingerprinted across
+runs -- the scanner's partialFingerprints under
+the tool and rule where supplied (basis
+partial), the structural shape of tool, rule,
+artifact, line, column and message otherwise
+(basis structural), that limit said plainly in
+the module -- and processing one stored upload
+through the API door (write rung, judged by
+S-190) settles its branch's alerts: new,
+reopened, still-open and fixed transitions in
+migration 124's code_scanning_alerts and
+code_scanning_branch_heads (schema 123 -> 124
+on the banked line; the suite's standing schema
+pins moved in-slice, its taxonomy pins
+unmoved). One branch's transitions never touch
+another's, uploads process per branch in upload
+order, and an older upload is refused
+code_scanning_stale_upload rather than rewrite
+a newer run's verdicts. Processing and reading
+append nothing here; the durable artefact is
+the alert row itself.)
+

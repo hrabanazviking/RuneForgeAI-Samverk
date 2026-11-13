@@ -131,8 +131,8 @@ class CIArtifactsTests(unittest.TestCase):
 
     # -- pins --------------------------------------
     def test_pins_schema_105_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 123)
-        self.assertEqual(db.MIGRATIONS[-1][0], 123)
+        self.assertEqual(schema_version(self.w.conn), 124)
+        self.assertEqual(db.MIGRATIONS[-1][0], 124)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
@@ -160,7 +160,7 @@ class CIArtifactsTests(unittest.TestCase):
                         (str(target),))
             self.assertEqual(schema_version(conn), 104)
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 123)
+            self.assertEqual(schema_version(conn), 124)
             tables = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             self.assertIn("ci_artifacts", tables)
