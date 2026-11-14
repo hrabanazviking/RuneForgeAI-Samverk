@@ -3232,3 +3232,24 @@ ci_secret.set / ci_secret.delete, with the
 scope, target and secret name, never a value
 or ciphertext -- so the taxonomy itself is
 unmoved.)
+
+S-320 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its fork-PR safety rule, in
+samverk/fork_pr_safety.py, is the scheduler's
+own judgement: a run whose event is a pull
+request from a head repository other than its
+base is planned with an empty secret
+environment -- the S-319 store's values road
+is never walked for a fork run, only its
+names face is read, so the withheld secrets
+are named and never decrypted -- and with its
+declared token permissions capped to
+read-only, every write lowered to read. Any
+other run is planned with the resolved
+environment whole and the declared
+permissions as declared, read-only when
+undeclared per S-313. Scheduling is a pure
+judgement that writes and witnesses nothing,
+and there is no migration (schema stays 130)
+-- so the taxonomy itself is unmoved.)
