@@ -3253,3 +3253,28 @@ undeclared per S-313. Scheduling is a pure
 judgement that writes and witnesses nothing,
 and there is no migration (schema stays 130)
 -- so the taxonomy itself is unmoved.)
+
+S-321 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its check reporting, in
+samverk/check_reporting.py, lands a workflow
+job's terminal conclusion (S-316, spoken by
+S-318's runner) as a check run on the commit
+and the pull request: one check_runs row
+(migration 95's table; status completed, the
+conclusion in S-246's vocabulary, poster
+samverk-ci) and one S-157 row folded from it
+through record_result at S-246's own decided
+panel state, under the standing name
+``<workflow> / <job>`` -- the context a branch
+rule names when it requires the check, so
+S-174's gate judges an internal run exactly
+as it judges an external post: unreported
+blocks, failed blocks, passed satisfies. The
+payload road judges the runner's raw
+conclusion through S-316's parse_conclusion
+against its assignment first. There is no
+migration (schema stays 130) and nothing is
+witnessed -- on S-301's basis the durable
+artefact is the check row itself -- so the
+taxonomy itself is unmoved.)
