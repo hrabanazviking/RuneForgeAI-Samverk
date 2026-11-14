@@ -3107,3 +3107,22 @@ docs/CLAIMS_REGISTER.md — rows C-13..C-35, one per
 Part XV slice, every row PROVEN on the slice's own
 battery. The gate builds nothing and witnesses
 nothing, so nothing here is witnessed.)
+
+S-313 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its workflow format decision, in
+samverk/workflow_format.py and
+docs/WORKFLOW_FORMAT.md, is a pure judgement --
+the adopted shape (.samverk/workflows/, GitHub-
+familiar in structure, documented as ours), the
+field-by-field mapping from the GitHub shape and
+the deliberate differences (no uses: marketplace
+actions, runner: labels in place of runs-on:
+images, no ${{ }} expression language yet, on
+kept a word and never a YAML 1.1 boolean,
+permissions read-only by default, unknown keys
+refused) -- plus a pure validator over the
+standing YAML subset. It stores nothing, lands
+no push and runs nothing yet -- S-314 owns
+triggers, S-315 jobs and steps, S-316 the runner
+protocol -- so nothing here is witnessed.)
