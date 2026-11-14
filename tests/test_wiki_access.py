@@ -326,8 +326,8 @@ class WikiAccessTests(unittest.TestCase):
     # -- pins ---------------------------------------------------
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 128)
-        self.assertEqual(db.MIGRATIONS[-1][0], 128)
+        self.assertEqual(schema_version(self.conn), 129)
+        self.assertEqual(db.MIGRATIONS[-1][0], 129)
         names = [n for n, in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")]
         self.assertIn('wiki_access_policies', names)

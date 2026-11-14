@@ -3182,3 +3182,30 @@ nothing, registers nothing and runs nothing --
 S-317 owns registration, S-318 the reference
 runner, S-321 the check-run landing -- so
 nothing here is witnessed.)
+
+S-317 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its runner registration, in
+samverk/runner_registration.py, mints one-time
+registration tokens for S-316's three scopes --
+instance, org and repo -- shown once and stored
+only as a SHA-256 hash, and registers a runner
+only when the presented token stands live for
+exactly the message's scope and target,
+consuming it in the same transaction that
+writes the runner's row (migration 129's
+runner_registration_tokens and runners; schema
+128 to 129). The witnessed acts ride the
+standing scoped verbs with the act named under
+detail key: the instance rides
+admin.settings.change, an org rides
+auth.organization.update, a repo rides
+repo.settings.change -- detail keys
+runner_token.mint / runner_token.revoke /
+runner.register / runner.deregister, with the
+scope, target and token or runner id, never
+token material. S-316's protocol audit now
+admits exactly this slice's two tables as the
+lawful runner surface; S-318 owns the runner
+that speaks the protocol, S-319 its secrets --
+so the taxonomy itself is unmoved.)

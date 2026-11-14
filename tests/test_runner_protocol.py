@@ -439,7 +439,7 @@ class AuditAndPageTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 128)
+        self.assertEqual(schema_version(self.conn), 129)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
     def test_audit_clean_on_live_instance(self):
@@ -451,11 +451,12 @@ class AuditAndPageTests(unittest.TestCase):
 
     def test_audit_catches_planted_table(self):
         self.conn.execute(
-            "CREATE TABLE runners (id INTEGER)")
+            "CREATE TABLE runner_backdoor (id INTEGER)")
         audit = audit_runner_protocol(self.conn)
         self.assertFalse(audit.stands_cleanly)
-        self.assertIn("runners", audit.offending_tables)
-        self.conn.execute("DROP TABLE runners")
+        self.assertIn(
+            "runner_backdoor", audit.offending_tables)
+        self.conn.execute("DROP TABLE runner_backdoor")
         self.conn.execute(
             "CREATE TABLE runs (runner_id TEXT)")
         audit = audit_runner_protocol(self.conn)
