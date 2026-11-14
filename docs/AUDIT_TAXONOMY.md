@@ -3126,3 +3126,20 @@ standing YAML subset. It stores nothing, lands
 no push and runs nothing yet -- S-314 owns
 triggers, S-315 jobs and steps, S-316 the runner
 protocol -- so nothing here is witnessed.)
+
+S-314 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its trigger law, in samverk/workflow_triggers.py,
+is a pure judgement over S-313's adopted shape --
+the five triggers (push, tag, pull_request,
+schedule, workflow_dispatch) parsed from the on
+value with glob filters judged in order and a
+filter never combined with its -ignore twin,
+classic five-field cron validated field by field
+with its next firing computed, and dispatch
+inputs resolved against their declarations with
+defaults themselves validated at parse. It
+stores nothing, fires nothing and keeps no
+clock -- S-315 owns jobs and steps, S-320 fork
+safety in the scheduler, S-326 the schedule's
+clock -- so nothing here is witnessed.)
