@@ -3079,3 +3079,21 @@ ids, publications and withdrawals carrying
 their actors, times and reasons, and every link
 naming a standing alert of its family in the
 advisory's own repository, once.)
+
+S-311 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its adversarial battery, in
+samverk/adversarial_battery.py, is a pure
+judgement over synthetic inputs -- 54 attacks in
+three families (scanner evasion against S-289 /
+S-290 / S-291, SARIF fuzzing against S-302 /
+S-303, signature spoofing against S-305), every
+verdict computed by the real defence it attacks
+and every miss named in the report's honest-gaps
+list: mutated shaped tokens evade the pattern
+layer, context-suppressed and symbol-fragmented
+secrets evade the generic layer, the push-scan
+seam catches an encoded token only through the
+generic layer, and every signature spoof is
+rejected. The battery stores nothing and lands
+no push, so nothing here is witnessed.)
