@@ -3097,3 +3097,13 @@ seam catches an encoded token only through the
 generic layer, and every signature spoof is
 rejected. The battery stores nothing and lands
 no push, so nothing here is witnessed.)
+
+S-312 (2026-11-13) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its Part XV gate, in tests/test_part_xv_gate.py,
+is a counted battery over the landed S-289..S-311
+machinery plus the claims-register extension in
+docs/CLAIMS_REGISTER.md — rows C-13..C-35, one per
+Part XV slice, every row PROVEN on the slice's own
+battery. The gate builds nothing and witnesses
+nothing, so nothing here is witnessed.)
