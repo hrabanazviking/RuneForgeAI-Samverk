@@ -3143,3 +3143,23 @@ stores nothing, fires nothing and keeps no
 clock -- S-315 owns jobs and steps, S-320 fork
 safety in the scheduler, S-326 the schedule's
 clock -- so nothing here is witnessed.)
+
+S-316 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its runner protocol, in
+samverk/runner_protocol.py, is a pure contract
+-- the four movements a runner speaks (register
+with name, labels, scope and a one-time token
+carried but never kept; poll for work, answered
+wait or one assignment whose required labels
+must be among the poll's labels and whose
+environment travels as names, never values; log
+chunks as a per-step numbered stream with gaps
+refused; and exactly one terminal conclusion
+in S-246's check-run vocabulary that must agree
+with its own steps) -- judged message by
+message before any runner exists. It stores
+nothing, registers nothing and runs nothing --
+S-317 owns registration, S-318 the reference
+runner, S-321 the check-run landing -- so
+nothing here is witnessed.)
