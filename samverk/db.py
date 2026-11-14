@@ -3329,6 +3329,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_runners_scope"
         " ON runners (scope, target, id)",
     ]),
+    # S-319: CI secrets -- per-org and per-repo
+    # secrets, encrypted at rest under the
+    # instance key (see ci_secrets.py); the row
+    # holds ciphertext only, never a value.
+    (130, [
+        "CREATE TABLE ci_secrets ("
+        "  id INTEGER PRIMARY KEY,"
+        "  scope TEXT NOT NULL,"
+        "  target TEXT NOT NULL,"
+        "  name TEXT NOT NULL,"
+        "  value_enc TEXT NOT NULL,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL"
+        ")",
+        "CREATE UNIQUE INDEX idx_ci_secrets_scope_name"
+        " ON ci_secrets (scope, target, name)",
+        "CREATE INDEX idx_ci_secrets_scope"
+        " ON ci_secrets (scope, target, id)",
+    ]),
 ]
 
 

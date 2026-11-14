@@ -87,8 +87,8 @@ class RegistryCoreTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 129)
-        self.assertEqual(db.MIGRATIONS[-1][0], 129)
+        self.assertEqual(schema_version(self.conn), 130)
+        self.assertEqual(db.MIGRATIONS[-1][0], 130)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:

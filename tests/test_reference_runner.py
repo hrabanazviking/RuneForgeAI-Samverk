@@ -379,7 +379,7 @@ class TestInvariants(RunnerCase):
     def test_no_migration_and_taxonomy_unmoved(self):
         with db.init_db(Path(self.tmp.name) / "inv.db") as conn:
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 129)
+            self.assertEqual(schema_version(conn), 130)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
     def test_audit_stands_cleanly(self):
