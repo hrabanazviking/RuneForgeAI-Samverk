@@ -3143,3 +3143,22 @@ stores nothing, fires nothing and keeps no
 clock -- S-315 owns jobs and steps, S-320 fork
 safety in the scheduler, S-326 the schedule's
 clock -- so nothing here is witnessed.)
+
+S-315 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its jobs and steps model, in
+samverk/workflow_jobs.py, is a pure judgement
+over S-313's adopted shape and S-314's trigger
+law -- a workflow run decomposes into jobs of
+ordered shell steps on a named runner, the
+needs-graph between jobs is checked (standing
+needs only, no self-need, no cycle) and ordered
+deterministically and in waves, and a declared
+matrix expands to its cartesian product with
+exclude applied, include refused by name, and
+every past-the-limit expansion refused whole
+rather than truncated. It stores nothing, runs
+nothing and schedules nothing -- S-316 owns the
+runner protocol, S-318 the runner, S-324 the
+audited run actions -- so nothing here is
+witnessed.)
