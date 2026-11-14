@@ -93,13 +93,14 @@ message exactly as it would arrive.
   judges messages, and judging changes nothing.
   No migration (schema stays 128), no taxonomy
   event (135 stand: 33 auth / 89 repo / 13
-  admin). No runner table, column or audit
-  event exists yet; the audit below proves that
-  absence against the live instance, and the
-  battery plants a runner table to prove the
-  audit would catch one arriving ahead of its
-  slice. S-317 builds registration on this
-  contract, S-318 the reference runner that
+  admin). At S-316's landing no runner table,
+  column or audit event existed yet; S-317 has
+  since built registration on this contract, and
+  the audit below admits exactly its two
+  registry tables by name -- any other runner
+  surface is still caught as a back door, and
+  the battery plants one to prove it. S-318 the
+  reference runner that
   speaks it end to end, S-321 the check-run
   landing, S-322 the log store and S-324
   re-run/cancel.
@@ -924,10 +925,13 @@ class RunnerProtocolAudit:
     live instance: the vocabulary's own integrity,
     how much schema was inspected, and every
     runner-shaped name found in it. The contract
-    stands cleanly only while no table, column or
-    audit event carries a runner surface yet --
-    S-317 and later slices mint theirs when they
-    land."""
+    stands cleanly only while the sole runner
+    surfaces in the instance are S-317's lawful
+    registry tables (``runner_registration_tokens``
+    and ``runners``, admitted by name since S-317
+    landed) and no audit event carries a runner
+    surface -- any other runner-named table or
+    column is a surface arriving by a back door."""
     protocol_ok: bool
     tables_scanned: int
     columns_scanned: int
@@ -944,15 +948,24 @@ class RunnerProtocolAudit:
                 and not self.offending_events)
 
 
+#: The lawful runner surface since S-317: its
+#: registry tables, admitted by name. Any other
+#: runner-named table or column is an offender.
+_LAWFUL_RUNNER_TABLES = frozenset({
+    "runner_registration_tokens", "runners"})
+
+
 def audit_runner_protocol(conn: sqlite3.Connection
                           ) -> RunnerProtocolAudit:
     """Check the runner contract against the live
     instance: the vocabulary is exactly this
     module's seven kinds, three scopes and S-246's
-    seven conclusions, and no table, column or
-    audit event carries a runner surface -- one
-    arriving ahead of its slice would be the
-    contract broken by a back door. Pure read."""
+    seven conclusions, and the only runner
+    surfaces in the schema are S-317's two lawful
+    registry tables and their columns -- any
+    other runner-named table or column, or any
+    runner audit event, would be the contract
+    broken by a back door. Pure read."""
     protocol_ok = (
         len(set(MESSAGE_KINDS)) == 7
         and tuple(RUNNER_SCOPES) == ("instance", "org", "repo")
@@ -965,13 +978,15 @@ def audit_runner_protocol(conn: sqlite3.Connection
     offending_columns: list = []
     columns_scanned = 0
     for table in tables:
-        if "runner" in table.lower():
+        if "runner" in table.lower() \
+                and table not in _LAWFUL_RUNNER_TABLES:
             offending_tables.append(table)
         safe = table.replace('"', '""')
         for row in conn.execute(
                 f'PRAGMA table_info("{safe}")').fetchall():
             columns_scanned += 1
-            if "runner" in str(row[1]).lower():
+            if "runner" in str(row[1]).lower() \
+                    and table not in _LAWFUL_RUNNER_TABLES:
                 offending_columns.append(f"{table}.{row[1]}")
     events = sorted(taxonomy.AUDIT_EVENTS)
     offending_events = [

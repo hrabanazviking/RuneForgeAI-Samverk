@@ -37,7 +37,7 @@ counted scanning battery green.**
   battery (S-311) runs whole and names its misses.
 
 The gate claims no migration and no taxonomy event:
-the assembled system stands at schema 128 with 135
+the assembled system stands at schema 129 with 135
 audit events (33 auth / 89 repo / 13 admin), and the
 battery proves both pins.
 
@@ -134,9 +134,9 @@ class PinsTests(unittest.TestCase):
         self.conn = db.init_db(Path(self._td.name) / "samverk.db")
         self.addCleanup(self.conn.close)
 
-    def test_pins_schema_128_taxonomy_135(self):
-        self.assertEqual(schema_version(self.conn), 128)
-        self.assertEqual(db.MIGRATIONS[-1][0], 128)
+    def test_pins_schema_129_taxonomy_135(self):
+        self.assertEqual(schema_version(self.conn), 129)
+        self.assertEqual(db.MIGRATIONS[-1][0], 129)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)

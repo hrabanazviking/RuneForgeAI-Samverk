@@ -23,7 +23,7 @@ moved finding; no judge crashes. Signature
 spoofing: every spoof rejected, both controls
 accepted. No storage, no audit event, no
 migration: taxonomy stands at 135 (33 auth / 89
-repo / 13 admin), schema at 128.
+repo / 13 admin), schema at 129.
 
 Counted with: python3 -m unittest tests.test_adversarial_battery
 """
@@ -172,7 +172,7 @@ class ReportHonestyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "samverk.db")
             try:
-                self.assertEqual(schema_version(conn), 128)
+                self.assertEqual(schema_version(conn), 129)
                 self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
             finally:
                 conn.close()

@@ -3288,6 +3288,47 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_security_advisory_events_repo"
         " ON security_advisory_events (repo_id, id)",
     ]),
+    # S-317: runner registration -- one-time
+    # registration tokens minted per scope
+    # (instance / org / repo) and the runners
+    # that consume them. Only a token's SHA-256
+    # hash and identifying prefix are stored;
+    # the raw token exists once, at minting.
+    (129, [
+        "CREATE TABLE runner_registration_tokens ("
+        "  id INTEGER PRIMARY KEY,"
+        "  scope TEXT NOT NULL,"
+        "  target TEXT NOT NULL DEFAULT '',"
+        "  token_hash TEXT NOT NULL,"
+        "  prefix TEXT NOT NULL,"
+        "  created_by INTEGER NOT NULL,"
+        "  created_at INTEGER NOT NULL,"
+        "  expires_at INTEGER NOT NULL,"
+        "  used_at INTEGER,"
+        "  used_runner TEXT NOT NULL DEFAULT '',"
+        "  revoked INTEGER NOT NULL DEFAULT 0"
+        ")",
+        "CREATE UNIQUE INDEX idx_runner_tokens_hash"
+        " ON runner_registration_tokens (token_hash)",
+        "CREATE INDEX idx_runner_tokens_scope"
+        " ON runner_registration_tokens (scope, target, id)",
+        "CREATE TABLE runners ("
+        "  id INTEGER PRIMARY KEY,"
+        "  name TEXT NOT NULL,"
+        "  name_lower TEXT NOT NULL,"
+        "  scope TEXT NOT NULL,"
+        "  target TEXT NOT NULL DEFAULT '',"
+        "  labels TEXT NOT NULL,"
+        "  agent_version TEXT NOT NULL,"
+        "  token_id INTEGER NOT NULL,"
+        "  registered_at INTEGER NOT NULL,"
+        "  last_seen_at INTEGER NOT NULL,"
+        "  deregistered INTEGER NOT NULL DEFAULT 0,"
+        "  deregistered_at INTEGER"
+        ")",
+        "CREATE INDEX idx_runners_scope"
+        " ON runners (scope, target, id)",
+    ]),
 ]
 
 
