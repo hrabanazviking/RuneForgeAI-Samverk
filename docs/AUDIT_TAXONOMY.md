@@ -3209,3 +3209,26 @@ admits exactly this slice's two tables as the
 lawful runner surface; S-318 owns the runner
 that speaks the protocol, S-319 its secrets --
 so the taxonomy itself is unmoved.)
+
+S-319 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its CI secrets, in samverk/ci_secrets.py, are
+per-organization and per-repository secrets
+encrypted at rest under the instance keys --
+an HMAC-SHA256 keystream with a fresh nonce
+and an HMAC seal per value, the instance key
+custodied per S-003 and never in the database
+(migration 130's ci_secrets; schema 129 to
+130) -- injected as env at dispatch (an org's
+secrets under its repositories' own, the
+repo's winning a shared name) and masked in
+logs through S-018's own filter, redact_text
+with the standing values as extra secrets.
+The witnessed acts ride the standing scoped
+verbs with the act named under detail key: an
+org rides auth.organization.update, a repo
+rides repo.settings.change -- detail keys
+ci_secret.set / ci_secret.delete, with the
+scope, target and secret name, never a value
+or ciphertext -- so the taxonomy itself is
+unmoved.)

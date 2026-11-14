@@ -359,8 +359,8 @@ class EventStoreTests(unittest.TestCase):
         self.assertIn("0 event(s).", empty)
 
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 129)
-        self.assertEqual(db.MIGRATIONS[-1][0], 129)
+        self.assertEqual(schema_version(self.conn), 130)
+        self.assertEqual(db.MIGRATIONS[-1][0], 130)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)

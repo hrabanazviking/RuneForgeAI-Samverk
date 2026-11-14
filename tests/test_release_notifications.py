@@ -147,8 +147,8 @@ class ReleaseNotificationTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------
     def test_pins_schema_104_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 129)
-        self.assertEqual(db.MIGRATIONS[-1][0], 129)
+        self.assertEqual(schema_version(self.conn), 130)
+        self.assertEqual(db.MIGRATIONS[-1][0], 130)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
@@ -176,7 +176,7 @@ class ReleaseNotificationTests(unittest.TestCase):
                         (str(target),))
             self.assertEqual(schema_version(conn), 102)
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 129)
+            self.assertEqual(schema_version(conn), 130)
             tables = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             self.assertIn("release_notification_deliveries", tables)
