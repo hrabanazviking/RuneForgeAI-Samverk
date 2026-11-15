@@ -623,7 +623,7 @@ class ForkSafetyAudit:
     live instance: the rule's own integrity (the
     default is read-only, the level vocabulary
     is S-313's three words), the schema unmoved
-    at S-319's 130 (this slice mints no
+    at 131 (this slice mints no
     migration), the taxonomy unmoved at 135, and
     every fork-shaped workflow surface found in
     the schema or the taxonomy. The rule stands
@@ -669,7 +669,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
     """Check the fork rule against the live
     instance: the defaults and vocabulary are
     the strict ones, the schema is exactly
-    S-319's 130, the taxonomy is exactly the
+    131, the taxonomy is exactly the
     standing 135, and no table, column or audit
     event carries a fork workflow surface --
     one arriving ahead of its slice would be
@@ -704,7 +704,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
         levels_ok=tuple(PERMISSION_LEVELS)
         == ("none", "read", "write")
         and set(PERMISSION_VALUES) == set(PERMISSION_LEVELS),
-        schema_version=version, schema_ok=version == 130,
+        schema_version=version, schema_ok=version == 131,
         events_ok=events_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

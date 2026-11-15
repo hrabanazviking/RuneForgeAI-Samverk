@@ -526,7 +526,7 @@ class CheckReportingAudit:
     instance: the vocabulary is S-246's word for
     word (the runner's conclusions ARE the check
     conclusions, and the fold covers every one),
-    the schema unmoved at S-320's 130 (this slice
+    the schema unmoved at 131 (this slice
     mints no migration -- its tables are S-157's
     and S-246's), the taxonomy unmoved at 135,
     the two lawful tables stand, and no table,
@@ -560,7 +560,7 @@ def audit_check_reporting(conn: sqlite3.Connection
                           ) -> CheckReportingAudit:
     """Check the landing against the live
     instance: the vocabularies agree, the schema
-    is exactly S-320's 130, the taxonomy is
+    is exactly 131, the taxonomy is
     exactly the standing 135, the lawful tables
     stand, and no check-reporting surface hides
     in the schema or the taxonomy. Pure read."""
@@ -598,7 +598,7 @@ def audit_check_reporting(conn: sqlite3.Connection
         e for e in events if _SURFACE_WORD in e]
     return CheckReportingAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 130,
+        schema_version=version, schema_ok=version == 131,
         events_ok=events_ok, tables_ok=tables_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

@@ -439,7 +439,7 @@ class AuditAndPageTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 130)
+        self.assertEqual(schema_version(self.conn), 131)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
 
     def test_audit_clean_on_live_instance(self):

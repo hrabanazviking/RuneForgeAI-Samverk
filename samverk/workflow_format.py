@@ -754,9 +754,12 @@ class WorkflowAudit:
     instance: the decision data's own integrity, how
     much schema was inspected, and every
     workflow-shaped name found in it. The decision
-    stands cleanly only while no table, column or
-    audit event carries a workflow yet -- S-314 and
-    later slices mint theirs when they land."""
+    stands cleanly only while the sole workflow
+    surface in the instance is S-322's lawful log
+    column (``ci_logs.workflow``, admitted by name
+    since S-322 landed) and no table or audit
+    event carries a workflow -- later slices mint
+    theirs when they land."""
     decision: str
     mapping_relations_ok: bool
     mapping_ids_unique: bool
@@ -779,13 +782,23 @@ class WorkflowAudit:
                 and not self.offending_events)
 
 
+#: The lawful workflow surface since S-322: its
+#: log store's workflow column, admitted by name.
+#: Any other workflow-named table or column is
+#: an offender.
+_LAWFUL_WORKFLOW_COLUMNS = frozenset({
+    "ci_logs.workflow"})
+
+
 def audit_workflow_format(conn: sqlite3.Connection) -> WorkflowAudit:
     """Check the decision against the live instance:
     the mapping's relations stay inside their
-    vocabulary and every id is unique, and no table,
-    column or audit event carries the word workflow
-    -- a CI surface arriving ahead of S-314 would be
-    the decision broken by a back door. Pure read."""
+    vocabulary and every id is unique, and the only
+    table, column or audit event carrying the word
+    workflow is S-322's lawful log column -- any
+    other CI surface arriving ahead of its slice
+    would be the decision broken by a back door.
+    Pure read."""
     relations = {"same", "renamed", "ours", "not-carried"}
     mapping_relations_ok = all(
         m.relation in relations for m in MAPPINGS)
@@ -805,7 +818,9 @@ def audit_workflow_format(conn: sqlite3.Connection) -> WorkflowAudit:
         for row in conn.execute(
                 f'PRAGMA table_info("{safe}")').fetchall():
             columns_scanned += 1
-            if "workflow" in str(row[1]).lower():
+            if "workflow" in str(row[1]).lower() \
+                    and f"{table}.{row[1]}" \
+                    not in _LAWFUL_WORKFLOW_COLUMNS:
                 offending_columns.append(f"{table}.{row[1]}")
     events = sorted(taxonomy.AUDIT_EVENTS)
     offending_events = [

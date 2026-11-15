@@ -195,8 +195,8 @@ class SecretAlertLifecycleTests(unittest.TestCase):
     # -- pins ------------------------------------------------------
 
     def test_schema_stands_at_117(self):
-        self.assertEqual(schema_version(self.conn), 130)
-        self.assertEqual(db.MIGRATIONS[-1][0], 130)
+        self.assertEqual(schema_version(self.conn), 131)
+        self.assertEqual(db.MIGRATIONS[-1][0], 131)
 
     def test_taxonomy_still_134(self):
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
