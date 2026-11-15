@@ -3278,3 +3278,27 @@ migration (schema stays 130) and nothing is
 witnessed -- on S-301's basis the durable
 artefact is the check row itself -- so the
 taxonomy itself is unmoved.)
+
+S-322 (2026-11-14) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its log streaming and storage, in
+samverk/ci_logs.py, lands a workflow job's
+streamed output (S-316's log chunks, spoken by
+S-318's runner) as one stored log per
+(repository, run, job) in migration 131's
+`ci_logs` row (schema 130 to 131) -- appended
+only after S-018's `redact_text` has struck
+its secrets, tailed by window for the UI,
+downloaded whole as plain text, and read
+through S-054's `can_read`, so a stranger to
+a private repository gets the uniform
+`repository_not_found`. Retention is S-266's
+own choices and stamps (`decide_expiry` /
+`is_expired`), enforced S-267's way: an
+expired log answers every read as a log that
+never stood, and the off-path `LogExpiryJob`
+sweep deletes its row, so storage and reads
+agree. Appends, reads and the sweep witness
+nothing -- the log row is the record, on
+S-321's and S-267's basis -- so the taxonomy
+itself is unmoved.)

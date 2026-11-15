@@ -636,7 +636,7 @@ class AuditAndPageTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_pin(self):
-        self.assertEqual(schema_version(self.conn), 130)
+        self.assertEqual(schema_version(self.conn), 131)
 
     def test_audit_stands_cleanly(self):
         audit = audit_check_reporting(self.conn)

@@ -379,8 +379,8 @@ class RenderTests(StoreCase):
 
 class InvariantTests(StoreCase):
     def test_migration_122_stands(self):
-        self.assertEqual(schema_version(self.conn), 130)
-        self.assertEqual(db.MIGRATIONS[-1][0], 130)
+        self.assertEqual(schema_version(self.conn), 131)
+        self.assertEqual(db.MIGRATIONS[-1][0], 131)
 
     def test_no_new_taxonomy_event(self):
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)

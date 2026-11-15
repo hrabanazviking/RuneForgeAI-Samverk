@@ -122,8 +122,8 @@ class PushProtectionBypassTests(unittest.TestCase):
     # -- pins -----------------------------------------------------------
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 130)
-        self.assertEqual(db.MIGRATIONS[-1][0], 130)
+        self.assertEqual(schema_version(self.conn), 131)
+        self.assertEqual(db.MIGRATIONS[-1][0], 131)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
         self.assertIn(BYPASS_EVENT, taxonomy.REPO_EVENTS)

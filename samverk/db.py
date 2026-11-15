@@ -3349,6 +3349,32 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_ci_secrets_scope"
         " ON ci_secrets (scope, target, id)",
     ]),
+    # S-322: CI logs -- one stored log per
+    # (repository, run, job): the job's whole
+    # output as redacted text, its line count,
+    # and S-266's retention choice with the
+    # expiry stamp decide_expiry computes
+    # (see ci_logs.py; S-267's pattern sweeps).
+    (131, [
+        "CREATE TABLE ci_logs ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  run_id TEXT NOT NULL,"
+        "  job_id TEXT NOT NULL,"
+        "  workflow TEXT NOT NULL DEFAULT '',"
+        "  log_text TEXT NOT NULL,"
+        "  line_count INTEGER NOT NULL DEFAULT 0,"
+        "  retention_days INTEGER NOT NULL,"
+        "  expires_at INTEGER,"
+        "  created_at INTEGER NOT NULL,"
+        "  updated_at INTEGER NOT NULL,"
+        "  UNIQUE (repo_id, run_id, job_id)"
+        ")",
+        "CREATE INDEX idx_ci_logs_repo_run"
+        " ON ci_logs (repo_id, run_id, id)",
+        "CREATE INDEX idx_ci_logs_expiry"
+        " ON ci_logs (expires_at, id)",
+    ]),
 ]
 
 
