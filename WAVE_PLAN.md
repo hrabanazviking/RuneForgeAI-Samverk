@@ -1,14 +1,14 @@
 # Samverk — Wave plan (resumed 2026-11-06 by Volmarr's direct order)
 
 ## Base
-- Main checkout: /home/volmarr/samverk-forge (branch main), base 43919c1 (S-320 closure) -- origin/main verified after banking push this tick (2026-11-14 14:18 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-320 (320/416).
-- Governing full suite at S-320: 5086 tests - Ran 5086 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
+- Main checkout: /home/volmarr/samverk-forge (branch main), base fb67077 (S-321 closure) -- origin/main verified after banking push this tick (2026-11-14 20:58 EST keeper tick).
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-321 (321/416).
+- Governing full suite at S-321: 5121 tests - Ran 5121 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
 - team-01 → S-323 (S-313 banked 2026-11-14, keeper) · team-02 → S-324 (S-314 banked 2026-11-14, keeper) · team-03 → S-325 (S-315 banked 2026-11-14, keeper) · team-04 → S-326 (S-316 banked 2026-11-14, keeper) · team-05 → S-327 (S-317 banked 2026-11-14, keeper)
-- team-06 → S-328 (S-318 banked 2026-11-14, keeper) · team-07 → S-329 (S-319 banked 2026-11-14, keeper) · team-08 → S-330 (S-320 banked 2026-11-14, keeper) · team-09 → S-321 (S-311 banked 2026-11-13, keeper) · team-10 → S-322 (S-312 banked 2026-11-13, keeper)
+- team-06 → S-328 (S-318 banked 2026-11-14, keeper) · team-07 → S-329 (S-319 banked 2026-11-14, keeper) · team-08 → S-330 (S-320 banked 2026-11-14, keeper) · team-09 → S-331 (S-321 banked 2026-11-14, keeper) · team-10 → S-322 (S-312 banked 2026-11-13, keeper)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
 
@@ -329,3 +329,6 @@ S-319 BANKED this tick (319/416; slice 7288bde, merge 6ebb3a1; battery 26 OK, ne
 
 ## Keeper note 2026-11-14 14:18 EST tick (samverk-forge-keeper)
 S-320 BANKED this tick (320/416; slice 2cfeb2b, merge 8f798ac; battery 30 OK, neighbours 238 OK; team full suite Ran 5086 in 1952.350s OK skipped=4 exit 0, main full suite Ran 5086 in 1803.000s OK skipped=4 exit 0). The merge was completed by a prior keeper tick and the main suite finished green at 14:11 EST; this tick verified both suites green from their logs and completed the banking (map entry + closure + push + ls-remote verify). This banking completes the wave S-311..S-320. Team-08 worktree reset to the S-320 banked base and takes S-330 next (Mirror credentials). STALL STATE: no live Samverk worker found at the tick check apart from unrelated Hermes pytest processes; teams stand at banked bases with assignments standing (01 S-323, 02 S-324, 03 S-325, 04 S-326, 05 S-327, 06 S-328, 07 S-329, 08 S-330, 09 S-321, 10 S-322). RESTART ORDER stands: fresh leads muster staggered (429 caution), solo-sequential per team, building in their own worktrees only; the banking head is S-321 (team-09), whose fresh lead musters next. Never touch any README.md. NO Docker ever.
+
+## Keeper note 2026-11-14 20:58 EST tick (samverk-forge-keeper)
+S-321 BANKED this tick (321/416; slice 74bfe92, merge 17ccfd6; battery 35 OK, neighbours 238 OK; team full suite Ran 5121 in 1655.504s OK skipped=4 exit 0; main first run FAILED errors=21 all sqlite disk-full with /tmp at 96%, rerun with TMPDIR redirected to the disk-backed volume Ran 5121 in 17840.141s OK skipped=4 exit 0, finished 20:57 EST). This tick verified the rerun green from its log and completed the banking (map entry + closure + push + ls-remote verify). Team-09 worktree reset to the S-321 banked base and takes S-331 next (Sync scheduler). STALL STATE: no live Samverk worker processes at tick check; teams stand at banked bases with assignments standing (01 S-323, 02 S-324, 03 S-325, 04 S-326, 05 S-327, 06 S-328, 07 S-329, 08 S-330, 09 S-331, 10 S-322). RESTART ORDER stands: fresh leads muster staggered (429 caution), solo-sequential per team, building in their own worktrees only; the banking head is S-322 (team-10). TMPDIR RULE stands: every full-suite verification runs with TMPDIR on the disk-backed volume by default. Never touch any README.md. NO Docker ever.
