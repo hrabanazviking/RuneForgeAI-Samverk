@@ -197,15 +197,15 @@ class WorldCase(unittest.TestCase):
 
 class PinTests(WorldCase):
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.w.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.w.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         families = {}
         for name in taxonomy.AUDIT_EVENTS:
             families[name.split(".")[0]] = (
                 families.get(name.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 89, "admin": 13})
+            families, {"auth": 33, "repo": 92, "admin": 13})
 
     def test_lineage_columns_and_index_stand(self):
         cols = {r["name"] for r in self.w.conn.execute(

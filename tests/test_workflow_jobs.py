@@ -380,17 +380,16 @@ class PinsAndAuditTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 89, "admin": 13})
-        self.assertFalse(
-            any("workflow" in e for e in taxonomy.AUDIT_EVENTS))
+            families, {"auth": 33, "repo": 92, "admin": 13})
+        self.assertEqual({e for e in taxonomy.AUDIT_EVENTS if "workflow" in e}, {"repo.workflow_run.rerun_all", "repo.workflow_run.rerun_failed", "repo.workflow_run.cancel"})
 
     def test_limits_are_the_stated_ones(self):
         self.assertEqual(MAX_MATRIX_COMBINATIONS, 256)
@@ -404,7 +403,7 @@ class PinsAndAuditTests(unittest.TestCase):
         self.assertTrue(audit.stands_cleanly)
         self.assertTrue(audit.limits_ok)
         self.assertGreater(audit.tables_scanned, 0)
-        self.assertEqual(audit.events_scanned, 135)
+        self.assertEqual(audit.events_scanned, 138)
         self.assertEqual(audit.offending_tables, ())
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())

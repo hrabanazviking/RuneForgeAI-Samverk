@@ -825,8 +825,8 @@ class LogStreamingAudit:
     """The log store checked against one live
     instance: the retention vocabulary is
     S-266's word for word, the schema is
-    exactly 131 (this slice's migration), the
-    taxonomy is unmoved at 135, the lawful
+    exactly 132 (this slice's migration), the
+    taxonomy is at the standing 138, the lawful
     table stands, and every standing row obeys
     the store's law -- a lawful retention
     choice, the expiry stamp `decide_expiry`
@@ -858,9 +858,9 @@ def audit_log_streaming(conn: sqlite3.Connection
     store's law. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 135
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
                  and len(taxonomy.AUTH_EVENTS) == 33
-                 and len(taxonomy.REPO_EVENTS) == 89
+                 and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
     retention_ok = (
         tuple(RETENTION_CHOICES) == (0, 7, 30, 90, 180, 365)
@@ -906,7 +906,7 @@ def audit_log_streaming(conn: sqlite3.Connection
                 "the name law")
     return LogStreamingAudit(
         retention_ok=retention_ok,
-        schema_version=version, schema_ok=version == 131,
+        schema_version=version, schema_ok=version == 132,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 

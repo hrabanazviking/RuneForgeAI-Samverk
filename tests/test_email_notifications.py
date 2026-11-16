@@ -76,11 +76,11 @@ class EmailNotificationTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}
@@ -91,8 +91,8 @@ class EmailNotificationTests(unittest.TestCase):
     def test_fresh_database_migrates_to_93(self):
         path = self.root / "fresh.db"
         conn = db.connect(path); self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 131)
-        self.assertEqual(db.schema_version(conn), 131)
+        self.assertEqual(db.migrate(conn), 132)
+        self.assertEqual(db.schema_version(conn), 132)
 
     # -- pure law -----------------------------------------------------
     def test_mode_door(self):

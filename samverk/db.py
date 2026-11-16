@@ -3375,6 +3375,29 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_ci_logs_expiry"
         " ON ci_logs (expires_at, id)",
     ]),
+    # S-324: workflow run actions -- one row per
+    # re-run or cancel performed on one workflow
+    # run (repository, workflow, commit): the
+    # kind, the attempt it opened or stopped,
+    # the job check names acted on (JSON, in
+    # run order), and who acted (see
+    # workflow_run_actions.py).
+    (132, [
+        "CREATE TABLE ci_run_actions ("
+        "  id INTEGER PRIMARY KEY,"
+        "  repo_id INTEGER NOT NULL,"
+        "  workflow TEXT NOT NULL,"
+        "  head_oid TEXT NOT NULL,"
+        "  kind TEXT NOT NULL,"
+        "  attempt INTEGER NOT NULL,"
+        "  jobs TEXT NOT NULL,"
+        "  actor_id INTEGER NOT NULL,"
+        "  actor TEXT NOT NULL,"
+        "  created_at INTEGER NOT NULL"
+        ")",
+        "CREATE INDEX idx_ci_run_actions_repo_run"
+        " ON ci_run_actions (repo_id, workflow, head_oid, id)",
+    ]),
 ]
 
 

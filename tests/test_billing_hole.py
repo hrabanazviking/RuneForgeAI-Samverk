@@ -70,9 +70,9 @@ class BillingHoleTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertFalse(any("billing" in e for e in taxonomy.AUDIT_EVENTS))
 
     def test_no_billing_tables_exist(self):
@@ -108,7 +108,7 @@ class BillingHoleTests(unittest.TestCase):
         self.assertTrue(audit.honestly_empty)
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())
-        self.assertEqual(audit.events_scanned, 135)
+        self.assertEqual(audit.events_scanned, 138)
         self.assertGreater(audit.tables_scanned, 50)
         self.assertGreater(audit.columns_scanned, 400)
 

@@ -3302,3 +3302,35 @@ agree. Appends, reads and the sweep witness
 nothing -- the log row is the record, on
 S-321's and S-267's basis -- so the taxonomy
 itself is unmoved.)
+S-324 (2026-11-15) added three events of its own:
+`repo.workflow_run.rerun_all`,
+`repo.workflow_run.rerun_failed` and
+`repo.workflow_run.cancel` -- 138 events stand:
+33 auth, 92 repo, 13 admin. (Its workflow run
+actions, in samverk/workflow_run_actions.py,
+are the two hands on a Part XVI run: re-run
+(all jobs, or only the failed ones -- failure,
+timed_out and action_required, the panel-failed
+conclusions minus cancelled, which re-run all
+covers) and cancel (a running run's unfinished
+jobs complete as cancelled; finished jobs keep
+their words). A run is addressed as S-323
+addresses it -- repository, workflow, commit --
+and its jobs are the run's S-321 check runs on
+that commit. An accepted act resets or
+completes the chosen checks (a re-run returns
+them to queued and folds their S-157 panel
+rows to pending, opening the next attempt;
+S-321 lands the new attempt's conclusions on
+the same rows), lands one row in migration
+132's ci_run_actions table (schema 131 to 132
+on the banked line; the suite's standing
+schema and taxonomy pins moved in-slice), and
+is witnessed here exactly once, naming the
+workflow, the commit, the attempt and the
+jobs acted on. Acts are write acts under
+S-054: a reader who cannot write the
+repository is refused permission_denied, a
+stranger to a private repository gets the
+uniform repository_not_found, and a refused
+act stores and witnesses nothing.)

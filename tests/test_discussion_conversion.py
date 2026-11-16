@@ -167,16 +167,16 @@ class ConversionTests(unittest.TestCase):
     # -- schema / taxonomy / verdict seam -------------------
 
     def test_schema_taxonomy_and_verdict_stand(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(db.migrate(self.conn), 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(db.migrate(self.conn), 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 89, "admin": 13})
+            families, {"auth": 33, "repo": 92, "admin": 13})
         audit = audit_discussions_verdict(self.conn)
         self.assertTrue(audit.build_queued_cleanly, audit)
         self.assertEqual(audit.offending_tables, ())

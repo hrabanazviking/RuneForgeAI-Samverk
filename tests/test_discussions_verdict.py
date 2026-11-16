@@ -76,15 +76,15 @@ class DiscussionsVerdictTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 89, "admin": 13})
+            families, {"auth": 33, "repo": 92, "admin": 13})
         self.assertFalse(any(
             "discussion" in e for e in taxonomy.AUDIT_EVENTS))
 
@@ -222,7 +222,7 @@ class DiscussionsVerdictTests(unittest.TestCase):
         self.assertEqual(audit.offending_tables, ())
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())
-        self.assertEqual(audit.events_scanned, 135)
+        self.assertEqual(audit.events_scanned, 138)
         self.assertGreater(audit.tables_scanned, 50)
         self.assertGreater(audit.columns_scanned, 400)
 

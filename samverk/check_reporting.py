@@ -528,7 +528,7 @@ class CheckReportingAudit:
     conclusions, and the fold covers every one),
     the schema unmoved at 131 (this slice
     mints no migration -- its tables are S-157's
-    and S-246's), the taxonomy unmoved at 135,
+    and S-246's), the taxonomy at the standing 138,
     the two lawful tables stand, and no table,
     column or audit event carries a
     check-reporting surface of its own -- the
@@ -560,15 +560,15 @@ def audit_check_reporting(conn: sqlite3.Connection
                           ) -> CheckReportingAudit:
     """Check the landing against the live
     instance: the vocabularies agree, the schema
-    is exactly 131, the taxonomy is
-    exactly the standing 135, the lawful tables
+    is exactly 132, the taxonomy is
+    exactly the standing 138, the lawful tables
     stand, and no check-reporting surface hides
     in the schema or the taxonomy. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 135
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
                  and len(taxonomy.AUTH_EVENTS) == 33
-                 and len(taxonomy.REPO_EVENTS) == 89
+                 and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
     vocabulary_ok = (
         tuple(RUNNER_CONCLUSIONS)
@@ -598,7 +598,7 @@ def audit_check_reporting(conn: sqlite3.Connection
         e for e in events if _SURFACE_WORD in e]
     return CheckReportingAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 131,
+        schema_version=version, schema_ok=version == 132,
         events_ok=events_ok, tables_ok=tables_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

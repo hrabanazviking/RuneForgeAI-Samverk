@@ -623,8 +623,8 @@ class ForkSafetyAudit:
     live instance: the rule's own integrity (the
     default is read-only, the level vocabulary
     is S-313's three words), the schema unmoved
-    at 131 (this slice mints no
-    migration), the taxonomy unmoved at 135, and
+    at 132 (this slice mints no
+    migration), the taxonomy at the standing 138, and
     every fork-shaped workflow surface found in
     the schema or the taxonomy. The rule stands
     cleanly only while it lives in this code and
@@ -669,16 +669,16 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
     """Check the fork rule against the live
     instance: the defaults and vocabulary are
     the strict ones, the schema is exactly
-    131, the taxonomy is exactly the
-    standing 135, and no table, column or audit
+    132, the taxonomy is exactly the
+    standing 138, and no table, column or audit
     event carries a fork workflow surface --
     one arriving ahead of its slice would be
     the rule bypassed by a back door. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 135
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
                  and len(taxonomy.AUTH_EVENTS) == 33
-                 and len(taxonomy.REPO_EVENTS) == 89
+                 and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
     tables = [r["name"] for r in conn.execute(
         "SELECT name FROM sqlite_master"
@@ -704,7 +704,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
         levels_ok=tuple(PERMISSION_LEVELS)
         == ("none", "read", "write")
         and set(PERMISSION_VALUES) == set(PERMISSION_LEVELS),
-        schema_version=version, schema_ok=version == 131,
+        schema_version=version, schema_ok=version == 132,
         events_ok=events_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,
