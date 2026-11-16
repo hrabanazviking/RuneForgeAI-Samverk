@@ -402,7 +402,7 @@ class World(unittest.TestCase):
         audit = audit_workflow_artifacts(self.conn)
         self.assertTrue(audit.names_ok)
         self.assertTrue(audit.schema_ok)
-        self.assertEqual(audit.schema_version, 131)
+        self.assertEqual(audit.schema_version, 132)
         self.assertTrue(audit.events_ok)
         self.assertTrue(audit.tables_ok)
         self.assertEqual(audit.rows_scanned, 5)
@@ -423,11 +423,11 @@ class World(unittest.TestCase):
         self.assertIn("check name", audit.problems[0])
 
     def test_pins_schema_131_taxonomy_135(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(db.MIGRATIONS[-1][0], 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}

@@ -74,15 +74,15 @@ S-322's shape for logs.
   both read the one row.
 - **The durable artefact is S-266's row.**
   This listing writes nothing: no row, no
-  audit entry, no taxonomy event (135 stand:
-  33 auth / 89 repo / 13 admin), on S-321's and
+  audit entry, no taxonomy event (138 stand:
+  33 auth / 92 repo / 13 admin), on S-321's and
   S-322's basis -- the witnessed record of a
   run's artifacts is the artifact row itself,
   carrying its poster, its digest and its
   retention stamps. No migration: the tables
   are S-246's `check_runs` (migration 95) and
   S-266's `ci_artifacts` (migration 105), and
-  the schema stays 131. S-327 owns the routed
+  the schema stays 132. S-327 owns the routed
   run pages; the render function here is the
   artifacts view in the house shape, every
   value escaped through S-010.
@@ -446,9 +446,9 @@ class WorkflowArtifactsStore:
 class WorkflowArtifactsAudit:
     """The run-artifact listing checked against
     one live instance: the name law is S-321's
-    word for word, the schema is exactly 131
+    word for word, the schema is exactly 132
     (no migration is this slice's), the taxonomy
-    is unmoved at 135, the lawful tables stand,
+    is at the standing 138, the lawful tables stand,
     and every standing artifact row's S-266 tie
     obeys the law the listing reads by -- its
     check run stands in the same repository,
@@ -479,9 +479,9 @@ def audit_workflow_artifacts(conn: sqlite3.Connection
     read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 135
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
                  and len(taxonomy.AUTH_EVENTS) == 33
-                 and len(taxonomy.REPO_EVENTS) == 89
+                 and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
     names_ok = (
         check_name_for("CI", "build") == "CI / build"
@@ -521,7 +521,7 @@ def audit_workflow_artifacts(conn: sqlite3.Connection
                 "check run's commit")
     return WorkflowArtifactsAudit(
         names_ok=names_ok,
-        schema_version=version, schema_ok=version == 131,
+        schema_version=version, schema_ok=version == 132,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 
