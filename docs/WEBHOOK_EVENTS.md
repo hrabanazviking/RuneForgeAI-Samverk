@@ -255,6 +255,9 @@ event named here is a real event-store verb.
 | `repo.artifact.upload` | repository | A CI artifact uploaded through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name`, `size`, `retention_days` |
 | `repo.artifact.delete` | repository | A CI artifact deleted through the API by a scoped poster (S-266) | `poster`, `credential`, `token_id`, `oid`, `check_run`, `name` |
 | `repo.code_scanning.upload` | repository | A SARIF document uploaded through the code-scanning API by a scoped poster (S-302) | `poster`, `credential`, `token_id`, `oid`, `ref`, `runs`, `results` |
+| `repo.workflow_run.rerun_all` | repository | A workflow run re-run in full by a repository writer (S-324) | `workflow`, `oid`, `attempt`, `jobs` |
+| `repo.workflow_run.rerun_failed` | repository | The failed jobs of a workflow run re-run by a repository writer (S-324) | `workflow`, `oid`, `attempt`, `jobs` |
+| `repo.workflow_run.cancel` | repository | A running workflow cancelled by a repository writer (S-324) | `workflow`, `oid`, `attempt`, `jobs` |
 
 ## Subscriptions (S-248)
 

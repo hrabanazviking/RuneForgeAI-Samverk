@@ -188,6 +188,10 @@ REPO_EVENTS = frozenset({
     "repo.artifact.delete",
     # S-302 addition (append-only, per the taxonomy rules):
     "repo.code_scanning.upload",
+    # S-324 additions (append-only, per the taxonomy rules):
+    "repo.workflow_run.rerun_all",
+    "repo.workflow_run.rerun_failed",
+    "repo.workflow_run.cancel",
 })
 
 ADMIN_EVENTS = frozenset({

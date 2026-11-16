@@ -378,8 +378,8 @@ class PushActorProtectionTests(unittest.TestCase):
         self.assertIn("is allowed", html_ok)
 
     def test_no_migration_no_new_taxonomy_event(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertNotIn("repo.push.actor_required",
                          taxonomy.AUDIT_EVENTS)
 

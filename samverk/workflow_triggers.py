@@ -876,6 +876,16 @@ class TriggerAudit:
 
 _WORDS = ("trigger", "schedule", "cron", "dispatch", "run")
 
+#: The lawful workflow events since S-324: its
+#: three run-action events, admitted by name
+#: (the S-322 admission precedent in
+#: workflow_format). Any other workflow run
+#: event is an offender.
+_LAWFUL_WORKFLOW_EVENTS = frozenset({
+    "repo.workflow_run.rerun_all",
+    "repo.workflow_run.rerun_failed",
+    "repo.workflow_run.cancel"})
+
 
 def _workflow_surface(name: str) -> bool:
     text = name.lower()
@@ -909,7 +919,8 @@ def audit_workflow_triggers(conn: sqlite3.Connection) -> TriggerAudit:
                 offending_columns.append(f"{table}.{row[1]}")
     events = sorted(taxonomy.AUDIT_EVENTS)
     offending_events = [
-        e for e in events if _workflow_surface(e)]
+        e for e in events if _workflow_surface(e)
+        and e not in _LAWFUL_WORKFLOW_EVENTS]
     return TriggerAudit(
         events_ok=events_ok,
         tables_scanned=len(tables),

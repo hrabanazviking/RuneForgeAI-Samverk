@@ -172,8 +172,8 @@ class ReportHonestyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn = db.init_db(Path(td) / "samverk.db")
             try:
-                self.assertEqual(schema_version(conn), 131)
-                self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+                self.assertEqual(schema_version(conn), 132)
+                self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
             finally:
                 conn.close()
 

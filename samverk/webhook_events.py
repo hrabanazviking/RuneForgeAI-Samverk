@@ -439,6 +439,12 @@ WEBHOOK_EVENT_DATA: tuple[tuple[str, str, str, tuple[str, ...], str], ...] = (
      'A CI artifact deleted through the API by a scoped poster (S-266)'),
     ('repo.code_scanning.upload', 'checks', 'repository', ('poster', 'credential', 'token_id', 'oid', 'ref', 'runs', 'results'),
      'A SARIF document uploaded through the code-scanning API by a scoped poster (S-302)'),
+    ('repo.workflow_run.rerun_all', 'checks', 'repository', ('workflow', 'oid', 'attempt', 'jobs'),
+     'A workflow run re-run in full by a repository writer (S-324)'),
+    ('repo.workflow_run.rerun_failed', 'checks', 'repository', ('workflow', 'oid', 'attempt', 'jobs'),
+     'The failed jobs of a workflow run re-run by a repository writer (S-324)'),
+    ('repo.workflow_run.cancel', 'checks', 'repository', ('workflow', 'oid', 'attempt', 'jobs'),
+     'A running workflow cancelled by a repository writer (S-324)'),
 )
 
 WEBHOOK_EVENTS: tuple[WebhookEventSpec, ...] = tuple(

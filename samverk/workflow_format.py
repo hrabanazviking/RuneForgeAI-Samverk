@@ -787,7 +787,16 @@ class WorkflowAudit:
 #: Any other workflow-named table or column is
 #: an offender.
 _LAWFUL_WORKFLOW_COLUMNS = frozenset({
-    "ci_logs.workflow"})
+    "ci_logs.workflow", "ci_run_actions.workflow"})
+
+#: The lawful workflow events since S-324: its
+#: three run-action events, admitted by name.
+#: Any other workflow-named audit event is an
+#: offender.
+_LAWFUL_WORKFLOW_EVENTS = frozenset({
+    "repo.workflow_run.rerun_all",
+    "repo.workflow_run.rerun_failed",
+    "repo.workflow_run.cancel"})
 
 
 def audit_workflow_format(conn: sqlite3.Connection) -> WorkflowAudit:
@@ -824,7 +833,8 @@ def audit_workflow_format(conn: sqlite3.Connection) -> WorkflowAudit:
                 offending_columns.append(f"{table}.{row[1]}")
     events = sorted(taxonomy.AUDIT_EVENTS)
     offending_events = [
-        e for e in events if "workflow" in e.lower()]
+        e for e in events if "workflow" in e.lower()
+        and e not in _LAWFUL_WORKFLOW_EVENTS]
     return WorkflowAudit(
         decision=DECISION,
         mapping_relations_ok=mapping_relations_ok,

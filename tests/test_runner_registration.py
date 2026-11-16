@@ -204,8 +204,8 @@ class StoreTests(unittest.TestCase):
     # -- pins -------------------------------------------------
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(self.conn), 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     # -- minting -----------------------------------------------
 
@@ -516,7 +516,7 @@ class StoreTests(unittest.TestCase):
         audit = audit_runner_protocol(self.conn)
         self.assertTrue(audit.protocol_ok)
         self.assertTrue(audit.stands_cleanly, audit)
-        self.assertEqual(audit.events_scanned, 135)
+        self.assertEqual(audit.events_scanned, 138)
         with self.conn:
             self.conn.execute(
                 "CREATE TABLE runner_backdoor (id INTEGER)")

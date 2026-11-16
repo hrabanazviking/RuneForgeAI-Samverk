@@ -184,9 +184,9 @@ class PureLawTests(unittest.TestCase):
     def test_pins_hold(self):
         self.assertEqual(POSTER, "samverk-ci")
         self.assertEqual(CHECK_RUN_STATUS_COMPLETED, "completed")
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
 
@@ -636,7 +636,7 @@ class AuditAndPageTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_schema_pin(self):
-        self.assertEqual(schema_version(self.conn), 131)
+        self.assertEqual(schema_version(self.conn), 132)
 
     def test_audit_stands_cleanly(self):
         audit = audit_check_reporting(self.conn)
