@@ -2,12 +2,12 @@
 
 ## Base
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-323 (323/416).
-- Governing full suite at S-323: 5182 tests - Ran 5182 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-324 (324/416).
+- Governing full suite at S-324: 5214 tests - Ran 5214 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
-- team-01 → S-333 (S-323 banked 2026-11-15, keeper) · team-02 → S-324 (S-314 banked 2026-11-14, keeper) · team-03 → S-325 (S-315 banked 2026-11-14, keeper) · team-04 → S-326 (S-316 banked 2026-11-14, keeper) · team-05 → S-327 (S-317 banked 2026-11-14, keeper)
+- team-01 → S-333 (S-323 banked 2026-11-15, keeper) · team-02 → S-334 (S-324 banked 2026-11-16, keeper) · team-03 → S-325 (S-315 banked 2026-11-14, keeper) · team-04 → S-326 (S-316 banked 2026-11-14, keeper) · team-05 → S-327 (S-317 banked 2026-11-14, keeper)
 - team-06 → S-328 (S-318 banked 2026-11-14, keeper) · team-07 → S-329 (S-319 banked 2026-11-14, keeper) · team-08 → S-330 (S-320 banked 2026-11-14, keeper) · team-09 → S-331 (S-321 banked 2026-11-14, keeper) · team-10 → S-332 (S-322 banked 2026-11-15, keeper)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
