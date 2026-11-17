@@ -471,7 +471,7 @@ def audit_skip_markers(conn: sqlite3.Connection) -> SkipAudit:
     taxonomy_ok = (
         len(taxonomy.AUDIT_EVENTS) == 138
         and len(taxonomy.AUTH_EVENTS) == 33
-        and len(taxonomy.REPO_EVENTS) == 89
+        and len(taxonomy.REPO_EVENTS) == 92
         and len(taxonomy.ADMIN_EVENTS) == 13)
     tables = [r["name"] for r in conn.execute(
         "SELECT name FROM sqlite_master"
