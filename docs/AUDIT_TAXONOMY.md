@@ -3359,3 +3359,28 @@ Every other context is judged as S-174
 judges. The judgement is pure: no migration
 (schema stays 131) and nothing is witnessed
 -- so the taxonomy itself is unmoved.)
+
+S-326 (2026-11-16) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its scheduled workflows, in
+samverk/workflow_schedules.py, are the
+schedule clock's judgement: schedules are
+read from the default branch only --
+`collect_schedules` gathers a branch's
+S-314-parsed schedule entries only when the
+branch is the repository's default, and on
+any other branch counts nothing and names
+the schedule-declaring workflows it ignored
+-- and a tick judges the window since the
+last tick honestly: a due firing fires at
+the tick, never early, late by exactly its
+stated drift in seconds, and every earlier
+firing due in the window is missed --
+counted, named by its due time, and never
+replayed in a catch-up burst -- while a
+cron that can never fire is stated as
+never firing, in S-314's honest None.
+Keeping the clock is a pure judgement that
+writes and witnesses nothing, and there is
+no migration (schema stays 131) -- so the
+taxonomy itself is unmoved.)
