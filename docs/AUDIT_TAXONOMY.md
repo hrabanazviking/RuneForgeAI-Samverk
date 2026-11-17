@@ -3302,3 +3302,25 @@ agree. Appends, reads and the sweep witness
 nothing -- the log row is the record, on
 S-321's and S-267's basis -- so the taxonomy
 itself is unmoved.)
+
+S-327 (2026-11-16) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its workflow UI, in samverk/workflow_ui.py,
+is a read face over the standing rows: the
+run list groups S-321's landed check runs by
+(workflow, commit) under S-323's name law, the
+run detail carries each job's conclusion said
+in text+icon (never colour-only, S-157's law),
+its steps from the workflow file itself, its
+timing from the rows' stamps, its log tails
+through S-322's store and its artifacts in
+S-323's own words, and workflow file linting
+surfaces S-313's validator with its refusals
+in plain words. Per-step conclusions are
+stored nowhere and none is shown; a job with
+no landed conclusion stands as pending, never
+as passed. Reads, lints and renders witness
+nothing -- the check rows, logs and artifacts
+are the record, on S-321's, S-322's and
+S-323's basis -- so the taxonomy itself is
+unmoved.)
