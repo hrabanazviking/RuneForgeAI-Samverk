@@ -3334,3 +3334,28 @@ repository is refused permission_denied, a
 stranger to a private repository gets the
 uniform repository_not_found, and a refused
 act stores and witnesses nothing.)
+
+S-325 (2026-11-15) added no event of its own:
+135 events stand: 33 auth, 89 repo, 13 admin.
+(Its skip markers, in
+samverk/skip_markers.py, honour the five
+GitHub markers -- [skip ci], [ci skip],
+[no ci], [skip actions] and [actions skip],
+matched case-insensitively as whole bracketed
+tokens -- for push and pull_request triggers
+only, judged through the S-314 trigger judge
+with the trigger reason preserved; a marker
+on a tag, schedule or dispatch event is
+recorded but not honoured. A marker-skipped
+workflow lands no checks, and the required-
+checks judge answers skipped -- not passed,
+never passed -- for a required context the
+skipped workflow would have produced (named
+by the S-321 check-name law), whatever state
+a panel row claims for it, closing the trap
+where a skipped conclusion folded to passed
+by S-246 would satisfy the S-174 gate.
+Every other context is judged as S-174
+judges. The judgement is pure: no migration
+(schema stays 131) and nothing is witnessed
+-- so the taxonomy itself is unmoved.)
