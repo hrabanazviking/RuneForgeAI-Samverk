@@ -114,10 +114,10 @@ class PureLawTests(unittest.TestCase):
         conn = db.init_db(
             Path(tempfile.mkdtemp()) / "samverk.db")
         self.addCleanup(conn.close)
-        self.assertEqual(schema_version(conn), 131)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 135)
+        self.assertEqual(schema_version(conn), 132)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
-        self.assertEqual(len(taxonomy.REPO_EVENTS), 89)
+        self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
 
     def test_conclusion_words_are_text_plus_icon(self):
@@ -564,7 +564,7 @@ class World(unittest.TestCase):
         self._seed()
         audit = audit_workflow_ui(self.conn)
         self.assertTrue(audit.stands_cleanly, audit.problems)
-        self.assertEqual(audit.schema_version, 131)
+        self.assertEqual(audit.schema_version, 132)
         self.assertEqual(audit.rows_scanned, 5)
         page = render_run_list_page(
             self.store.list_runs(self.owner, "volmarr", "pub"),

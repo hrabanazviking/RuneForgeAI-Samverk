@@ -1026,9 +1026,9 @@ def audit_workflow_ui(conn: sqlite3.Connection
     the pages read by. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 135
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
                  and len(taxonomy.AUTH_EVENTS) == 33
-                 and len(taxonomy.REPO_EVENTS) == 89
+                 and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
     vocabulary_ok = (
         tuple(RUNNER_CONCLUSIONS) == (
@@ -1066,7 +1066,7 @@ def audit_workflow_ui(conn: sqlite3.Connection
                 "into a workflow and a lawful job")
     return WorkflowUIAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 131,
+        schema_version=version, schema_ok=version == 132,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 
