@@ -145,9 +145,9 @@ class PinsTests(unittest.TestCase):
         self.conn = db.init_db(Path(self._td.name) / "samverk.db")
         self.addCleanup(self.conn.close)
 
-    def test_pins_schema_132_taxonomy_138(self):
-        self.assertEqual(schema_version(self.conn), 132)
-        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+    def test_pins_schema_133_taxonomy_138(self):
+        self.assertEqual(schema_version(self.conn), 133)
+        self.assertEqual(db.MIGRATIONS[-1][0], 133)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

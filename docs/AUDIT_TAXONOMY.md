@@ -3422,3 +3422,19 @@ completes, and the pending, syncing and
 failed states live in that same record. No
 migration either -- schema stays 132 -- so
 the taxonomy itself is unmoved.)
+
+S-330 (2026-11-18) added no event of its own:
+138 events stand. (Its mirror credentials, in
+samverk/mirror_credentials.py, are set and
+cleared through the standing scoped verb
+repo.settings.change, the detail naming the
+act under key (mirror_credential.set /
+mirror_credential.clear) and the instance
+secret's NAME -- never a value, per S-003's
+secrets law: the database holds only the
+reference, in repo_mirrors.credential_name
+(migration 133, schema 133); the token itself
+lives only in memory and its env/file source,
+and reaches a sync through the fetch seam's
+askpass environment, never a stored URL, an
+audit row, or a log.)

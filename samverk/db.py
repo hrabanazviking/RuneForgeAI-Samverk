@@ -3398,6 +3398,14 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE INDEX idx_ci_run_actions_repo_run"
         " ON ci_run_actions (repo_id, workflow, head_oid, id)",
     ]),
+    # S-330: mirror credentials -- a mirror record may
+    # reference an instance secret BY NAME (S-003 law: the
+    # value itself is never in the database, only ever in
+    # memory and its env/file source). The reference is the
+    # whole of what this column can hold.
+    (133, [
+        "ALTER TABLE repo_mirrors ADD COLUMN credential_name TEXT",
+    ]),
 ]
 
 
