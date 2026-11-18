@@ -3406,3 +3406,19 @@ nothing -- the check rows, logs and artifacts
 are the record, on S-321's, S-322's and
 S-323's basis -- so the taxonomy itself is
 unmoved.)
+
+S-329 (2026-11-17) added no event of its own:
+138 events stand. (Its pull mirrors, in
+samverk/pull_mirrors.py, are created through
+S-070 MirrorService over S-013 repositories,
+so creation is witnessed by the standing
+repo.create event inside create_repository
+itself, and a sync outcome is product data
+in the repo_mirrors record -- the state the
+repo page reads -- exactly as S-070 kept it.
+Readiness is not an event: a pull mirror
+advertises ready only after its first sync
+completes, and the pending, syncing and
+failed states live in that same record. No
+migration either -- schema stays 132 -- so
+the taxonomy itself is unmoved.)
