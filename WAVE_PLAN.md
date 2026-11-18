@@ -2,13 +2,13 @@
 
 ## Base
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-328 (328/416).
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-329 (329/416).
 - Governing full suite at S-326: 5276 tests - Ran 5276 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
 - team-01 → S-333 (S-323 banked 2026-11-15, keeper) · team-02 → S-334 (S-324 banked 2026-11-16, keeper) · team-03 → S-335 (S-325 banked 2026-11-16, keeper) · team-04 → S-336 (S-326 banked 2026-11-17, keeper) · team-05 → S-337 (S-327 banked 2026-11-17, keeper)
-- team-06 → S-338 (S-328 banked 2026-11-17, keeper) · team-07 → S-329 (S-319 banked 2026-11-14, keeper) · team-08 → S-330 (S-320 banked 2026-11-14, keeper) · team-09 → S-331 (S-321 banked 2026-11-14, keeper) · team-10 → S-332 (S-322 banked 2026-11-15, keeper)
+- team-06 → S-338 (S-328 banked 2026-11-17, keeper) · team-07 → S-339 (S-329 banked 2026-11-18, keeper) · team-08 → S-330 (S-320 banked 2026-11-14, keeper) · team-09 → S-331 (S-321 banked 2026-11-14, keeper) · team-10 → S-332 (S-322 banked 2026-11-15, keeper)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
 
@@ -409,3 +409,6 @@ S-325 BANKED this tick (325/416; slice c5a8e82, merge 3d0c90a, banking pin 6b91d
 
 ## Keeper note 2026-11-17 04:18 EST tick (samverk-forge-keeper)
 S-326 BANKED this tick (326/416; slice 7bd83ed, merge 21c24ad, banking pin 0761ced; battery 31 OK, neighbours 184 OK, team full suite Ran 5213 OK skipped=4, main full suite Ran 5276 in 17350.520s OK skipped=4 exit 0, finished 04:15 EST, TMPDIR on the disk-backed volume per the standing rule). Team-04 worktree reset to the banked base and takes S-336 next. Banking head is now S-327 (team-05, committed 3c56d3a, team suite Ran 5216 OK skipped=4, neighbours Ran 269 OK): merge into main, reconcile pins if needed, main full suite green, then push. Teams 06-10 stand at banked base 55092a9 with S-328..S-332 assigned; fresh leads muster on later ticks, staggered. Never touch any README.md. NO Docker ever.
+
+## Keeper note 2026-11-18 02:48 EST tick (samverk-forge-keeper)
+S-329 BANKED this tick (329/416, slice a7e8406, merge 8f28d62; battery 40 OK; team full suite Ran 5339 OK skipped=4 exit 0; main full suite Ran 5339 in 16376.960s OK skipped=4 exit 0, TMPDIR on disk-backed volume). The merge and main suite were completed by the prior tick; this tick verified both suites green from their logs and completed banking (map + closure + push). Team-07 worktree reset to the banked base and takes S-339 next. STALL STATE: no live Samverk worker processes at tick check; teams 01-06, 08-10 stand at their banked bases with next slices assigned (S-333..S-338, S-330..S-332) and restart orders standing in their CAMPAIGN_STATE.md files — fresh leads muster staggered, solo-sequential per team, building in their own worktrees only; the keeper banks strictly in roadmap order, next S-330 (team-08).
