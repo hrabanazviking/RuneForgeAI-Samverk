@@ -912,7 +912,7 @@ def audit_workflow_run_actions(conn: sqlite3.Connection
                 "stand")
     return WorkflowRunActionsAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 133,
+        schema_version=version, schema_ok=version == 134,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 

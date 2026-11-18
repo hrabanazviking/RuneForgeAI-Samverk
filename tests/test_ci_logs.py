@@ -568,8 +568,8 @@ class AuditAndPageTests(unittest.TestCase):
             self.owner.id, "volmarr", "pub", visibility="public")
 
     def test_schema_pin(self):
-        self.assertEqual(schema_version(self.conn), 133)
-        self.assertEqual(db.MIGRATIONS[-1][0], 133)
+        self.assertEqual(schema_version(self.conn), 134)
+        self.assertEqual(db.MIGRATIONS[-1][0], 134)
 
     def test_audit_stands_cleanly(self):
         self.logs.append_log(

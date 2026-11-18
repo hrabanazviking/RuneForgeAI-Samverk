@@ -598,7 +598,7 @@ def audit_check_reporting(conn: sqlite3.Connection
         e for e in events if _SURFACE_WORD in e]
     return CheckReportingAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 133,
+        schema_version=version, schema_ok=version == 134,
         events_ok=events_ok, tables_ok=tables_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

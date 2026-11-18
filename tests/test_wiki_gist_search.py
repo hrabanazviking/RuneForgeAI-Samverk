@@ -380,7 +380,7 @@ class CombinedAndGlobalTests(unittest.TestCase):
         self.assertIn("Wiki and gist search", landing)
 
     def test_schema_and_taxonomy_stand(self):
-        self.assertEqual(schema_version(self.w.conn), 133)
+        self.assertEqual(schema_version(self.w.conn), 134)
         self.assertEqual(len(AUTH_EVENTS), 33)
         self.assertEqual(len(REPO_EVENTS), 92)
         self.assertEqual(len(ADMIN_EVENTS), 13)
