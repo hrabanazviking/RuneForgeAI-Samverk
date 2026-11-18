@@ -170,9 +170,12 @@ class PullMirrorTests(unittest.TestCase):
 
     # -- bookkeeping ---------------------------------------------------
     def test_schema_and_taxonomy_are_unmoved(self):
+        # S-329 itself moved neither; S-330's migration 133
+        # (repo_mirrors.credential_name) has since landed, so
+        # the schema pin stands at 133 -- taxonomy unmoved.
         from samverk import taxonomy
-        self.assertEqual(db.schema_version(self.conn), 132)
-        self.assertEqual(db.MIGRATIONS[-1][0], 132)
+        self.assertEqual(db.schema_version(self.conn), 133)
+        self.assertEqual(db.MIGRATIONS[-1][0], 133)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     def test_non_mirror_repo_has_no_advertisement(self):
