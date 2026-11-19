@@ -204,7 +204,7 @@ class StoreTests(unittest.TestCase):
     # -- pins -------------------------------------------------
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 133)
+        self.assertEqual(schema_version(self.conn), 134)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     # -- minting -----------------------------------------------

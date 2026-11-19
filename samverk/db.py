@@ -3406,6 +3406,15 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
     (133, [
         "ALTER TABLE repo_mirrors ADD COLUMN credential_name TEXT",
     ]),
+    # S-331: sync scheduler -- a mirror may carry its own
+    # sync interval (NULL means the 24h founding default)
+    # and the moment its next scheduled sync falls due.
+    # Scheduling lives off the request path; the columns
+    # hold only times and counts, never a credential.
+    (134, [
+        "ALTER TABLE repo_mirrors ADD COLUMN sync_interval_seconds INTEGER",
+        "ALTER TABLE repo_mirrors ADD COLUMN next_sync_at INTEGER",
+    ]),
 ]
 
 

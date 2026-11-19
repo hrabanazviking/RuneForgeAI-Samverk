@@ -468,7 +468,7 @@ class MergeTests(unittest.TestCase):
 
     def test_merge_event_is_in_the_taxonomy(self):
         self.assertIn("repo.pull_request.merge", taxonomy.AUDIT_EVENTS)
-        self.assertEqual(schema_version(self.conn), 133)
+        self.assertEqual(schema_version(self.conn), 134)
 
 
 if __name__ == "__main__":
