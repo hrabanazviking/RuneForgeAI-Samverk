@@ -427,8 +427,8 @@ class AuditAndRenderTests(unittest.TestCase):
     def test_audit_stands_cleanly_on_live_instance(self):
         audit = audit_skip_markers(self.conn)
         self.assertTrue(audit.stands_cleanly)
-        self.assertEqual(audit.schema_version, 134)
-        self.assertEqual(schema_version(self.conn), 134)
+        self.assertEqual(audit.schema_version, 135)
+        self.assertEqual(schema_version(self.conn), 135)
         self.assertEqual(audit.events_scanned, 138)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 

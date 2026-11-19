@@ -21,6 +21,13 @@ how the last sync ended — live in `repo_mirrors`.
   `last_sync_at` are written for failures exactly as for
   successes, and a failed sync leaves the mirror's existing
   content untouched and readable.
+- **Sync status (S-332)** rides this record: every sync
+  also writes ``last_success_at`` (moved by successes
+  only) and ``last_objects_moved`` (objects the attempt
+  brought in, counted around the fetch), so the repo
+  page can say attempt, success, movement, and failure
+  reason in plain words -- a failed mirror never looks
+  healthy.
 - Part XVII (the mirror duty for Volmarr's original
   repositories) builds on this layout; scheduling and
   fleet policy are that part's, not this slice's.
@@ -36,7 +43,7 @@ from pathlib import Path
 
 from .accounts import AccountStore
 from .audit import AuditLog
-from .proc import ProcRefused, run_git_fetch_from, validate_remote_url
+from .proc import ProcRefused, run_git_fetch_from, run_git_in, validate_remote_url
 from .repositories import Repository, RepositoryStore
 
 
@@ -56,6 +63,11 @@ class Mirror:
     last_sync_at: int | None
     last_status: str | None       # "ok" | "failed" | None (never synced)
     last_detail: str | None
+    # S-332: when a sync last succeeded (a failed attempt
+    # never moves it) and how many objects the last
+    # attempt brought in (None = not recorded).
+    last_success_at: int | None = None
+    last_objects_moved: int | None = None
 
 
 @dataclass(frozen=True)
@@ -64,6 +76,7 @@ class SyncResult:
     status: str                   # "ok" | "failed"
     synced_at: int
     detail: str
+    objects_moved: int = 0        # S-332: objects the attempt brought in
 
 
 class MirrorService:
@@ -122,11 +135,16 @@ class MirrorService:
             (current.id,)).fetchone()
         if row is None:
             return None
+        keys = row.keys()
         return Mirror(
             repo_id=row["repo_id"], full_name=current.full_name,
             source=row["source"], source_kind=row["source_kind"],
             created_at=row["created_at"], last_sync_at=row["last_sync_at"],
-            last_status=row["last_status"], last_detail=row["last_detail"])
+            last_status=row["last_status"], last_detail=row["last_detail"],
+            last_success_at=(row["last_success_at"]
+                             if "last_success_at" in keys else None),
+            last_objects_moved=(row["last_objects_moved"]
+                                if "last_objects_moved" in keys else None))
 
     def is_mirror(self, owner, repo) -> bool:
         return self.mirror_for(owner, repo) is not None
@@ -189,6 +207,25 @@ class MirrorService:
                 (current.id,))
 
     # -- sync ------------------------------------------------------------
+    @staticmethod
+    def _count_objects(path: Path) -> int | None:
+        """Total git objects in the mirror (loose + packed),
+        through the S-014 seam; None when the count cannot
+        be read -- an unknown count is said to be unknown,
+        never guessed."""
+        try:
+            result = run_git_in(path, ["count-objects", "-v"], timeout=30.0)
+            if result.returncode != 0:
+                return None
+            total = 0
+            for line in result.stdout.decode("utf-8", "replace").splitlines():
+                key, _, value = line.partition(":")
+                if key.strip() in ("count", "in-pack"):
+                    total += int(value.strip())
+            return total
+        except Exception:
+            return None
+
     def sync_mirror(self, owner, repo, *, token: str | None = None) -> SyncResult:
         """Fetch the mirror's source into it and record the
         outcome — success and failure alike."""
@@ -202,6 +239,7 @@ class MirrorService:
                               else mirror.source)
         path = self._repos.path_for(current.owner, current.name)
         now = int(self._now())
+        before = self._count_objects(path)
         try:
             result = run_git_fetch_from(
                 path, source, timeout=self._fetch_timeout, token=token)
@@ -213,10 +251,25 @@ class MirrorService:
                     "utf-8", "replace").strip()[:200] or "fetch failed"
         except Exception as exc:  # recorded, never hidden, never raised
             status, detail = "failed", f"{type(exc).__name__}: {exc}"[:200]
+        after = self._count_objects(path)
+        moved: int | None = (max(0, after - before)
+                             if before is not None and after is not None
+                             else None)
         with self._conn:
-            self._conn.execute(
-                "UPDATE repo_mirrors SET last_sync_at = ?, last_status = ?,"
-                " last_detail = ? WHERE repo_id = ?",
-                (now, status, detail, current.id))
+            if status == "ok":
+                # S-332: success is recorded as success -- the
+                # last-success moment moves only here.
+                self._conn.execute(
+                    "UPDATE repo_mirrors SET last_sync_at = ?, last_status = ?,"
+                    " last_detail = ?, last_success_at = ?,"
+                    " last_objects_moved = ? WHERE repo_id = ?",
+                    (now, status, detail, now, moved, current.id))
+            else:
+                self._conn.execute(
+                    "UPDATE repo_mirrors SET last_sync_at = ?, last_status = ?,"
+                    " last_detail = ?, last_objects_moved = ?"
+                    " WHERE repo_id = ?",
+                    (now, status, detail, moved, current.id))
         return SyncResult(full_name=current.full_name, status=status,
-                          synced_at=now, detail=detail)
+                          synced_at=now, detail=detail,
+                          objects_moved=moved or 0)
