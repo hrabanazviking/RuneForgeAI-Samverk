@@ -357,7 +357,8 @@ class SyncSchedulerService:
             with self._conn:
                 self._conn.execute(
                     "UPDATE repo_mirrors SET last_sync_at = ?,"
-                    " last_status = ?, last_detail = ?"
+                    " last_status = ?, last_detail = ?,"
+                    " last_objects_moved = 0"
                     " WHERE repo_id = ?",
                     (synced_at, status, detail[:200], schedule.repo_id))
         nxt = self._advance(schedule, synced_at)

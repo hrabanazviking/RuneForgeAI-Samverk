@@ -3415,6 +3415,14 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE repo_mirrors ADD COLUMN sync_interval_seconds INTEGER",
         "ALTER TABLE repo_mirrors ADD COLUMN next_sync_at INTEGER",
     ]),
+    # S-332: sync status -- a mirror records when a sync
+    # last *succeeded* (a failed attempt never moves it)
+    # and how many objects its last attempt brought in.
+    # Times and counts only, never a credential.
+    (135, [
+        "ALTER TABLE repo_mirrors ADD COLUMN last_success_at INTEGER",
+        "ALTER TABLE repo_mirrors ADD COLUMN last_objects_moved INTEGER",
+    ]),
 ]
 
 
