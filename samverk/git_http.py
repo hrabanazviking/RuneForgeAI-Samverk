@@ -143,6 +143,20 @@ class SmartHttpService:
             raise TransportError(
                 "permission_denied",
                 "You do not have write permission on this repository.")
+        if minimum == "write":
+            # S-334: mirror write law -- a mirror is read-only
+            # for local changes; refuse the write leg with the
+            # reason stated, before any pack byte moves. Reads
+            # are untouched: a mirror is read-only, not
+            # unreadable.
+            from .mirror_write_law import (
+                mirror_row_for, write_refusal_message)
+            mirror_row = mirror_row_for(self._conn, current.id)
+            if mirror_row is not None:
+                raise TransportError(
+                    "mirror_read_only",
+                    write_refusal_message(
+                        current.full_name, mirror_row[0]))
         if wiki:
             path = wiki_path_for(self._repos, current)
             if not WikiStore._is_bare_wiki(path):

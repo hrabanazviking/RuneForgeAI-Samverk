@@ -3454,3 +3454,23 @@ product data in repo_push_mirrors (migration
 136, schema 136) -- the state the repo page
 reads -- exactly as S-070/S-332 kept sync
 outcomes, so the taxonomy itself is unmoved.)
+S-334 (2026-11-20) added no event of its own:
+138 events stand. (Its mirror write law, in
+samverk/mirror_write_law.py, makes mirrors
+read-only for local changes: the judgement
+is pure over S-070's repo_mirrors record,
+the smart-HTTP and SSH transports refuse a
+receive-pack to a mirror after the standing
+permission gate and before any pack byte
+moves, the S-089 receive gate refuses it
+through its protection stage, and the UI
+renders the law in words -- every
+refusal under the one machine reason
+mirror_read_only with the reason stated
+(the repository, its source, and the way
+through: change the source and let the
+mirror sync). A refusal is not an act on
+the repository and sync is not a local
+change, so nothing is witnessed and no
+migration is claimed -- schema stays 135 --
+so the taxonomy itself is unmoved.)
