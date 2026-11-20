@@ -492,7 +492,7 @@ def audit_skip_markers(conn: sqlite3.Connection) -> SkipAudit:
     offending_events = [e for e in events if _surface(e)]
     return SkipAudit(
         markers_ok=markers_ok, events_ok=events_ok,
-        schema_version=version, schema_ok=version == 135,
+        schema_version=version, schema_ok=version == 136,
         events_scanned=len(events), taxonomy_ok=taxonomy_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

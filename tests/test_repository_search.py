@@ -165,8 +165,8 @@ class RepositorySearchTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.a.conn), 135)
-        self.assertEqual(db.MIGRATIONS[-1][0], 135)
+        self.assertEqual(schema_version(self.a.conn), 136)
+        self.assertEqual(db.MIGRATIONS[-1][0], 136)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

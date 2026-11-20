@@ -906,7 +906,7 @@ def audit_log_streaming(conn: sqlite3.Connection
                 "the name law")
     return LogStreamingAudit(
         retention_ok=retention_ok,
-        schema_version=version, schema_ok=version == 135,
+        schema_version=version, schema_ok=version == 136,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 
