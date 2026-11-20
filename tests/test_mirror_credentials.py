@@ -193,7 +193,7 @@ class MirrorCredentialTests(unittest.TestCase):
 
     # -- pins -----------------------------------------------------------------
     def test_schema_133_carries_credential_name(self):
-        self.assertEqual(db.schema_version(self.conn), 135)
+        self.assertEqual(db.schema_version(self.conn), 136)
         cols = [r["name"] for r in self.conn.execute(
             "PRAGMA table_info(repo_mirrors)").fetchall()]
         self.assertIn("credential_name", cols)

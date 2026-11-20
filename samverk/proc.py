@@ -438,6 +438,61 @@ def run_git_fetch_from(
         tempdir.cleanup()
 
 
+
+def run_git_push_to(
+    repo_path: Path,
+    target: str | Path,
+    *,
+    timeout: float = 120.0,
+    token: str | None = None,
+    token_username: str = "x-access-token",
+) -> subprocess.CompletedProcess:
+    """Push every head and tag from a bare repository to one
+    onward target -- the S-333 push-mirror seam, and the
+    mirror-image of `run_git_fetch_from` (generic `push`
+    stays refused under S-014).
+
+    The target is either a trusted local `Path` (an on-disk
+    repository the caller resolved) or a remote URL string
+    validated by `validate_remote_url`; the source
+    repository is likewise a trusted `Path` parameter. This
+    function builds its argv itself -- `--git-dir` from the
+    parameter, a fixed mirror refspec, `--prune` so the
+    target converges -- so no caller string can redirect
+    the push. Tokens use the same askpass environment as
+    the fetch seam and are never logged.
+    """
+    if isinstance(target, Path):
+        if not target.is_absolute():
+            raise ProcRefused(
+                "push_target_not_trusted",
+                "a local push target must be a resolved Path object")
+        target_arg = str(target)
+    else:
+        target_arg = validate_remote_url(target)
+    if not isinstance(repo_path, Path) or not repo_path.is_absolute():
+        raise ProcRefused(
+            "push_path_not_trusted",
+            "push source must be a resolved local Path object")
+    executable = resolve_program("git")
+    argv = [str(executable), f"--git-dir={repo_path}", "push",
+            "--prune", target_arg,
+            "+refs/heads/*:refs/heads/*", "+refs/tags/*:refs/tags/*"]
+    if token is None:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env())
+    env_extra, tempdir = _askpass_env(token, token_username)
+    try:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env(env_extra))
+    finally:
+        tempdir.cleanup()
+
+
 _FETCH_REF_RE = re.compile(
     r"^refs/[A-Za-z0-9][A-Za-z0-9._/-]*$")
 

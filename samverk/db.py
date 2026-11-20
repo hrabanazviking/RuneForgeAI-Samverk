@@ -3423,6 +3423,23 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "ALTER TABLE repo_mirrors ADD COLUMN last_success_at INTEGER",
         "ALTER TABLE repo_mirrors ADD COLUMN last_objects_moved INTEGER",
     ]),
+    # S-333: push mirrors -- a repository may name onward
+    # targets (a second machine's Samverk or a plain git
+    # remote) in repo_push_mirrors. Each target records
+    # its pushes with S-332's status honesty: last attempt,
+    # last success (moved by successes only), the plain
+    # failure detail, and objects moved. Destinations,
+    # times, and counts only -- never a credential (a URL
+    # carrying one is refused at the door by S-014).
+    (136, [
+        "CREATE TABLE repo_push_mirrors (id INTEGER PRIMARY KEY,"
+        " repo_id INTEGER NOT NULL REFERENCES repositories(id),"
+        " target TEXT NOT NULL, target_kind TEXT NOT NULL,"
+        " created_at INTEGER NOT NULL, last_attempt_at INTEGER,"
+        " last_success_at INTEGER, last_status TEXT,"
+        " last_detail TEXT, last_objects_moved INTEGER,"
+        " UNIQUE (repo_id, target))",
+    ]),
 ]
 
 

@@ -3438,3 +3438,19 @@ lives only in memory and its env/file source,
 and reaches a sync through the fetch seam's
 askpass environment, never a stored URL, an
 audit row, or a log.)
+
+
+S-333 (2026-11-19) added no event of its own:
+138 events stand. (Its push mirrors, in
+samverk/push_mirrors.py, name onward targets
+for a repository -- a second machine's Samverk
+or a plain git remote -- and record every push
+on the target record itself, with S-332's
+status honesty: last attempt, last success
+(moved by successes only), objects moved, and
+the failure reason in plain words, so a failed
+push never looks healthy. A push outcome is
+product data in repo_push_mirrors (migration
+136, schema 136) -- the state the repo page
+reads -- exactly as S-070/S-332 kept sync
+outcomes, so the taxonomy itself is unmoved.)

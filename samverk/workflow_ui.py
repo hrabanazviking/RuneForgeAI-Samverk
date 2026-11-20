@@ -1066,7 +1066,7 @@ def audit_workflow_ui(conn: sqlite3.Connection
                 "into a workflow and a lawful job")
     return WorkflowUIAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 135,
+        schema_version=version, schema_ok=version == 136,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 
