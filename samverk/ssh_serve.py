@@ -205,6 +205,16 @@ class SshServeService:
                 return self._refuse(
                     stderr, "permission_denied",
                     "You do not have write permission on this repository.")
+        # -- S-334: mirror write law, before any pack byte ----
+        if service == "git-receive-pack":
+            from .mirror_write_law import (
+                mirror_row_for, write_refusal_message)
+            mirror_row = mirror_row_for(self._conn, current.id)
+            if mirror_row is not None:
+                return self._refuse(
+                    stderr, "mirror_read_only",
+                    write_refusal_message(
+                        current.full_name, mirror_row[0]))
         # -- S-089: the pre-receive gate point, before any pack --
         if service == "git-receive-pack" and self._receive_gate is not None:
             actor = (principal.user.username
