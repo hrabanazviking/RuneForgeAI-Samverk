@@ -3474,3 +3474,17 @@ the repository and sync is not a local
 change, so nothing is witnessed and no
 migration is claimed -- schema stays 135 --
 so the taxonomy itself is unmoved.)
+
+S-335 (2026-11-20) added no event of its own:
+138 events stand. (Its census fixture, in
+samverk/census_fixture.py, imports the
+54-originals inventory as mirror definitions
+through S-329's pull-mirror creation, which
+rides repo.create; uncertain-classified repos
+are recorded held in census_fixture_entries
+(migration 137, schema 137) with no repository
+created and no mirror defined, and become
+mirrors only by the owner's word, one at a
+time, through release_held. Holding a name is
+a record, not an act on a repository, so the
+taxonomy itself is unmoved.)
