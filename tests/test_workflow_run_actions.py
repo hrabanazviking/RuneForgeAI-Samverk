@@ -655,7 +655,7 @@ class World(unittest.TestCase):
         audit = audit_workflow_run_actions(self.conn)
         self.assertTrue(audit.vocabulary_ok)
         self.assertTrue(audit.schema_ok)
-        self.assertEqual(audit.schema_version, 136)
+        self.assertEqual(audit.schema_version, 137)
         self.assertTrue(audit.events_ok)
         self.assertTrue(audit.tables_ok)
         self.assertEqual(audit.rows_scanned, 0)
@@ -686,8 +686,8 @@ class World(unittest.TestCase):
         self.assertIn("its repository does not stand", joined)
 
     def test_pins_schema_132_taxonomy_138(self):
-        self.assertEqual(schema_version(self.conn), 136)
-        self.assertEqual(db.MIGRATIONS[-1][0], 136)
+        self.assertEqual(schema_version(self.conn), 137)
+        self.assertEqual(db.MIGRATIONS[-1][0], 137)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

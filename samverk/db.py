@@ -3440,6 +3440,19 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " last_detail TEXT, last_objects_moved INTEGER,"
         " UNIQUE (repo_id, target))",
     ]),
+    # S-335: census fixture entries -- one row per imported
+    # census name: its classification, its state (defined as
+    # a mirror, or held for the owner's word), the mirror
+    # repository it was defined as (NULL while held), its
+    # source, and the census note kept verbatim. Names only
+    # -- never a credential.
+    (137, [
+        "CREATE TABLE census_fixture_entries (id INTEGER PRIMARY KEY,"
+        " full_name TEXT NOT NULL UNIQUE, name TEXT NOT NULL,"
+        " source TEXT NOT NULL, classification TEXT NOT NULL,"
+        " state TEXT NOT NULL, repo_id INTEGER REFERENCES repositories(id),"
+        " note TEXT NOT NULL DEFAULT '', imported_at INTEGER NOT NULL)",
+    ]),
 ]
 
 
