@@ -3501,3 +3501,15 @@ first_pass_mirror_runs (migration 138, schema
 their own status; a verification is a reading,
 not an act on a repository, so the taxonomy
 itself is unmoved.)
+
+S-346 (2026-11-22) added no event of its own:
+138 events stand. (Its configuration judgement,
+in samverk/configuration.py, unifies S-002's
+boot config behind one documented key set,
+judges environment overrides, and answers a
+plain-words check through `samverk config
+check`. Configuration is boot fact read before
+the database opens; it adds no table and no
+migration -- schema stays 139 -- and a check
+is a reading, not an act, so the taxonomy
+itself is unmoved.)
