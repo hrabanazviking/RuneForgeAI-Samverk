@@ -3454,6 +3454,8 @@ product data in repo_push_mirrors (migration
 136, schema 136) -- the state the repo page
 reads -- exactly as S-070/S-332 kept sync
 outcomes, so the taxonomy itself is unmoved.)
+S-353 (2026-11-22) added no event of its own: maintenance-mode changes are witnessed with the standing ``admin.settings.change`` event (target ``maintenance``), so the taxonomy stands at 138.
+
 S-334 (2026-11-20) added no event of its own:
 138 events stand. (Its mirror write law, in
 samverk/mirror_write_law.py, makes mirrors

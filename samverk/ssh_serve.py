@@ -215,6 +215,17 @@ class SshServeService:
                     stderr, "mirror_read_only",
                     write_refusal_message(
                         current.full_name, mirror_row[0]))
+        # -- S-353: maintenance mode, before any pack byte --
+        if service == "git-receive-pack":
+            from .maintenance_mode import decide_access, read_state
+            mm = decide_access(
+                read_state(self._conn),
+                is_admin=bool(principal.user is not None
+                              and principal.user.is_admin),
+                write=True)
+            if not mm.allowed:
+                return self._refuse(
+                    stderr, "maintenance_mode", mm.message)
         # -- S-089: the pre-receive gate point, before any pack --
         if service == "git-receive-pack" and self._receive_gate is not None:
             actor = (principal.user.username
