@@ -55,10 +55,12 @@ root: a rollback clears the data root, and an archive
 inside it would be cleared with it.
 
 No migration of this slice's own and no new taxonomy
-event: the schema stands at 139 and the taxonomy
-stands at 138. The rehearsed stand-in migration in
+event: the schema stands at 140 and the taxonomy
+stands at 142 (coordinator pin sweep at S-357 banking:
+S-355 landed migration 140 and four taxonomy events
+after this slice was built). The rehearsed stand-in migration in
 the battery raises a *scratch* database to a pretend
-140; no such migration ships.
+141; no such migration ships.
 """
 from __future__ import annotations
 import json, shutil, sqlite3, time

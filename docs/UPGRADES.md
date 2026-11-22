@@ -147,4 +147,4 @@ instance claimed as upgraded.
 ## Pins
 
 No migration of this slice's own and no new taxonomy
-event: schema stands at 139, taxonomy stands at 138.
+event: schema stands at 140, taxonomy stands at 142 (coordinator pin sweep at S-357 banking).

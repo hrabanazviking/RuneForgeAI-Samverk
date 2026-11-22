@@ -31,13 +31,13 @@ def git(repo, *args, input_bytes=None):
 
 def standin_next_migration(conn):
     """A rehearsed stand-in next migration: a new table
-    plus the schema bump to a pretend 140, on the
+    plus the schema bump to a pretend 141, on the
     scratch database only. No such migration ships."""
     with conn:
         conn.execute("CREATE TABLE upgrade_rehearsal (id INTEGER PRIMARY KEY, note TEXT NOT NULL)")
         conn.execute("INSERT INTO upgrade_rehearsal (note) VALUES ('rehearsed')")
-        conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', '140')")
-    return 140
+        conn.execute("INSERT OR REPLACE INTO schema_meta (key, value) VALUES ('version', '141')")
+    return 141
 
 def destructive_failing_migration(conn):
     with conn:
@@ -80,8 +80,8 @@ class UpgradeTests(unittest.TestCase):
         return self.proc.run(self.admin.id, self.dest, **kw)
 
     def test_pins_no_new_migration_or_event(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     def test_doc_steps_pin_to_code_steps_in_order(self):
@@ -120,9 +120,9 @@ class UpgradeTests(unittest.TestCase):
         self.assertEqual([s.step_id for s in report.steps], list(STEP_IDS))
         self.assertTrue(all(s.ok for s in report.steps))
         self.assertFalse(report.rolled_back)
-        self.assertEqual((report.schema_before, report.schema_after), (139, 140))
+        self.assertEqual((report.schema_before, report.schema_after), (140, 141))
         conn = self.proc.conn
-        self.assertEqual(schema_version(conn), 140)
+        self.assertEqual(schema_version(conn), 141)
         self.assertEqual(conn.execute("SELECT note FROM upgrade_rehearsal").fetchone()[0], "rehearsed")
         self.assertEqual(int(conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]), 2)
         self.assertTrue(report.archive_path.is_file())
@@ -131,7 +131,7 @@ class UpgradeTests(unittest.TestCase):
     def test_rehearsal_default_migrate_is_a_clean_noop_upgrade(self):
         report = self.run_proc()
         self.assertTrue(report.ok, report.problems)
-        self.assertEqual((report.schema_before, report.schema_after), (139, 139))
+        self.assertEqual((report.schema_before, report.schema_after), (140, 140))
 
     def test_failed_migration_rolls_back_to_the_export(self):
         report = self.run_proc(migration_fn=destructive_failing_migration)
@@ -142,7 +142,7 @@ class UpgradeTests(unittest.TestCase):
         self.assertIn("not half-migrated", report.headline)
         self.assertIn("exploded mid-way", "; ".join(report.problems))
         conn = self.proc.conn
-        self.assertEqual(schema_version(conn), 139)
+        self.assertEqual(schema_version(conn), 140)
         self.assertEqual(int(conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]), 2)
         self.assertIsNotNone(self.proc.accounts.get_by_username("yrsa"))
         tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
@@ -169,14 +169,14 @@ class UpgradeTests(unittest.TestCase):
         self.assertFalse(report.ok); self.assertEqual(report.failed_step, "stop")
         self.assertFalse(report.rolled_back)
         self.assertIn("before changing anything", report.headline)
-        self.assertEqual(schema_version(self.conn), 139)
+        self.assertEqual(schema_version(self.conn), 140)
         self.assertIsNotNone(report.archive_path)
 
     def test_not_started_rolls_back(self):
         report = self.run_proc(started=False, migration_fn=standin_next_migration)
         self.assertFalse(report.ok); self.assertEqual(report.failed_step, "start")
         self.assertTrue(report.rolled_back, report.rollback_problems)
-        self.assertEqual(schema_version(self.proc.conn), 139)
+        self.assertEqual(schema_version(self.proc.conn), 140)
 
     def test_export_inside_data_root_changes_nothing(self):
         report = self.proc.run(self.admin.id, self.data_root / "exports", stopped=True, started=True)
