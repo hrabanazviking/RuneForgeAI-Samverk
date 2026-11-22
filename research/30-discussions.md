@@ -32,3 +32,16 @@ Before implementation, map each recommendation to current `samverk/` code and te
 
 1. https://docs.github.com/en/discussions
 2. https://www.w3.org/TR/WCAG22/
+
+## Audit status — S-398: OPEN, owned by S-403
+
+This file holds the discussions study and its design
+recommendations, but it does **not** hold a recorded verdict:
+the build/defer/refuse conclusion its roadmap line promises
+is not written here. The verdict was in fact delivered by
+**S-282** — BUILD — and lives in `docs/DISCUSSIONS_VERDICT.md`;
+it was never recorded here. This file is therefore honestly
+marked OPEN. Its remainder is owned by **S-403** (successor
+roadmap seed: refused/deferred items — this study's own text
+defers polls and rich badges — and S-398's open studies named
+as its input).

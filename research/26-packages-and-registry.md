@@ -34,3 +34,16 @@ Before declaring this study's roadmap slices finished, identify source modules, 
 1. https://packaging.python.org/en/latest/specifications/
 2. https://slsa.dev/spec/v1.2/
 3. https://www.rfc-editor.org/rfc/rfc9110.html
+
+## Audit status — S-398: OPEN, owned by S-403
+
+This file holds the registry study and the questions the
+verdict had to answer, but it does **not** hold a recorded
+verdict: the text above still presents the ecosystem choice
+as one to rank and decide. The verdict was in fact delivered
+by **S-264** — DEFER every ecosystem, REFUSE OCI outright —
+and lives in `docs/PACKAGE_VERDICT.md`; it was never recorded
+here. This file is therefore honestly marked OPEN. Its
+remainder is owned by **S-403** (successor roadmap seed:
+refused/deferred items, and S-398's open studies named as
+its input).

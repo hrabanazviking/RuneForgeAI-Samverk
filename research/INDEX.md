@@ -20,6 +20,10 @@ and the roadmap slices it feeds (see `docs/SAMVERK_MASSIVE_ROADMAP.md`).
 
 All **46 numbered research files now contain written technical studies**. Seven already held studies before this expansion; the remaining 39 were populated on 2026-11-06 with clean-room technical guidance, references, proposed architecture, failure cases, and acceptance tests. This updates the founding-era note above that files initially started empty: that sentence records their original scaffold state, not their current state.
 
+## Corpus audit — S-398 (2026-11-22)
+
+Counted by reading, not by trusting the paragraph above: the corpus is **46 numbered study files** (plus this index). **43 hold completed studies** under this index's own definition (observable behaviour, design questions, a decision or recommendation, and the roadmap slices fed). **3 are honestly OPEN** — each poses a verdict question whose verdict was delivered in a separate document but never recorded in the study file itself, and each now carries an in-file audit marking naming its owner: `24-graphql-api-shape.md` (verdict S-253, DEFER), `26-packages-and-registry.md` (verdict S-264, DEFER/REFUSE) and `30-discussions.md` (verdict S-282, BUILD) — all three owned by **S-403**, whose seed text names S-398's open studies as its input. The full counted audit is `docs/research-corpus-audit-s398.md`; the census is pinned in `samverk/research_corpus_audit.py`. No file in this corpus claims shipped or production-proven functionality.
+
 For step-by-step coding-agent implementation, integration, testing and release guidance, see the [18-document Development Research and Implementation Playbooks](../docs/development-research/INDEX.md). These studies are research deliverables, **not claims that their roadmap features are implemented or production-proven**.
 
 ## The shelf
