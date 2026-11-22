@@ -82,7 +82,7 @@ class UpgradeTests(unittest.TestCase):
     def test_pins_no_new_migration_or_event(self):
         self.assertEqual(schema_version(self.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     def test_doc_steps_pin_to_code_steps_in_order(self):
         doc = (Path(__file__).resolve().parent.parent / "docs" / "UPGRADES.md").read_text(encoding="utf-8")
