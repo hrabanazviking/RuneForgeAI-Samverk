@@ -29,6 +29,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_verify = audit_sub.add_parser("verify", help="verify the audit hash chain")
     p_verify.add_argument("--config", default=None, help="path to samverk.ini")
 
+    p_config = sub.add_parser("config", help="configuration tools (S-346)")
+    config_sub = p_config.add_subparsers(dest="config_command", required=True)
+    for name, helptext in (
+        ("check", "check the configuration and explain any problem in plain words"),
+        ("show", "show the effective settings and where each came from"),
+        ("example", "print a samverk.ini with every key documented"),
+    ):
+        p_c = config_sub.add_parser(name, help=helptext)
+        p_c.add_argument("--config", default=None, help="path to samverk.ini")
+
     p_keys = sub.add_parser("keys", help="instance key custody (S-020)")
     keys_sub = p_keys.add_subparsers(dest="keys_command", required=True)
     for name, helptext in (
@@ -69,6 +79,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"audit chain BROKEN at seq {bad_seq} "
               f"({count} entries verified before the break)")
         return 1
+    if args.command == "config":
+        from .configuration import ConfigurationService, format_check_report
+
+        service = ConfigurationService(config_path=args.config)
+        if args.config_command == "example":
+            print(service.example())
+            return 0
+        check = service.check()
+        print(format_check_report(check))
+        return 0 if check.ok else 1
     if args.command == "keys":
         from .keys import (
             ensure_instance_key,
