@@ -22,13 +22,13 @@ from samverk.db import MIGRATIONS, schema_version
 
 class RegisterTests(unittest.TestCase):
     def test_register_covers_every_migration_exactly(self):
-        self.assertEqual(len(REGISTER), 139)
-        self.assertEqual([e.version for e in REGISTER], list(range(1, 140)))
+        self.assertEqual(len(REGISTER), 140)
+        self.assertEqual([e.version for e in REGISTER], list(range(1, 141)))
         self.assertEqual(validate_register(MIGRATIONS, REGISTER), [])
 
-    def test_schema_pin_139_and_migrations_numbered_in_order(self):
-        self.assertEqual([v for v, _ in MIGRATIONS], list(range(1, 140)))
-        self.assertEqual(MIGRATIONS[-1][0], 139)
+    def test_schema_pin_140_and_migrations_numbered_in_order(self):
+        self.assertEqual([v for v, _ in MIGRATIONS], list(range(1, 141)))
+        self.assertEqual(MIGRATIONS[-1][0], 140)
 
     def test_every_entry_exactly_one_of_down_or_warning(self):
         for e in REGISTER:
@@ -63,7 +63,7 @@ class RegisterTests(unittest.TestCase):
     def test_register_entry_lookup_and_unknown(self):
         self.assertEqual(register_entry(139).version, 139)
         with self.assertRaises(MigrationRegisterError) as cm:
-            register_entry(140)
+            register_entry(141)
         self.assertEqual(cm.exception.reason, "unknown_migration")
 
 
@@ -78,14 +78,14 @@ class TransactionTests(unittest.TestCase):
             "SELECT name FROM sqlite_master WHERE type='table'").fetchall()
         return {r[0] for r in rows}
 
-    def test_fresh_database_migrates_to_139(self):
-        self.assertEqual(schema_version(self.conn), 139)
+    def test_fresh_database_migrates_to_140(self):
+        self.assertEqual(schema_version(self.conn), 140)
 
     def test_failing_migration_rolls_back_whole(self):
         with self.conn:
             self.conn.execute(
                 "INSERT INTO settings (key, value) VALUES ('sentinel', 'keep-me')")
-        failing = (140, ["CREATE TABLE rehearsal_partial (id INTEGER)",
+        failing = (141, ["CREATE TABLE rehearsal_partial (id INTEGER)",
                          "INSERT INTO no_such_table VALUES (1)"])
         MIGRATIONS.append(failing)
         try:
@@ -94,7 +94,7 @@ class TransactionTests(unittest.TestCase):
         finally:
             MIGRATIONS.pop()
         # Prior version stamped, partial DDL gone, content intact.
-        self.assertEqual(schema_version(self.conn), 139)
+        self.assertEqual(schema_version(self.conn), 140)
         self.assertNotIn("rehearsal_partial", self._table_names())
         row = self.conn.execute(
             "SELECT value FROM settings WHERE key='sentinel'").fetchone()
@@ -102,27 +102,27 @@ class TransactionTests(unittest.TestCase):
 
     def test_good_migration_and_down_path_round_trip(self):
         entry = MigrationEntry(
-            140, "creates table rehearsal_roundtrip",
+            141, "creates table rehearsal_roundtrip",
             ("DROP TABLE rehearsal_roundtrip",), None)
-        db.apply_migration(self.conn, 140, [
+        db.apply_migration(self.conn, 141, [
             "CREATE TABLE rehearsal_roundtrip (id INTEGER PRIMARY KEY, note TEXT)",
             "INSERT INTO rehearsal_roundtrip (note) VALUES ('hello')"])
-        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(schema_version(self.conn), 141)
         self.assertIn("rehearsal_roundtrip", self._table_names())
-        apply_down(self.conn, entry, 139)
-        self.assertEqual(schema_version(self.conn), 139)
+        apply_down(self.conn, entry, 140)
+        self.assertEqual(schema_version(self.conn), 140)
         self.assertNotIn("rehearsal_roundtrip", self._table_names())
 
     def test_failing_down_path_rolls_back_whole(self):
-        db.apply_migration(self.conn, 140, [
+        db.apply_migration(self.conn, 141, [
             "CREATE TABLE rehearsal_downfail (id INTEGER PRIMARY KEY)"])
         entry = MigrationEntry(
-            140, "creates table rehearsal_downfail",
+            141, "creates table rehearsal_downfail",
             ("DROP TABLE rehearsal_downfail", "INSERT INTO no_such_table VALUES (1)"),
             None)
         with self.assertRaises(sqlite3.Error):
-            apply_down(self.conn, entry, 139)
-        self.assertEqual(schema_version(self.conn), 140)
+            apply_down(self.conn, entry, 140)
+        self.assertEqual(schema_version(self.conn), 141)
         self.assertIn("rehearsal_downfail", self._table_names())
 
     def test_one_way_down_refused_and_database_untouched(self):
@@ -131,15 +131,16 @@ class TransactionTests(unittest.TestCase):
             apply_down(self.conn, entry, 138)
         self.assertEqual(cm.exception.reason, "one_way_migration")
         self.assertIn("ONE-WAY", str(cm.exception))
-        self.assertEqual(schema_version(self.conn), 139)
+        self.assertEqual(schema_version(self.conn), 140)
         self.assertIn("metadata_imports", self._table_names())
 
 
 class WarningSurfaceTests(unittest.TestCase):
     def test_pending_one_way_counts(self):
-        self.assertEqual(len(pending_one_way(REGISTER, 0)), 139)
-        self.assertEqual([e.version for e in pending_one_way(REGISTER, 138)], [139])
-        self.assertEqual(pending_one_way(REGISTER, 139), [])
+        self.assertEqual(len(pending_one_way(REGISTER, 0)), 140)
+        self.assertEqual([e.version for e in pending_one_way(REGISTER, 138)], [139, 140])
+        self.assertEqual([e.version for e in pending_one_way(REGISTER, 139)], [140])
+        self.assertEqual(pending_one_way(REGISTER, 140), [])
 
     def test_rendered_warnings_are_plain_operator_words(self):
         text = render_upgrade_warnings(REGISTER, 138)
@@ -147,7 +148,7 @@ class WarningSurfaceTests(unittest.TestCase):
         self.assertIn("backup", text)
         self.assertIn("Migration 139", text)
         self.assertNotIn("Migration 138", text)
-        done = render_upgrade_warnings(REGISTER, 139)
+        done = render_upgrade_warnings(REGISTER, 140)
         self.assertIn("no one-way migrations", done)
 
     def test_cli_check_and_warnings(self):
@@ -155,8 +156,8 @@ class WarningSurfaceTests(unittest.TestCase):
         with redirect_stdout(out):
             rc = cli_main(["migrations", "check"])
         self.assertEqual(rc, 0)
-        self.assertIn("139 migrations", out.getvalue())
-        self.assertIn("1..139", out.getvalue())
+        self.assertIn("140 migrations", out.getvalue())
+        self.assertIn("1..140", out.getvalue())
         out = io.StringIO()
         with redirect_stdout(out):
             rc = cli_main(["migrations", "warnings", "--from-version", "138"])

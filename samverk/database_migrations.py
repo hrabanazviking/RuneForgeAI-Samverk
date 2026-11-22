@@ -4,7 +4,7 @@ Roadmap S-358: **numbered, transactional where SQLite allows,
 each with a down-path or an explicit one-way warning.**
 
 What already stood in ``samverk/db.py`` and still stands:
-``MIGRATIONS`` is numbered 1..139 with no gaps, applied in
+``MIGRATIONS`` is numbered 1..140 with no gaps, applied in
 order by ``migrate()``, and each migration runs in its own
 transaction (``apply_migration``) so a failure rolls the whole
 migration back and leaves the prior schema version stamped.
@@ -15,7 +15,7 @@ What this slice adds is the honest register and its proofs:
   Each entry names what the migration does and carries either
   a down-path (``down_statements``) or an explicit one-way
   warning — never neither, never both. The standing truth is
-  that all 139 shipped migrations are one-way: none shipped
+  that all 140 shipped migrations are one-way: none shipped
   with a down-path, and inventing one now would mean dropping
   tables and the data written into them since. Each warning
   says so in plain words and names the real way back: restore
@@ -36,8 +36,11 @@ What this slice adds is the honest register and its proofs:
   above a given version, printed by
   ``samverk migrations warnings`` before an upgrade.
 
-No migration of this slice's own: the schema stands at 139
-and the taxonomy stands at 138.
+No migration of this slice's own: the schema stands at 140
+and the taxonomy stands at 142 (coordinator pin sweep at
+S-358 banking: S-355 landed migration 140 and four taxonomy
+events after this slice was built; entry 140 was added to
+the register by the same sweep).
 """
 from __future__ import annotations
 
@@ -344,6 +347,8 @@ REGISTER: tuple[MigrationEntry, ...] = (
         "ONE-WAY: migration 138 shipped without a down-path (creates table first_pass_mirror_runs). There is no safe automatic way back: reversing it would mean dropping or undoing the objects above and any data written into them since. The way back is to restore a backup of the database taken before upgrading past version 138."),
     MigrationEntry(139, "creates table metadata_imports; creates table metadata_import_runs", None,
         "ONE-WAY: migration 139 shipped without a down-path (creates table metadata_imports; creates table metadata_import_runs). There is no safe automatic way back: reversing it would mean dropping or undoing the objects above and any data written into them since. The way back is to restore a backup of the database taken before upgrading past version 139."),
+    MigrationEntry(140, "creates table abuse_reports; creates index idx_abuse_reports_state; creates index idx_abuse_reports_reporter", None,
+        "ONE-WAY: migration 140 shipped without a down-path (creates table abuse_reports; creates index idx_abuse_reports_state; creates index idx_abuse_reports_reporter). There is no safe automatic way back: reversing it would mean dropping or undoing the objects above and any data written into them since. The way back is to restore a backup of the database taken before upgrading past version 140."),
 )
 
 

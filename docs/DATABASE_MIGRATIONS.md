@@ -6,7 +6,7 @@ each with a down-path or an explicit one-way warning.
 ## The law, and where it lives
 
 - **Numbered, in order.** `samverk/db.py` `MIGRATIONS` is
-  numbered 1..139 with no gaps; `migrate()` applies pending
+  numbered 1..140 with no gaps; `migrate()` applies pending
   migrations in number order and stamps `schema_meta` with
   each landed version. Append-only: never edit a shipped
   migration; add the next number.
@@ -28,7 +28,7 @@ each with a down-path or an explicit one-way warning.
   down-path or an explicit one-way warning — never neither,
   never both, judged purely by `validate_register`.
 
-## The honest register: all 139 are one-way
+## The honest register: all 140 are one-way
 
 No shipped migration carried a down-path, and this slice does
 not invent any: a written-after-the-fact "down" for a CREATE
@@ -44,7 +44,7 @@ author can honestly write a down-path, the entry carries
 `down_statements` instead of a warning and `apply_down` runs
 them plus the version re-stamp in the same savepoint
 transaction. The battery round-trips a rehearsed reversible
-migration (up to a scratch 140, back down to 139) to prove
+migration (up to a scratch 141, back down to 140) to prove
 that road, and proves a failing down-path also rolls back
 whole. `apply_down` on a one-way entry refuses by name and
 leaves the database untouched.
@@ -60,12 +60,15 @@ Before upgrading, read the warnings the upgrade would cross:
 above the given version with its warning and the standing
 instruction: take a backup first; restoring it is the only
 way back. `check` validates the register against `MIGRATIONS`
-and reports the count (139 migrations, numbered 1..139, 139
-one-way, 0 reversible at this slice).
+and reports the count (140 migrations, numbered 1..140, 140
+one-way, 0 reversible; entry 140 added by the coordinator
+pin sweep at S-358 banking, S-355 having landed after this
+slice was built).
 
 ## No migration of this slice's own
 
-The schema stands at 139 and the taxonomy stands at 138.
+The schema stands at 140 and the taxonomy stands at 142
+(coordinator pin sweep at S-358 banking).
 This slice changed the machinery around migrations, not the
 schema.
 
@@ -212,6 +215,7 @@ schema.
 | 137 | creates table census_fixture_entries | no — one-way, see warning |
 | 138 | creates table first_pass_mirror_runs | no — one-way, see warning |
 | 139 | creates table metadata_imports; creates table metadata_import_runs | no — one-way, see warning |
+| 140 | creates table abuse_reports; creates index idx_abuse_reports_state; creates index idx_abuse_reports_reporter | no — one-way, see warning |
 
 Every one-way warning reads, in full for migration N: "ONE-WAY:
 migration N shipped without a down-path (<what it does>). There
