@@ -2,15 +2,15 @@
 
 ## Base
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-366 (366/416).
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-367 (367/416).
 - Crew mustered: 2026-11-22 07:52 EST (new-regime crew, Volmarr order 2026-11-22)
-- Last slice banked: S-366 at 2026-11-22 13:17 EST
+- Last slice banked: S-367 at 2026-11-22 13:28 EST
 - Wave 351-360 full-suite run: FINISHED 2026-11-22 (sharded runner, logs hidden_files/shards-wave360/): Ran 5885, skipped 4, fails 24 — every failure is the known stale schema/taxonomy-pin class at the S-360 base (taxonomy counts auth34/admin16 vs pinned auth33/admin13, schema pins, verb-count pins); NO failure outside that class, so no fix-forward work arises. Non-blocking per new regime.
 - Governing full suite at S-326: 5276 tests - Ran 5276 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
-- team-01 → S-372 (S-362 banked 2026-11-22, coordinator, new banking law) · team-02 → S-373 (S-363 banked 2026-11-22, coordinator, new banking law) · team-03 → S-375 (S-365 banked 2026-11-22, coordinator, new banking law) · team-04 → S-376 (S-366 banked 2026-11-22, coordinator, new banking law) · team-05 → S-367 (S-357 banked 2026-11-22, coordinator, new banking law)
+- team-01 → S-372 (S-362 banked 2026-11-22, coordinator, new banking law) · team-02 → S-373 (S-363 banked 2026-11-22, coordinator, new banking law) · team-03 → S-375 (S-365 banked 2026-11-22, coordinator, new banking law) · team-04 → S-376 (S-366 banked 2026-11-22, coordinator, new banking law) · team-05 → S-377 (S-367 banked 2026-11-22, coordinator, new banking law)
 - team-06 → S-368 (S-358 banked 2026-11-22, coordinator, new banking law) · team-07 → S-369 (S-359 banked 2026-11-22, coordinator, new banking law) · team-08 → S-370 (S-360 banked 2026-11-22, coordinator, new banking law) · team-09 → S-374 (S-364 banked 2026-11-22, coordinator, new banking law) · team-10 → S-371 (S-361 banked 2026-11-22, coordinator, new banking law)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
