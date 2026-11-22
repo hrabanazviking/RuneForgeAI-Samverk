@@ -1,6 +1,7 @@
 """Command-line entry point.
 
     samverk serve [--config PATH] [--host HOST] [--port PORT]
+    samverk admin create-first-admin --username NAME [--email EMAIL]
 
 More subcommands arrive with their slices (audit verify in S-007,
 operator tools in Part XVIII); the shape is fixed now so scripts and
@@ -28,6 +29,20 @@ def build_parser() -> argparse.ArgumentParser:
     audit_sub = p_audit.add_subparsers(dest="audit_command", required=True)
     p_verify = audit_sub.add_parser("verify", help="verify the audit hash chain")
     p_verify.add_argument("--config", default=None, help="path to samverk.ini")
+
+    p_admin = sub.add_parser("admin", help="instance admin tools")
+    admin_sub = p_admin.add_subparsers(dest="admin_command", required=True)
+    p_first = admin_sub.add_parser(
+        "create-first-admin",
+        help="create the first admin (S-350; refuses once an admin exists)")
+    p_first.add_argument("--config", default=None, help="path to samverk.ini")
+    p_first.add_argument("--username", required=True, help="the first admin's username")
+    p_first.add_argument("--email", default=None, help="optional email address")
+    p_first.add_argument(
+        "--password-env", default=None,
+        help="environment variable holding the password "
+             "(default: hidden prompt; the password is never "
+             "taken from argv and never printed)")
 
     p_keys = sub.add_parser("keys", help="instance key custody (S-020)")
     keys_sub = p_keys.add_subparsers(dest="keys_command", required=True)
@@ -69,6 +84,43 @@ def main(argv: list[str] | None = None) -> int:
         print(f"audit chain BROKEN at seq {bad_seq} "
               f"({count} entries verified before the break)")
         return 1
+    if args.command == "admin" and args.admin_command == "create-first-admin":
+        import getpass
+        import os
+        import sys
+
+        from .accounts import AccountStore
+        from .audit import AuditLog
+        from .db import init_db
+        from .first_admin import FirstAdminError, FirstAdminService
+
+        if args.password_env is not None:
+            password = os.environ.get(args.password_env)
+            if password is None:
+                print(f"environment variable {args.password_env} is not set",
+                      file=sys.stderr)
+                return 1
+        else:
+            password = getpass.getpass("Password for the first admin: ")
+            if password != getpass.getpass("Again, to be sure: "):
+                print("the two passwords do not match", file=sys.stderr)
+                return 1
+        cfg = load_config(args.config)
+        conn = init_db(cfg.db_path)
+        try:
+            service = FirstAdminService(
+                conn, AccountStore(conn), audit=AuditLog(conn))
+            try:
+                user = service.create_first_admin(
+                    args.username, password, args.email)
+            except FirstAdminError as exc:
+                print(f"refused: {exc}", file=sys.stderr)
+                return 1
+        finally:
+            conn.close()
+        print(f"first admin created: {user.username} (id {user.id})")
+        print("sign in to land on your home and its three first steps")
+        return 0
     if args.command == "keys":
         from .keys import (
             ensure_instance_key,
