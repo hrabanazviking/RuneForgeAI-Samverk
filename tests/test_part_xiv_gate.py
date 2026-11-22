@@ -200,8 +200,8 @@ class PartXIVGateTests(unittest.TestCase):
 
     # -- pins --------------------------------------------
     def test_pins_schema_114_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 138)
-        self.assertEqual(db.MIGRATIONS[-1][0], 138)
+        self.assertEqual(schema_version(self.conn), 139)
+        self.assertEqual(db.MIGRATIONS[-1][0], 139)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

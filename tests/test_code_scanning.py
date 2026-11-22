@@ -528,8 +528,8 @@ class PinsTests(unittest.TestCase):
         self.w = make_world(Path(self.tmp.name))
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.w.conn), 138)
-        self.assertEqual(db.MIGRATIONS[-1][0], 138)
+        self.assertEqual(schema_version(self.w.conn), 139)
+        self.assertEqual(db.MIGRATIONS[-1][0], 139)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

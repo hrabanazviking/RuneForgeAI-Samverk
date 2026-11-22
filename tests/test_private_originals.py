@@ -98,7 +98,7 @@ class PrivateOriginalsTests(unittest.TestCase):
         # S-337 reuses the standing run log and seams: no
         # migration, no new audit event, on purpose.
         self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 138)
+        self.assertEqual(db.MIGRATIONS[-1][0], 139)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     # -- pure credential gate ----------------------------------------

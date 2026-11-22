@@ -174,8 +174,8 @@ class PullMirrorTests(unittest.TestCase):
         # (repo_mirrors.credential_name) has since landed, so
         # the schema pin stands at 133 -- taxonomy unmoved.
         from samverk import taxonomy
-        self.assertEqual(db.schema_version(self.conn), 138)
-        self.assertEqual(db.MIGRATIONS[-1][0], 138)
+        self.assertEqual(db.schema_version(self.conn), 139)
+        self.assertEqual(db.MIGRATIONS[-1][0], 139)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     def test_non_mirror_repo_has_no_advertisement(self):

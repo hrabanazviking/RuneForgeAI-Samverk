@@ -114,7 +114,7 @@ class PureLawTests(unittest.TestCase):
         conn = db.init_db(
             Path(tempfile.mkdtemp()) / "samverk.db")
         self.addCleanup(conn.close)
-        self.assertEqual(schema_version(conn), 138)
+        self.assertEqual(schema_version(conn), 139)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
