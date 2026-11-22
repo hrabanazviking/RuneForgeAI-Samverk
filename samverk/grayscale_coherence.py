@@ -38,7 +38,7 @@ MEANING_CARRIERS = (
     ("repo_public", "visibility", "#57606a", "Public", "globe"),
     ("repo_private", "visibility", "#9e6a03", "Private", "lock"),
     ("branch_protected", "protection", "#8250df", "Protected", "shield"),
-    ("branch_unprotected", "protection", "#6e7781", "Unprotected", None),
+    ("branch_unprotected", "protection", "#6e7781", "Unprotected", "shield_off"),
     ("alert_critical", "alerts", "#d1242f", "Critical", "alarm"),
     ("alert_warning", "alerts", "#9a6700", "Warning", "triangle"),
     ("alert_info", "alerts", "#0969da", "Info", "info"),
