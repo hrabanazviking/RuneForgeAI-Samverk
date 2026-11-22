@@ -34,7 +34,7 @@ from urllib.parse import unquote, urlparse
 
 from .accounts import AccountStore, User
 from .audit import AuditLog
-from .escaping import escape_html_text
+from .escaping import escape_html_attr, escape_html_text
 from .issues import IssueError, IssueStore
 from .permission_engine import PermissionEngine
 from .pull_requests import PullRequestError, PullRequestStore
@@ -155,7 +155,7 @@ class LinkUnfurlService:
 def render_card(card: UnfurlCard) -> str:
     """Samtal-side reference renderer: draws exactly the
     decided card, escaped, and nothing else."""
-    return (f'<article class="samverk-card" data-kind="{card.kind}">'
-            f'<a href="{escape_html_text(card.link_path)}">'
+    return (f'<article class="samverk-card" data-kind="{escape_html_attr(card.kind)}">'
+            f'<a href="{escape_html_attr(card.link_path)}">'
             f"{escape_html_text(card.title)}</a>"
             f"<p>{escape_html_text(card.summary)}</p></article>")
