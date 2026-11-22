@@ -42,7 +42,6 @@ is that door, and its laws are plain:
 """
 from __future__ import annotations
 
-import html
 import json
 import sqlite3
 import time
@@ -51,6 +50,7 @@ from dataclasses import dataclass, field
 
 from .accounts import AccountStore
 from .audit import AuditLog, verify_chain
+from .escaping import escape_html_text
 
 REASON_MAX = 1000
 RESOLUTION_MAX = 1000
@@ -403,15 +403,15 @@ def render_queue(entries) -> str:
         r = entry.report
         parts.append("<section class='abuse-report'>")
         parts.append(
-            f"<h2>Report {r.id}: {html.escape(r.target_kind)} "
-            f"{html.escape(r.target_id)}</h2>")
-        parts.append(f"<p>State: {html.escape(r.state)} -- "
-                     f"{html.escape(r.state_in_words)}</p>")
-        parts.append(f"<p>Reason: {html.escape(r.reason)}</p>")
+            f"<h2>Report {r.id}: {escape_html_text(r.target_kind)} "
+            f"{escape_html_text(r.target_id)}</h2>")
+        parts.append(f"<p>State: {escape_html_text(r.state)} -- "
+                     f"{escape_html_text(r.state_in_words)}</p>")
+        parts.append(f"<p>Reason: {escape_html_text(r.reason)}</p>")
         parts.append(f"<p>Reported by user {r.reporter_id}.</p>")
         if r.resolution_reason:
             parts.append("<p>Resolution: "
-                         f"{html.escape(r.resolution_reason)}</p>")
+                         f"{escape_html_text(r.resolution_reason)}</p>")
         parts.append("<p>Audit chain: "
                      + ("intact" if entry.chain_ok else "BROKEN")
                      + "</p>")
@@ -419,8 +419,8 @@ def render_queue(entries) -> str:
             parts.append("<ul>")
             for c in entry.context:
                 parts.append(
-                    f"<li>#{c.seq} {html.escape(c.action)} "
-                    f"({html.escape(c.outcome)})</li>")
+                    f"<li>#{c.seq} {escape_html_text(c.action)} "
+                    f"({escape_html_text(c.outcome)})</li>")
             parts.append("</ul>")
         else:
             parts.append("<p>No audit context attached.</p>")
@@ -434,6 +434,6 @@ def render_my_reports(reports) -> str:
         parts.append("<p>You have not filed any reports.</p>")
     for r in reports:
         parts.append(
-            f"<p>Report {r.id} on {html.escape(r.target_kind)} "
-            f"{html.escape(r.target_id)}: {html.escape(r.state_in_words)}</p>")
+            f"<p>Report {r.id} on {escape_html_text(r.target_kind)} "
+            f"{escape_html_text(r.target_id)}: {escape_html_text(r.state_in_words)}</p>")
     return "\n".join(parts)
