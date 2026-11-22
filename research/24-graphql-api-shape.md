@@ -32,3 +32,15 @@ Before declaring this study's roadmap slices finished, identify source modules, 
 
 1. https://graphql.org/learn/
 2. https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html
+
+## Audit status — S-398: OPEN, owned by S-403
+
+This file holds the cost-benefit study and the defer-or-adopt
+framing, but it does **not** hold a recorded verdict: the text
+above still asks for a decision record to be written. The
+verdict was in fact delivered by **S-253** — DEFER, with
+reasons — and lives in `docs/GRAPHQL_VERDICT.md`; it was never
+recorded here. This file is therefore honestly marked OPEN.
+Its remainder is owned by **S-403** (successor roadmap seed:
+the GraphQL verdict revisited, and S-398's open studies named
+as its input).
