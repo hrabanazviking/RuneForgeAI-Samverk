@@ -93,7 +93,7 @@ class ApiContractTests(unittest.TestCase):
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
 
     def test_base_and_contract_path(self):
         self.assertEqual(API_BASE, "/api/v1")

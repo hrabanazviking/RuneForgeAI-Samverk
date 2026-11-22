@@ -108,7 +108,7 @@ class PinTests(unittest.TestCase):
         self.w = make_world(Path(self._td.name))
         self.addCleanup(self.w.conn.close)
 
-    def test_pins_schema_99_taxonomy_133(self):
+    def test_pins_schema_140_taxonomy_142(self):
         self.assertEqual(schema_version(self.w.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
@@ -117,7 +117,7 @@ class PinTests(unittest.TestCase):
             families[name.split(".")[0]] = (
                 families.get(name.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
         self.assertEqual(len(WEBHOOK_CATEGORIES), 14)
 
     def test_table_name_passes_the_billing_audit(self):

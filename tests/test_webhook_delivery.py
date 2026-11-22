@@ -161,7 +161,7 @@ class WorldCase(unittest.TestCase):
 
 
 class PinTests(WorldCase):
-    def test_pins_schema_99_taxonomy_133(self):
+    def test_pins_schema_140_taxonomy_142(self):
         self.assertEqual(schema_version(self.w.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
@@ -170,7 +170,7 @@ class PinTests(WorldCase):
             families[name.split(".")[0]] = (
                 families.get(name.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
 
     def test_table_names_pass_the_billing_audit(self):
         from samverk.billing_hole import forbidden_terms_in
