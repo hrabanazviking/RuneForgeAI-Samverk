@@ -31,6 +31,12 @@ The users table and the one door that creates rows in it.
   ``auth.signup.denied`` with its reason — when an AuditLog is
   supplied. Creation commits before the account is answered with
   (commit-before-answer), so a returned id is immediately usable.
+- **Site settings gate (S-352).** When the store is wired
+  with a site-settings service, `register` consults its
+  registration mode before creating anything: closed refuses
+  everyone, invite refuses anyone without a valid single-use
+  invite code (consumed by the signup it admits). Unwired
+  stores keep the historic open behaviour.
 - **Rename and tombstones (S-042)** live here too, because they
   are operations on the same uniqueness law: `rename` applies
   the full username law to the new name, refuses collisions
@@ -201,11 +207,13 @@ class AccountStore:
         audit: AuditLog | None = None,
         signup_guard: SignupGuard | None = None,
         time_fn: Callable[[], float] = time.time,
+        site_settings=None,
     ):
         self._conn = conn
         self._audit = audit
         self._guard = signup_guard
         self._now = time_fn
+        self._site_settings = site_settings
 
     # -- lookups -------------------------------------------------
     def get_by_id(self, user_id: int) -> User | None:
@@ -263,6 +271,7 @@ class AccountStore:
         *,
         source_ip: str | None = None,
         verification_mode: str = "none",
+        invite_code: str | None = None,
     ) -> User:
         """Create an account, or raise RegistrationError clearly.
 
@@ -284,6 +293,10 @@ class AccountStore:
                     source_ip=source_ip, detail={"reason": reason})
             return RegistrationError(reason, message)
 
+        if self._site_settings is not None:
+            decision = self._site_settings.check_registration(invite_code)
+            if not decision.allowed:
+                raise deny(decision.reason, decision.message)
         try:
             username = validate_username(username)
             email_norm = validate_email(email)
@@ -342,6 +355,8 @@ class AccountStore:
                        "That email address is already registered.") from None
         user = self.get_by_id(int(cur.lastrowid))
         assert user is not None
+        if self._site_settings is not None and invite_code:
+            self._site_settings.consume_invite_code(invite_code)
         if self._audit is not None:
             self._audit.append(
                 actor_kind="user", actor_id=user.id,

@@ -3524,3 +3524,13 @@ admin.user.role_change, detail from member,
 to admin, via install_walk. A bootstrap is a
 role change, not a new kind of act, so the
 taxonomy itself is unmoved; schema stays 139.)
+S-352 (2026-11-22) added no event of its own: 138 events stand.
+(Its site settings, in samverk/site_settings.py, store the
+instance name and description, registration mode, default repo
+visibility, and upload and repo size limits in the standing
+settings table -- no migration, schema stays 139. Changes and
+invite-code minting are admin acts on the instance, so they ride
+the standing admin.settings.change event with the keys and
+from/to values named, exactly as S-038's instance defences do.
+Registration refusals under a closed or invite mode ride the
+standing auth.signup.denied with the mode's reason.)

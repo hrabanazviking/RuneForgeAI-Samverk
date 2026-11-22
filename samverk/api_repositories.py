@@ -426,7 +426,7 @@ class RepositoriesAPI:
             created = self._repos.create_repository(
                 user.id, user.username, body["name"],
                 description=body.get("description", ""),
-                visibility=body.get("visibility", "private"),
+                visibility=body.get("visibility"),  # S-352: unnamed -> site default in the store
                 default_branch=body.get("default_branch", "main"),
                 source_ip=source_ip)
         except RepositoryError as exc:
