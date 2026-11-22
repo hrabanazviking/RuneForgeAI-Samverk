@@ -89,7 +89,7 @@ Remedy: Fix the named key in samverk.ini (or drop the file to take defaults), an
 
 ### 6. database_init — The database initialises at the current schema
 Check: `db.init_db` opens `<data_root>/samverk.db` and
-`schema_version` equals the current schema, **139**.
+`schema_version` equals the current schema, **140** (corrected by S-397: migration 140 landed after this guide was written; the walk code itself derives the head from `db.MIGRATIONS`, so only this text had drifted).
 Failure mode: database_init_failed / schema_mismatch: the database file cannot be opened (corrupt file, a directory in its place, no write permission) or migrations stop short of the current schema version.
 Remedy: If the path holds a corrupt or foreign file, move it aside and let the walk create a fresh database (an existing real database is migrated in place, never recreated); fix permissions if the file cannot be written; a migration error names its version -- keep the error and the database file for diagnosis.
 
