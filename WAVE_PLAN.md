@@ -2,9 +2,9 @@
 
 ## Base
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-384 (384/416).
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-385 (385/416).
 - Crew mustered: 2026-11-22 07:52 EST (new-regime crew, Volmarr order 2026-11-22)
-- Last slice banked: S-384 at 2026-11-22 15:37 EST
+- Last slice banked: S-385 at 2026-11-22 15:39 EST
 - Wave 351-360 full-suite run: FINISHED 2026-11-22 (sharded runner, logs hidden_files/shards-wave360/): Ran 5885, skipped 4, fails 24 — every failure is the known stale schema/taxonomy-pin class at the S-360 base (taxonomy counts auth34/admin16 vs pinned auth33/admin13, schema pins, verb-count pins); NO failure outside that class, so no fix-forward work arises. Non-blocking per new regime.
 - Wave 361-370 full-suite run: FINISHED 2026-11-22 (sharded runner, logs hidden_files/shards-wave370/): Ran 5992, skipped 4, fails 19 — 18 are the known stale schema/taxonomy-pin class at the S-370 base (three of them fixed forward in S-377). ONE failure was outside that class: tests.test_escaping.OneSeamTests.test_no_other_module_escapes_directly named abuse_queue.py escaping directly outside the one seam (present at the S-370 base, pre-dating S-376..S-378). FIXED FORWARD 2026-11-22 (fix commit on main): all 11 html.escape call sites in abuse_queue.py now route through samverk.escaping.escape_html_text; tests.test_escaping + tests.test_abuse_queue Ran 31 OK, neighbour test_part_xviii_gate Ran 15 OK. Non-blocking per new regime.
 - Wave 371-380 COMPLETE 2026-11-22 (S-380 banked, PART XIX GATE PASSED). Wave 371-380 background full-suite run STARTED 2026-11-22 15:16 EST by keeper (sharded runner pid 1524742, --workers 8 --label wave380, logs hidden_files/shards-wave380/), non-blocking per new regime; a regression outside the stale-pin class becomes immediate fix-forward work.
@@ -12,7 +12,7 @@
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
-- team-01 → S-392 (S-382 banked 2026-11-22, coordinator, new banking law) · team-02 → S-393 (S-383 banked 2026-11-22, coordinator, new banking law) · team-03 → S-385 (S-375 banked 2026-11-22, coordinator, new banking law) · team-04 → S-386 (S-376 banked 2026-11-22, coordinator, new banking law) · team-05 → S-387 (S-377 banked 2026-11-22, coordinator, new banking law)
+- team-01 → S-392 (S-382 banked 2026-11-22, coordinator, new banking law) · team-02 → S-393 (S-383 banked 2026-11-22, coordinator, new banking law) · team-03 → S-395 (S-385 banked 2026-11-22, coordinator, new banking law) · team-04 → S-386 (S-376 banked 2026-11-22, coordinator, new banking law) · team-05 → S-387 (S-377 banked 2026-11-22, coordinator, new banking law)
 - team-06 → S-388 (S-378 banked 2026-11-22, coordinator, new banking law) · team-07 → S-389 (S-379 banked 2026-11-22, coordinator, new banking law) · team-08 → S-390 (S-380 banked 2026-11-22, coordinator, new banking law) · team-09 → S-394 (S-384 banked 2026-11-22, coordinator, new banking law) · team-10 → S-391 (S-381 banked 2026-11-22, coordinator, new banking law)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
