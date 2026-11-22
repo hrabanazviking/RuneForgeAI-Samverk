@@ -23,6 +23,24 @@ add. No silent truncation, no half-accepted push.
   exception second (`enforce_receive`, raising
   `QuotaError` with the same message) for the receive path
   itself.
+
+S-354 widens this point, it does not build beside it: the
+same `check_receive` now also judges a **per-user quota**
+-- the owner's repositories measured together with the
+same S-058 walk -- so a push is refused at this one point
+when *either* limit would break, repo first, then user,
+and the refusal names the level that bit, in plain
+numbers. A per-user quota is explicit only, like the
+repo levels: an admin-set per-user value wins, otherwise
+an admin-set instance user default applies, otherwise
+the user is unlimited. Per-user values ride the settings
+table (`user_quota_bytes:<owner>` and
+`user_quota_default_bytes`); no migration, no new store.
+Only a site admin may set a user quota -- an owner
+raising their own ceiling would be no ceiling at all --
+and every change is audit-logged under the frozen
+`admin.settings.change` verb with the key named. The
+owner-visible surface lives in `samverk.quotas`.
 """
 
 from __future__ import annotations
@@ -39,6 +57,8 @@ from .repo_size import measure_path
 from .repositories import Repository, RepositoryStore
 
 DEFAULT_QUOTA_SETTING = "repo_quota_default_bytes"
+DEFAULT_USER_QUOTA_SETTING = "user_quota_default_bytes"
+USER_QUOTA_SETTING_PREFIX = "user_quota_bytes:"
 
 
 class QuotaError(ValueError):
@@ -55,6 +75,9 @@ class ReceiveDecision:
     quota_bytes: int | None       # None = unlimited
     incoming_bytes: int
     message: str
+    user_usage_bytes: int | None = None
+    user_quota_bytes: int | None = None
+    blocked_by: str = "none"  # "none" | "repository" | "user"
 
 
 def _validate_quota(value: object) -> int:
@@ -71,6 +94,29 @@ def _validate_incoming(value: object) -> int:
             "incoming_invalid",
             "An incoming size is a whole number of bytes, zero or more.")
     return value
+
+
+def decide_user_quota(owner_display: str, full_name: str,
+                      user_usage: int, user_quota: int | None,
+                      incoming: int) -> tuple[bool, str]:
+    """The pure per-user judgement (S-354): would this
+    push keep the owner's repositories, taken together,
+    within the owner's quota? Plain words either way."""
+    if user_quota is None:
+        return True, (
+            f"{owner_display} has no user quota; their "
+            f"repositories hold {user_usage} bytes in total.")
+    if user_usage + incoming <= user_quota:
+        return True, (
+            f"{owner_display}'s repositories hold {user_usage} of "
+            f"{user_quota} bytes; this push adds {incoming}.")
+    return False, (
+        f"User quota exceeded for {owner_display}: their "
+        f"repositories hold {user_usage} bytes of their "
+        f"{user_quota}-byte user quota, and this push to "
+        f"{full_name} adds {incoming} bytes. Remove or shrink "
+        "content in any of their repositories, or ask a site "
+        "admin to raise the user quota.")
 
 
 class QuotaService:
@@ -115,6 +161,108 @@ class QuotaService:
         """Per-repo quota wins; instance default next; else none."""
         per_repo = self.repo_quota(owner, repo)
         return per_repo if per_repo is not None else self.default_quota()
+
+    # -- per-user quotas (S-354) --------------------------------
+    def _user(self, owner):
+        user = self._accounts.get_by_username(owner)
+        if user is None:
+            raise QuotaError("no_such_user", "No such account.")
+        return user
+
+    def user_usage_bytes(self, owner) -> int:
+        """Every repository the owner holds, measured with
+        the same S-058 walk the per-repo number uses."""
+        total = 0
+        for current in self._repos.list_for_owner(owner):
+            path = self._repos.path_for(current.owner, current.name)
+            total += measure_path(path).total_bytes
+        return total
+
+    def user_quota(self, owner) -> int | None:
+        """The explicit per-user quota alone (None unset)."""
+        user = self._user(owner)
+        row = self._conn.execute(
+            "SELECT value FROM settings WHERE key = ?",
+            (USER_QUOTA_SETTING_PREFIX + user.username_lower,)).fetchone()
+        return int(row["value"]) if row else None
+
+    def default_user_quota(self) -> int | None:
+        row = self._conn.execute(
+            "SELECT value FROM settings WHERE key = ?",
+            (DEFAULT_USER_QUOTA_SETTING,)).fetchone()
+        return int(row["value"]) if row else None
+
+    def effective_user_quota(self, owner) -> int | None:
+        """Per-user quota wins; instance user default next;
+        otherwise the user is unlimited."""
+        per_user = self.user_quota(owner)
+        return per_user if per_user is not None else self.default_user_quota()
+
+    def _require_admin(self, actor_user_id: int):
+        actor = self._accounts.get_by_id(actor_user_id)
+        if actor is None:
+            raise QuotaError("no_such_user", "No such account.")
+        if not actor.is_admin:
+            raise QuotaError(
+                "permission_denied",
+                "Only a site admin can set a user quota.")
+        return actor
+
+    def set_user_quota(self, actor_user_id: int, owner,
+                       quota_bytes: int | None, *,
+                       source_ip: str | None = None) -> int | None:
+        """Set (or, with None, clear) one user's quota.
+        Admins only; audit-logged `admin.settings.change`."""
+        user = self._user(owner)
+        actor = self._require_admin(actor_user_id)
+        key = USER_QUOTA_SETTING_PREFIX + user.username_lower
+        with self._conn:
+            if quota_bytes is None:
+                self._conn.execute(
+                    "DELETE FROM settings WHERE key = ?", (key,))
+            else:
+                self._conn.execute(
+                    "INSERT INTO settings (key, value) VALUES (?, ?)"
+                    " ON CONFLICT(key) DO UPDATE SET"
+                    " value = excluded.value",
+                    (key, str(_validate_quota(quota_bytes))))
+        if self._audit is not None:
+            self._audit.append(
+                actor_kind="user", actor_id=actor.id,
+                action="admin.settings.change", target_kind="user",
+                target_id=user.username_lower, outcome="success",
+                source_ip=source_ip,
+                detail={"key": "user_quota_bytes",
+                        "quota": quota_bytes})
+        return self.effective_user_quota(owner)
+
+    def set_default_user_quota(self, actor_user_id: int,
+                               quota_bytes: int | None, *,
+                               source_ip: str | None = None) -> int | None:
+        """Set (or clear) the instance user default. Admins
+        only; audit-logged `admin.settings.change`."""
+        actor = self._require_admin(actor_user_id)
+        with self._conn:
+            if quota_bytes is None:
+                self._conn.execute(
+                    "DELETE FROM settings WHERE key = ?",
+                    (DEFAULT_USER_QUOTA_SETTING,))
+            else:
+                self._conn.execute(
+                    "INSERT INTO settings (key, value) VALUES (?, ?)"
+                    " ON CONFLICT(key) DO UPDATE SET"
+                    " value = excluded.value",
+                    (DEFAULT_USER_QUOTA_SETTING,
+                     str(_validate_quota(quota_bytes))))
+        if self._audit is not None:
+            self._audit.append(
+                actor_kind="user", actor_id=actor.id,
+                action="admin.settings.change", target_kind="instance",
+                target_id="quotas", outcome="success",
+                source_ip=source_ip,
+                detail={"key": DEFAULT_USER_QUOTA_SETTING,
+                        "quota": quota_bytes})
+        return self.default_user_quota()
 
     # -- setting quotas ---------------------------------------------
     def _require_owner_or_admin(self, actor_user_id: int,
@@ -185,35 +333,56 @@ class QuotaService:
 
     # -- receive-time enforcement ------------------------------------
     def check_receive(self, owner, repo, incoming_bytes: int) -> ReceiveDecision:
-        """Would accepting `incoming_bytes` keep the repo in quota?"""
+        """Would accepting `incoming_bytes` keep the repo in
+        quota -- and its owner within the user quota (S-354)?
+        Both levels are judged at this one point, repo first."""
         current = self._repo(owner, repo)
         incoming = _validate_incoming(incoming_bytes)
         usage = self.usage_bytes(owner, repo)
         quota = self.effective_quota(owner, repo)
-        if quota is None:
+        user_usage = self.user_usage_bytes(owner)
+        user_quota = self.effective_user_quota(owner)
+        if quota is not None and usage + incoming > quota:
             return ReceiveDecision(
-                allowed=True, full_name=current.full_name,
-                usage_bytes=usage, quota_bytes=None,
-                incoming_bytes=incoming,
-                message=f"{current.full_name} has no quota; "
-                        f"it currently holds {usage} bytes.")
-        if usage + incoming <= quota:
-            return ReceiveDecision(
-                allowed=True, full_name=current.full_name,
+                allowed=False, full_name=current.full_name,
                 usage_bytes=usage, quota_bytes=quota,
                 incoming_bytes=incoming,
-                message=f"{current.full_name} holds {usage} of "
-                        f"{quota} bytes; this push adds {incoming}.")
+                message=(
+                    f"Repository quota exceeded for {current.full_name}: "
+                    f"it holds {usage} bytes of its {quota}-byte quota, "
+                    f"and this push adds {incoming} bytes. "
+                    "Remove or shrink content, or ask the repository's "
+                    "owner or a site admin to raise the quota."),
+                user_usage_bytes=user_usage,
+                user_quota_bytes=user_quota, blocked_by="repository")
+        user_ok, user_message = decide_user_quota(
+            current.owner, current.full_name, user_usage,
+            user_quota, incoming)
+        if not user_ok:
+            return ReceiveDecision(
+                allowed=False, full_name=current.full_name,
+                usage_bytes=usage, quota_bytes=quota,
+                incoming_bytes=incoming, message=user_message,
+                user_usage_bytes=user_usage,
+                user_quota_bytes=user_quota, blocked_by="user")
+        if quota is None and user_quota is None:
+            message = (f"{current.full_name} has no quota; "
+                       f"it currently holds {usage} bytes.")
+        elif quota is None:
+            message = user_message
+        elif user_quota is None:
+            message = (f"{current.full_name} holds {usage} of "
+                       f"{quota} bytes; this push adds {incoming}.")
+        else:
+            message = (f"{current.full_name} holds {usage} of "
+                       f"{quota} bytes; this push adds {incoming}. "
+                       + user_message)
         return ReceiveDecision(
-            allowed=False, full_name=current.full_name,
+            allowed=True, full_name=current.full_name,
             usage_bytes=usage, quota_bytes=quota,
-            incoming_bytes=incoming,
-            message=(
-                f"Repository quota exceeded for {current.full_name}: "
-                f"it holds {usage} bytes of its {quota}-byte quota, "
-                f"and this push adds {incoming} bytes. "
-                "Remove or shrink content, or ask the repository's "
-                "owner or a site admin to raise the quota."))
+            incoming_bytes=incoming, message=message,
+            user_usage_bytes=user_usage,
+            user_quota_bytes=user_quota, blocked_by="none")
 
     def enforce_receive(self, owner, repo, incoming_bytes: int) -> ReceiveDecision:
         """The receive path's gate: returns the decision when the
