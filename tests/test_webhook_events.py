@@ -72,7 +72,7 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
 
     def test_payload_fields_are_s221s_own_shape(self):
         self.assertEqual(PAYLOAD_FIELDS, (
@@ -85,8 +85,8 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
 
     def test_every_taxonomy_verb_ruled_exactly_once(self):
         verbs = all_verbs()
-        self.assertEqual(len(verbs), 138)
-        self.assertEqual(len(set(verbs)), 138)
+        self.assertEqual(len(verbs), 142)
+        self.assertEqual(len(set(verbs)), 142)
         self.assertEqual(set(verbs), set(taxonomy.AUDIT_EVENTS))
         self.assertEqual(
             tuple(s.verb for s in WEBHOOK_EVENTS), verbs)
@@ -95,7 +95,7 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
         self.assertEqual(SCOPES, ("repository", "organization", "none"))
         self.assertEqual(len(verbs_for_scope("repository")), 92)
         self.assertEqual(len(verbs_for_scope("organization")), 2)
-        self.assertEqual(len(verbs_for_scope("none")), 44)
+        self.assertEqual(len(verbs_for_scope("none")), 48)
         self.assertEqual(len(deliverable_verbs()), 94)
         self.assertEqual(len(deliverable_verbs("repository")), 92)
         self.assertEqual(len(deliverable_verbs("organization")), 2)
@@ -136,12 +136,12 @@ class WebhookTaxonomyDataTests(unittest.TestCase):
         counts = {c: len(verbs_for_category(c))
                   for c in WEBHOOK_CATEGORIES}
         self.assertEqual(counts, {
-            "account": 29, "administration": 13, "branches": 2,
+            "account": 30, "administration": 16, "branches": 2,
             "checks": 8, "following": 2, "issues": 24,
             "labels": 3, "milestones": 3, "organization": 2,
             "pull_requests": 28, "push": 2, "releases": 1,
             "repository": 19, "webhooks": 2})
-        self.assertEqual(sum(counts.values()), 138)
+        self.assertEqual(sum(counts.values()), 142)
 
     def test_category_spot_checks(self):
         self.assertEqual(
@@ -316,11 +316,11 @@ class WebhookAuditAndRenderTests(unittest.TestCase):
         audit = audit_webhook_events()
         self.assertTrue(audit.ratified, audit.problems)
         self.assertEqual(audit.problems, ())
-        self.assertEqual(audit.verbs_checked, 138)
+        self.assertEqual(audit.verbs_checked, 142)
         self.assertEqual(audit.deliverable, 94)
         self.assertEqual(audit.repository_scope, 92)
         self.assertEqual(audit.organization_scope, 2)
-        self.assertEqual(audit.withheld, 44)
+        self.assertEqual(audit.withheld, 48)
 
     def test_document_names_every_verb(self):
         doc = (Path(__file__).resolve().parent.parent
@@ -341,7 +341,7 @@ class WebhookAuditAndRenderTests(unittest.TestCase):
         self.assertIn("never delivered", page)
         self.assertIn("Checked, not just claimed", page)
         self.assertIn("94 of them deliverable", page)
-        self.assertIn("44 withheld", page)
+        self.assertIn("48 withheld", page)
         self.assertIn("docs/WEBHOOK_EVENTS.md", page)
         for verb in all_verbs():
             self.assertIn(verb, page, verb)
