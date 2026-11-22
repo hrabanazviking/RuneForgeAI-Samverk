@@ -3495,6 +3495,26 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " releases_skipped INTEGER NOT NULL,"
         " detail TEXT NOT NULL, run_at INTEGER NOT NULL)",
     ]),
+    # S-355: the abuse queue -- one row per user report on a
+    # repository, issue, comment or account. audit_context is
+    # a JSON list of audit_log sequence numbers captured at
+    # filing time: references into the chain, never copies of
+    # it. State moves open -> acknowledged -> resolved /
+    # dismissed; terminal rows keep their resolution reason
+    # and the admin who handled them.
+    (140, [
+        "CREATE TABLE abuse_reports (id INTEGER PRIMARY KEY,"
+        " reporter_id INTEGER NOT NULL REFERENCES users(id),"
+        " target_kind TEXT NOT NULL, target_id TEXT NOT NULL,"
+        " reason TEXT NOT NULL, state TEXT NOT NULL DEFAULT 'open',"
+        " audit_context TEXT NOT NULL DEFAULT '[]',"
+        " resolution_reason TEXT, handled_by INTEGER,"
+        " created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+        "CREATE INDEX idx_abuse_reports_state"
+        " ON abuse_reports (state, created_at)",
+        "CREATE INDEX idx_abuse_reports_reporter"
+        " ON abuse_reports (reporter_id, created_at)",
+    ]),
 ]
 
 
