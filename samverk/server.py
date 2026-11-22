@@ -6,6 +6,10 @@ internals ever sent to a client (error law, S-019 — adopted from the
 first slice, not retrofitted).
 
 Routes grow slice by slice; S-002 ships exactly one: the health route.
+S-359 makes that route a real probe (health_status.probe_database:
+a standing-but-broken database answers down, never a false ok) and
+adds the admin status page at /admin/status on the standing seams
+(S-006 session cookie -> S-359 admin door); see health_status.py.
 
 S-009 adds the HTTP security baseline at the door: every
 state-changing method (POST/PUT/PATCH/DELETE) must present a valid
@@ -42,8 +46,13 @@ from .platform_seam import ensure_dir
 _CSRF_BODY_LIMIT = 64 * 1024
 
 
-def _health_payload() -> dict:
-    return {"status": "ok", "service": "samverk", "version": __version__}
+def _health_payload(cfg: Config) -> tuple[int, dict]:
+    """S-359: the health route probes the real database
+    (read-only) and answers its verdict -- 200 ok or
+    503 down -- never a constant ok."""
+    from .health_status import healthz_payload, probe_database
+    report = probe_database(cfg.db_path)
+    return report.http_status, healthz_payload(report)
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -63,6 +72,22 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         # S-016: every response carries the CSP — this is the one
         # send path, so no route can forget it.
+        csp_name, csp_value = csp_header(self._cfg.csp_mode)
+        self.send_header(csp_name, csp_value)
+        pending = getattr(self, "_pending_cookie", None)
+        if pending is not None:
+            self.send_header("Set-Cookie", pending)
+            self._pending_cookie = None
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _send_html(self, code: int, text: str) -> None:
+        """S-359: the one HTML send path (the admin status
+        page), carrying the same CSP law as _send_json."""
+        body = text.encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
         csp_name, csp_value = csp_header(self._cfg.csp_mode)
         self.send_header(csp_name, csp_value)
         pending = getattr(self, "_pending_cookie", None)
@@ -175,10 +200,59 @@ class _Handler(BaseHTTPRequestHandler):
     do_PATCH = _handle_state_changing
     do_DELETE = _handle_state_changing
 
+    def _admin_status(self) -> None:
+        """S-359: GET /admin/status -- the caller's session
+        cookie (S-006) resolved against the real database;
+        anonymous or unknown answers 401, a signed-in
+        non-admin 403, a site admin the gathered page.
+        The service door (health_status.HealthStatus) is
+        the law; this is only its HTTP face."""
+        from . import db as _db
+        from .accounts import AccountStore
+        from .health_status import (
+            HealthStatus, HealthStatusError, render_status_page)
+        from .index_architecture import SearchIndexStore
+        from .repositories import RepositoryStore
+        from .sessions import SessionStore
+        cfg = self._cfg
+        if not cfg.db_path.is_file():
+            self._send_error(401, "unauthorized")
+            return
+        conn = _db.connect(cfg.db_path)
+        try:
+            token = session_token_from_cookie_header(
+                self.headers.get("Cookie"))
+            viewer_id = (
+                SessionStore(conn).authenticate(token) if token else None)
+            if viewer_id is None:
+                self._send_error(401, "unauthorized")
+                return
+            accounts = AccountStore(conn)
+            service = HealthStatus(
+                conn, accounts,
+                SearchIndexStore(conn, RepositoryStore(
+                    conn, cfg.data_root, accounts)),
+                cfg.data_root)
+            try:
+                status = service.status(viewer_id)
+            except HealthStatusError as exc:
+                if exc.reason == "not_site_admin":
+                    self._send_error(403, "unauthorized")
+                else:
+                    self._send_error(401, "unauthorized")
+                return
+            self._send_html(200, render_status_page(status))
+        finally:
+            conn.close()
+
     def _route_get(self) -> None:
-        if self.path == "/healthz":
-            self._send_json(200, _health_payload())
-        elif self.path == "/":
+        path = self.path.split("?", 1)[0]
+        if path == "/healthz":
+            code, payload = _health_payload(self._cfg)
+            self._send_json(code, payload)
+        elif path == "/admin/status":
+            self._admin_status()
+        elif path == "/":
             self._send_json(200, {"service": "samverk", "version": __version__})
         else:
             self._send_error(404, "not_found")
