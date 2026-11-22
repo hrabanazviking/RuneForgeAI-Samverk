@@ -3524,3 +3524,16 @@ admin.user.role_change, detail from member,
 to admin, via install_walk. A bootstrap is a
 role change, not a new kind of act, so the
 taxonomy itself is unmoved; schema stays 139.)
+
+S-355 (2026-11-22) added four events of its own: 142
+events stand. (Its abuse queue, in
+samverk/abuse_queue.py, files user reports on
+repositories, issues, comments and accounts into one
+admin queue with the target's audit context attached by
+sequence reference: `auth.abuse_report.filed` at filing,
+and `admin.abuse_report.acknowledged` /
+`admin.abuse_report.resolved` /
+`admin.abuse_report.dismissed` as admins work the queue.
+Schema
+moves 139 -> 140 for the abuse_reports table, migration
+140.)

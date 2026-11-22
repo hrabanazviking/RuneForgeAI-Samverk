@@ -62,6 +62,8 @@ AUTH_EVENTS = frozenset({
     # S-232 additions (append-only, per the taxonomy rules):
     "auth.follow",
     "auth.unfollow",
+    # S-355 addition (append-only, per the taxonomy rules):
+    "auth.abuse_report.filed",
 })
 
 REPO_EVENTS = frozenset({
@@ -211,6 +213,10 @@ ADMIN_EVENTS = frozenset({
     "admin.user.unsuspend",
     # S-215 addition (append-only, per the taxonomy rules):
     "admin.index.rebuild",
+    # S-355 additions (append-only, per the taxonomy rules):
+    "admin.abuse_report.acknowledged",
+    "admin.abuse_report.resolved",
+    "admin.abuse_report.dismissed",
 })
 
 AUDIT_EVENTS = AUTH_EVENTS | REPO_EVENTS | ADMIN_EVENTS
