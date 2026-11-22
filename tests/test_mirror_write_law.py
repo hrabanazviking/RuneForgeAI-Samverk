@@ -70,8 +70,8 @@ class MirrorWriteLawTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 137)
-        self.assertEqual(db.MIGRATIONS[-1][0], 137)
+        self.assertEqual(schema_version(self.conn), 138)
+        self.assertEqual(db.MIGRATIONS[-1][0], 138)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
 
     # -- the pure judgement --------------------------------------

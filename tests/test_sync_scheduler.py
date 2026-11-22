@@ -216,7 +216,7 @@ class SyncSchedulerTests(unittest.TestCase):
         self.assertNotIn("secret", blob.lower())
 
     def test_schema_134_carries_schedule_columns(self):
-        self.assertEqual(db.schema_version(self.conn), 137)
+        self.assertEqual(db.schema_version(self.conn), 138)
         cols = [r["name"] for r in self.conn.execute(
             "PRAGMA table_info(repo_mirrors)").fetchall()]
         self.assertIn("sync_interval_seconds", cols)

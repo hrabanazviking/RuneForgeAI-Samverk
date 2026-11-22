@@ -3488,3 +3488,16 @@ mirrors only by the owner's word, one at a
 time, through release_held. Holding a name is
 a record, not an act on a repository, so the
 taxonomy itself is unmoved.)
+
+S-336 (2026-11-21) added no event of its own:
+138 events stand. (Its first-pass mirroring
+run, in samverk/first_pass_mirroring.py, syncs
+the public census originals proof-first -- one
+proof mirror verified ref-for-ref against its
+source through the S-014 ls-remote seam before
+the batch may run -- and records every run in
+first_pass_mirror_runs (migration 138, schema
+138). Sync rides S-329/S-070, which record
+their own status; a verification is a reading,
+not an act on a repository, so the taxonomy
+itself is unmoved.)

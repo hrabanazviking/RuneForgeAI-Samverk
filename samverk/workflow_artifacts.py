@@ -521,7 +521,7 @@ def audit_workflow_artifacts(conn: sqlite3.Connection
                 "check run's commit")
     return WorkflowArtifactsAudit(
         names_ok=names_ok,
-        schema_version=version, schema_ok=version == 137,
+        schema_version=version, schema_ok=version == 138,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 
