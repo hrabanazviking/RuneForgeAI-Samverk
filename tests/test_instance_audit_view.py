@@ -13,8 +13,8 @@ verify_chain recomputed whole on every read:
 verified with the count, or broken naming the
 first broken entry (a tampered row is proven
 to read broken at the right place, never a
-false green). No migration (schema 139);
-taxonomy unmoved at 138 (33/92/13).
+false green). No migration by this slice (schema 140 stands,
+moved by S-355); taxonomy 142 (34/92/16).
 
 Counted with: python3 -m unittest tests.test_instance_audit_view
 """
@@ -214,7 +214,7 @@ class InstanceAuditTests(unittest.TestCase):
     def test_audit_clean_and_pins(self):
         self.seed()
         self.assertEqual(audit_instance_audit_view(self.conn), [])
-        self.assertEqual(schema_version(self.conn), 139)
+        self.assertEqual(schema_version(self.conn), 140)
 
     def test_read_writes_nothing(self):
         self.seed()

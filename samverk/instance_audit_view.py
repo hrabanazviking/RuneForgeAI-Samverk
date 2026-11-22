@@ -53,9 +53,10 @@ genesis over every entry, whatever the filter
 or window: a filter can hide a break from the
 list but never from the verdict.
 - **No migration, no new taxonomy event.**
-This face stores nothing (schema 139 stands)
-and audits nothing (138 events stand:
-33 auth / 92 repo / 13 admin). The honesty
+This face stores nothing (schema 140 stands,
+moved by S-355 after this face was built)
+and audits nothing (142 events stand:
+34 auth / 92 repo / 16 admin). The honesty
 re-proof is ``audit_instance_audit_view``:
 S-309's row proofs, plus the standing pins.
 """
@@ -298,22 +299,22 @@ def render_instance_audit_page(page: InstanceAuditPage,
 def audit_instance_audit_view(conn: sqlite3.Connection) -> list[str]:
     """Re-prove what this face claims: S-309's
     row proofs over the chain, the standing
-    schema pin (139), the standing taxonomy pin
-    (138: 33 auth / 92 repo / 13 admin), and no
+    schema pin (140), the standing taxonomy pin
+    (142: 34 auth / 92 repo / 16 admin), and no
     instance-audit surface of its own in the
     schema -- this face stores nothing."""
     from . import taxonomy
     from .db import schema_version
     problems = list(audit_audit_log_ui(conn))
     version = schema_version(conn)
-    if version != 139:
+    if version != 140:
         problems.append(
-            f"schema version is {version}, expected 139")
+            f"schema version is {version}, expected 140")
     counts = (len(taxonomy.AUTH_EVENTS), len(taxonomy.REPO_EVENTS),
               len(taxonomy.ADMIN_EVENTS), len(taxonomy.AUDIT_EVENTS))
-    if counts != (33, 92, 13, 138):
+    if counts != (34, 92, 16, 142):
         problems.append(
-            f"taxonomy counts are {counts}, expected (33, 92, 13, 138)")
+            f"taxonomy counts are {counts}, expected (34, 92, 16, 142)")
     for row in conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'").fetchall():
         if "instance_audit" in str(row["name"]):

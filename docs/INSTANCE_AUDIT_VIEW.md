@@ -9,8 +9,8 @@ It is S-309's audit log UI at instance scope (roadmap S-356:
 "S-309 at instance scope, chain-verified"), built in
 `samverk/instance_audit_view.py` over S-309's `AuditLogUIStore` and
 S-007's `verify_chain`. It stores nothing and records nothing: reading
-the witness is not an act the witness records. Schema stays **139**;
-the taxonomy stays **138** events (33 auth / 92 repo / 13 admin).
+the witness is not an act the witness records. Schema stays **140** (moved by S-355 after this face was built);
+the taxonomy stays **142** events (34 auth / 92 repo / 16 admin).
 
 ## The door
 
@@ -62,5 +62,5 @@ real row and reading the break at exactly that sequence number.
 `audit_instance_audit_view(conn)` re-proves what the face claims:
 S-309's row proofs (every action in the taxonomy, sequence numbers
 unbroken from 1, both hashes on every row, every named actor standing),
-the schema pin (139), the taxonomy pin (138 = 33/92/13), and no
+the schema pin (140), the taxonomy pin (142 = 34/92/16), and no
 instance-audit table of its own — this face stores nothing.
