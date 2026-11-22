@@ -3549,3 +3549,14 @@ and `admin.abuse_report.acknowledged` /
 Schema
 moves 139 -> 140 for the abuse_reports table, migration
 140.)
+S-356 (2026-11-22) added no event of its own:
+138 events stand. (Its instance audit view, in
+samverk/instance_audit_view.py, is S-309's
+audit log UI at instance scope: a site-admin
+only, windowed, filterable read over S-007's
+chain with verify_chain recomputed whole on
+every read and the verdict shown in words.
+Reading the witness is not an act the witness
+records, and the view stores nothing -- schema
+stays 139 -- so the taxonomy itself is
+unmoved.)
