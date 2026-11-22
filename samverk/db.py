@@ -17,6 +17,7 @@ transaction; a failure leaves the previous schema version intact.
 from __future__ import annotations
 
 import sqlite3
+from contextlib import contextmanager
 from pathlib import Path
 
 from .platform_seam import ensure_dir
@@ -3520,6 +3521,51 @@ def schema_version(conn: sqlite3.Connection) -> int:
     return int(row["value"]) if row else 0
 
 
+@contextmanager
+def migration_transaction(conn: sqlite3.Connection):
+    """One real transaction for a migration or a down-path.
+
+    A SAVEPOINT, not ``with conn:`` — Python's sqlite3 only opens
+    an implicit transaction before DML, so a migration whose first
+    statement is CREATE TABLE would otherwise autocommit that
+    table before a later statement fails, leaving the database
+    half-migrated at the old version stamp (the S-358 battery
+    caught exactly this). A savepoint opens a transaction in
+    autocommit mode and nests inside a caller's transaction;
+    SQLite DDL is transactional, so CREATE / ALTER / DROP roll
+    back with everything else. RELEASE of the outermost
+    savepoint commits.
+    """
+    conn.execute("SAVEPOINT samverk_migration")
+    try:
+        yield
+    except BaseException:
+        conn.execute("ROLLBACK TO samverk_migration")
+        conn.execute("RELEASE samverk_migration")
+        raise
+    else:
+        conn.execute("RELEASE samverk_migration")
+
+
+def apply_migration(conn: sqlite3.Connection, target: int,
+                    statements: list[str]) -> None:
+    """Apply one migration in its own transaction (S-358).
+
+    The statements and the schema-version stamp land together
+    or not at all: a failure rolls the whole migration back and
+    raises, leaving the database at the prior version with its
+    prior content.
+    """
+    with migration_transaction(conn):
+        for stmt in statements:
+            conn.execute(stmt)
+        conn.execute(
+            "INSERT OR REPLACE INTO schema_meta (key, value) "
+            "VALUES ('version', ?)",
+            (str(target),),
+        )
+
+
 def migrate(conn: sqlite3.Connection) -> int:
     """Apply pending migrations, each in its own transaction.
 
@@ -3530,14 +3576,7 @@ def migrate(conn: sqlite3.Connection) -> int:
     for target, statements in MIGRATIONS:
         if target <= version:
             continue
-        with conn:  # one transaction per migration
-            for stmt in statements:
-                conn.execute(stmt)
-            conn.execute(
-                "INSERT OR REPLACE INTO schema_meta (key, value) "
-                "VALUES ('version', ?)",
-                (str(target),),
-            )
+        apply_migration(conn, target, statements)
         version = target
     return version
 
