@@ -4,7 +4,7 @@
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
 - Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-338 (338/416).
 - Crew mustered: 2026-11-22 07:52 EST (new-regime crew, Volmarr order 2026-11-22)
-- Last slice banked: S-337 at 2026-11-22 07:55 EST
+- Last slice banked: S-338 at 2026-11-22 08:25 EST
 - Governing full suite at S-326: 5276 tests - Ran 5276 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
@@ -440,3 +440,6 @@ S-335 BANKED this tick (335/416, slice 5c35937, merge cdda933; battery 75 OK; te
 
 ## Suite speed
 - Investigation opened 2026-11-22 under the new banking law: why 5,461 tests take ~6.1 hours wall, and the sharded runner that replaces the serial run. Findings and the new full-suite wall time land here.
+
+## Keeper note 2026-11-22 08:28 EST tick (samverk-swift-keeper)
+S-338 BANKED and remote-verified this tick (338/416, origin/main 533d182 == local HEAD, ls-remote verified; slice 96fc68f, merge 1312675, banking pin sweep 897c157 fixing the 4 schema-pin 138->139 neighbour failures from the 08:13 team-06 neighbours run, closure 533d182; battery 17 OK). Firing-rule stamp updated: last banked S-338 at 08:25 EST; crew mustered 07:52 EST stands - no firing (clock reset by the banking). Work flowing: team-07 S-339 battery 23 OK, neighbours run LIVE (started 08:04, log growing); team-08 S-340 committed e1f532c, battery 17 OK + neighbours 76 OK, awaiting banking after S-339; team-06 verifying S-348 (08:27). Wave full suite: sharded runner wave337 (8 workers) running in background since 08:05, non-blocking per the new regime. Load high (~25, Ollama + other work sharing the box); MemAvailable ~26.9 GB. Next banking head: S-339. Never touch README.md. NO Docker ever.
