@@ -188,8 +188,13 @@ class _Renderer:
             return self._slot(inner)
         href = escape_html_attr(resolved)
         if kind == "image":
+            # S-390 alt-text law: a missing or generic author alt
+            # takes the law's floor (the file, named) -- an image
+            # never renders alt-less or alt="image".
+            from samverk.alt_text_law import fallback_alt
+            alt = fallback_alt(resolved, label)
             return self._slot(
-                f'<img src="{href}" alt="{escape_html_attr(label)}">')
+                f'<img src="{href}" alt="{escape_html_attr(alt)}">')
         return self._slot(f'<a href="{href}">{inner}</a>')
 
     def _keep_bare_url(self, match: re.Match) -> str:
