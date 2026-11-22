@@ -3467,6 +3467,34 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " refs_diverged INTEGER NOT NULL, detail TEXT NOT NULL,"
         " run_at INTEGER NOT NULL)",
     ]),
+    # S-338: metadata imports -- one provenance row per
+    # item imported from GitHub's API into a mirror
+    # (issue, label, milestone, or release): the kind,
+    # the source key (the GitHub number, name, title, or
+    # tag), the source link (the item's html_url on the
+    # source), and the local row it landed as. Plus one
+    # run row per import attempt -- imported, refused at
+    # the credential gate, or failed -- with per-kind
+    # counts and the plain detail. Imported is a fact
+    # recorded here, never a flag guessed elsewhere.
+    (139, [
+        "CREATE TABLE metadata_imports (id INTEGER PRIMARY KEY,"
+        " repo_id INTEGER NOT NULL REFERENCES repositories(id),"
+        " full_name TEXT NOT NULL, kind TEXT NOT NULL,"
+        " source_key TEXT NOT NULL, source_url TEXT NOT NULL,"
+        " local_id INTEGER NOT NULL, imported_at INTEGER NOT NULL,"
+        " UNIQUE (repo_id, kind, source_key))",
+        "CREATE TABLE metadata_import_runs (id INTEGER PRIMARY KEY,"
+        " full_name TEXT NOT NULL, repo_id INTEGER NOT NULL"
+        " REFERENCES repositories(id), state TEXT NOT NULL,"
+        " labels_imported INTEGER NOT NULL, labels_skipped INTEGER NOT NULL,"
+        " milestones_imported INTEGER NOT NULL,"
+        " milestones_skipped INTEGER NOT NULL,"
+        " issues_imported INTEGER NOT NULL, issues_skipped INTEGER NOT NULL,"
+        " releases_imported INTEGER NOT NULL,"
+        " releases_skipped INTEGER NOT NULL,"
+        " detail TEXT NOT NULL, run_at INTEGER NOT NULL)",
+    ]),
 ]
 
 
