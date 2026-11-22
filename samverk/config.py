@@ -48,8 +48,16 @@ class Config:
     csp_mode: str = "enforce"
 
     @property
+    def layout(self):
+        """S-347: the data directory layout rooted here -- the
+        canonical resolver every seam can adopt."""
+        from .data_layout import layout_for
+        return layout_for(self.data_root)
+
+    @property
     def db_path(self) -> Path:
-        return self.data_root / "samverk.db"
+        # Spelling delegated to the S-347 layout (identical path).
+        return self.layout.db_path
 
 
 def _parse_bool(value: str) -> bool:
