@@ -32,7 +32,7 @@ import json
 from dataclasses import dataclass
 
 from .accounts import User
-from .escaping import escape_html_text
+from .escaping import escape_html_attr, escape_html_text
 from .seam_contract import (EVENT_KINDS, SeamContractError, seam_enabled,
                             validate_event_envelope)
 
@@ -230,8 +230,8 @@ def render_card(card: HallCard) -> str:
     who = (f" by {escape_html_text(card.actor_name)}"
            if card.actor_name else "")
     return (
-        f'<article class="hall-card" data-kind="{escape_html_text(card.kind)}">'
-        f'<a href="{escape_html_text(card.link_path)}">'
+        f'<article class="hall-card" data-kind="{escape_html_attr(card.kind)}">'
+        f'<a href="{escape_html_attr(card.link_path)}">'
         f"{escape_html_text(card.summary())}</a>"
         f"<span>{escape_html_text(card.kind)} in "
         f"{escape_html_text(card.repo)}{who}</span></article>\n")
