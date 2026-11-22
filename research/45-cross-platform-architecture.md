@@ -36,3 +36,45 @@ Record current source modules, whether features are routable from the real serve
 2. https://docs.python.org/3/library/subprocess.html
 3. https://git-scm.com/docs/git
 4. https://docs.python.org/3/library/http.server.html
+
+<!-- S-405 support matrix: begin -->
+
+## Support matrix (ratified at S-405)
+
+The promise, written down at S-405: the Samverk
+server is supported on Linux, Windows and macOS,
+on x86-64 and ARM64 CPUs, with the Raspberry Pi 5
+as the floor. The law module is
+`samverk/support_matrix.py`; the rendered matrix
+document is `docs/SUPPORT_MATRIX.md`; the counted
+log is `docs/support-matrix-s405.md`.
+
+A cell is PROVEN only when its battery has run in
+that cell (Part XXII's law). At ratification every
+cell below is **NOT PROVEN** -- no platform is
+claimed proven without a real run on that
+platform, and no cell flips on wording.
+
+| Cell | Dimension | Platform | CPU / surface | Floor | Status | Flips at |
+|---|---|---|---|---|---|---|
+| linux-x86-64 | os_cpu | Linux | x86-64 | ordinary laptop, desktop or server | NOT PROVEN | S-416 |
+| linux-arm64-pi5 | os_cpu | Linux | ARM64 | Raspberry Pi 5 (the floor: nothing weaker is promised) | NOT PROVEN | S-415 |
+| windows-x86-64 | os_cpu | Windows | x86-64 | ordinary laptop, desktop or server | NOT PROVEN | S-416 |
+| macos-arm64 | os_cpu | macOS | ARM64 | Apple silicon Mac | NOT PROVEN | S-416 |
+| fs-case-sensitive | filesystem | filesystem | n/a | the filesystems Linux servers ship by default | NOT PROVEN | S-408 |
+| fs-case-insensitive | filesystem | filesystem | n/a | the default filesystems of Windows and macOS | NOT PROVEN | S-408 |
+| deploy-real-sshd | deployment | deployment | n/a | a stock sshd on a promised OS | NOT PROVEN | Part XXII (S-415/S-416 cells) |
+| deploy-real-http | deployment | deployment | n/a | the server answering real HTTP clients on a promised OS | NOT PROVEN | Part XXII (S-415/S-416 cells) |
+| service-systemd | service | Linux | any promised CPU | a systemd Linux host | NOT PROVEN | S-412 |
+| service-windows | service | Windows | x86-64 | a Windows host, no Docker and no WSL requirement | NOT PROVEN | S-410 |
+| service-launchd | service | macOS | ARM64 | an Apple silicon Mac | NOT PROVEN | S-411 |
+| browser-device-reach | reach | web UI | n/a | current Chrome, Firefox, Safari and Edge; phone and tablet browsers | NOT PROVEN | S-414 |
+
+Windows on ARM64 and macOS on x86-64 are not
+promised and have no cells. S-415 flips the
+Linux ARM64 cell, S-416 is the portability gate
+for the Windows and macOS cells, S-408 owns the
+filesystem cells, S-410..S-412 the service forms,
+and S-414 the browser and device reach cell.
+
+<!-- S-405 support matrix: end -->
