@@ -402,7 +402,7 @@ class World(unittest.TestCase):
         audit = audit_workflow_artifacts(self.conn)
         self.assertTrue(audit.names_ok)
         self.assertTrue(audit.schema_ok)
-        self.assertEqual(audit.schema_version, 138)
+        self.assertEqual(audit.schema_version, 140)
         self.assertTrue(audit.events_ok)
         self.assertTrue(audit.tables_ok)
         self.assertEqual(audit.rows_scanned, 5)
@@ -426,9 +426,9 @@ class World(unittest.TestCase):
         self.assertEqual(schema_version(self.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
         tables = {r["name"] for r in self.conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'")}
         self.assertIn("ci_artifacts", tables)

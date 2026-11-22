@@ -185,9 +185,9 @@ class PureLawTests(unittest.TestCase):
         self.assertEqual(POSTER, "samverk-ci")
         self.assertEqual(CHECK_RUN_STATUS_COMPLETED, "completed")
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
 
 class LandingCase(unittest.TestCase):

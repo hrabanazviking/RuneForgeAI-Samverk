@@ -566,7 +566,7 @@ def audit_check_reporting(conn: sqlite3.Connection
     in the schema or the taxonomy. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 142
                  and len(taxonomy.AUTH_EVENTS) == 33
                  and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
@@ -598,7 +598,7 @@ def audit_check_reporting(conn: sqlite3.Connection
         e for e in events if _SURFACE_WORD in e]
     return CheckReportingAudit(
         vocabulary_ok=vocabulary_ok,
-        schema_version=version, schema_ok=version == 138,
+        schema_version=version, schema_ok=version == 140,
         events_ok=events_ok, tables_ok=tables_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

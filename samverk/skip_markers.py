@@ -469,7 +469,7 @@ def audit_skip_markers(conn: sqlite3.Connection) -> SkipAudit:
         SKIPPABLE_EVENTS == ("push", "pull_request")
         and all(e in TRIGGER_EVENTS for e in SKIPPABLE_EVENTS))
     taxonomy_ok = (
-        len(taxonomy.AUDIT_EVENTS) == 138
+        len(taxonomy.AUDIT_EVENTS) == 142
         and len(taxonomy.AUTH_EVENTS) == 33
         and len(taxonomy.REPO_EVENTS) == 92
         and len(taxonomy.ADMIN_EVENTS) == 13)
@@ -492,7 +492,7 @@ def audit_skip_markers(conn: sqlite3.Connection) -> SkipAudit:
     offending_events = [e for e in events if _surface(e)]
     return SkipAudit(
         markers_ok=markers_ok, events_ok=events_ok,
-        schema_version=version, schema_ok=version == 138,
+        schema_version=version, schema_ok=version == 140,
         events_scanned=len(events), taxonomy_ok=taxonomy_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

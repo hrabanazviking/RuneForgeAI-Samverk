@@ -384,9 +384,9 @@ class InvariantTests(StoreCase):
 
     def test_no_new_taxonomy_event(self):
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
     def test_audit_log_does_not_move(self):
         accounts = AccountStore(self.conn)

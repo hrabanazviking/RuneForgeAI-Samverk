@@ -168,9 +168,9 @@ class RepositorySearchTests(unittest.TestCase):
         self.assertEqual(schema_version(self.a.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
     # -- the four fields ---------------------------------------
     def test_search_by_name(self):

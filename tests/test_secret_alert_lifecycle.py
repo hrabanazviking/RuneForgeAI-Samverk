@@ -200,9 +200,9 @@ class SecretAlertLifecycleTests(unittest.TestCase):
 
     def test_taxonomy_still_134(self):
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
     def test_resolution_vocabulary_is_the_roadmaps_three(self):
         self.assertEqual(

@@ -410,9 +410,9 @@ class DispatchRoadTests(unittest.TestCase):
         self.assertEqual(schema_version(self.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
     def test_fork_dispatch_never_consults_the_store(self):
         # No key at all, and a wrong key: a non-fork resolve
@@ -462,7 +462,7 @@ class DispatchRoadTests(unittest.TestCase):
         self.assertTrue(audit.defaults_ok)
         self.assertTrue(audit.levels_ok)
         self.assertTrue(audit.schema_ok)
-        self.assertEqual(audit.schema_version, 138)
+        self.assertEqual(audit.schema_version, 140)
         self.assertTrue(audit.events_ok)
         self.assertEqual(audit.events_scanned, 142)
         self.assertEqual(audit.offending_tables, ())

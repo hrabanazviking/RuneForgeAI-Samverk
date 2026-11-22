@@ -381,9 +381,9 @@ class CombinedAndGlobalTests(unittest.TestCase):
 
     def test_schema_and_taxonomy_stand(self):
         self.assertEqual(schema_version(self.w.conn), 140)
-        self.assertEqual(len(AUTH_EVENTS), 33)
+        self.assertEqual(len(AUTH_EVENTS), 34)
         self.assertEqual(len(REPO_EVENTS), 92)
-        self.assertEqual(len(ADMIN_EVENTS), 13)
+        self.assertEqual(len(ADMIN_EVENTS), 16)
         self.assertEqual(len(AUDIT_EVENTS), 142)
 
 

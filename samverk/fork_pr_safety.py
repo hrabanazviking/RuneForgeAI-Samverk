@@ -676,7 +676,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
     the rule bypassed by a back door. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 142
                  and len(taxonomy.AUTH_EVENTS) == 33
                  and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
@@ -704,7 +704,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
         levels_ok=tuple(PERMISSION_LEVELS)
         == ("none", "read", "write")
         and set(PERMISSION_VALUES) == set(PERMISSION_LEVELS),
-        schema_version=version, schema_ok=version == 138,
+        schema_version=version, schema_ok=version == 140,
         events_ok=events_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

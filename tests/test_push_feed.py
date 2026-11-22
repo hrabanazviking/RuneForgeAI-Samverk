@@ -81,9 +81,9 @@ class PushFeedTests(unittest.TestCase):
         self.assertEqual(schema_version(self.conn), 140)
         self.assertEqual(db.MIGRATIONS[-1][0], 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
         self.assertIn("repo.push", taxonomy.AUDIT_EVENTS)
 
     def test_reading_the_feed_writes_and_witnesses_nothing(self):

@@ -219,9 +219,9 @@ class StandingPinTests(unittest.TestCase):
             self.assertEqual(schema_version(conn), 140)
             conn.close()
         self.assertEqual(len(AUDIT_EVENTS), 142)
-        self.assertEqual(len(AUTH_EVENTS), 33)
+        self.assertEqual(len(AUTH_EVENTS), 34)
         self.assertEqual(len(REPO_EVENTS), 92)
-        self.assertEqual(len(ADMIN_EVENTS), 13)
+        self.assertEqual(len(ADMIN_EVENTS), 16)
 
 
 if __name__ == "__main__":

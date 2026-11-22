@@ -200,9 +200,9 @@ class PinsTests(unittest.TestCase):
                 self.assertEqual(schema_version(conn), 140)
             finally:
                 conn.close()
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
 

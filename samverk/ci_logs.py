@@ -858,7 +858,7 @@ def audit_log_streaming(conn: sqlite3.Connection
     store's law. Pure read."""
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
-    events_ok = (len(taxonomy.AUDIT_EVENTS) == 138
+    events_ok = (len(taxonomy.AUDIT_EVENTS) == 142
                  and len(taxonomy.AUTH_EVENTS) == 33
                  and len(taxonomy.REPO_EVENTS) == 92
                  and len(taxonomy.ADMIN_EVENTS) == 13)
@@ -906,7 +906,7 @@ def audit_log_streaming(conn: sqlite3.Connection
                 "the name law")
     return LogStreamingAudit(
         retention_ok=retention_ok,
-        schema_version=version, schema_ok=version == 138,
+        schema_version=version, schema_ok=version == 140,
         events_ok=events_ok, tables_ok=tables_ok,
         rows_scanned=len(rows), problems=tuple(problems))
 

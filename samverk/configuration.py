@@ -617,7 +617,7 @@ def audit_configuration(conn: sqlite3.Connection) -> ConfigurationAudit:
         and clean.config is not None
         and clean.config.port == 8737)
     taxonomy_ok = (
-        len(taxonomy.AUDIT_EVENTS) == 138
+        len(taxonomy.AUDIT_EVENTS) == 142
         and len(taxonomy.AUTH_EVENTS) == 33
         and len(taxonomy.REPO_EVENTS) == 92
         and len(taxonomy.ADMIN_EVENTS) == 13)
@@ -640,7 +640,7 @@ def audit_configuration(conn: sqlite3.Connection) -> ConfigurationAudit:
     offending_events = [e for e in events if _surface(e)]
     return ConfigurationAudit(
         source_ok=source_ok,
-        schema_version=version, schema_ok=version == 139,
+        schema_version=version, schema_ok=version == 140,
         events_scanned=len(events), taxonomy_ok=taxonomy_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,

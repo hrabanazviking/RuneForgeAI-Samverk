@@ -518,9 +518,9 @@ class SecurityTabTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins(self):
         self.assertEqual(schema_version(self.conn), 140)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
 
 if __name__ == "__main__":
