@@ -21,10 +21,10 @@ anchor below.
 | C-06 | Client errors leak no stack traces, paths, or secrets, and correlate to server logs by opaque id | PROVEN | tests/test_errors.py, tests/test_log_redaction.py |
 | C-07 | Samverk requires no third-party runtime dependency and no Samtal to run | PROVEN | tests/test_dependencies.py (import scan: stdlib + intra-package only) |
 | C-08 | No Docker, ever — native installs only | PROVEN (as construction: no container artifacts exist in this tree; the battery keeps it so) | tests/test_claims_register.py (tree scan) |
-| C-09 | An unmodified git client clones, pushes, and pulls (SSH and smart HTTP) | NOT PROVEN | Part III (git core & transport) owns this proof |
-| C-10 | The server runs on Windows and macOS, and on ARM down to a Raspberry Pi | NOT PROVEN (proven only on Linux x86-64, this VM) | Part XXII (cross-platform proof matrix) owns this proof |
-| C-11 | The face is designed under the Cyber-Viking Visual Design Lawbook and passes its ship gate | NOT PROVEN (no UI exists yet) | Part XX (design warband) owns this proof |
-| C-12 | Samverk mirrors Volmarr's original repositories onto his own machines and keeps them current | NOT PROVEN | Part XVII (mirroring) owns this proof |
+| C-09 | An unmodified git client clones, pushes, and pulls (SSH and smart HTTP) | PROVEN (scoped: stock-git smart-HTTP and SSH forced-command harnesses counted green; the real-sshd cell is still skipped on the proving host and remains NOT PROVEN, owned by Part XXII) | tests/test_transport_battery.py, tests/test_part_iv_gate.py; re-judged at S-399 (F-01) |
+| C-10 | The server runs on Windows and macOS, and on ARM down to a Raspberry Pi | NOT PROVEN (Linux x86-64 proven; Pi-class performance budgets MEASURED on a Raspberry Pi 5 at S-395, docs/perf-verification-s395.md; Windows, macOS and the full matrix unproven) | Part XXII (cross-platform proof matrix, S-405..S-416) owns this proof; re-judged at S-399 (F-02) |
+| C-11 | The face is designed under the Cyber-Viking Visual Design Lawbook and passes its ship gate | PROVEN (scoped: the Book XIV ship gate counted PASSED at the Part XX gate, S-392, over the finished UI machinery S-381..S-391; serving that face end-to-end waits on the live composition, F-10) | tests/test_part_xx_gate.py; re-judged at S-399 (F-03), document: docs/PART_XX_GATE.md |
+| C-12 | Samverk mirrors Volmarr's original repositories onto his own machines and keeps them current | PROVEN (scoped: mirroring machinery, freshness law and restore proof counted green at the Part XVII gate, S-344; a continuously running live fleet is an operational state, not a test result) | tests/test_part_xvii_gate.py; re-judged at S-399 (F-04), document: docs/PART_XVII_GATE.md |
 
 ## Part XV claims (S-312 extension)
 
@@ -70,3 +70,37 @@ re-checks these rows mechanically on every run.
   remainder is part of the claim's honest state, not fine print.
 - When a NOT PROVEN claim is proven, its row flips in the same
   commit as the proof, and the project map records it.
+
+## Final register (S-399)
+
+At 398/416 every remaining public claim -- the part gates
+XVI-XX, the Part XXI counted artifacts, the cross-cutting
+claims, the README's dated snapshots, and the README items
+only Volmarr can settle -- was judged against the tree.
+The law module is `samverk/claims_register_final.py`; its
+battery is `tests/test_claims_register_final.py`; the
+counted log ships at `docs/claims-register-final-s399.md`.
+Statuses: PROVEN / PROVEN (scoped) rest on the named
+counted evidence; NOT PROVEN names its owner; OPEN names
+Volmarr (the README is never edited by this campaign);
+HISTORICAL marks a dated snapshot read as history.
+
+| ID | Claim (source, in substance) | Status | Evidence / owner |
+|---|---|---|---|
+| F-01 | C-09 re-judged: unmodified git client over SSH and smart HTTP (README virtue 4) | PROVEN (scoped: real-sshd cell remains NOT PROVEN, Part XXII) | tests/test_transport_battery.py, tests/test_part_iv_gate.py |
+| F-02 | C-10 re-judged: Windows, macOS, ARM down to a Raspberry Pi (README virtue 6) | NOT PROVEN | Part XXII (S-405..S-416); Pi-class budgets measured at S-395, docs/perf-verification-s395.md |
+| F-03 | C-11 re-judged: Cyber-Viking face passes its ship gate (README) | PROVEN (scoped: gate over the UI machinery; live serving is F-10) | tests/test_part_xx_gate.py, document: docs/PART_XX_GATE.md |
+| F-04 | C-12 re-judged: mirrors of Volmarr's originals kept current (README) | PROVEN (scoped: machinery and freshness law; live fleet operation is operational, not a test result) | tests/test_part_xvii_gate.py, document: docs/PART_XVII_GATE.md |
+| F-05 | Part XVI: native CI takes a sample repo from push to a green check on a PR | PROVEN | tests/test_part_xvi_gate.py |
+| F-06 | Part XVIII: fresh install from the written guide alone reaches a working instance (the gate record itself states the walk ran on x86-64, not Pi) | PROVEN | tests/test_part_xviii_gate.py, document: docs/PART_XVIII_GATE.md |
+| F-07 | S-396: an RC instance with real-shaped data upgrades per S-357 and verifies | PROVEN | tests/test_upgrade_drill.py, document: docs/upgrade-drill-s396.md |
+| F-08 | Part XIX: the Samtal seam -- linked identity, 90-cell permissions matrix, kill switch | PROVEN | tests/test_part_xix_gate.py, document: docs/PART_XIX_GATE.md |
+| F-09 | S-394: the v1.0 acceptance battery is assembled (the v1.0 tag, S-401, is not claimed) | PROVEN | tests/test_battery_v1.py |
+| F-10 | The feature services composed into one complete running forge served by samverk/server.py (README 2026-11-13 update, still accurate: only /, /healthz, /admin/status are routed) | NOT PROVEN | S-402 (founder usability walk) and the successor roadmap own this proof |
+| F-11 | The full suite is green | NOT PROVEN | Part XXI pin-refresh work (final census S-404); the counted master run stands at 6129 ran / 15 named stale-pin failures / 4 named skips, docs/COUNTED_MASTER_RUN.md |
+| F-12 | S-397: operator, admin and user guides walked by a fresh reader against a live instance | PROVEN | tests/test_docs_completeness.py, document: docs/documentation-completeness-s397.md |
+| F-13 | S-398: all 46 research studies complete or honestly open (43 complete, 3 open owned by S-403 -- 'all complete' is not claimed) | PROVEN | tests/test_research_corpus_audit.py, document: docs/research-corpus-audit-s398.md |
+| F-14 | Sovereignty: native systemd units ship, data in the owner's directories, no Docker (README virtue 3; Linux-scoped) | PROVEN | document: docs/SYSTEMD_UNITS.md; deploy/systemd/ unit files; C-08 tree scan in tests/test_claims_register.py |
+| F-15 | Samverk is AGPL-3.0 free software (README licence section) | PROVEN | document: LICENSE |
+| F-16 | The README's dated snapshots (founding Status; 2026-11-06 at 152/416; 2026-11-13 at 304/416) read as current position | HISTORICAL | Dated and superseded in place; the current position is 398/416, Parts I-XX through their gates; this register is the current authority |
+| F-17 | README wordings only Volmarr can settle: the founding Status bullet ('46 study areas, each an empty file' -- false today, S-398 counted all 46 populated) and the first paragraph's 'Samtel' for Samtal | OPEN | Volmarr -- recorded here, never edited and never silently passed; no Part owns a README edit |
