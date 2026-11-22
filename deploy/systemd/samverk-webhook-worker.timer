@@ -1,0 +1,14 @@
+# S-348: drain webhook deliveries once a minute. The service unit is
+# oneshot; this timer is the recurrence, kept separate so an operator
+# can change the cadence without touching the worker's hardening.
+[Unit]
+Description=Run the Samverk webhook delivery worker every minute
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+Persistent=true
+Unit=samverk-webhook-worker.service
+
+[Install]
+WantedBy=timers.target

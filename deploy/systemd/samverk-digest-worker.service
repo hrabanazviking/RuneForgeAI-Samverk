@@ -1,0 +1,44 @@
+# Samverk weekly digest worker -- S-348. A batch worker, not a daemon:
+# samverk/digest_job.py main() composes the last completed week's
+# digests and exits, so this unit is Type=oneshot and
+# samverk-digest-worker.timer is what makes it recur. Entry:
+# python3 -m samverk.digest_job <db-path> <repos-root> (the module's
+# own usage line). Composition only -- no mail leaves this process, so
+# it needs no network address families at all.
+[Unit]
+Description=Samverk weekly digest worker (one weekly run)
+Documentation=file:///usr/share/doc/samverk/SYSTEMD_UNITS.md
+After=network.target
+
+[Service]
+Type=oneshot
+User=samverk
+Group=samverk
+ExecStart=/usr/bin/python3 -m samverk.digest_job /var/lib/samverk/samverk.db /var/lib/samverk
+WorkingDirectory=/var/lib/samverk
+StateDirectory=samverk
+UMask=0027
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=samverk-digest-worker
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/samverk
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX
+PrivateDevices=true
+ProtectProc=invisible
+ProcSubset=pid
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
