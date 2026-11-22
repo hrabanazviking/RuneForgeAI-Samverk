@@ -157,6 +157,16 @@ class SmartHttpService:
                     "mirror_read_only",
                     write_refusal_message(
                         current.full_name, mirror_row[0]))
+            # S-353: maintenance mode -- pushes refuse with
+            # the operator's message, before any pack byte
+            # moves; admins retain access. Reads untouched.
+            from .maintenance_mode import decide_access, read_state
+            mm = decide_access(
+                read_state(self._conn),
+                is_admin=bool(viewer is not None and viewer.is_admin),
+                write=True)
+            if not mm.allowed:
+                raise TransportError("maintenance_mode", mm.message)
         if wiki:
             path = wiki_path_for(self._repos, current)
             if not WikiStore._is_bare_wiki(path):
