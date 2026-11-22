@@ -53,6 +53,17 @@ def build_parser() -> argparse.ArgumentParser:
              "(default: hidden prompt; the password is never "
              "taken from argv and never printed)")
 
+    p_mig = sub.add_parser("migrations", help="database migration register (S-358)")
+    mig_sub = p_mig.add_subparsers(dest="migrations_command", required=True)
+    p_mig_check = mig_sub.add_parser(
+        "check", help="check the register covers every migration, each with "
+                      "a down-path or a one-way warning")
+    p_mig_warn = mig_sub.add_parser(
+        "warnings", help="print the one-way warnings an upgrade would cross, "
+                         "in plain words, before upgrading")
+    p_mig_warn.add_argument("--from-version", type=int, default=0,
+                            help="schema version upgrading from (default: 0)")
+
     p_keys = sub.add_parser("keys", help="instance key custody (S-020)")
     keys_sub = p_keys.add_subparsers(dest="keys_command", required=True)
     for name, helptext in (
@@ -139,6 +150,28 @@ def main(argv: list[str] | None = None) -> int:
             conn.close()
         print(f"first admin created: {user.username} (id {user.id})")
         print("sign in to land on your home and its three first steps")
+        return 0
+    if args.command == "migrations":
+        from .database_migrations import (
+            REGISTER,
+            render_upgrade_warnings,
+            validate_register,
+        )
+        from .db import MIGRATIONS
+
+        if args.migrations_command == "check":
+            problems = validate_register(MIGRATIONS, REGISTER)
+            if problems:
+                for problem in problems:
+                    print(problem)
+                return 1
+            one_way = sum(1 for e in REGISTER if not e.reversible)
+            print(f"migration register OK: {len(REGISTER)} migrations, "
+                  f"numbered 1..{REGISTER[-1].version}, each with a "
+                  f"down-path or a one-way warning "
+                  f"({one_way} one-way, {len(REGISTER) - one_way} reversible)")
+            return 0
+        print(render_upgrade_warnings(REGISTER, args.from_version))
         return 0
     if args.command == "keys":
         from .keys import (
