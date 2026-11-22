@@ -51,7 +51,7 @@ event named here is a real event-store verb.
 ## Events, per event
 
 
-### account (29)
+### account (30)
 
 | Event | Scope | Meaning | detail may carry |
 |---|---|---|---|
@@ -84,6 +84,7 @@ event named here is a real event-store verb.
 | `auth.deletion.execute` | none | Account irreversibly deleted after grace (S-043) | `username` |
 | `auth.identity.link` | none | External identity linked (S-045) | `provider` |
 | `auth.identity.unlink` | none | External identity unlinked (S-045) | `provider` |
+| `auth.abuse_report.filed` | none | Abuse report filed (S-355) | `report_id`, `reason`, `audit_context` |
 
 ### repository (19)
 
@@ -214,7 +215,7 @@ event named here is a real event-store verb.
 | `repo.branch.delete_on_merge` | repository | Head branch deleted when its pull request merged, under the repository's delete_branch_on_merge opt-in; the deletion is tombstoned for restore (S-159) | `number`, `branch`, `head_repo`, `oid`, `merge` |
 | `repo.branch.restore` | repository | A deleted branch restored from its tombstone at the recorded head oid (S-159) | `branch`, `oid`, `deleted_branch_id` |
 
-### administration (13)
+### administration (16)
 
 | Event | Scope | Meaning | detail may carry |
 |---|---|---|---|
@@ -231,6 +232,9 @@ event named here is a real event-store verb.
 | `admin.user.suspend` | none | Admin suspended an account, with reason (S-044) | `reason` |
 | `admin.user.unsuspend` | none | Admin lifted a suspension (S-044) | `reason` |
 | `admin.index.rebuild` | none | Admin triggered a search-index rebuild for a repository (S-215) | `kinds`, `generations`, `jobs` |
+| `admin.abuse_report.acknowledged` | none | Admin acknowledged an abuse report (S-355) | `report_id` |
+| `admin.abuse_report.resolved` | none | Admin resolved an abuse report, with a reason (S-355) | `report_id`, `reason` |
+| `admin.abuse_report.dismissed` | none | Admin dismissed an abuse report, with a reason (S-355) | `report_id`, `reason` |
 
 ### organization (2)
 
