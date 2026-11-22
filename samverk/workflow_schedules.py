@@ -647,9 +647,9 @@ def audit_workflow_schedules(conn: sqlite3.Connection) -> ScheduleAudit:
             "ci", parse_triggers("push")) == ())
     taxonomy_ok = (
         len(taxonomy.AUDIT_EVENTS) == 142
-        and len(taxonomy.AUTH_EVENTS) == 33
+        and len(taxonomy.AUTH_EVENTS) == 34
         and len(taxonomy.REPO_EVENTS) == 92
-        and len(taxonomy.ADMIN_EVENTS) == 13)
+        and len(taxonomy.ADMIN_EVENTS) == 16)
     tables = [r["name"] for r in conn.execute(
         "SELECT name FROM sqlite_master"
         " WHERE type = 'table' ORDER BY name").fetchall()]

@@ -567,9 +567,9 @@ def audit_check_reporting(conn: sqlite3.Connection
     from .db import schema_version as _schema_version
     version = _schema_version(conn)
     events_ok = (len(taxonomy.AUDIT_EVENTS) == 142
-                 and len(taxonomy.AUTH_EVENTS) == 33
+                 and len(taxonomy.AUTH_EVENTS) == 34
                  and len(taxonomy.REPO_EVENTS) == 92
-                 and len(taxonomy.ADMIN_EVENTS) == 13)
+                 and len(taxonomy.ADMIN_EVENTS) == 16)
     vocabulary_ok = (
         tuple(RUNNER_CONCLUSIONS)
         == tuple(CHECK_RUN_CONCLUSIONS)

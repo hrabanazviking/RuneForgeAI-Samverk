@@ -618,9 +618,9 @@ def audit_configuration(conn: sqlite3.Connection) -> ConfigurationAudit:
         and clean.config.port == 8737)
     taxonomy_ok = (
         len(taxonomy.AUDIT_EVENTS) == 142
-        and len(taxonomy.AUTH_EVENTS) == 33
+        and len(taxonomy.AUTH_EVENTS) == 34
         and len(taxonomy.REPO_EVENTS) == 92
-        and len(taxonomy.ADMIN_EVENTS) == 13)
+        and len(taxonomy.ADMIN_EVENTS) == 16)
     tables = [r["name"] for r in conn.execute(
         "SELECT name FROM sqlite_master"
         " WHERE type = 'table' ORDER BY name").fetchall()]

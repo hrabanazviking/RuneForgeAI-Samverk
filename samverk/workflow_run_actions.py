@@ -839,9 +839,9 @@ def audit_workflow_run_actions(conn: sqlite3.Connection
     version = _schema_version(conn)
     events_ok = (
         len(taxonomy.AUDIT_EVENTS) == 142
-        and len(taxonomy.AUTH_EVENTS) == 33
+        and len(taxonomy.AUTH_EVENTS) == 34
         and len(taxonomy.REPO_EVENTS) == 92
-        and len(taxonomy.ADMIN_EVENTS) == 13
+        and len(taxonomy.ADMIN_EVENTS) == 16
         and all(event in taxonomy.REPO_EVENTS
                 for event in EVENT_BY_ACTION.values()))
     vocabulary_ok = (
