@@ -3453,6 +3453,20 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         " state TEXT NOT NULL, repo_id INTEGER REFERENCES repositories(id),"
         " note TEXT NOT NULL DEFAULT '', imported_at INTEGER NOT NULL)",
     ]),
+    # S-336: first-pass mirror runs -- one row per mirror
+    # per first-pass run: its phase (proof or batch), its
+    # state (verified or failed), the four ref counts of
+    # the ref-for-ref comparison (matched, missing, extra,
+    # diverged), the plain detail, and when it ran.
+    (138, [
+        "CREATE TABLE first_pass_mirror_runs (id INTEGER PRIMARY KEY,"
+        " full_name TEXT NOT NULL, repo_id INTEGER NOT NULL"
+        " REFERENCES repositories(id), phase TEXT NOT NULL,"
+        " state TEXT NOT NULL, refs_matched INTEGER NOT NULL,"
+        " refs_missing INTEGER NOT NULL, refs_extra INTEGER NOT NULL,"
+        " refs_diverged INTEGER NOT NULL, detail TEXT NOT NULL,"
+        " run_at INTEGER NOT NULL)",
+    ]),
 ]
 
 

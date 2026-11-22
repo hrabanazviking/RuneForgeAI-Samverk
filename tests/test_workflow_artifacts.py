@@ -402,7 +402,7 @@ class World(unittest.TestCase):
         audit = audit_workflow_artifacts(self.conn)
         self.assertTrue(audit.names_ok)
         self.assertTrue(audit.schema_ok)
-        self.assertEqual(audit.schema_version, 137)
+        self.assertEqual(audit.schema_version, 138)
         self.assertTrue(audit.events_ok)
         self.assertTrue(audit.tables_ok)
         self.assertEqual(audit.rows_scanned, 5)
@@ -423,8 +423,8 @@ class World(unittest.TestCase):
         self.assertIn("check name", audit.problems[0])
 
     def test_pins_schema_131_taxonomy_135(self):
-        self.assertEqual(schema_version(self.conn), 137)
-        self.assertEqual(db.MIGRATIONS[-1][0], 137)
+        self.assertEqual(schema_version(self.conn), 138)
+        self.assertEqual(db.MIGRATIONS[-1][0], 138)
         self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)

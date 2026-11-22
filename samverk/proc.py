@@ -439,6 +439,51 @@ def run_git_fetch_from(
 
 
 
+def run_git_ls_remote_refs(
+    source: str | Path,
+    *,
+    timeout: float = 120.0,
+    token: str | None = None,
+    token_username: str = "x-access-token",
+) -> subprocess.CompletedProcess:
+    """List one source's heads and tags -- the S-336
+    verification seam, and the only ls-remote in Samverk.
+
+    Ref-for-ref verification needs the refs a source
+    advertises *now*, read without fetching: this seam
+    builds its argv itself (the source, then the two
+    fixed patterns of the mirror refspec's scope), so no
+    caller string can widen the listing. The source is
+    either a trusted local `Path` or a remote URL string
+    validated by `validate_remote_url`; tokens use the
+    same askpass environment as the fetch seam and are
+    never logged.
+    """
+    if isinstance(source, Path):
+        if not source.is_absolute():
+            raise ProcRefused(
+                "ls_remote_source_not_trusted",
+                "a local ls-remote source must be a resolved Path object")
+        source_arg = str(source)
+    else:
+        source_arg = validate_remote_url(source)
+    executable = resolve_program("git")
+    argv = [str(executable), "ls-remote", source_arg,
+            "refs/heads/*", "refs/tags/*"]
+    if token is None:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env())
+    env_extra, tempdir = _askpass_env(token, token_username)
+    try:
+        return subprocess.run(
+            argv, shell=False, timeout=timeout,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=_clean_env(env_extra))
+    finally:
+        tempdir.cleanup()
+
 def run_git_push_to(
     repo_path: Path,
     target: str | Path,

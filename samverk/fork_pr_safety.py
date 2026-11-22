@@ -704,7 +704,7 @@ def audit_fork_pr_safety(conn: sqlite3.Connection) -> ForkSafetyAudit:
         levels_ok=tuple(PERMISSION_LEVELS)
         == ("none", "read", "write")
         and set(PERMISSION_VALUES) == set(PERMISSION_LEVELS),
-        schema_version=version, schema_ok=version == 137,
+        schema_version=version, schema_ok=version == 138,
         events_ok=events_ok,
         tables_scanned=len(tables),
         columns_scanned=columns_scanned,
