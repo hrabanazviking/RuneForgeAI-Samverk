@@ -124,12 +124,14 @@ class RepositoryStore:
         accounts: AccountStore,
         audit: AuditLog | None = None,
         time_fn: Callable[[], float] = time.time,
+        site_settings=None,
     ):
         self._conn = conn
         self._data_root = Path(data_root)
         self._accounts = accounts
         self._audit = audit
         self._now = time_fn
+        self._site_settings = site_settings
 
     # -- paths ---------------------------------------------------
     def path_for(self, owner: object, repo: object) -> Path:
@@ -164,7 +166,7 @@ class RepositoryStore:
     # -- S-049: creation ------------------------------------------
     def create_repository(
         self, actor_user_id: int, owner: object, repo: object,
-        *, description: str = "", visibility: str = DEFAULT_VISIBILITY,
+        *, description: str = "", visibility: str | None = None,
         default_branch: str = DEFAULT_BRANCH,
         source_ip: str | None = None,
     ) -> Repository:
@@ -177,6 +179,13 @@ class RepositoryStore:
                 "not_repo_owner",
                 "Only the owner account can create its repositories.")
         description = _validate_description(description)
+        if visibility is None:
+            # S-352: an unnamed visibility is born with the site
+            # default when a site-settings service is wired,
+            # else the historic private default.
+            visibility = (self._site_settings.default_repo_visibility()
+                          if self._site_settings is not None
+                          else DEFAULT_VISIBILITY)
         visibility = _validate_visibility(visibility)
         default_branch = validate_branch_name(default_branch)
         if self.get_repository(owner_lower, repo_lower) is not None:
