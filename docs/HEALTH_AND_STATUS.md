@@ -12,13 +12,13 @@ health read creates nothing and migrates nothing):
 - a real `SELECT 1` against the file,
 - the schema version, read through the database layer's own
   `schema_version`, judged against the current migration head
-  (**139**).
+  (**140**).
 
 Answers:
 
 | State | HTTP | Body |
 |---|---|---|
-| Database up, schema current | 200 | `{"status": "ok", "db": "up", "schema_version": 139, ...}` |
+| Database up, schema current | 200 | `{"status": "ok", "db": "up", "schema_version": 140, ...}` |
 | No database file yet (bare checkout, nothing initialised) | 200 | `{"status": "ok", "db": "missing", "schema_version": null, "reason": "database_not_initialised"}` |
 | Database file stands but cannot be read | 503 | `{"status": "down", "db": "down", "schema_version": null, "reason": "database_unreachable"}` |
 | Database readable, schema not current | 503 | `{"status": "down", "db": "up", "schema_version": <n>, "reason": "schema_mismatch"}` |
@@ -82,4 +82,4 @@ file in the tree (disk numbers move).
   links `GET /admin/status` — nothing here depends on it.
 - No migration and no new taxonomy event: health reads write
   nothing and audit nothing (S-215's law for reads). Schema stands
-  at **139**, taxonomy at **138**.
+  at **140**, taxonomy at **142** (coordinator pin sweep at S-359 banking).

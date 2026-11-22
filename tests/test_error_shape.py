@@ -267,7 +267,7 @@ class ErrorShapeTests(unittest.TestCase):
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
-        self.assertEqual(families, {"auth": 33, "repo": 92, "admin": 13})
+        self.assertEqual(families, {"auth": 34, "repo": 92, "admin": 16})
         self.assertEqual(
             PROBLEM_FIELDS,
             ("type", "title", "status", "detail", "error_id"))

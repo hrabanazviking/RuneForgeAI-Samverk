@@ -71,7 +71,9 @@ makes both faces honest:
 No migration (the slice reads standing tables and
 writes nothing) and no new taxonomy event (health
 reads audit nothing, exactly as S-215's reads do):
-the schema stands at 139 and the taxonomy at 138.
+the schema stands at 140 and the taxonomy at 142
+(coordinator pin sweep at S-359 banking: S-355/S-358 landed
+after this slice was built).
 """
 from __future__ import annotations
 

@@ -116,15 +116,15 @@ class WorldTests(unittest.TestCase):
             fn(*args)
         return ctx.exception.reason
 
-    def test_pins_schema_139_taxonomy_138(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(EXPECTED_SCHEMA_VERSION, 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+    def test_pins_schema_140_taxonomy_142(self):
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(EXPECTED_SCHEMA_VERSION, 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     def test_probe_healthy_database(self):
         report = probe_database(self.root / "samverk.db")
-        self.assertEqual((report.status, report.db, report.schema_version), ("ok", "up", 139))
+        self.assertEqual((report.status, report.db, report.schema_version), ("ok", "up", 140))
         via_conn = probe_connection(self.conn, self.root / "samverk.db")
         self.assertEqual(via_conn.status, "ok")
 
@@ -148,7 +148,7 @@ class WorldTests(unittest.TestCase):
     def test_status_numbers_are_real_and_fresh(self):
         first = self.service.status(self.admin.id)
         self.assertEqual(first.overall, "ok")
-        self.assertEqual(first.database.schema_version, 139)
+        self.assertEqual(first.database.schema_version, 140)
         self.assertEqual(first.database.user_count, 2)
         self.assertEqual(first.database.repo_count, 1)
         self.assertGreater(first.database.size_bytes, 0)
@@ -170,7 +170,7 @@ class WorldTests(unittest.TestCase):
         page = render_status_page(third)
         self.assertIn("Index lag: 90 seconds", page)
         self.assertIn("1 jobs waiting or in flight", page)
-        self.assertIn("schema version 139 of 139", page)
+        self.assertIn("schema version 140 of 140", page)
 
     def test_dead_work_degrades_and_page_names_it(self):
         with self.conn:
@@ -222,7 +222,7 @@ class HttpTests(unittest.TestCase):
         status, body = self._get(port, "/healthz")
         payload = json.loads(body)
         self.assertEqual((status, payload["status"], payload["db"], payload["schema_version"]),
-                         (200, "ok", "up", 139))
+                         (200, "ok", "up", 140))
         (self.root / "samverk.db").write_bytes(b"garbage, not sqlite")
         status, body = self._get(port, "/healthz")
         payload = json.loads(body)
@@ -249,7 +249,7 @@ class HttpTests(unittest.TestCase):
         page = body.decode("utf-8")
         self.assertIn("Instance status", page)
         self.assertIn("Index lag: 0 seconds", page)
-        self.assertIn("schema version 139 of 139", page)
+        self.assertIn("schema version 140 of 140", page)
 
 
 if __name__ == "__main__":
