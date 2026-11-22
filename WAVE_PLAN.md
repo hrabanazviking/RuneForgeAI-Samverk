@@ -5,6 +5,7 @@
 - Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-360 (360/416).
 - Crew mustered: 2026-11-22 07:52 EST (new-regime crew, Volmarr order 2026-11-22)
 - Last slice banked: S-360 at 2026-11-22 12:19 EST
+- Wave 351-360 full-suite run: STARTED 2026-11-22 12:20 EST in background (sharded runner tools/run_suite_sharded.py --workers 8 --label wave360, setsid-detached, logs hidden_files/shards-wave360/); non-blocking per new regime — banking continues regardless; any regression it finds becomes the immediate next work.
 - Governing full suite at S-326: 5276 tests - Ran 5276 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
