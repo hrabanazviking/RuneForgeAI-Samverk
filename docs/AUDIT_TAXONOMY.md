@@ -3501,3 +3501,15 @@ first_pass_mirror_runs (migration 138, schema
 their own status; a verification is a reading,
 not an act on a repository, so the taxonomy
 itself is unmoved.)
+
+S-349 (2026-11-22) added no event of its own:
+138 events stand. (Its install walk, in
+samverk/install_walk.py, bootstraps the first
+administrator on an empty instance through
+S-025 registration -- which keeps its own
+auth.signup.success -- and witnesses the
+promotion with the standing
+admin.user.role_change, detail from member,
+to admin, via install_walk. A bootstrap is a
+role change, not a new kind of act, so the
+taxonomy itself is unmoved; schema stays 139.)
