@@ -1,0 +1,49 @@
+# Samverk server -- S-348. The one long-running process: web, API and
+# the transports' HTTP half (run model, S-345). Entry point is real:
+# samverk/cli.py main() -> serve subcommand -> samverk/server.py serve().
+[Unit]
+Description=Samverk server (web, API, Git HTTP)
+Documentation=file:///usr/share/doc/samverk/SYSTEMD_UNITS.md
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=samverk
+Group=samverk
+ExecStart=/usr/bin/python3 -m samverk serve --config /etc/samverk/samverk.ini
+WorkingDirectory=/var/lib/samverk
+StateDirectory=samverk
+ConfigurationDirectory=samverk
+Restart=on-failure
+RestartSec=5s
+UMask=0027
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=samverk-server
+# Hardening (S-348). The server needs only its data root writable and
+# outbound/inbound TCP; everything else is closed down.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/samverk
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+PrivateDevices=true
+ProtectProc=invisible
+ProcSubset=pid
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+# S-348: compose weekly digests on Monday at 06:00 local time (the job
+# composes the last completed week). Persistent=true catches up a run
+# missed while the machine was off.
+[Unit]
+Description=Run the Samverk weekly digest worker weekly
+
+[Timer]
+OnCalendar=Mon 06:00
+Persistent=true
+Unit=samverk-digest-worker.service
+
+[Install]
+WantedBy=timers.target

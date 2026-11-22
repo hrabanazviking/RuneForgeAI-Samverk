@@ -1,0 +1,43 @@
+# Samverk webhook delivery worker -- S-348. A batch worker, not a
+# daemon: samverk/webhook_delivery.py main() drains one due batch and
+# exits, so this unit is Type=oneshot and samverk-webhook-worker.timer
+# is what makes it recur. Entry: python3 -m samverk.webhook_delivery
+# <db-path> <repos-root> (the module's own usage line).
+[Unit]
+Description=Samverk webhook delivery worker (one due batch)
+Documentation=file:///usr/share/doc/samverk/SYSTEMD_UNITS.md
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+User=samverk
+Group=samverk
+ExecStart=/usr/bin/python3 -m samverk.webhook_delivery /var/lib/samverk/samverk.db /var/lib/samverk
+WorkingDirectory=/var/lib/samverk
+StateDirectory=samverk
+UMask=0027
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=samverk-webhook-worker
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/samverk
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+PrivateDevices=true
+ProtectProc=invisible
+ProcSubset=pid
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native

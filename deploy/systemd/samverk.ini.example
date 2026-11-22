@@ -1,0 +1,12 @@
+# Example Samverk configuration for the systemd install (S-348).
+# Install as /etc/samverk/samverk.ini. Every key is the one
+# samverk/config.py reads; environment variables (SAMVERK_*) override.
+[samverk]
+host = 127.0.0.1
+port = 8737
+data_root = /var/lib/samverk
+log_level = INFO
+# Set secure_cookies = true and provide tls_cert_file / tls_key_file
+# (or terminate TLS at a reverse proxy) before binding beyond loopback;
+# the server refuses non-loopback plaintext without an audited override
+# (S-015). See docs/SYSTEMD_UNITS.md.
