@@ -375,14 +375,14 @@ class AuditAndPageTests(unittest.TestCase):
         self.addCleanup(self.conn.close)
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     def test_audit_clean_on_live_instance(self):
         audit = audit_workflow_triggers(self.conn)
         self.assertTrue(audit.events_ok)
         self.assertTrue(audit.stands_cleanly, audit)
-        self.assertEqual(audit.events_scanned, 138)
+        self.assertEqual(audit.events_scanned, 142)
         self.assertGreater(audit.tables_scanned, 0)
 
     def test_audit_catches_planted_table(self):

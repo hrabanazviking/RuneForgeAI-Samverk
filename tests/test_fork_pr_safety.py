@@ -407,9 +407,9 @@ class DispatchRoadTests(unittest.TestCase):
             self.owner.id, "repo", BASE, "TOKEN", "second-value")
 
     def test_pins_hold(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
@@ -464,7 +464,7 @@ class DispatchRoadTests(unittest.TestCase):
         self.assertTrue(audit.schema_ok)
         self.assertEqual(audit.schema_version, 138)
         self.assertTrue(audit.events_ok)
-        self.assertEqual(audit.events_scanned, 138)
+        self.assertEqual(audit.events_scanned, 142)
         self.assertEqual(audit.offending_tables, ())
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())

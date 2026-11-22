@@ -88,9 +88,9 @@ class MetadataImportTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins(self):
         # S-338 adds migration 139 (provenance + runs) and
         # no new audit event: taxonomy stands at 138.
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     # -- pure source parsing ----------------------------------------
     def test_parse_github_source_variants(self):

@@ -78,9 +78,9 @@ class WholeInstanceExportTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------------
     def test_schema_and_taxonomy_pins_unchanged(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     # -- pure judgements --------------------------------------------
     def test_secret_names_are_judged_by_name(self):
@@ -164,7 +164,7 @@ class WholeInstanceExportTests(unittest.TestCase):
         import sqlite3 as s3
         conn = s3.connect(str(snap)); conn.row_factory = s3.Row
         try:
-            self.assertEqual(schema_version(conn), 139)
+            self.assertEqual(schema_version(conn), 140)
             count = conn.execute("SELECT COUNT(*) FROM repositories").fetchone()[0]
             self.assertEqual(count, 2)
         finally:

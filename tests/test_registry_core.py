@@ -87,9 +87,9 @@ class RegistryCoreTests(unittest.TestCase):
 
     # pins
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (
@@ -397,7 +397,7 @@ class RegistryCoreTests(unittest.TestCase):
         self.assertEqual(audit.offending_tables, ())
         self.assertEqual(audit.offending_columns, ())
         self.assertEqual(audit.offending_events, ())
-        self.assertEqual(audit.events_scanned, 138)
+        self.assertEqual(audit.events_scanned, 142)
         self.assertEqual(audit.operations_defined, 4)
         self.assertEqual(audit.seam_invariants, 8)
         self.assertGreater(audit.tables_scanned, 50)

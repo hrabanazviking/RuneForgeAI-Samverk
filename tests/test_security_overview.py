@@ -560,8 +560,8 @@ class SecurityOverviewTests(unittest.TestCase):
         self.assertEqual(rows, 0)
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)

@@ -69,10 +69,10 @@ class TaxonomyTests(unittest.TestCase):
         # S-158 added repo.pull_request.auto_merge_arm/
         # auto_merge_cancel/auto_merge_fire.
         # S-215 added admin.index.rebuild.
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
-        self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
+        self.assertEqual(len(taxonomy.AUTH_EVENTS), 34)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
-        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
+        self.assertEqual(len(taxonomy.ADMIN_EVENTS), 16)
 
     def test_names_are_well_formed(self):
         pattern = re.compile(r"^(auth|repo|admin)(\.[a-z0-9_]+)+$")

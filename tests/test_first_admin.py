@@ -211,9 +211,9 @@ class FirstAdminTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
     def test_no_migration_no_new_taxonomy_event(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertIn("admin.user.create", taxonomy.AUDIT_EVENTS)
 
 if __name__ == "__main__":

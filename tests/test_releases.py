@@ -93,9 +93,9 @@ class ReleaseTests(unittest.TestCase):
 
     # -- pins ------------------------------------------
     def test_pins_schema_100_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
@@ -119,7 +119,7 @@ class ReleaseTests(unittest.TestCase):
                         (str(target),))
             self.assertEqual(schema_version(conn), 100)
             db.migrate(conn)
-            self.assertEqual(schema_version(conn), 139)
+            self.assertEqual(schema_version(conn), 140)
             tables = {r["name"] for r in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             self.assertIn("releases", tables)

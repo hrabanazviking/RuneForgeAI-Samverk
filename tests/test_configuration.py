@@ -195,8 +195,8 @@ class AuditTests(unittest.TestCase):
         finally:
             conn.close()
         self.assertTrue(audit.stands_cleanly, audit)
-        self.assertEqual(audit.schema_version, 139)
-        self.assertEqual(audit.events_scanned, 138)
+        self.assertEqual(audit.schema_version, 140)
+        self.assertEqual(audit.events_scanned, 142)
 
 
 class CliTests(unittest.TestCase):

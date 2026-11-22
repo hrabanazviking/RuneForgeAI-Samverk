@@ -21,9 +21,9 @@ PW = "correct horse battery staple"
 
 class PureJudgementTests(unittest.TestCase):
     def test_schema_and_taxonomy_pins_unchanged(self):
-        self.assertEqual(EXPECTED_SCHEMA_VERSION, 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(EXPECTED_SCHEMA_VERSION, 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
     def test_python_floor(self):
         self.assertTrue(decide_python_ok((3, 11, 0))); self.assertTrue(decide_python_ok((3, 14, 4)))
         self.assertFalse(decide_python_ok((3, 10, 9))); self.assertFalse(decide_python_ok((2, 7, 18)))
@@ -89,7 +89,7 @@ class WalkRunTests(unittest.TestCase):
         self.assertGreater(report.elapsed_seconds, 0)
         conn = db.init_db(self.data / "samverk.db")
         try:
-            self.assertEqual(schema_version(conn), 139)
+            self.assertEqual(schema_version(conn), 140)
             admin = AccountStore(conn).get_by_username("volmarr")
             self.assertIsNotNone(admin); self.assertTrue(admin.is_admin)
         finally: conn.close()

@@ -203,11 +203,11 @@ class CustomPatternTests(unittest.TestCase):
     # -- schema / taxonomy pins ---------------------------------------
 
     def test_schema_stands_at_118(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
 
     def test_taxonomy_still_134(self):
-        self.assertEqual(len(AUDIT_EVENTS), 138)
+        self.assertEqual(len(AUDIT_EVENTS), 142)
 
     # -- the definition door -------------------------------------------
 

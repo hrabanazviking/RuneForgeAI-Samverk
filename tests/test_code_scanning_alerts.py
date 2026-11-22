@@ -154,9 +154,9 @@ class PinsTest(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.w.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.w.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     def test_reasons_registered(self):
         self.assertTrue(

@@ -167,10 +167,10 @@ class ConversionTests(unittest.TestCase):
     # -- schema / taxonomy / verdict seam -------------------
 
     def test_schema_taxonomy_and_verdict_stand(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(db.migrate(self.conn), 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(db.migrate(self.conn), 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         families = {}
         for event in taxonomy.AUDIT_EVENTS:
             families[event.split(".")[0]] = (

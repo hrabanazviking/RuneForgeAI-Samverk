@@ -110,9 +110,9 @@ class MentionRoutingTests(unittest.TestCase):
 
     # -- pins -------------------------------------------------------
     def test_pins_schema_99_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
@@ -124,8 +124,8 @@ class MentionRoutingTests(unittest.TestCase):
     def test_fresh_database_migrates_to_93(self):
         path = self.root / "fresh.db"
         conn = db.connect(path); self.addCleanup(conn.close)
-        self.assertEqual(db.migrate(conn), 139)
-        self.assertEqual(db.schema_version(conn), 139)
+        self.assertEqual(db.migrate(conn), 140)
+        self.assertEqual(db.schema_version(conn), 140)
 
     # -- pure law -----------------------------------------------------
     def test_parse_tokens_order_dedup_and_kinds(self):

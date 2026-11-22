@@ -170,8 +170,8 @@ class RelocationTests(unittest.TestCase):
 class PinsTests(unittest.TestCase):
     def test_no_migration_no_new_taxonomy_event(self):
         from samverk import db as db_mod
-        self.assertEqual(db_mod.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(db_mod.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
 
 if __name__ == "__main__":

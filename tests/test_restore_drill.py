@@ -64,9 +64,9 @@ class RestoreDrillTests(unittest.TestCase):
         self.drill = RestoreDrill(time_fn=lambda: 1700000100.0)
 
     def test_schema_and_taxonomy_pins_unchanged(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     def test_compare_counts_names_every_mismatch(self):
         manifest = {"repos_included": ["o/a", "o/b"], "repos_excluded": [], "lfs_objects": 1, "entries": [{}] * 5}

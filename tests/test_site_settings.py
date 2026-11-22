@@ -38,9 +38,9 @@ class SiteSettingsTests(unittest.TestCase):
         self.accounts = AccountStore(self.conn, audit=self.audit, site_settings=self.site)
         self.repos = RepositoryStore(self.conn, self.data_root, self.accounts, site_settings=self.site)
     def test_pins_unchanged(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
     def test_defaults(self):
         s = self.site.get_settings()
         self.assertEqual(s, SiteSettings())

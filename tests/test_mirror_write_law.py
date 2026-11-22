@@ -70,9 +70,9 @@ class MirrorWriteLawTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     # -- the pure judgement --------------------------------------
     def test_pure_decision_refuses_a_mirror_with_reason(self):

@@ -203,10 +203,10 @@ class RealSeamsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn = init_db(Path(td) / "samverk.db")
             try:
-                self.assertEqual(schema_version(conn), 139)
+                self.assertEqual(schema_version(conn), 140)
             finally:
                 conn.close()
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
 
 class DrawingAndWordsTest(unittest.TestCase):

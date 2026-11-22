@@ -206,9 +206,9 @@ class QuotaTests(unittest.TestCase):
 
     # -- pins ---------------------------------------------------
     def test_no_migration_no_new_taxonomy_event(self):
-        self.assertEqual(db.schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(AUDIT_EVENTS), 138)
+        self.assertEqual(db.schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(AUDIT_EVENTS), 142)
 
 if __name__ == "__main__":
     unittest.main()

@@ -200,9 +200,9 @@ class PartXIVGateTests(unittest.TestCase):
 
     # -- pins --------------------------------------------
     def test_pins_schema_114_taxonomy_133(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
         self.assertEqual(len(taxonomy.AUTH_EVENTS), 33)
         self.assertEqual(len(taxonomy.REPO_EVENTS), 92)
         self.assertEqual(len(taxonomy.ADMIN_EVENTS), 13)
@@ -810,7 +810,7 @@ class PartXIVGistDiscussionGateTests(unittest.TestCase):
         self.assertEqual(VERDICT, "build")
         audit = audit_discussions_verdict(self.conn)
         self.assertTrue(audit.build_queued_cleanly, audit)
-        self.assertEqual(audit.events_scanned, 138)
+        self.assertEqual(audit.events_scanned, 142)
         self.assertEqual(get_feature("polls").judgement, "deferred")
         self.assertEqual(decide_discussion_request("polls"), "discussions_deferred")
 

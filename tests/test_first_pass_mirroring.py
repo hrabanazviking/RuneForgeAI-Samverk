@@ -99,9 +99,9 @@ class FirstPassTests(unittest.TestCase):
 
     # -- pins ------------------------------------------------------
     def test_schema_and_taxonomy_pins(self):
-        self.assertEqual(schema_version(self.conn), 139)
-        self.assertEqual(db.MIGRATIONS[-1][0], 139)
-        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 138)
+        self.assertEqual(schema_version(self.conn), 140)
+        self.assertEqual(db.MIGRATIONS[-1][0], 140)
+        self.assertEqual(len(taxonomy.AUDIT_EVENTS), 142)
 
     # -- pure ref judgement ------------------------------------------
     def test_compare_exact_maps_verify(self):
