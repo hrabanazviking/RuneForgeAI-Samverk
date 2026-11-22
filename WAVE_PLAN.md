@@ -2,13 +2,15 @@
 
 ## Base
 - Main checkout: /home/volmarr/samverk-forge (branch main), base 438e568 (S-323 merge) -- origin/main verified after banking push this tick (2026-11-15 23:08 EST keeper tick).
-- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-337 (337/416).
+- Roadmap: docs/SAMVERK_MASSIVE_ROADMAP.md, 416 slices. Banked: S-001..S-338 (338/416).
+- Crew mustered: 2026-11-22 07:52 EST (new-regime crew, Volmarr order 2026-11-22)
+- Last slice banked: S-337 at 2026-11-22 07:55 EST
 - Governing full suite at S-326: 5276 tests - Ran 5276 OK skipped=4 / 0 failed (skips = S-095 named real-sshd cell + S-159 named GC environment skip + S-292 two named no-detector-layer guards, which skip on the merged tree by design). PART IX GATE PASSED at S-204. PART X GATE PASSED at S-220. PART XI GATE PASSED at S-236. PART XII GATE PASSED at S-256. PART XIII GATE PASSED at S-272. PART XIV GATE PASSED at S-288. PART XV GATE PASSED at S-312.
 - All work on purplelongship. NO Docker. README.md is NEVER touched.
 
 ## Team layout (10 teams x 6 Mythic Engineering sub-agents = 60)
 - team-01 → S-343 (S-333 banked 2026-11-20, keeper) · team-02 → S-344 (S-334 banked 2026-11-20, keeper) · team-03 → S-345 (S-335 banked 2026-11-21, keeper) · team-04 → S-346 (S-336 banked 2026-11-22, keeper) · team-05 → S-347 (S-337 banked 2026-11-22, coordinator, new banking law)
-- team-06 → S-338 (S-328 banked 2026-11-17, keeper) · team-07 → S-339 (S-329 banked 2026-11-18, keeper) · team-08 → S-340 (S-330 banked 2026-11-18, keeper) · team-09 → S-341 (S-331 banked 2026-11-19, keeper) · team-10 → S-342 (S-332 banked 2026-11-20, keeper)
+- team-06 → S-348 (S-338 banked 2026-11-22, coordinator, new banking law) · team-07 → S-339 (S-329 banked 2026-11-18, keeper) · team-08 → S-340 (S-330 banked 2026-11-18, keeper) · team-09 → S-341 (S-331 banked 2026-11-19, keeper) · team-10 → S-342 (S-332 banked 2026-11-20, keeper)
 - Worktrees: ~/samverk-team-NN on branch yrsa/samverk-team-NN, each with CAMPAIGN_STATE.md.
 - After a team banks its slice it immediately takes the next unassigned slice in roadmap order (S-163, S-164, ...).
 
