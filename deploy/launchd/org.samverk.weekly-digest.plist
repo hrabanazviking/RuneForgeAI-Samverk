@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>org.samverk.weekly-digest</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/bin/python3</string>
+		<string>-m</string>
+		<string>samverk.digest_job</string>
+		<string>/Library/Application Support/Samverk/samverk.db</string>
+		<string>/Library/Application Support/Samverk</string>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/Library/Application Support/Samverk/logs/weekly-digest.err.log</string>
+	<key>StandardOutPath</key>
+	<string>/Library/Application Support/Samverk/logs/weekly-digest.out.log</string>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>6</integer>
+		<key>Minute</key>
+		<integer>0</integer>
+		<key>Weekday</key>
+		<integer>1</integer>
+	</dict>
+	<key>UserName</key>
+	<string>_samverk</string>
+	<key>WorkingDirectory</key>
+	<string>/Library/Application Support/Samverk</string>
+</dict>
+</plist>
