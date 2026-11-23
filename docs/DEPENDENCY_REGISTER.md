@@ -35,3 +35,13 @@ so no unregistered import can drift in.
   imported by Samverk code, and is not a runtime dependency.
 - The test suite runs on the stdlib `unittest` — no test-only
   dependencies are admitted either.
+
+## Replaceability (S-407)
+
+Every dependency above — plus the external programs (git, gpg),
+SQLite, CPython itself, the build-only setuptools backend, and
+the reference runner's POSIX shell — names its equivalent or
+replacement path per OS in `docs/DEPENDENCY_REPLACEABILITY.md`
+(register: `samverk/dependency_replaceability.py`). An
+irreplaceable dependency is a defect under the
+Never-Leave-A-Bug law; at S-407 none is irreplaceable.
