@@ -388,7 +388,7 @@ class PinsAndAuditTests(unittest.TestCase):
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
         self.assertEqual({e for e in taxonomy.AUDIT_EVENTS if "workflow" in e}, {"repo.workflow_run.rerun_all", "repo.workflow_run.rerun_failed", "repo.workflow_run.cancel"})
 
     def test_limits_are_the_stated_ones(self):

@@ -42,6 +42,8 @@ process creation, because the allowlist policy lives there.
 | samverk/reference_runner.py | process | External reference runner under S-014 law; parity tooling |
 | samverk/seam_battery.py | process | Battery harness git calls; test tooling |
 | samverk/upgrade_drill.py | process | Upgrade-drill git calls; operator tooling |
+| samverk/windows_service.py | process | subprocess.list2cmdline only: pure quoting for sc.exe registration strings; creates no process |
+| samverk/windows_service_host.py | process | SCM service host spawns its own Samverk child (subprocess.Popen); platform-host code |
 
 ## Categories with zero touchpoints outside the seam
 

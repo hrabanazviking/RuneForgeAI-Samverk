@@ -34,6 +34,8 @@ INVENTORY = {
     "reference_runner.py": {"process": "Runs the external reference implementation under the S-014 subprocess law for parity checks; not forge-core process creation."},
     "seam_battery.py": {"process": "Battery harness: shells to git to build seam fixtures; test tooling, not shipped runtime."},
     "upgrade_drill.py": {"process": "Upgrade drill tooling: shells to git against drill repos; operator tooling, not shipped runtime."},
+    "windows_service.py": {"process": "Windows service registration (S-406 sibling): subprocess.list2cmdline is pure command-line quoting for sc.exe registration strings; it creates no process."},
+    "windows_service_host.py": {"process": "Windows service host: the SCM host process itself spawns its Samverk child via subprocess.Popen; platform-host code that cannot route through the seam it hosts."},
 }
 
 

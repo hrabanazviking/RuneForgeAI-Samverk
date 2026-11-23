@@ -157,7 +157,7 @@ class AnswerMarkingTests(unittest.TestCase):
             families[event.split(".")[0]] = (
                 families.get(event.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
 
     def test_verdict_audit_still_clean(self):
         audit = audit_discussions_verdict(self.conn)

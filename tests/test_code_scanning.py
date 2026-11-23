@@ -547,7 +547,7 @@ class PinsTests(unittest.TestCase):
         self.assertEqual(spec.scope, "repository")
         audit = audit_webhook_events()
         self.assertTrue(audit.ratified, audit.problems)
-        self.assertEqual(audit.verbs_checked, 138)
+        self.assertEqual(audit.verbs_checked, 142)
 
 
 if __name__ == "__main__":

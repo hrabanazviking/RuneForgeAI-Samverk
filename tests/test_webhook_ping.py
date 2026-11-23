@@ -205,7 +205,7 @@ class PinTests(WorldCase):
             families[name.split(".")[0]] = (
                 families.get(name.split(".")[0], 0) + 1)
         self.assertEqual(
-            families, {"auth": 33, "repo": 92, "admin": 13})
+            families, {"auth": 34, "repo": 92, "admin": 16})
 
     def test_ping_ledger_table_stands(self):
         cols = {r["name"] for r in self.w.conn.execute(
