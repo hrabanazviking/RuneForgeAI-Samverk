@@ -81,6 +81,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
+from .platform_seam import restrict_to_owner
 from .accounts import AccountStore, User
 from .audit import AuditLog
 from .escaping import escape_html_text
@@ -448,7 +449,7 @@ class ReleaseAssetStore:
         ensure_dir(staging.parent)
         staging.write_bytes(b"")
         try:
-            staging.chmod(0o600)
+            restrict_to_owner(staging)
         except OSError:
             pass  # non-POSIX filesystems govern their own ACLs
         return session
@@ -537,7 +538,7 @@ class ReleaseAssetStore:
         if not final.exists():
             final.write_bytes(data)
             try:
-                final.chmod(0o600)
+                restrict_to_owner(final)
             except OSError:
                 pass
         now = int(self._now())

@@ -22,12 +22,16 @@ from __future__ import annotations
 
 import os
 import platform
+import stat
 import sys
 from pathlib import Path
 
 __all__ = [
     "os_name",
     "machine",
+    "platform_string",
+    "restrict_to_owner",
+    "make_owner_executable",
     "data_root_default",
     "ensure_dir",
     "secret_file_is_private",
@@ -54,6 +58,25 @@ def os_name() -> str:
 def machine() -> str:
     """Return the CPU architecture string (e.g. 'x86_64', 'aarch64')."""
     return platform.machine()
+
+
+def platform_string() -> str:
+    """Full platform description string (diagnostics/reporting)."""
+    return platform.platform()
+
+
+def restrict_to_owner(path: Path) -> Path:
+    """chmod *path* to owner-only (0o600) on POSIX; no-op on Windows."""
+    if os_name() != "windows":
+        path.chmod(0o600)
+    return path
+
+
+def make_owner_executable(path: Path) -> Path:
+    """chmod *path* to owner rwx (S_IRWXU) on POSIX; no-op on Windows."""
+    if os_name() != "windows":
+        path.chmod(stat.S_IRWXU)
+    return path
 
 
 def data_root_default() -> Path:

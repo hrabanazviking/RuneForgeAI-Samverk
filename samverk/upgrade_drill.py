@@ -50,11 +50,12 @@ instances only.
 """
 from __future__ import annotations
 
-import os, platform, subprocess, time
+import os, subprocess, time
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import db
+from .platform_seam import machine as seam_machine, platform_string as seam_platform_string
 from .accounts import AccountStore
 from .config import Config
 from .db import schema_version
@@ -304,8 +305,8 @@ def run_drill(base: Path) -> dict:
                 + [f"leg-b-rollback: {p}" for p in leg_b["problems"]])
     passed = judge_drill(leg_a["ok"], leg_b["ok"], problems)
     return {"slice": "S-396", "procedure": "S-357",
-            "machine": platform.machine(),
-            "platform": platform.platform(),
+            "machine": seam_machine(),
+            "platform": seam_platform_string(),
             "rc_shape": expected_rc_counts(),
             "rc_users": [u for u, _a in RC_USERS],
             "rc_repos": [f"{o}/{n}" for o, n, _v, _c in RC_REPOS],

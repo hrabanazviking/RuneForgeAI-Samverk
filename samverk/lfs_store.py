@@ -36,6 +36,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from .platform_seam import restrict_to_owner
+
 _OID_RE = re.compile(r"^[0-9a-f]{64}$")
 _POINTER_VERSION = "version https://git-lfs.github.com/spec/v1"
 
@@ -144,7 +146,7 @@ class LFSStore:
             raise LFSError("oid_mismatch",
                            "The bytes do not hash to the claimed oid; "
                            "nothing was stored.")
-        os.chmod(tmp, 0o600)
+        restrict_to_owner(tmp)
         os.replace(tmp, dest)   # atomic publish
         return LFSObject(oid, len(data), deduped=False)
 

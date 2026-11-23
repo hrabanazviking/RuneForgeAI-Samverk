@@ -24,11 +24,11 @@ clone budget plainly, per hardware class, and measures it:
 
 from __future__ import annotations
 
-import platform
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
+from .platform_seam import machine as seam_machine
 from .proc import run_git_clone_local
 from .repo_size import measure_path
 
@@ -54,7 +54,7 @@ def hardware_class() -> str:
     before claiming the Pi budget, which is why measurements
     record the machine string alongside the class.
     """
-    machine = platform.machine().lower()
+    machine = seam_machine().lower()
     if machine in {"aarch64", "arm64", "armv7l", "armv6l"}:
         return "pi_class_arm"
     return "server_x86_64"
@@ -92,5 +92,5 @@ def measure_local_clone(source: Path, dest: Path, *,
     return CloneMeasurement(
         source=str(source), dest=str(dest), seconds=seconds,
         total_bytes=size.total_bytes, file_count=size.file_count,
-        hardware_class=cls, machine=platform.machine(),
+        hardware_class=cls, machine=seam_machine(),
         budget_seconds=budget, within_budget=seconds <= budget)

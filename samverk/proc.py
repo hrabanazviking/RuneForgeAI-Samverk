@@ -53,6 +53,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from .platform_seam import make_owner_executable
+
 ALLOWED_PROGRAMS = frozenset({"git", "gpg"})  # gpg: S-305 OpenPGP verification
 
 # The git subcommands Samverk's core may run. Part III (git core)
@@ -334,7 +336,7 @@ def _askpass_env(token: str, token_username: str) -> tuple[dict[str, str], objec
         "*Username*) printf '%s' \"$SAMVERK_IMPORT_USERNAME\" ;;\n"
         "*) printf '%s' \"$SAMVERK_IMPORT_TOKEN\" ;;\n"
         "esac\n")
-    script.chmod(stat.S_IRWXU)
+    make_owner_executable(script)
     env = {
         "GIT_ASKPASS": str(script),
         "GIT_TERMINAL_PROMPT": "0",

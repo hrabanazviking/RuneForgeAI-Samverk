@@ -82,10 +82,10 @@ measured over, and takes the measurement.
 """
 from __future__ import annotations
 
-import platform
 import time
 from dataclasses import dataclass
 
+from .platform_seam import machine as seam_machine
 from .code_search import CodeSearch
 from .escaping import escape_html_text
 from .repo_budgets import hardware_class
@@ -314,7 +314,7 @@ def measure_searches(search: CodeSearch, viewer, *,
             "repetitions_invalid",
             "Repetitions is a positive count.")
     cls = hardware if hardware is not None else hardware_class()
-    machine = platform.machine()
+    machine = seam_machine()
     measurements = []
     for kind, pattern in MEASURED_QUERIES:
         mode = "regex" if kind == "regex" else "substring"
