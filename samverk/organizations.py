@@ -51,6 +51,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
+from .platform_seam import restrict_to_owner
 from .accounts import RESERVED_USERNAMES, AccountStore
 from .audit import AuditLog
 from .escaping import escape_html_attr, escape_html_text
@@ -367,7 +368,7 @@ class OrganizationStore:
         if not promoted.exists():
             promoted.write_bytes(quarantine_path.read_bytes())
             try:
-                promoted.chmod(0o600)
+                restrict_to_owner(promoted)
             except OSError:
                 pass
         now = int(self._now())

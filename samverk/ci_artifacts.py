@@ -104,6 +104,7 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
+from .platform_seam import restrict_to_owner
 from .accounts import AccountStore
 from .api_auth import ApiAuthError, ApiAuthenticator, ApiIdentity
 from .audit import AuditLog
@@ -593,7 +594,7 @@ class CIArtifactsAPI:
         ensure_dir(staging.parent)
         staging.write_bytes(b"")
         try:
-            staging.chmod(0o600)
+            restrict_to_owner(staging)
         except OSError:
             pass
         return session_to_dict(session)
@@ -710,7 +711,7 @@ class CIArtifactsAPI:
         if not final.exists():
             final.write_bytes(data)
             try:
-                final.chmod(0o600)
+                restrict_to_owner(final)
             except OSError:
                 pass
         with self._conn:

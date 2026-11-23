@@ -49,11 +49,12 @@ stands at 140 and the taxonomy stands at 142.
 """
 from __future__ import annotations
 
-import platform, re
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from . import db, taxonomy
+from .platform_seam import machine as seam_machine, platform_string as seam_platform_string
 
 __all__ = ["EXPECTED_COUNT", "STUDIES", "StudyFile",
     "audit_corpus", "judge_audit", "audit_log_dict",
@@ -201,8 +202,8 @@ def judge_audit(problems: list, studies=STUDIES) -> bool:
 def audit_log_dict(problems: list) -> dict:
     complete = [s.filename for s in STUDIES if s.verdict == "complete"]
     open_ = [{"file": s.filename, "owner": s.owner, "evidence": s.evidence} for s in STUDIES if s.verdict == "open"]
-    return {"machine": platform.machine(),
-            "platform": platform.platform(),
+    return {"machine": seam_machine(),
+            "platform": seam_platform_string(),
             "schema": db.MIGRATIONS[-1][0],
             "taxonomy_events": len(taxonomy.AUDIT_EVENTS),
             "total": len(STUDIES), "complete": len(complete),

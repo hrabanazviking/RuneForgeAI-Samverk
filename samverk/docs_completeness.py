@@ -44,11 +44,12 @@ stands at 140 and the taxonomy stands at 142.
 """
 from __future__ import annotations
 
-import http.client, json, platform, re, threading
+import http.client, json, re, threading
 from dataclasses import dataclass
 from pathlib import Path
 
 from . import db, taxonomy
+from .platform_seam import machine as seam_machine, platform_string as seam_platform_string
 from .api_contract import API_RESOURCES
 from .config import Config
 from .db import schema_version
@@ -199,8 +200,8 @@ def walk_live_instance(root: Path, work: Path) -> dict:
 
 
 def walk_log_dict(checks: list) -> dict:
-    return {"machine": platform.machine(),
-            "platform": platform.platform(),
+    return {"machine": seam_machine(),
+            "platform": seam_platform_string(),
             "schema": db.MIGRATIONS[-1][0],
             "taxonomy_events": len(taxonomy.AUDIT_EVENTS),
             "guides": [g.guide_id for g in GUIDES],

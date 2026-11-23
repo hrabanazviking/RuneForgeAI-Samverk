@@ -70,10 +70,10 @@ re-measurement's machinery and its publication:
 """
 from __future__ import annotations
 
-import platform
 import time
 from dataclasses import dataclass
 
+from .platform_seam import machine as seam_machine
 from .escaping import escape_html_text
 from .file_browser import FileBrowser
 from .repo_budgets import hardware_class
@@ -168,7 +168,7 @@ def measure_browse(browser: FileBrowser, viewer, owner: str,
     summary = summarise(samples)
     return BrowseMeasurement(
         repo=f"{owner}/{repo}", entries=entries, summary=summary,
-        hardware_class=cls, machine=platform.machine(),
+        hardware_class=cls, machine=seam_machine(),
         budget_ms=budget, within_budget=judge(summary, budget))
 
 

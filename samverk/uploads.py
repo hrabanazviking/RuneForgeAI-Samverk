@@ -39,6 +39,7 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
+from .platform_seam import restrict_to_owner
 from .platform_seam import ensure_dir
 
 GENERIC_DECLARED = "application/octet-stream"
@@ -165,7 +166,7 @@ def save_to_quarantine(
         # untrusted until promoted, and untrusted stays private.
         path.write_bytes(data)
         try:
-            path.chmod(0o600)
+            restrict_to_owner(path)
         except OSError:
             pass  # non-POSIX filesystems govern their own ACLs
     return path
