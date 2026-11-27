@@ -84,6 +84,107 @@ keeps them current, so his creations never live only under a landlord's roof.
 What is proven will be counted; what is not proven will be named
 NOT PROVEN, in this README and everywhere else.
 
+## Engineering progress update — 2026-11-27
+
+### The first forge campaign reaches 414 of 416; the successor era begins
+
+> Repository inspection of `main` at [`04c7a124e5764`](https://github.com/hrabanazviking/RuneForgeAI-Samverk/commit/04c7a124e5764c8547667ad9815b66d50f4352e5) (2026-11-27 19:15 UTC). The latest inspected [keeper verification](https://github.com/hrabanazviking/RuneForgeAI-Samverk/commit/a04df425c2440fc1eb2627328f08aeeed1ef929c) records 414/416 at 14:12 EST. The last numbered slice banked was S-415, on November 23 at 10:19 EST. The subsequent keeper ticks are verification/bookkeeping, not new features; today's uploads extend the future roadmap. This is an additive news report: the November 6 and November 13 entries below remain historical snapshots.
+
+**Samverk has reached the end of the crew-bankable work of its original engineering campaign.** The first roadmap has grown from 152 banked slices on November 6, to 304 on November 13, to 414 today. The forge now contains a substantial body of collaboration, Git, security, CI, backup, administration, optional Samtal integration, UI, and portability machinery. The next challenge is to bring those components together into the running forge and prove it on real systems. **414/416 is a roadmap-accounting achievement, not a claim that the application is 99.5% production-ready.** A slice may bank a truthful failure record, a scoped proof, or a deliberate deferral.
+
+| Indicator | State at inspection |
+|---|---|
+| Original roadmap | **414/416 banked (99.5% by slice count)**; 110 additional slices since November 13. Two remain open. |
+| Campaign status | Keeper firing rule **RESTS**: no further crew-bankable original slices available under the current rules. |
+| Outstanding slices | **S-402** founder usability walk, explicitly nonblocking for the crew; **S-416** final portability gate, held on the real Windows x86-64 leg. The November 25 founder ruling waived macOS as a required gate leg; it did not prove macOS support. |
+| Source inventory | 1,040 recursive Git tree entries (files and directories); 383 tracked files in `samverk/` (382 Python files), 417 Python test files in `tests/`, 132 files in `docs/`, 47 files in `research/` including its index, and 23 files in `tools/`. Counts include package markers. |
+| Data and runtime | Schema 140; 142 audit event names (34 auth / 92 repo / 16 admin) according to the final gate records. Package version **0.1.0**, Python >=3.11; stdlib-first, with exactly one admitted third-party runtime dependency, `cryptography==46.0.5`, for signature verification. Native installation, no Docker. |
+| Running HTTP surface | Exactly three GET paths in [server.py](samverk/server.py): `/`, `/healthz`, `/admin/status`. No state-changing feature routes are mounted yet. |
+| Verification | The last documented master and wave runs are **not green**. The real Pi 5 battery also records failures. Focused gate passes are valuable, but do not supersede those results. |
+| Release | v1.0 tag placement is recorded as NOT PLACED; no published GitHub releases or Actions runs were returned at inspection. Source packaging exists, but the recorded package is unsigned. |
+| New direction | Three successor roadmap drafts now define composition and release, advanced sovereign forge capabilities, and measured resilience/self-repair. |
+
+### What has landed since November 13 (S-305 through S-415)
+
+The following describes checked-in implementations and their recorded tests, not a promise that all components are reachable from a running HTTP instance.
+
+| Workstream | Current engineering achievement and proof boundary |
+|---|---|
+| **Part XV — Security assurance (S-305–S-312)** | Signed-commit verification (GPG/SSH), vigil mode, repository security tab, security overview, audit log UI, private advisories, and adversarial scanner tests. S-312 extends the [claims register](docs/CLAIMS_REGISTER.md) to C-35. Scanner and signature batteries are scoped to tested inputs; independent security review and integrated route protection remain owed. |
+| **Part XVI — Native CI and runners (S-313–S-328)** | Workflow parsing, triggers, job graphs/matrices, runner registration/protocol, reference runner, encrypted secrets and log masking, fork-PR safety, checks, logs, artifacts, schedules and run UI. The [S-328 gate](tests/test_part_xvi_gate.py) walks a sample branch/PR through execution to a passed required check and verifies a failed step blocks merging. This is Samverk's own test-harness CI, not public GitHub Actions or production isolation proof. |
+| **Part XVII — Mirroring, backup and recovery (S-329–S-344)** | Pull/push mirror definitions, credentials, synchronization scheduling and freshness, read-only mirror law, private-original handling, metadata import, backup/export and restore exercises. The [S-344 gate](docs/PART_XVII_GATE.md) records 16 passing gate tests, with eight stale schema-pin failures in its 179-test neighbor run. Its census fixture defines 54 mirrors, holds 17 uncertain and excludes 84; these are fixture counts, not a live fleet inventory. Continuous operation of the founder's actual backup fleet remains unverified. |
+| **Part XVIII — Deployment and administration (S-345–S-360)** | Native systemd service files, installation guide, first-admin flow, administration/settings, maintenance mode, quotas, abuse handling, instance audit, migrations, upgrades and health monitoring. [S-360](docs/PART_XVIII_GATE.md) records 15 passing tests and a 2.41-second standalone install walk on x86-64, not a timed Pi install. The live admin-status route resolves a real session and enforces site-admin access. |
+| **Part XIX — Optional Samtal seam (S-361–S-380)** | Identity linking and SSO, panels, PR/hall event flows, mention bridge, unfurls, permission audit, kill switch and boundary enforcement. [S-380](docs/PART_XIX_GATE.md) reports seven passing gate tests, a 12-step seam walk, 90 permission cells (68 allow, 22 deny; all 90 denied when disabled or unlinked), and 34/34 specified attacks held in its review battery. Samverk remains standalone; the Samtal-side codebase was not present for a reciprocal integration run. |
+| **Part XX — Cyber-Viking design (S-381–S-392)** | Design tokens, layout shell, grayscale and text scaling, effects-off, target sizes, status without color dependence, keyboard reachability, semantic accessibility, alt text and motion restraint. [The S-392 gate](docs/PART_XX_GATE.md) records a green structural/visual battery with no critical visual defects, but Tove's explicit pass and live Orca screen-reader session remain unrecorded. Rendered components are not a fully navigable served UI. |
+| **Part XXI — Release proof and succession (S-393–S-404)** | Counted master run, seven-leg v1 battery, measured performance, upgrade/rollback drill, guide and research audits, final claims register, deterministic source packaging and tag-placement law, successor seed and final census. The acceptance battery exists; neither a green final run nor a signed public v1.0 release is established. S-402 is still founder-owned and open. |
+| **Part XXII — Platform engineering (S-405–S-415)** | Support matrix and platform seam audit, dependency replaceability, filesystem/case rules, path encoding, Windows service design, macOS launchd artifacts, Linux service checks, CPU-budget honesty, browser/device matrix and a real Raspberry Pi 5 counted battery. Banking S-415 records the ARM result truthfully; it does **not** turn a failed battery into a platform pass. S-416 remains held. |
+
+### The largest remaining engineering gap: live composition
+
+Direct inspection of [samverk/server.py](samverk/server.py) confirms that the real executable HTTP process presently serves:
+
+- `GET /`: service/version JSON.
+- `GET /healthz`: read-only database probe returning 200 or 503 according to its verdict, rather than a constant success.
+- `GET /admin/status`: authenticated site-admin HTML status page; anonymous sessions receive 401 and non-admins 403.
+
+POST, PUT, PATCH and DELETE pass through the CSRF guard and then return 404; unrecognized GET paths also return 404. The server already contains CSP, error redaction, TLS bind-policy and session-cookie seams. Those protections must be retained when the feature routes are assembled.
+
+Account registration/sign-in, token management, repository browsing, issue and PR workflows, REST API classes, Git smart HTTP, LFS, wiki transport, search, release pages, notification UI, security views, and most administration functions exist as services/renderers or harnesses but are not mounted as a coherent user-facing application here. The successor roadmap explicitly makes this the first major workstream. This is an integration problem with substantial existing machinery to reuse, not a reason to rebuild every feature.
+
+### Verification ledger: counts are evidence, not decorations
+
+| Recorded run | Result | Interpretation |
+|---|---|---|
+| [S-393 master run](docs/COUNTED_MASTER_RUN.md), Nov 22 | 6,129 run; 6,110 passed; 15 failed; 4 skipped | All 15 failures recorded as stale schema/audit-taxonomy pins. The four skips name real sshd, a GC environment condition and two detector-absence paths. NOT GREEN. |
+| [S-404 final census](docs/final-census-s404.md), wave 380 | 6,029 run; 15 failures | Historical non-green wave; recorded stale-pin class. |
+| [S-404 final census](docs/final-census-s404.md), wave 400 | 6,190 run; 12 failures | Historical non-green wave; tag must wait for a genuinely green counted tree. |
+| [S-415 Raspberry Pi 5](docs/BATTERY_PORT_ARM.md), Nov 22 | Seven legs; 6,257 total test executions; 61 failures; 3 skips | Actual aarch64, Python 3.11.2, Git 2.39.5. Transport leg failed the named real-sshd cell; unit failures include stale pins and a rebase/revert cluster. The Git version difference is a suspect, not a proven root cause. ARM cell remains NOT PROVEN. |
+
+These runs have different trees, test selections and aggregation methods and must not be directly compared as if they were one identical suite. The first roadmap's newer banking rule allows own-battery and neighbor evidence to advance slices without a full-suite gate; the full-suite release proof remains separate. A new complete count on the current fixed tree is needed. No fresh tests were executed by this README review.
+
+### Real hardware measurements, recovery and release engineering
+
+[S-395 performance measurements](docs/perf-verification-s395.md) now include a real Raspberry Pi 5 and an x86-64 host. On the Pi, the reference local bare clone was recorded at 0.011 s, the 300-file substring-search workload at 56.2 ms p95, regex search at 12.2 ms p95, and the one-entry repository-root browse at 10.2 ms p95. All were within the documented budgets for those workloads. The x86-64 host also met its measured budgets. These are narrow local component benchmarks, not internet latency, concurrent-user throughput, or a complete deployed forge benchmark; laptop-class measurements remain owed.
+
+The [S-396 upgrade drill](docs/upgrade-drill-s396.md) reports a successful 140→141 rehearsal over an RC fixture containing three users, four repositories, 15 commits and three LFS objects, plus rollback to schema 140 after an injected migration failure. This proves the documented rehearsal, not that the live project's schema has advanced to 141.
+
+[S-400 packaging](docs/release-packaging-s400.md) records a 945-file source tarball, 5,995,227 bytes, SHA-256 verified by the packaging machinery. It is **unsigned**, awaiting the maintainer-held key outside the source tree. The [tag law](docs/V1_TAG.md) and later final census explicitly forbid the v1.0 tag until the exact release tree has a finished zero-failure count. Neither a successful checksum nor a banked release-law slice substitutes for that requirement.
+
+### Portability, accessibility and other remaining proof boundaries
+
+- **S-402:** Volmarr's unaided fresh-instance journey: account, token, repository, push and mirror. Founder-only; no worker or synthetic test can claim it on his behalf. The keeper now treats it as nonblocking for the other original slices.
+- **S-416:** actual Windows x86-64 gate evidence is the remaining required leg under the November 25 founder ruling. macOS has been waived as a required leg, not certified; launchd files and platform seams do not establish actual support. The historical support matrix and claims must be read with the newer ruling. Linux ARM's failed S-415 battery remains an explicit proof debt regardless of banking.
+- **Browser reach (S-414):** [the recorded Firefox desktop headless render](docs/browser-reach-s414.md) is screenshot evidence only; DOM verification did not complete. Chrome, Edge, Safari, phone and tablet runs remain unproven. The successor plan calls for fixing the missing viewport meta across the page-renderer census (70→71 including the later browser-reach page), updating defect-expectation tests and rerunning.
+- **Transport/security:** real sshd interoperability is still NOT PROVEN; local stock-Git smart-HTTP and forced-command harnesses are scoped evidence. Actual deployment review, adversarial review beyond the existing batteries, and full routed authorization testing remain necessary.
+- **Operational proof:** real continuously scheduled mirror fleet, timed Pi-class installation, real screen-reader session, reciprocal Samtal-side verification and laptop-class performance measurements remain separate obligations.
+- **Research:** [S-398 audit](docs/research-corpus-audit-s398.md) counted 46 substantive studies, 43 complete and three open (24 GraphQL, 26 packages, 30 discussions). Decisions exist in separate verdict records but still need reconciliation into those studies. The 18 development research playbooks remain implementation guidance.
+- **Documentation drift:** the earlier dated README sections and the S-404 census are historical. `CAMPAIGN_STATE.md` still describes the once-held S-415 branch; the November 27 keeper commit supersedes that banking status, not its failed ARM result. C-07's old zero-third-party-dependency wording in the claims register is stale: the pinned cryptography admission is confirmed by [pyproject.toml](pyproject.toml) and the [dependency register](docs/DEPENDENCY_REGISTER.md). The founding-era empty-research-files statement is historical and the introductory spelling “Samtel” refers to Samtal. This update does not silently change the original claims register or ratify a broader proof label.
+
+### The three new successor roadmaps
+
+The original 416-slice plan is no longer the entire horizon. These three documents, now tracked in the repository, set out distinct future campaigns, with explicit preconditions and the same counted-evidence discipline:
+
+| Roadmap | Purpose |
+|---|---|
+| **[The Successor Roadmap](Samverk_The_Successor_Roadmap_Nov-27-2026.md)** | First priority: compose the live HTTP/web/API and Git transport surface, integrate all major user journeys, resolve Windows proof and suite failures, sign/tag v1.0, publish verification, and mature operations. Revisit deferred GraphQL, package and discussion features only under their recorded conditions. |
+| **[Samverk Ascendant — second successor](Samverk_Ascendant_2nd_Successor_Roadmap_Nov-27-2026.md)** | Draft vision beyond a conventional Git forge: semantic changes and merge reasoning, code knowledge graphs, proof-grade CI, evidence-linked AI assistance, offline sovereignty, village planning, speed, identity and an expanded Cyber-Viking interface. Its precondition is a working, green, signed successor-era forge. |
+| **[Samverk Víðarr — third successor](Samverk_Vidarr_3rd_Successor_Roadmap_Nov-27-2026.md)** | Draft resilience era after Ascendant: systematic adversarial testing, isolation, cryptographic integrity, bounded self-repair, forensics, long-term data survivability and sealed supply-chain verification. It explicitly refuses the unfalsifiable claim “unhackable.” |
+
+These are ambitions and engineering plans, not completed features. In addition, [draft PR #1](https://github.com/hrabanazviking/RuneForgeAI-Samverk/pull/1) proposes Git interoperability for journaled, branchable Bifröst long-term memory. It is open and unmerged at inspection, and is not counted as a shipped main-branch capability.
+
+### Recommended next order of work
+
+1. Start the successor's composition waves: route foundation, account flows, repository UI, issues/PRs, organizations, search, security, other collaboration surfaces, administration and real Git/LFS transports. Preserve the existing centralized permission, escaping, audit and error seams.
+2. Repair stale pins, investigate ARM rebase/revert failures and the real-sshd cell, reconcile viewport handling and run a fresh seven-leg counted battery. Diagnose rather than suppress failures.
+3. Exercise a real Windows x86-64 host for S-416, then perform the founder-only S-402 journey against the actual composed installation. Keep the waived macOS gate and unproven platform cells distinct.
+4. Reproduce actual install/upgrade/restore and end-to-end networked user journeys; add externally reproducible CI, accessibility and security verification. Sign the new release package and tag only the exact counted-green tree.
+5. Advance Ascendant and Víðarr after their own prerequisite gates, keeping planned capabilities separate from proven ones.
+
+**Current conclusion:** Samverk is a very substantial, nearly banked-out first-roadmap forge implementation, with meaningful component-level proofs, an unusually explicit verification ledger, and a much larger successor vision. It is not yet a fully composed, production-ready GitHub replacement. The next milestone is a real sovereign forge that ordinary users can install, sign into, clone from, push to, collaborate through, and recover without developer intervention. The together-work continues.
+
+**Audit scope:** inspected the default-branch tree, recent commit and keeper records, the server routing source, package/dependency metadata, representative gate test source, counted logs, research/claims/census documents, three successor roadmaps, release/Actions records and open PR list. The repository was not cloned or executed in this review; recorded run results are attributed to project documents, not independently reproduced. This is a README-only historical addition, not a change to application code, banking rules, claims labels or release state.
+
+
 ## Engineering progress update — 2026-11-06
 
 > **Dated inspection of `main` before this documentation change:** [`421db0ef`](https://github.com/hrabanazviking/RuneForgeAI-Samverk/commit/421db0ef53d7aa9b56ba8f934b660ee84e15ded4), committed 2026-11-03 UTC. This section updates the founding-era **Status** snapshot above without erasing that historical record. It distinguishes code present, tests reported, and production readiness.
