@@ -353,6 +353,12 @@ All workstream descriptions above refer to **tracked implementations plus their 
 
 **Acceptance benchmark:** a fresh operator on documented, supported hardware can install without Docker, create/administer an account, create a repository and token, clone and push with stock Git, browse changes, file an issue, open/review/merge a PR, receive events, inspect security findings and restore a backup using the running interface/API. The full journey must be permission-safe, repeatable, observable, accessible and supported by published test logs. **Until that benchmark and the claims register's open items are met, Samverk should be described as an ambitious, fast-moving, modular forge implementation, not a finished drop-in GitHub replacement.**
 
+---
+
+![why_I_hate_docker.png](why_I_hate_docker.png)
+
+---
+
 ## Licence
 
 **GNU Affero General Public License v3.0** (AGPL-3.0) — see `LICENSE`.
