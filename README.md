@@ -74,6 +74,12 @@ Samverk also inherits a standing duty: **the backup of Volmarr's own work.**
 It mirrors his original repositories from GitHub onto his own machines and
 keeps them current, so his creations never live only under a landlord's roof.
 
+---
+
+![file_000000001b0c822f9056b205f44eedfc.png](file_000000001b0c822f9056b205f44eedfc.png)
+
+---
+
 ## Status
 
 **Founding phase (2026-10-29).** This repository currently holds:
