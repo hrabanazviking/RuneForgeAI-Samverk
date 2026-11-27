@@ -2,6 +2,12 @@
 
 Samverk is the together-work, your own forge that stands alone yet can nestle inside Samtel. It speaks the old Git tongue, opens its doors to your hand, and lets your village's talk become work—soft, yours to reshape, whether it lives by itself or beside the longhouse fire.
 
+---
+
+![file_00000000ebfc822f8b1f9fbf7531235b.png](file_00000000ebfc822f8b1f9fbf7531235b.png)
+
+---
+
 # Samverk — the together-work, in founding
 
 **Samverk** (Old Norse *samverk*: work done together, joint labour) is a
