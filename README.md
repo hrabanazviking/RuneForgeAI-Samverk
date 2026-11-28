@@ -385,13 +385,32 @@ Read, adopt, and share [The Manifesto of Individual and Technological Sovereignt
 
 ---
 
-## Licence
+![GNU_Affero_OS_License_1.png](GNU_Affero_OS_License_1.png)
 
-**GNU Affero General Public License v3.0** (AGPL-3.0) — see `LICENSE`.
-Samverk is free software: run it, study it, reshape it; if you offer your
+---
+
+## ⚖️ Licence
+
+Copyright (c) 2026 Volmarr Wyrd
+
+RuneForgeAI: Samverk is licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0) — see `LICENSE`. Samverk is free software: run it, study it, reshape it; if you offer your
 reshaped version to others over a network, offer them the same freedom in
 return. That reciprocity is why the AGPL was chosen: the together-work
 stays together.
+
+Unless required by applicable law or agreed to in writing, this project is distributed on an "AS IS" BASIS, without warranties or conditions of any kind, either express or implied.
+
+---
+
+## Distribution and Privacy Position
+
+RuneForgeAI: Samverk is published here as source code and project material.
+
+The author does not require users to provide age, identity, government ID, biometric data, or similar personal information in order to access or use the source code in this repository.
+
+The author may decline to provide official binaries, installers, hosted services, app-store releases, or other official distribution channels where doing so would require age verification, identity verification, or similar personal-data collection.
+
+Any third party who forks, packages, redistributes, deploys, hosts, or otherwise makes this software available does so independently and is solely responsible for compliance with applicable law, platform policy, and distribution requirements in their own jurisdiction and context.
 
 ---
 
