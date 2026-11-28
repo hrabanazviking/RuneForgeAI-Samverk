@@ -674,6 +674,7 @@ That work remains an important part of our identity.
 - **[Rúnavél](https://github.com/hrabanazviking/runavel):** A runic computation, cipher, divination, and visualization engine exploring the linguistic and spiritual dimensions of the Elder Futhark.
 - **[Metaphysical Theory of Mind for AI](https://github.com/hrabanazviking/Metaphysical-Theory-of-Mind-for-AI):** Philosophical research concerning AI interaction with spiritual, subjective, imaginative, potential, and manifest realities.
 - **[Heathen Third Path and Cyber-Viking Ethos](https://github.com/hrabanazviking/Heathen-Third-Path-and-Cyber-Viking-Ethos):** Our foundational exploration of living Norse Pagan spirituality, personal sovereignty, and technologically empowered spiritual existence.
+- **[The Manifesto of Individual and Technological Sovereignty](https://github.com/hrabanazviking/The-Manifesto-of-Individual-and-Technological-Sovereignty/blob/main/README.md):** Technology in service of freedom. Commerce in service of mutual prosperity. Intelligence in service of possibility. We are the users of technology, not its subjects. We are the patrons of corporations, not their thralls.
 
 We distinguish accurately computed data and documented historical material from symbolic interpretation, philosophical speculation, personal gnosis, and living spiritual practice, while recognizing the value of exploring each within its appropriate context.
 
