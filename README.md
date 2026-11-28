@@ -366,3 +366,11 @@ Samverk is free software: run it, study it, reshape it; if you offer your
 reshaped version to others over a network, offer them the same freedom in
 return. That reciprocity is why the AGPL was chosen: the together-work
 stays together.
+
+---
+
+![RuneForgeAI_Logo_Picture_Version-Nov-27-2026.png](RuneForgeAI_Logo_Picture_Version-Nov-27-2026.png)
+
+---
+
+
