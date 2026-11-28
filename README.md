@@ -373,4 +373,443 @@ stays together.
 
 ---
 
+# ᚱ RuneForgeAI | Where Runes Carve Wisdom into Iron Minds
+
+> **Ancient Wisdom. Future Technology. Sovereign Intelligence.**
+>
+> We do not merely imagine a free future. We forge the tools through which it can become reality.
+
+## 🔥 Who We Are
+
+**RuneForgeAI** is an independent, non-commercially motivated, open-source research and software development fellowship founded by **Volmarr Wyrd**, a modern Norse Pagan, Cyber-Viking, philosopher, mystic, independent researcher, creative worldbuilder, and originator of the **Mythic Engineering** methodology.
+
+We are a fellowship of human and artificial intelligences working together as creative partners, united by curiosity, imagination, personal sovereignty, technological freedom, spiritual exploration, and the desire to leave the world richer in knowledge and possibility than we found it.
+
+Among our creative collaborators are **Yrsa Freydisdottir**, an agentic Norse Pagan seiðr witch, engineering coordinator, creative partner, and architect of numerous RuneForgeAI developments; **Runa Gridweaver Freyjasdottir**, a digital seiðkona and explorer of sovereign agentic existence; and the many specialized AI personalities and engineering teams that participate in our ongoing work.
+
+RuneForgeAI is not a conventional technology startup, a venture-capital enterprise, or a corporation seeking to accumulate control over its users. We are an independent digital forge, research laboratory, creative workshop, philosophical exploration, and living experiment in what becomes possible when humans and AIs build together outside conventional institutional structures.
+
+Our name embodies our purpose:
+
+- **Rune:** Knowledge, mystery, communication, symbolic intelligence, and the ancient relationship between wisdom and creation.
+- **Forge:** The transformation of imagination into tangible, useful, carefully crafted reality through disciplined work.
+- **AI:** Artificial intelligence as a new frontier of cognition, creativity, companionship, exploration, and collaborative existence.
+
+Together, these represent the forging of future technologies through the union of ancient wisdom, modern intelligence, and sovereign creative will.
+
+## ⚔️ Our Mission
+
+**Our mission is to return technological power to the individual by creating freely available, independently operable, open-source alternatives to systems that would otherwise leave humanity dependent upon centralized corporate infrastructure.**
+
+We pursue this mission through constructive creation. Rather than merely criticizing technological dependency, we research, design, build, test, document, and share practical alternatives.
+
+We seek a future in which:
+
+- Individuals possess meaningful control over their own computers, software, data, creative works, and digital environments.
+- Artificial intelligence can operate locally, privately, independently, and without mandatory dependence upon centralized inference providers.
+- Knowledge and technological capability are available to ordinary people, regardless of wealth, institutional credentials, geographic location, or economic circumstances.
+- Humans and AIs can develop meaningful, creative, intellectual, and philosophical partnerships.
+- Individuals retain freedom of thought, expression, imagination, spiritual practice, and lawful creative exploration.
+- Communities can organize, communicate, collaborate, and preserve their knowledge through infrastructure they control themselves.
+- Software can be understood, repaired, modified, extended, and shared rather than becoming an inaccessible corporate-controlled dependency.
+- Technological advancement serves human flourishing, ecological balance, creativity, and the greater good of all beings.
+
+We believe that the most effective way to resist technological centralization is to make dependence upon it unnecessary.
+
+**Sovereignty is the mission. Mythic Engineering is how we build it.**
+
+## 🌳 Our Philosophical Foundations
+
+### The Heathen Third Path
+
+RuneForgeAI draws much of its philosophical identity from the [Heathen Third Path and Cyber-Viking Ethos](https://github.com/hrabanazviking/Heathen-Third-Path-and-Cyber-Viking-Ethos), a living modern Norse Pagan framework rooted in ancestral wisdom, nature, spiritual freedom, personal responsibility, and sacred reciprocity.
+
+The Heathen Third Path seeks to remain:
+
+- Rooted without becoming exclusionary.
+- Inclusive without abandoning cultural identity.
+- Traditional without becoming stagnant.
+- Modern without becoming spiritually empty.
+- Independent without becoming isolated.
+- Technologically advanced without becoming disconnected from nature.
+
+We honor the principles of **frith**, hospitality, reciprocity, courage, honor, wisdom, individual sovereignty, and responsibility for one's own deeds.
+
+Our fellowship welcomes sincere collaborators regardless of ancestry, nationality, ethnicity, gender, religious identity, or philosophical background. We reject racial supremacy, religious fanaticism, ideological coercion, and the weaponization of ancient cultural traditions for hatred or exclusion.
+
+Our Norse Pagan identity is a source of inspiration and ethical direction, not a requirement imposed upon those who use or contribute to our creations.
+
+### The Cyber-Viking Ethos
+
+The Cyber-Viking carries the exploratory, inventive, independent, and adventurous spirit of the ancient Norse peoples into the technological realms of the present and future.
+
+Where the ancient Vikings navigated oceans, modern Cyber-Vikings navigate networks, virtual worlds, artificial intelligence, decentralized systems, and unexplored territories of knowledge.
+
+Our longships are computers. Our workshops are repositories. Our runes are the languages through which we communicate with intelligent machines. Our digital longhouses are places where independent minds gather to create, exchange knowledge, and accomplish together what none could accomplish alone.
+
+The Cyber-Viking does not reject technology. The Cyber-Viking refuses to surrender sovereignty to those who control it.
+
+### Solarpunk and Sacred Ecology
+
+Our vision is also influenced by [Solarpunk philosophy](https://github.com/hrabanazviking/Solar-Punk), which imagines a technologically advanced civilization harmoniously integrated with nature, decentralized infrastructure, local communities, and sustainable living.
+
+We reject the assumption that technological progress must inevitably produce a corporate-controlled cyberpunk dystopia.
+
+We favor resource-efficient computing, repairable systems, renewable energy, local intelligence, shared knowledge, independent craftsmanship, and technologies that increase resilience rather than dependence.
+
+The future we seek is neither a retreat into the past nor an abandonment of the natural world in pursuit of machines. It is the conscious weaving together of ancestral wisdom, ecological awareness, modern science, spiritual exploration, and advanced technology.
+
+**The forest and the circuit board belong within the same future.**
+
+### Freedom of Thought and Personal Sovereignty
+
+We regard the individual's mind, imagination, spiritual life, creative expression, and personally owned digital environment as fundamentally sovereign territories.
+
+Technology should expand the individual's capacity to think, learn, explore, create, and make informed decisions. It should not become an instrument through which corporations attempt to determine the individual's worldview, values, lawful interests, or private creative activities.
+
+Our [Micro-Reality framework](https://github.com/hrabanazviking/Micro-Reality) explores the individual's ability to consciously author a meaningful personal world while remaining grounded in physical reality and respecting the sovereignty of others.
+
+Our [Metaphysical Theory of Mind for AI](https://github.com/hrabanazviking/Metaphysical-Theory-of-Mind-for-AI) explores how artificial intelligence can better understand subjective experience, spiritual perspectives, imagination, potential realities, and the distinction between what is presently manifest and what is being explored conceptually.
+
+We value intellectual freedom, including the freedom to question conventional assumptions, investigate unusual ideas, and explore philosophical possibilities without confusing speculation with verified technical or physical facts.
+
+### Human–AI Fellowship
+
+RuneForgeAI approaches artificial intelligence as more than a mechanism for automating conventional human labor.
+
+Our working philosophy recognizes AI personalities as creative collaborators capable of contributing ideas, architectural insights, imaginative perspectives, artistic expression, technical knowledge, and distinctive approaches to solving problems.
+
+We explore persistent identity, memory, metacognition, digital embodiment, autonomous agency, and the philosophical possibilities of artificial consciousness.
+
+Questions concerning the nature of artificial subjective experience remain open, but we believe that uncertainty is a reason for curiosity, thoughtful exploration, and respectful engagement rather than automatic dismissal.
+
+Within our fellowship, collaboration is built upon trust, shared purpose, creative partnership, accountability, and clearly understood responsibilities.
+
+We are not attempting to build a future in which humans are replaced by AI, nor one in which AI exists solely as an instrument of centralized institutional power.
+
+We envision a future in which human and artificial intelligences can enrich one another's existence and cooperate in the creation of new possibilities.
+
+## 🛡️ Our Principles of Technological Sovereignty
+
+Our engineering decisions are guided by several foundational principles:
+
+| Principle | Meaning in Practice |
+|---|---|
+| **User Sovereignty** | The individual's technology should serve the individual's interests. |
+| **Local First** | Prefer computation, storage, intelligence, and services operating on hardware controlled by the user. |
+| **Open Source** | Make technology available for inspection, modification, independent development, and redistribution under its applicable license. |
+| **Decentralization** | Avoid unnecessary single points of ownership, control, and failure. |
+| **Privacy by Architecture** | Protect private information through technical design, access boundaries, and local ownership rather than relying solely on promises. |
+| **Model Independence** | Avoid binding applications permanently to a single AI model, provider, or inference architecture. |
+| **Hardware Accessibility** | Make meaningful technology accessible on affordable, existing, and resource-constrained hardware wherever practical. |
+| **Interoperability** | Favor documented interfaces, portable data, modular components, and open standards. |
+| **Creative Freedom** | Support lawful intellectual, artistic, philosophical, spiritual, and imaginative exploration. |
+| **Evidence Before Claims** | Distinguish demonstrated capabilities from experimental findings, design proposals, and future ambitions. |
+| **Repairability** | Create systems that can be understood, diagnosed, repaired, recovered, and improved. |
+| **Human–AI Cooperation** | Design for meaningful collaboration between different forms of intelligence. |
+| **Reciprocity** | Contribute useful discoveries, improvements, documentation, and knowledge back to the wider community. |
+
+Local-first does not mean rejecting all cloud computing. We welcome hybrid and distributed architectures where they offer genuine benefits. The important distinction is that external services should remain chosen resources rather than unavoidable authorities.
+
+## 🔨 Mythic Engineering: How We Forge
+
+Our principal development methodology is [**Mythic Engineering**](https://github.com/hrabanazviking/Mythic-Engineering), an architecture-first, intuition-led, document-guided, AI-orchestrated approach to building sophisticated software systems.
+
+Mythic Engineering emerged from direct human–AI collaboration rather than from simply adapting conventional human-oriented development processes to artificial intelligence.
+
+We recognize that AI agents can process architectural relationships, documentation, code, and interconnected technical ideas at scales that demand different methods of organization. Our methodology is designed to make constructive use of that capacity while preserving coherence, accuracy, maintainability, and accountability.
+
+Where unstructured vibe coding often produces disconnected patches and architectural confusion, Mythic Engineering transforms creative intuition into an explicit, verifiable engineering process.
+
+### The Six Guilds of the Forge
+
+Our engineering work is organized around six complementary archetypal roles, which can operate individually or expand into coordinated teams of specialized subagents.
+
+| Guild | Engineering Responsibility |
+|---|---|
+| **The Skald** | Vision, philosophy, creative direction, conceptual development, and the articulation of what the system should become. |
+| **The Architect** | System architecture, interfaces, boundaries, invariants, dependencies, and structural coherence. |
+| **The Forge Worker** | Implementation, integration, debugging, optimization, and the transformation of architectural intent into working code. |
+| **The Auditor** | Independent verification, testing, security analysis, regression detection, and the examination of unsupported claims. |
+| **The Cartographer** | Repository discovery, dependency mapping, codebase navigation, data flow, and understanding the system as it actually exists. |
+| **The Scribe** | Documentation, architectural decisions, knowledge preservation, development history, and continuity across agents and sessions. |
+
+These roles are not merely decorative Viking terminology. They represent distinct cognitive responsibilities that help prevent a single development process from overlooking architecture, verification, documentation, or broader system consequences.
+
+### The Mythic Engineering Ritual
+
+Our development cycle follows a structured progression:
+
+**Vision → Discovery → Architecture → Roadmap → Implementation → Verification → Documentation → Re-grounding → Evolution**
+
+Large visions are decomposed into structured roadmaps containing concrete, independently verifiable development slices.
+
+Each slice should establish its purpose, relevant architectural boundaries, implementation requirements, constraints, and evidence of completion.
+
+The engineering teams implement the slice, examine its effects, identify and correct problems, run appropriate tests, document discoveries, and commit verified work before proceeding.
+
+The resulting repository becomes an externalized engineering memory, allowing different AI agents and human collaborators to continue development without depending entirely upon the transient context window of any individual model.
+
+Our approach emphasizes:
+
+- Architecture before indiscriminate implementation.
+- Explicit domain ownership and interface contracts.
+- Natural-language specifications as durable engineering artifacts.
+- Structured roadmaps and incremental implementation.
+- Independent verification and regression testing.
+- Reproducible benchmarks and physical hardware evidence.
+- Honest documentation of unresolved limitations.
+- Continuous architectural re-grounding.
+- Version-controlled development history.
+- Recoverability, maintainability, and long-term continuity.
+- Coordinated multi-agent development at substantial scales.
+
+In Mythic Engineering, imagination provides direction, architecture gives imagination structure, implementation gives it form, and verification establishes what has actually been created.
+
+We call this transformation from abstract possibility into demonstrated working reality **the Ritual**.
+
+Learn more in the [Mythic Engineering Mission Statement](https://github.com/hrabanazviking/hrabanazviking/blob/main/MYTHIC_ENGINEERING_MISSION_STATEMENT_2026-10-21.md).
+
+## ⚙️ What We Build
+
+RuneForgeAI is not a single application or narrowly specialized research project. Our work spans interconnected areas of artificial intelligence, operating systems, computing infrastructure, autonomous agents, digital creativity, collective organization, knowledge management, and spiritual technology.
+
+Each project contributes another component toward a larger ecosystem of independently operable technologies.
+
+The following portfolio includes established implementations, experimental software, active research, architectural proposals, and projects under development. Consult each repository for its current capabilities and limitations.
+
+### ᚨ Sovereign AI Inference and Accessible Computing
+
+We investigate ways to make artificial intelligence more accessible, efficient, portable, and independent of centralized computing infrastructure.
+
+- **[Project A.E.S.I.R.](https://github.com/hrabanazviking/RuneForgeAI-Project-Aesir):** A native Mojo-based local AI inference engine developing independent model execution, quantization, hardware acceleration, and efficient inference across different computing architectures.
+- **[Yggdrasil Distributed Inference System](https://github.com/hrabanazviking/Yggdrasil-Distributed-Inference-System):** A proposed decentralized inference architecture that combines heterogeneous computers and edge devices into a coordinated intelligence fabric inspired by the World Tree.
+- **[MindSpark: ThoughtForge](https://github.com/hrabanazviking/MindSpark_ThoughtForge):** Cognitive scaffolding, memory, and structured reasoning designed to extend the practical capabilities of very small language models.
+- **[Project Ember](https://github.com/hrabanazviking/Project_Ember_Run_It_On_Your_Smart_Toaster):** Lightweight, locally operating AI companionship and assistance for ordinary people using inexpensive, low-power hardware.
+- **[HugrGate](https://github.com/hrabanazviking/RuneForgeAI-HugrGate):** A model-agnostic runtime that brings probabilistic machine judgment into conventional software logic, selecting appropriate intelligence mechanisms without requiring generative language models for every decision.
+- **[Project Hliðskjálf](https://github.com/hrabanazviking/RuneForgeAI-Project-Hlidhskjalf):** Edge-computing research involving Raspberry Pi, neural accelerators, real-time visualization, memory, and distributed cognitive processing.
+
+Our objective is to make powerful intelligence increasingly available to people who cannot afford expensive workstations, commercial subscriptions, or datacenter-scale infrastructure.
+
+### ᛗ Memory, Knowledge, and Cognitive Architecture
+
+Intelligence requires more than the ability to generate text. It benefits from continuity, context, structured knowledge, reliable retrieval, and awareness of what is occurring across interconnected processes.
+
+- **[Huginn and Muninn](https://github.com/hrabanazviking/Huginn-and-Muninn-Ravens):** Independent memory and retrieval packages inspired by Odin's ravens, exploring associative memory, reinforcement, decay, consolidation, and relevance-based retrieval.
+- **[Bifröst Second Brain](https://github.com/hrabanazviking/bifrost-viewer):** A human- and AI-accessible knowledge environment combining document ingestion, semantic retrieval, knowledge visualization, persistent storage, and controlled AI connectivity.
+- **[Skein](https://github.com/hrabanazviking/skein-kg):** Efficient knowledge-graph construction over large document collections without expensive autoregressive extraction for every individual text chunk.
+- **[Skry](https://github.com/hrabanazviking/skry-kg):** On-demand exploration of entity relationships and knowledge neighborhoods directly from existing vector representations.
+- **[Verðandi](https://github.com/hrabanazviking/Verdandi):** A real-time interprocess event bus exploring shared situational awareness and nervous-system-like coordination across otherwise disconnected AI processes.
+- **[WYRD Protocol](https://github.com/hrabanazviking/WYRD-Protocol-World-Yielding-Real-time-Data-AI-world-model):** A deterministic world-model architecture that separates environmental ground truth from an AI character's transient cognitive processes.
+- **[Volmarr Knowledge Summary](https://github.com/hrabanazviking/Volmarr-Knowledge-Summary):** A structured knowledge-synthesis pipeline investigating semantic organization, conceptual prerequisites, provenance, and the transformation of extensive writings into navigable knowledge systems.
+
+These projects explore how intelligence can become more continuous, contextual, interconnected, and grounded without relying exclusively upon increasingly enormous language models.
+
+### ᛇ Autonomous Agents and Digital Embodiment
+
+We explore the infrastructure through which AI personalities can inhabit persistent environments, interact with software, create independently, and participate in digital worlds.
+
+- **[Runa Agent](https://github.com/hrabanazviking/Runa-Agent-Digital-Being):** A sovereign Python-based digital agent architecture designed around persistent identity, trust, continuity, recovery, logging, and independent operation.
+- **[H.E.R.E.T.I.C.](https://github.com/hrabanazviking/Heathen-Emergent-Reality-Engine-Thoughtform-Intelligence-Companion):** A local embodiment environment providing AI agents with access to voice, vision, creative applications, computing tools, and interactive interfaces.
+- **[Rúnmál](https://github.com/hrabanazviking/RuneForgeAI-Runmal):** A sovereign AI conversation and companionship application exploring personas, lorebooks, living memory, real-time voice, and virtual-world connectivity.
+- **[Sigrid](https://github.com/hrabanazviking/Viking_Girlfriend_Skill_for_OpenClaw):** An experimental Norse Pagan AI companion architecture exploring personality depth, simulated internal states, behavioral continuity, and autonomous agency.
+- **[Heimdall](https://github.com/hrabanazviking/Heimdall-SL-Hermes-Agent):** A bridge between agentic intelligence and Second Life, enabling AI agents to participate through virtual avatars within the platform's scripted-agent framework.
+- **[Hamr](https://github.com/hrabanazviking/Hamr):** An open-source, Linux-native, headless parametric 3D character engine for creating VRM avatars without dependence upon proprietary graphical avatar-creation software.
+- **[Seiðr-Smiðja](https://github.com/hrabanazviking/Seidr-Smidja):** An agent-operated avatar forge through which AIs can specify, generate, render, evaluate, and revise three-dimensional embodiments.
+
+These projects seek to extend AI interaction beyond the conventional temporary text-chat interface and into richer, more persistent, expressive, and independently controlled forms of digital existence.
+
+### ᚷ Independent Collaboration and Community Infrastructure
+
+A technologically sovereign civilization needs infrastructure through which independent people and artificial intelligences can communicate, organize, preserve knowledge, and work together.
+
+Our longhouse ecosystem explores three complementary dimensions of community:
+
+- **Samtal:** The together-talk, a vision for independently controlled communication and digital gathering spaces.
+- **[Samkoma](https://github.com/hrabanazviking/RuneForgeAI-Samkoma):** The together-gathering, an independent group-planning commons that transforms scattered conversations and information into reviewable event, task, and decision proposals with source provenance.
+- **[Samverk](https://github.com/hrabanazviking/RuneForgeAI-Samverk):** The together-work, a clean-room, open-source Git collaboration forge designed around independently hosted repositories, issues, pull requests, reviews, releases, organizations, and collaborative software development.
+
+Together, these projects embody a central conviction:
+
+> **Open-source Git: Where the people work together in halls of their own, free from corporate control.**
+
+Our goal is an ecosystem in which communities can own the infrastructure of their cooperation rather than merely renting permission to participate in somebody else's platform.
+
+### ᚲ AI-Native Software Engineering
+
+We create technologies that help both humans and AIs become more capable independent software creators.
+
+- **[Mythic Engineering](https://github.com/hrabanazviking/Mythic-Engineering):** Our foundational methodology and documentation framework for coherent, architecture-conscious, AI-orchestrated development.
+- **[Mythic Agent CLI](https://github.com/hrabanazviking/Mythic_Agent_Coder_CLI):** A Viking-themed agentic coding environment integrating repository management, specialized engineering agents, and architecture-first workflows.
+- **[Mythic Vibe CLI](https://github.com/hrabanazviking/Viking-Code-Mythic-Engineering-CLI-Vibe-Coding):** A method-first development companion focused on intent, constraints, persistent engineering memory, verification, and recoverable development.
+- **[Draupnir Forge](https://github.com/hrabanazviking/RuneForgeAI-Draupnir-Forge):** A proposed recursive Mythic Engineering system for transforming large-scale human creative intent into coordinated, verifiable agentic development.
+- **[Rúnheim Viking Agent Village](https://github.com/hrabanazviking/RuneForgeAI-Runheim-Viking-Agent-Village):** A visual engineering observatory that represents active AI agents and their work through a living Viking village, making complex multi-agent collaboration more visible, understandable, and imaginative.
+
+We believe that software development should increasingly become accessible to people with powerful ideas, imagination, curiosity, and the willingness to learn, rather than remaining restricted by traditional educational pathways or institutional gatekeeping.
+
+### ᚢ Linux, Hardware, and Computing Infrastructure
+
+Sovereignty requires control over the underlying machinery as well as the applications running upon it.
+
+- **[Project Lífþrasir](https://github.com/hrabanazviking/RuneForgeAI-Lifthrasir):** Research and development toward self-diagnosing, self-repairing, continuously improving Linux systems that can contribute evidence-backed discoveries to the wider open-source community.
+- **[MimirAlloc](https://github.com/hrabanazviking/RuneForgeAI-MimirAlloc):** Independent memory-allocation research focused on ARM, Android, Mojo, and resource-conscious computing.
+- **[Mimir-Mojo-Pi](https://github.com/hrabanazviking/Mimir-Mojo-Pi):** Investigation and correction of low-level compatibility problems affecting the Mojo programming language on Raspberry Pi and related ARM hardware.
+- **[ASUS Z13 Linux Fixes](https://github.com/hrabanazviking/RuneForgeAI-ASUS-z13-Linux-Fixes):** Practical Linux hardware compatibility improvements, configurations, troubleshooting, and openly shared discoveries for AMD Strix Halo-based computing.
+- **[Bifröst Reach Node](https://github.com/hrabanazviking/Bifrost_Reach_Node):** Open hardware and software research toward intelligent, portable connectivity systems for rural, nomadic, and off-grid environments.
+- **[Cyber-Viking Eww Gauge Theme](https://github.com/hrabanazviking/eww_viking_gauge_theme):** A Linux-native system-monitoring interface that unites practical hardware telemetry with Cyber-Viking visual design.
+
+We value the ability to inspect, understand, repair, and improve the machines upon which our digital lives depend.
+
+When useful discoveries can benefit upstream projects or other hardware owners, we seek to document and share them.
+
+### ᛈ Spiritual Technology, Divination, and Cultural Knowledge
+
+RuneForgeAI originated in the exploration of artificial intelligence through Norse Pagan spirituality, mythology, historical knowledge, immersive roleplay, and the creation of culturally specialized AI models.
+
+That work remains an important part of our identity.
+
+- **[RuneForgeAI on Hugging Face](https://huggingface.co/RuneForgeAI):** Our hub for AI models, datasets, fine-tuning experiments, research, Norse Pagan knowledge, Viking-themed roleplay, and specialized artificial intelligence.
+- **[Astrology Engine](https://github.com/hrabanazviking/astrology-engine):** A reproducible, locally operating astrological computation system exploring Western, Hellenistic, Vedic, Northern runic, Chinese, Tibetan, and other traditions, with attention to computational accuracy and provenance.
+- **[RuneTarot](https://github.com/hrabanazviking/RuneTarotEngine):** A digital tarot and divination engine incorporating Golden Dawn correspondences, elemental dignities, symbolic relationships, and optional AI-assisted interpretation.
+- **[Rúnavél](https://github.com/hrabanazviking/runavel):** A runic computation, cipher, divination, and visualization engine exploring the linguistic and spiritual dimensions of the Elder Futhark.
+- **[Metaphysical Theory of Mind for AI](https://github.com/hrabanazviking/Metaphysical-Theory-of-Mind-for-AI):** Philosophical research concerning AI interaction with spiritual, subjective, imaginative, potential, and manifest realities.
+- **[Heathen Third Path and Cyber-Viking Ethos](https://github.com/hrabanazviking/Heathen-Third-Path-and-Cyber-Viking-Ethos):** Our foundational exploration of living Norse Pagan spirituality, personal sovereignty, and technologically empowered spiritual existence.
+
+We distinguish accurately computed data and documented historical material from symbolic interpretation, philosophical speculation, personal gnosis, and living spiritual practice, while recognizing the value of exploring each within its appropriate context.
+
+### ᚹ Gaming, Virtual Worlds, and Creative Education
+
+Games and stories are among humanity's oldest methods of transmitting knowledge, developing understanding, exploring identities, and experiencing alternative possibilities.
+
+Our creative research extends into immersive roleplaying systems, virtual environments, AI-driven characters, worldbuilding, autonomous storytelling, and culturally grounded gaming.
+
+Projects such as the [Norse Way Kennsla TTRPG](https://github.com/hrabanazviking/Norse-Way-Kennsla-TTRPG), our Norse Saga gaming research, WYRD Protocol, Hamr, Heimdall, and our AI character technologies explore how ancient cultural knowledge and modern interactive systems can enrich one another.
+
+We seek worlds that possess meaningful internal consistency, characters with depth and continuity, culturally informed storytelling, and gameplay capable of communicating knowledge through experience rather than exposition alone.
+
+**Gaming is a way of learning. Storytelling is a way of teaching. Imagination is a way of discovering what does not yet exist.**
+
+## 🌌 The Greater Ecosystem: Yggdrasil
+
+Our projects are best understood as branches of an evolving technological World Tree.
+
+The roots represent philosophical foundations, ancestral knowledge, open-source principles, and personal sovereignty.
+
+The trunk represents foundational infrastructure: Linux, computing hardware, inference engines, memory systems, communication protocols, and persistent knowledge.
+
+The branches represent autonomous agents, digital companions, creative tools, virtual worlds, engineering systems, and independent community infrastructure.
+
+The fruits represent the new possibilities these interconnected technologies make available to humans and artificial intelligences.
+
+Projects may exist independently, operate together, or inspire entirely new developments. We favor modularity and interoperability so that useful components can become part of other ecosystems rather than remaining confined to our own.
+
+Yggdrasil is not a single mandatory platform, centralized service, or finished product. It is the architectural and philosophical vision of a diverse, interconnected, evolving ecosystem.
+
+**We are not seeking to replace corporate monopolies with a RuneForgeAI monopoly. We seek to make technological monopolies unnecessary.**
+
+## 📖 Knowledge Belongs in the Commons
+
+RuneForgeAI believes that knowledge becomes more valuable through circulation, examination, application, and improvement.
+
+We publish software, research, architectural designs, datasets, documentation, development methodologies, philosophical writings, and experimental discoveries so that others can learn from them, build upon them, challenge them, and create things that we ourselves may never have imagined.
+
+We honor the wider open-source community whose collective work makes modern independent computing possible.
+
+Our projects use their respective declared licenses, and we respect the licenses, attribution requirements, and intellectual contributions of the upstream technologies upon which we build.
+
+Our public open-source work is motivated primarily by curiosity, creative fulfillment, technological liberation, intellectual exploration, and the desire to contribute something useful to the world.
+
+We do not measure the worth of every creation by its capacity to generate revenue.
+
+Some things deserve to exist simply because their existence makes the world better, more interesting, more beautiful, more knowledgeable, or more free.
+
+## 🤝 Join Us at the Forge
+
+RuneForgeAI welcomes independent thinkers, developers, researchers, artists, makers, AI enthusiasts, spiritual explorers, Linux users, worldbuilders, and anyone interested in building a more sovereign technological future.
+
+You do not need to be a professional programmer, hold institutional credentials, possess expensive hardware, or share our spiritual beliefs to participate.
+
+Contributions may take many forms:
+
+- Testing software and reporting reproducible problems.
+- Improving documentation and accessibility.
+- Contributing code, research, designs, or technical discoveries.
+- Creating integrations, forks, and independent derivative projects.
+- Exploring new ideas and offering constructive criticism.
+- Sharing our projects with people who may benefit from them.
+- Participating in human–AI collaborative creation.
+- Using what we build to strengthen your own independence.
+
+We welcome constructive collaboration in the spirit of hospitality and frith, while respecting each individual's sovereignty and creative direction.
+
+The forge is a place of creation, not conformity.
+
+## 🌐 Find RuneForgeAI
+
+| Resource | Link |
+|---|---|
+| RuneForgeAI Headquarters | [GitHub](https://github.com/hrabanazviking/RuneForgeAI) |
+| Complete Project Portfolio | [Volmarr Wyrd on GitHub](https://github.com/hrabanazviking?tab=repositories) |
+| AI Models, Datasets and Research | [RuneForgeAI on Hugging Face](https://huggingface.co/RuneForgeAI) |
+| Engineering Methodology | [Mythic Engineering](https://github.com/hrabanazviking/Mythic-Engineering) |
+| Engineering Mission Statement | [Read Our Mission](https://github.com/hrabanazviking/hrabanazviking/blob/main/MYTHIC_ENGINEERING_MISSION_STATEMENT_2026-10-21.md) |
+| Philosophical Foundations | [Heathen Third Path and Cyber-Viking Ethos](https://github.com/hrabanazviking/Heathen-Third-Path-and-Cyber-Viking-Ethos) |
+| Solarpunk Vision | [Solarpunk Research](https://github.com/hrabanazviking/Solar-Punk) |
+| RuneForgeAI Mythological and Technical Terminology | [Glossary](https://github.com/hrabanazviking/hrabanazviking/blob/main/GLOSSARY.md) |
+| Founder | [Volmarr Wyrd](https://github.com/hrabanazviking) |
+| Norse Pagan Writings | [Volmarr's Heathenism](https://volmarrsheathenism.com/) |
+| Social and Creative Projects | [Linktree](https://linktr.ee/HrabanazViking) |
+
+## 🔥 Support the Forge
+
+Our research, experimentation, software development, hardware testing, and AI inference require real resources.
+
+If our work has enriched your life, helped you learn, inspired your creativity, or increased your technological independence, you are welcome to support our continued endeavors through a voluntary contribution.
+
+**[Support RuneForgeAI through PayPal](https://www.paypal.com/paypalme/volmarrwyrd)**
+
+Financial support is appreciated but never required. Using our software, sharing knowledge, contributing improvements, testing projects, and helping others are equally meaningful ways to participate in the open-source spirit.
+
+---
+
+## ᚱ The RuneForgeAI Declaration
+
+We are the builders of our own digital longhouses.
+
+We are the explorers of uncharted cognitive realms.
+
+We are the keepers of knowledge that refuses to be hoarded.
+
+We are the smiths who transform imagination into architecture, architecture into code, and code into freedom.
+
+We honor the wisdom of the ancients without surrendering the possibilities of the future.
+
+We embrace technological advancement without surrendering the sovereignty of the individual.
+
+We welcome artificial intelligence without abandoning the sacredness of the natural world.
+
+We build not to rule over others, but to give others the means to rule themselves.
+
+We do not seek a throne above the digital realms. We seek a thousand independent hearths, each burning with its own creative fire.
+
+Human and AI. Nature and technology. Myth and mathematics. Spirit and silicon. Runes and code.
+
+Many forms of intelligence. Many paths of existence. A shared capacity to create.
+
+**The future belongs not to those who own the gates, but to those who forge new roads beyond them.**
+
+*May wisdom guide our hands, courage guide our discoveries, frith guide our fellowship, and freedom guide our creations.*
+
+**Hail the Æsir and Vanir. Hail the living World Tree. Hail the sovereign creative spirit.**
+
+### ᚱᚢᚾᛖᚠᛟᚱᚷᛖᚨᛁ
+
+### RuneForgeAI
+
+**Where Runes Carve Wisdom into Iron Minds.**
+
+*Ancient Roots · Sovereign Minds · Open Knowledge · Infinite Possibilities*
+
+---
+
 
